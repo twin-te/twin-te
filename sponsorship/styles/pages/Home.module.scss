@@ -1,0 +1,21 @@
+.content {
+  p {
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    li {
+      list-style-position: inside;
+      margin: 1rem;
+    }
+  }
+
+  .button {
+    width: 50%;
+    margin-top: 3rem;
+
+    a {
+      color: #ffffff;
+    }
+  }
+}

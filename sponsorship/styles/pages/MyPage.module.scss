@@ -1,0 +1,22 @@
+@import "../variables.scss";
+
+.content {
+    .editButton {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        text-decoration: none;
+        color: #929292
+    }
+
+    .title {
+        border-left: 5px solid $primary;
+        padding-left: 1rem;
+    }
+
+
+    .editIcon{
+        margin-right: 5px;
+        transform: translateY(3px);
+     }
+}
