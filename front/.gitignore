@@ -1,0 +1,7 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+tsconfig.staged.json
+storybook-static
