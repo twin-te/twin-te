@@ -1,0 +1,7 @@
+version: v1
+lint:
+  ignore_only:
+    PACKAGE_VERSION_SUFFIX:
+      - shared
+    ENUM_VALUE_PREFIX:
+      - shared
