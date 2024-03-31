@@ -7,7 +7,7 @@ import (
 
 type Actor interface {
 	HasPermission(permission Permission) bool
-	AuthNUser() *AuthNUser
+	AuthNUser() (authNUser *AuthNUser, ok bool)
 }
 
 var _ Actor = (*Unknown)(nil)
@@ -20,8 +20,8 @@ func (actor *Unknown) HasPermission(permission Permission) bool {
 	return lo.Contains(actor.Permissions, permission)
 }
 
-func (actor *Unknown) AuthNUser() *AuthNUser {
-	return nil
+func (actor *Unknown) AuthNUser() (*AuthNUser, bool) {
+	return nil, false
 }
 
 var _ Actor = (*AuthNUser)(nil)
@@ -36,8 +36,8 @@ func (actor *AuthNUser) HasPermission(permission Permission) bool {
 	return lo.Contains(actor.Permissions, permission)
 }
 
-func (actor *AuthNUser) AuthNUser() *AuthNUser {
-	return actor
+func (actor *AuthNUser) AuthNUser() (*AuthNUser, bool) {
+	return actor, true
 }
 
 func NewUnknown(permissions ...Permission) *Unknown {
