@@ -1,0 +1,22 @@
+syntax = "proto3";
+package shared;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/sharedpb";
+
+extend google.protobuf.MethodOptions {
+  TwinteMethodOptions twinte = 50000;
+}
+
+message TwinteMethodOptions {
+  Authentication authentication = 1;
+  repeated string error_codes = 2;
+}
+
+enum Authentication {
+  AUTHENTICATION_UNSPECIFIED = 0;
+  NOT_REQURED = 1;
+  OPTIONAL = 2;
+  REQURED = 3;
+}
