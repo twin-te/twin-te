@@ -24,6 +24,7 @@ func (r *impl) Transaction(ctx context.Context, fn func(rtx announcementport.Rep
 
 func New(db *gorm.DB) *impl {
 	return &impl{
-		db: db,
+		db:            db,
+		announcements: make([]*announcementdomain.Announcement, 0),
 	}
 }
