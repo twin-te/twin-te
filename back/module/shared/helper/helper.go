@@ -10,7 +10,7 @@ import (
 
 func ValidateDuplicates[T comparable](collection []T) error {
 	if duplicates := lo.FindDuplicates(collection); len(duplicates) != 0 {
-		return apperr.New(sharederr.CodeInvalidArgument, fmt.Sprintf("found duplicates %+v", collection))
+		return apperr.New(sharederr.CodeInvalidArgument, fmt.Sprintf("found duplicates %+v", duplicates))
 	}
 	return nil
 }
