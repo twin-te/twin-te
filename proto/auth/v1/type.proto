@@ -1,0 +1,24 @@
+syntax = "proto3";
+package auth.v1;
+
+import "shared/type.proto";
+
+option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1;authv1";
+
+enum Provider {
+  PROVIDER_UNSPECIFIED = 0;
+  PROVIDER_GOOGLE = 1;
+  PROVIDER_APPLE = 2;
+  PROVIDER_TWITTER = 3;
+}
+
+message UserAuthentication {
+  Provider provider = 1;
+  string social_id = 2;
+}
+
+message User {
+  shared.UUID id = 1;
+  repeated UserAuthentication authentications = 2;
+  shared.RFC3339DateTime created_at = 3;
+}
