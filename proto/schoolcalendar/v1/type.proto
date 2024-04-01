@@ -1,0 +1,36 @@
+syntax = "proto3";
+package schoolcalendar.v1;
+
+import "shared/type.proto";
+
+option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/schoolcalendar/v1;schoolcalendarv1";
+
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_HOLIDAY = 1;
+  EVENT_TYPE_PUBLIC_HOLIDAY = 2;
+  EVENT_TYPE_EXAM = 3;
+  EVENT_TYPE_SUBSTITUTE_DAY = 4;
+  EVENT_TYPE_OTHER = 5;
+}
+
+enum Module {
+  MODULE_UNSPECIFIED = 0;
+  MODULE_SPRING_A = 1;
+  MODULE_SPRING_B = 2;
+  MODULE_SPRING_C = 3;
+  MODULE_SUMMER_VACATION = 4;
+  MODULE_FALL_A = 5;
+  MODULE_FALL_B = 6;
+  MODULE_WINTER_VACATION = 7;
+  MODULE_FALL_C = 8;
+  MODULE_SPRING_VACATION = 9;
+}
+
+message Event {
+  int32 id = 1;
+  EventType type = 2;
+  shared.RFC3339FullDate date = 3;
+  string description = 4;
+  optional shared.Weekday change_to = 5;
+}
