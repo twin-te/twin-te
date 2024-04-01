@@ -101,7 +101,7 @@ type UseCase interface {
 	// Please specify all tag ids associated with the user.
 	//
 	// [Authentication] required
-	RearrangeTags(ctx context.Context, tagIDs []idtype.TagID) error
+	RearrangeTags(ctx context.Context, tagIDs []idtype.TagID) ([]*timetabledomain.Tag, error)
 }
 
 type SearchCoursesIn struct {
