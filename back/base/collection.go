@@ -2,6 +2,8 @@ package base
 
 import (
 	"fmt"
+
+	"github.com/samber/lo"
 )
 
 func CopySlice[T any](collection []T) []T {
@@ -101,4 +103,15 @@ func FindByString[T fmt.Stringer](collection []T, element string) (T, bool) {
 
 	var result T
 	return result, false
+}
+
+// HaveSameElements verifies whether two slices have exactly identical elements.
+// The order of the elements does not matter.
+// Each slices is expected to have no duplicate elements.
+func HaveSameElements[T comparable](collectionA, collectionB []T) bool {
+	if len(collectionA) != len(collectionB) {
+		return false
+	}
+	intersect := lo.Intersect(collectionA, collectionB)
+	return len(intersect) == len(collectionA)
 }
