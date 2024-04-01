@@ -7,7 +7,6 @@ import (
 	"github.com/twin-te/twinte-back/base"
 	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
 	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedhelper "github.com/twin-te/twinte-back/module/shared/helper"
 )
 
 var (
@@ -198,16 +197,10 @@ func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate) error {
 	}
 
 	if data.Methods != nil {
-		if err := sharedhelper.ValidateDuplicates(*data.Methods); err != nil {
-			return err
-		}
 		rc.updateMethods(*data.Methods)
 	}
 
 	if data.Schedules != nil {
-		if err := sharedhelper.ValidateDuplicates(*data.Schedules); err != nil {
-			return err
-		}
 		rc.updateSchedules(*data.Schedules)
 	}
 
@@ -228,9 +221,6 @@ func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate) error {
 	}
 
 	if data.TagIDs != nil {
-		if err := sharedhelper.ValidateDuplicates(*data.TagIDs); err != nil {
-			return err
-		}
 		rc.TagIDs = *data.TagIDs
 	}
 
