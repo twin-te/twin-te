@@ -93,18 +93,18 @@ func (uc impl) DeleteTag(ctx context.Context, id idtype.TagID) error {
 	return nil
 }
 
-func (uc impl) RearrangeTags(ctx context.Context, ids []idtype.TagID) error {
+func (uc impl) RearrangeTags(ctx context.Context, ids []idtype.TagID) (tags []*timetabledomain.Tag, err error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
-		return err
+		return
 	}
 
-	if err := sharedhelper.ValidateDuplicates(ids); err != nil {
-		return err
+	if err = sharedhelper.ValidateDuplicates(ids); err != nil {
+		return
 	}
 
-	return uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
-		tags, err := rtx.ListTags(ctx, timetableport.ListTagsConds{
+	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+		tags, err = rtx.ListTags(ctx, timetableport.ListTagsConds{
 			UserID: &userID,
 		}, sharedport.LockExclusive)
 		if err != nil {
@@ -133,4 +133,6 @@ func (uc impl) RearrangeTags(ctx context.Context, ids []idtype.TagID) error {
 
 		return nil
 	})
+
+	return
 }
