@@ -1,0 +1,97 @@
+syntax = "proto3";
+package timetable.v1;
+
+import "shared/type.proto";
+
+option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1;timetablev1";
+
+enum Module {
+  MODULE_UNSPECIFIED = 0;
+  MODULE_SPRING_A = 1;
+  MODULE_SPRING_B = 2;
+  MODULE_SPRING_C = 3;
+  MODULE_FALL_A = 4;
+  MODULE_FALL_B = 5;
+  MODULE_FALL_C = 6;
+  MODULE_SUMMER_VACATION = 7;
+  MODULE_SPRING_VACATION = 8;
+}
+
+enum Day {
+  DAY_UNSPECIFIED = 0;
+  DAY_SUN = 1;
+  DAY_MON = 2;
+  DAY_TUE = 3;
+  DAY_WED = 4;
+  DAY_THU = 5;
+  DAY_FRI = 6;
+  DAY_SAT = 7;
+  DAY_INTENSIVE = 8;
+  DAY_APPOINTMENT = 9;
+  DAY_ANY_TIME = 10;
+}
+
+enum CourseMethod {
+  COURSE_METHOD_UNSPECIFIED = 0;
+  COURSE_METHOD_ONLINE_ASYNCHRONOUS = 1;
+  COURSE_METHOD_ONLINE_SYNCHRONOUS = 2;
+  COURSE_METHOD_FACE_TO_FACE = 3;
+  COURSE_METHOD_OTHERS = 4;
+}
+
+message Schedule {
+  Module module = 1;
+  Day day = 2;
+  int32 period = 3;
+  string rooms = 4;
+}
+
+message CourseMethodList {
+  repeated CourseMethod values = 1;
+}
+
+message ScheduleList {
+  repeated Schedule values = 1;
+}
+
+message Course {
+  shared.UUID id = 1;
+  shared.AcademicYear year = 2;
+  string code = 3;
+  string name = 4;
+  string instructors = 5;
+  string credit = 6;
+  string overview = 7;
+  string remarks = 8;
+  shared.RFC3339DateTime last_updated_at = 9;
+  repeated int32 recommended_grades = 10;
+  repeated CourseMethod methods = 11;
+  repeated Schedule schedules = 12;
+  bool has_parse_error = 13;
+  bool is_annual = 14;
+}
+
+// If it has the based course, code is present.
+message RegisteredCourse {
+  shared.UUID id = 1;
+  shared.UUID user_id = 2;
+  shared.AcademicYear year = 3;
+  optional string code = 4;
+  string name = 5;
+  string instructors = 6;
+  string credit = 7;
+  repeated CourseMethod methods = 8;
+  repeated Schedule schedules = 9;
+  string memo = 10;
+  int32 attendance = 11;
+  int32 absence = 12;
+  int32 late = 13;
+  repeated shared.UUID tag_ids = 14;
+}
+
+message Tag {
+  shared.UUID id = 1;
+  shared.UUID user_id = 2;
+  string name = 3;
+  int32 position = 4;
+}
