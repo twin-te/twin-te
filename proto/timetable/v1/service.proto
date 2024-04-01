@@ -1,0 +1,221 @@
+syntax = "proto3";
+package timetable.v1;
+
+import "shared/option.proto";
+import "shared/type.proto";
+import "timetable/v1/type.proto";
+
+option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1;timetablev1";
+
+// The following error codes are not stated explicitly in the each rpc, but may be returned.
+//   - shared.InvalidArgument
+//   - shared.Unauthenticated
+//   - shared.Unauthorized
+service TimetableService {
+  rpc GetCoursesByCodes(GetCoursesByCodesRequest) returns (GetCoursesByCodesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (shared.twinte) = {
+      authentication: NOT_REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc SearchCourses(SearchCoursesRequest) returns (SearchCoursesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (shared.twinte) = {
+      authentication: NOT_REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc CreateRegisteredCoursesByCodes(CreateRegisteredCoursesByCodesRequest) returns (CreateRegisteredCoursesByCodesResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: [
+        "timetable.CourseNotFound",
+        "timetable.RegisteredCourseAlreadyExists"
+      ],
+    };
+  }
+
+  rpc CreateRegisteredCourseManually(CreateRegisteredCourseManuallyRequest) returns (CreateRegisteredCourseManuallyResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc GetRegisteredCourses(GetRegisteredCoursesRequest) returns (GetRegisteredCoursesResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc UpdateRegisteredCourse(UpdateRegisteredCourseRequest) returns (UpdateRegisteredCourseResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: ["timetable.RegisteredCourseNotFound"],
+    };
+  }
+
+  rpc DeleteRegisteredCourse(DeleteRegisteredCourseRequest) returns (DeleteRegisteredCourseResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: ["timetable.RegisteredCourseNotFound"],
+    };
+  }
+
+  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc UpdateTag(UpdateTagRequest) returns (UpdateTagResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: ["timetable.TagNotFound"],
+    };
+  }
+
+  rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: ["timetable.TagNotFound"],
+    };
+  }
+
+  rpc RearrangeTags(RearrangeTagsRequest) returns (RearrangeTagsResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED,
+      error_codes: [],
+    };
+  }
+}
+
+message GetCoursesByCodesRequest {
+  shared.AcademicYear year = 1;
+  repeated string codes = 2;
+}
+
+message GetCoursesByCodesResponse {
+  repeated Course courses = 1;
+}
+
+message SearchCoursesRequest {
+  shared.AcademicYear year = 1;
+  repeated string keywords = 2;
+  repeated string code_prefixes_included = 3;
+  repeated string code_prefixes_excluded = 4;
+  repeated Schedule schedules_fully_included = 5;
+  repeated Schedule schedules_partially_overlapped = 6;
+  int32 limit = 7;
+  int32 offset = 8;
+}
+
+message SearchCoursesResponse {
+  repeated Course courses = 1;
+}
+
+message CreateRegisteredCoursesByCodesRequest {
+  shared.AcademicYear year = 1;
+  repeated string codes = 2;
+}
+
+message CreateRegisteredCoursesByCodesResponse {
+  repeated RegisteredCourse registered_courses = 1;
+}
+
+message CreateRegisteredCourseManuallyRequest {
+  shared.AcademicYear year = 1;
+  string name = 2;
+  string instructors = 3;
+  string credit = 4;
+  repeated CourseMethod methods = 5;
+  repeated Schedule schedules = 6;
+}
+
+message CreateRegisteredCourseManuallyResponse {
+  RegisteredCourse registered_course = 1;
+}
+
+message GetRegisteredCoursesRequest {
+  optional shared.AcademicYear year = 1;
+}
+
+message GetRegisteredCoursesResponse {
+  repeated RegisteredCourse registered_courses = 1;
+}
+
+message UpdateRegisteredCourseRequest {
+  shared.UUID id = 1;
+  optional string name = 2;
+  optional string instructors = 3;
+  optional string credit = 4;
+  optional CourseMethodList methods = 5;
+  optional ScheduleList schedules = 6;
+  optional string memo = 7;
+  optional int32 attendance = 8;
+  optional int32 absence = 9;
+  optional int32 late = 10;
+  optional shared.UUIDList tag_ids = 11;
+}
+
+message UpdateRegisteredCourseResponse {
+  RegisteredCourse registered_course = 1;
+}
+
+message DeleteRegisteredCourseRequest {
+  shared.UUID id = 1;
+}
+
+message DeleteRegisteredCourseResponse {}
+
+message CreateTagRequest {
+  string name = 1;
+}
+
+message CreateTagResponse {
+  Tag tag = 1;
+}
+
+message GetTagsRequest {}
+
+message GetTagsResponse {
+  repeated Tag tags = 1;
+}
+
+message UpdateTagRequest {
+  shared.UUID id = 1;
+  optional string name = 2;
+}
+
+message UpdateTagResponse {
+  Tag tag = 1;
+}
+
+message DeleteTagRequest {
+  shared.UUID id = 1;
+}
+
+message DeleteTagResponse {}
+
+message RearrangeTagsRequest {
+  // Please specify all tag ids that the user have.
+  repeated shared.UUID ids = 1;
+}
+
+message RearrangeTagsResponse {
+  repeated Tag tags = 1;
+}
