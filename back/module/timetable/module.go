@@ -28,6 +28,14 @@ type UseCase interface {
 	// [Authentication] not required
 	SearchCourses(ctx context.Context, in SearchCoursesIn) ([]*timetabledomain.Course, error)
 
+	// UpdateCoursesBasedOnKDB retrieves data about courses from kdb and updates courses.
+	//
+	// [Authentication] not required
+	//
+	// [Permission]
+	//   - PermissionExecuteBatchJob
+	UpdateCoursesBasedOnKDB(ctx context.Context, year shareddomain.AcademicYear) error
+
 	// CreateRegisteredCoursesByCodes creates new registered courses by the given year and codes.
 	//
 	// [Authentication] required
@@ -94,14 +102,6 @@ type UseCase interface {
 	//
 	// [Authentication] required
 	RearrangeTags(ctx context.Context, tagIDs []idtype.TagID) error
-
-	// UpdateCoursesBasedOnKDB retrieves data about courses from kdb and updates courses.
-	//
-	// [Authentication] not required
-	//
-	// [Permission]
-	//   - PermissionExecuteBatchJob
-	UpdateCoursesBasedOnKDB(ctx context.Context, year shareddomain.AcademicYear) error
 }
 
 type SearchCoursesIn struct {
