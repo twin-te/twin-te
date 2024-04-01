@@ -1,0 +1,22 @@
+syntax = "proto3";
+package announcement.v1;
+
+import "shared/type.proto";
+
+option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/announcement/v1;announcementv1";
+
+enum AnnouncementTag {
+  ANNOUNCEMENT_TAG_UNSPECIFIED = 0;
+  ANNOUNCEMENT_TAG_INFORMATION = 1;
+  ANNOUNCEMENT_TAG_NOTIFICATION = 2;
+}
+
+// If authenticated, is_read is present.
+message Announcement {
+  shared.UUID id = 1;
+  repeated AnnouncementTag tags = 2;
+  string title = 3;
+  string content = 4;
+  shared.RFC3339DateTime published_at = 5;
+  optional bool is_read = 6;
+}
