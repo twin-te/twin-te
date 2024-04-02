@@ -49,7 +49,7 @@ func ConstructPaymentHistory(fn func(ph *PaymentHistory) (err error)) (*PaymentH
 		return nil, err
 	}
 
-	if ph.ID.IsZero() || ph.Type.IsZero() || ph.Status.IsZero() || ph.Amount == 0 || ph.CreatedAt.IsZero() {
+	if ph.ID.IsZero() || ph.Type.IsZero() || ph.Status.IsZero() || ph.Amount <= 0 || ph.CreatedAt.IsZero() {
 		return nil, fmt.Errorf("failed to construct %+v", ph)
 	}
 

@@ -2,11 +2,16 @@ package donationusecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
 )
 
 func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (idtype.CheckoutSessionID, error) {
+	if amount <= 0 {
+		return "", fmt.Errorf("amount must be greater than 0, but got %d", amount)
+	}
+
 	var paymentUserID *idtype.PaymentUserID
 
 	_, err := uc.a.Authenticate(ctx)
