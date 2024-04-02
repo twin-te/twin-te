@@ -103,19 +103,19 @@ func (rc *RegisteredCourse) Clone() *RegisteredCourse {
 	ret := lo.ToPtr(*rc)
 
 	if rc.CourseID != nil {
-		*ret.CourseID = *rc.CourseID
+		ret.CourseID = lo.ToPtr(*rc.CourseID)
 	}
 
 	if rc.Name != nil {
-		*ret.Name = *rc.Name
+		ret.Name = lo.ToPtr(*rc.Name)
 	}
 
 	if rc.Instructors != nil {
-		*ret.Instructors = *rc.Instructors
+		ret.Instructors = lo.ToPtr(*rc.Instructors)
 	}
 
 	if rc.Credit != nil {
-		*ret.Credit = *rc.Credit
+		ret.Credit = lo.ToPtr(*rc.Credit)
 	}
 
 	if rc.Methods != nil {
