@@ -44,6 +44,8 @@ func ParseModule(s string) (Module, error) {
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Day -trimprefix=Day -output=day_string.gen.go
 type Day int
 
+// Weekday returns weekday.
+// If day is special, panic will be occurred.
 func (d Day) Weekday() time.Weekday {
 	switch d {
 	case DaySun:
