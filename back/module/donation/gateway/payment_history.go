@@ -47,7 +47,7 @@ func (g *impl) ListPaymentHistories(ctx context.Context, paymentUserID *idtype.P
 
 		startingAfter = &data[len(data)-1].ID
 
-		time.Sleep(40 * time.Microsecond)
+		time.Sleep(50 * time.Microsecond)
 	}
 
 	return base.MapWithErr(paymentIntents, fromStripePaymentIntent)
