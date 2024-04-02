@@ -59,13 +59,19 @@ type UseCase interface {
 	// [Authentication] not required
 	GetTotalAmount(ctx context.Context) (int, error)
 
-	// GetContributors returns payment users who have made at least one donation and have registered name for display.
+	// GetContributors returns contributors.
+	// Contributor is payment user who has made at least one donation and has registered name for display.
 	//
 	// [Authentication] not required
-	GetContributors(ctx context.Context) ([]*donationdomain.PaymentUser, error)
+	GetContributors(ctx context.Context) ([]Contributor, error)
 }
 
 type UpdateOrCreatePaymentUserIn struct {
 	DisplayName *string
+	Link        *string
+}
+
+type Contributor struct {
+	DisplayName string
 	Link        *string
 }

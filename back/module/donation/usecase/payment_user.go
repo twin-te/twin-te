@@ -77,11 +77,11 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 	return paymentUser, uc.r.CreatePaymentUsers(ctx, paymentUser)
 }
 
-func (uc *impl) GetContributors(ctx context.Context) ([]*donationdomain.PaymentUser, error) {
+func (uc *impl) GetContributors(ctx context.Context) ([]donationmodule.Contributor, error) {
 	uc.contributorsCacheMutex.RLock()
 	defer uc.contributorsCacheMutex.RUnlock()
 
-	return base.MapByClone(uc.contributorsCache), nil
+	return base.CopySlice(uc.contributorsCache), nil
 }
 
 func (uc *impl) updateContributorsCache(ctx context.Context) error {
@@ -119,8 +119,15 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 		return err
 	}
 
-	contributors := lo.Filter(paymentUsers, func(paymentUser *donationdomain.PaymentUser, index int) bool {
+	paymentUsers = lo.Filter(paymentUsers, func(paymentUser *donationdomain.PaymentUser, index int) bool {
 		return paymentIDToIsContributor[paymentUser.ID]
+	})
+
+	contributors := base.Map(paymentUsers, func(paymentUser *donationdomain.PaymentUser) donationmodule.Contributor {
+		return donationmodule.Contributor{
+			DisplayName: *paymentUser.DisplayName,
+			Link:        paymentUser.Link,
+		}
 	})
 
 	uc.contributorsCacheMutex.Lock()

@@ -8,7 +8,6 @@ import (
 
 	authmodule "github.com/twin-te/twinte-back/module/auth"
 	donationmodule "github.com/twin-te/twinte-back/module/donation"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
 	donationport "github.com/twin-te/twinte-back/module/donation/port"
 )
 
@@ -20,7 +19,7 @@ type impl struct {
 	g donationport.Gateway
 	r donationport.Repository
 
-	contributorsCache      []*donationdomain.PaymentUser
+	contributorsCache      []donationmodule.Contributor
 	contributorsCacheMutex sync.RWMutex
 
 	totalAmountCache      int
