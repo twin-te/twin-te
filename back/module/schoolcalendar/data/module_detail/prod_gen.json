@@ -1,0 +1,352 @@
+[
+  {
+    "id": 1,
+    "year": 2020,
+    "module": "SpringVacation",
+    "start": "2020-04-01",
+    "end": "2020-04-04"
+  },
+  {
+    "id": 2,
+    "year": 2020,
+    "module": "SpringA",
+    "start": "2020-04-05",
+    "end": "2020-05-19"
+  },
+  {
+    "id": 3,
+    "year": 2020,
+    "module": "SpringB",
+    "start": "2020-05-20",
+    "end": "2020-06-30"
+  },
+  {
+    "id": 4,
+    "year": 2020,
+    "module": "SpringC",
+    "start": "2020-07-01",
+    "end": "2020-08-06"
+  },
+  {
+    "id": 5,
+    "year": 2020,
+    "module": "SummerVacation",
+    "start": "2020-08-07",
+    "end": "2020-09-30"
+  },
+  {
+    "id": 6,
+    "year": 2020,
+    "module": "FallA",
+    "start": "2020-10-01",
+    "end": "2020-11-10"
+  },
+  {
+    "id": 7,
+    "year": 2020,
+    "module": "FallB",
+    "start": "2020-11-11",
+    "end": "2020-12-28"
+  },
+  {
+    "id": 8,
+    "year": 2020,
+    "module": "WinterVacation",
+    "start": "2020-12-29",
+    "end": "2021-01-05"
+  },
+  {
+    "id": 9,
+    "year": 2020,
+    "module": "FallC",
+    "start": "2021-01-06",
+    "end": "2021-02-17"
+  },
+  {
+    "id": 10,
+    "year": 2020,
+    "module": "SpringVacation",
+    "start": "2021-02-18",
+    "end": "2021-03-31"
+  },
+  {
+    "id": 11,
+    "year": 2021,
+    "module": "SpringVacation",
+    "start": "2021-04-01",
+    "end": "2021-04-04"
+  },
+  {
+    "id": 12,
+    "year": 2021,
+    "module": "SpringA",
+    "start": "2021-04-05",
+    "end": "2021-05-19"
+  },
+  {
+    "id": 13,
+    "year": 2021,
+    "module": "SpringB",
+    "start": "2021-05-20",
+    "end": "2021-06-30"
+  },
+  {
+    "id": 14,
+    "year": 2021,
+    "module": "SpringC",
+    "start": "2021-07-01",
+    "end": "2021-08-06"
+  },
+  {
+    "id": 15,
+    "year": 2021,
+    "module": "SummerVacation",
+    "start": "2021-08-07",
+    "end": "2021-09-30"
+  },
+  {
+    "id": 16,
+    "year": 2021,
+    "module": "FallA",
+    "start": "2021-10-01",
+    "end": "2021-11-10"
+  },
+  {
+    "id": 17,
+    "year": 2021,
+    "module": "FallB",
+    "start": "2021-11-11",
+    "end": "2021-12-28"
+  },
+  {
+    "id": 18,
+    "year": 2021,
+    "module": "WinterVacation",
+    "start": "2021-12-29",
+    "end": "2022-01-05"
+  },
+  {
+    "id": 19,
+    "year": 2021,
+    "module": "FallC",
+    "start": "2022-01-06",
+    "end": "2022-02-17"
+  },
+  {
+    "id": 20,
+    "year": 2021,
+    "module": "SpringVacation",
+    "start": "2022-02-18",
+    "end": "2022-03-31"
+  },
+  {
+    "id": 21,
+    "year": 2022,
+    "module": "SpringVacation",
+    "start": "2022-04-01",
+    "end": "2022-04-04"
+  },
+  {
+    "id": 22,
+    "year": 2022,
+    "module": "SpringA",
+    "start": "2022-04-05",
+    "end": "2022-05-24"
+  },
+  {
+    "id": 23,
+    "year": 2022,
+    "module": "SpringB",
+    "start": "2022-05-25",
+    "end": "2022-07-05"
+  },
+  {
+    "id": 24,
+    "year": 2022,
+    "module": "SpringC",
+    "start": "2022-07-06",
+    "end": "2022-08-10"
+  },
+  {
+    "id": 25,
+    "year": 2022,
+    "module": "SummerVacation",
+    "start": "2022-08-11",
+    "end": "2022-09-30"
+  },
+  {
+    "id": 26,
+    "year": 2022,
+    "module": "FallA",
+    "start": "2022-10-01",
+    "end": "2022-11-10"
+  },
+  {
+    "id": 27,
+    "year": 2022,
+    "module": "FallB",
+    "start": "2022-11-11",
+    "end": "2022-12-28"
+  },
+  {
+    "id": 28,
+    "year": 2022,
+    "module": "WinterVacation",
+    "start": "2022-12-29",
+    "end": "2023-01-05"
+  },
+  {
+    "id": 29,
+    "year": 2022,
+    "module": "FallC",
+    "start": "2023-01-06",
+    "end": "2023-02-16"
+  },
+  {
+    "id": 30,
+    "year": 2022,
+    "module": "SpringVacation",
+    "start": "2023-02-17",
+    "end": "2023-03-31"
+  },
+  {
+    "id": 31,
+    "year": 2023,
+    "module": "SpringVacation",
+    "start": "2023-04-01",
+    "end": "2023-04-04"
+  },
+  {
+    "id": 32,
+    "year": 2023,
+    "module": "SpringA",
+    "start": "2023-04-05",
+    "end": "2023-05-23"
+  },
+  {
+    "id": 33,
+    "year": 2023,
+    "module": "SpringB",
+    "start": "2023-05-24",
+    "end": "2023-07-04"
+  },
+  {
+    "id": 34,
+    "year": 2023,
+    "module": "SpringC",
+    "start": "2023-07-05",
+    "end": "2023-08-10"
+  },
+  {
+    "id": 35,
+    "year": 2023,
+    "module": "SummerVacation",
+    "start": "2023-08-11",
+    "end": "2023-09-30"
+  },
+  {
+    "id": 36,
+    "year": 2023,
+    "module": "FallA",
+    "start": "2023-10-01",
+    "end": "2023-11-09"
+  },
+  {
+    "id": 37,
+    "year": 2023,
+    "module": "FallB",
+    "start": "2023-11-10",
+    "end": "2023-12-27"
+  },
+  {
+    "id": 38,
+    "year": 2023,
+    "module": "WinterVacation",
+    "start": "2023-12-28",
+    "end": "2024-01-04"
+  },
+  {
+    "id": 39,
+    "year": 2023,
+    "module": "FallC",
+    "start": "2024-01-05",
+    "end": "2024-02-16"
+  },
+  {
+    "id": 40,
+    "year": 2023,
+    "module": "SpringVacation",
+    "start": "2024-02-17",
+    "end": "2024-03-31"
+  },
+  {
+    "id": 41,
+    "year": 2024,
+    "module": "SpringVacation",
+    "start": "2024-04-01",
+    "end": "2024-04-04"
+  },
+  {
+    "id": 42,
+    "year": 2024,
+    "module": "SpringA",
+    "start": "2024-04-05",
+    "end": "2024-05-23"
+  },
+  {
+    "id": 43,
+    "year": 2024,
+    "module": "SpringB",
+    "start": "2024-05-24",
+    "end": "2024-07-04"
+  },
+  {
+    "id": 44,
+    "year": 2024,
+    "module": "SpringC",
+    "start": "2024-07-05",
+    "end": "2024-08-09"
+  },
+  {
+    "id": 45,
+    "year": 2024,
+    "module": "SummerVacation",
+    "start": "2024-08-10",
+    "end": "2024-09-30"
+  },
+  {
+    "id": 46,
+    "year": 2024,
+    "module": "FallA",
+    "start": "2024-10-01",
+    "end": "2024-11-08"
+  },
+  {
+    "id": 47,
+    "year": 2024,
+    "module": "FallB",
+    "start": "2024-11-09",
+    "end": "2024-12-25"
+  },
+  {
+    "id": 48,
+    "year": 2024,
+    "module": "WinterVacation",
+    "start": "2024-12-26",
+    "end": "2025-01-05"
+  },
+  {
+    "id": 49,
+    "year": 2024,
+    "module": "FallC",
+    "start": "2025-01-06",
+    "end": "2025-02-17"
+  },
+  {
+    "id": 50,
+    "year": 2024,
+    "module": "SpringVacation",
+    "start": "2025-02-18",
+    "end": "2025-03-31"
+  }
+]
