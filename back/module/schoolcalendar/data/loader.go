@@ -1,4 +1,4 @@
-package schoolcalendarrepository
+package schoolcalendardata
 
 import (
 	_ "embed"
