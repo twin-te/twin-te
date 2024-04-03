@@ -1,0 +1,62 @@
+[
+  {
+    "year": 2020,
+    "module": "SpringVacation",
+    "start": "2020-04-01",
+    "end": "2020-04-04"
+  },
+  {
+    "year": 2020,
+    "module": "SpringA",
+    "start": "2020-04-05",
+    "end": "2020-05-19"
+  },
+  {
+    "year": 2020,
+    "module": "SpringB",
+    "start": "2020-05-20",
+    "end": "2020-06-30"
+  },
+  {
+    "year": 2020,
+    "module": "SpringC",
+    "start": "2020-07-01",
+    "end": "2020-08-06"
+  },
+  {
+    "year": 2020,
+    "module": "SummerVacation",
+    "start": "2020-08-07",
+    "end": "2020-09-30"
+  },
+  {
+    "year": 2020,
+    "module": "FallA",
+    "start": "2020-10-01",
+    "end": "2020-11-10"
+  },
+  {
+    "year": 2020,
+    "module": "FallB",
+    "start": "2020-11-11",
+    "end": "2020-12-28"
+  },
+  {
+    "year": 2020,
+    "module": "WinterVacation",
+    "start": "2020-12-29",
+    "end": "2021-01-05"
+  },
+  {
+    "year": 2020,
+    "module": "FallC",
+    "start": "2021-01-06",
+    "end": "2021-02-17"
+  },
+  {
+    "year": 2020,
+    "module": "SpringVacation",
+    "start": "2021-02-18",
+    "end": "2021-03-31"
+  }
+]
