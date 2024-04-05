@@ -3,7 +3,7 @@ package appctx
 import (
 	"context"
 
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 )
 
 type actorKey struct{}
