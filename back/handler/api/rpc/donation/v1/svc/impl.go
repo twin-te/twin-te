@@ -91,14 +91,27 @@ func (svc *impl) GetPaymentHistories(ctx context.Context, req *connect.Request[d
 	return
 }
 
-func (svc *impl) GetSubscriptions(ctx context.Context, req *connect.Request[donationv1.GetSubscriptionsRequest]) (res *connect.Response[donationv1.GetSubscriptionsResponse], err error) {
-	subscriptions, err := svc.uc.GetSubscriptions(ctx)
+func (svc *impl) GetSubscriptionPlans(ctx context.Context, req *connect.Request[donationv1.GetSubscriptionPlansRequest]) (res *connect.Response[donationv1.GetSubscriptionPlansResponse], err error) {
+	subscriptionPlans, err := svc.uc.GetSubscriptionPlans(ctx)
 	if err != nil {
 		return
 	}
 
-	res = connect.NewResponse(&donationv1.GetSubscriptionsResponse{
-		Subscriptions: base.Map(subscriptions, donationv1conv.ToPBSubscription),
+	res = connect.NewResponse(&donationv1.GetSubscriptionPlansResponse{
+		SubscriptionPlans: base.Map(subscriptionPlans, donationv1conv.ToPBSubscriptionPlan),
+	})
+
+	return
+}
+
+func (svc *impl) GetSubscription(ctx context.Context, req *connect.Request[donationv1.GetSubscriptionRequest]) (res *connect.Response[donationv1.GetSubscriptionResponse], err error) {
+	subscription, err := svc.uc.GetSubscription(ctx)
+	if err != nil {
+		return
+	}
+
+	res = connect.NewResponse(&donationv1.GetSubscriptionResponse{
+		Subscription: donationv1conv.ToPBSubscription(subscription),
 	})
 
 	return
