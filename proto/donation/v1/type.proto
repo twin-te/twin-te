@@ -41,7 +41,7 @@ message SubscriptionPlan {
 
 message Subscription {
   string id = 1;
-  repeated SubscriptionPlan plans = 2;
+  SubscriptionPlan plan = 2;
   bool is_active = 3;
   shared.RFC3339DateTime created_at = 4;
 }

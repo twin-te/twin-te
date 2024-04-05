@@ -48,11 +48,19 @@ service DonationService {
     };
   }
 
-  rpc GetSubscriptions(GetSubscriptionsRequest) returns (GetSubscriptionsResponse) {
+  rpc GetSubscriptionPlans(GetSubscriptionPlansRequest) returns (GetSubscriptionPlansResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+    option (shared.twinte) = {
+      authentication: NOT_REQURED,
+      error_codes: [],
+    };
+  }
+
+  rpc GetSubscription(GetSubscriptionRequest) returns (GetSubscriptionResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: REQURED,
-      error_codes: [],
+      error_codes: ["donation.SubscriptionNotFound"],
     };
   }
 
@@ -117,10 +125,16 @@ message GetPaymentHistoriesResponse {
   repeated PaymentHistory payment_histories = 1;
 }
 
-message GetSubscriptionsRequest {}
+message GetSubscriptionPlansRequest {}
 
-message GetSubscriptionsResponse {
-  repeated Subscription subscriptions = 1;
+message GetSubscriptionPlansResponse {
+  repeated SubscriptionPlan subscription_plans = 1;
+}
+
+message GetSubscriptionRequest {}
+
+message GetSubscriptionResponse {
+  Subscription subscription = 1;
 }
 
 message UnsubscribeRequest {
