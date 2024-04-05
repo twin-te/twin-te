@@ -5,6 +5,7 @@ import (
 	"github.com/stripe/stripe-go/v76/customer"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
@@ -12,7 +13,7 @@ var _ donationport.Factory = (*impl)(nil)
 
 type impl struct{}
 
-func (f *impl) NewPaymentUser(userID idtype.UserID, displayName *string, link *string) (*donationdomain.PaymentUser, error) {
+func (f *impl) NewPaymentUser(userID idtype.UserID, displayName *shareddomain.RequiredString, link *donationdomain.Link) (*donationdomain.PaymentUser, error) {
 	return donationdomain.ConstructPaymentUser(func(pu *donationdomain.PaymentUser) (err error) {
 		customer, err := customer.New(&stripe.CustomerParams{})
 		if err != nil {

@@ -94,18 +94,37 @@ func fromDBPaymentUser(dbPaymentUser *model.PaymentUser) (*donationdomain.Paymen
 			return
 		}
 
-		pu.DisplayName = dbPaymentUser.DisplayName
-		pu.Link = dbPaymentUser.Link
+		if dbPaymentUser.DisplayName != nil {
+			pu.DisplayName, err = base.ToPtrWithErr(donationdomain.ParseDisplayName(*dbPaymentUser.DisplayName))
+			if err != nil {
+				return
+			}
+		}
+
+		if dbPaymentUser.Link != nil {
+			pu.Link, err = base.ToPtrWithErr(donationdomain.ParseLink(*dbPaymentUser.Link))
+			if err != nil {
+				return
+			}
+		}
 
 		return
 	})
 }
 
 func toDBPaymentUser(paymentUser *donationdomain.PaymentUser) *model.PaymentUser {
-	return &model.PaymentUser{
+	dbPaymentUser := &model.PaymentUser{
 		ID:           paymentUser.ID.String(),
 		TwinteUserID: paymentUser.UserID.String(),
-		DisplayName:  paymentUser.DisplayName,
-		Link:         paymentUser.Link,
 	}
+
+	if paymentUser.DisplayName != nil {
+		dbPaymentUser.DisplayName = lo.ToPtr(paymentUser.DisplayName.String())
+	}
+
+	if paymentUser.Link != nil {
+		dbPaymentUser.Link = lo.ToPtr(paymentUser.Link.String())
+	}
+
+	return dbPaymentUser
 }

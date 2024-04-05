@@ -4,6 +4,7 @@ import (
 	"context"
 
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
@@ -75,11 +76,11 @@ type UseCase interface {
 }
 
 type UpdateOrCreatePaymentUserIn struct {
-	DisplayName *string
-	Link        *string
+	DisplayName *shareddomain.RequiredString
+	Link        *donationdomain.Link
 }
 
 type Contributor struct {
-	DisplayName string
-	Link        *string
+	DisplayName shareddomain.RequiredString
+	Link        *donationdomain.Link
 }
