@@ -11,14 +11,14 @@ func ToPBPaymentUser(paymentUser *donationdomain.PaymentUser) *donationv1.Paymen
 	return &donationv1.PaymentUser{
 		Id:          paymentUser.ID.String(),
 		UserId:      sharedconv.ToPBUUID(paymentUser.UserID),
-		DisplayName: paymentUser.DisplayName,
-		Link:        paymentUser.Link,
+		DisplayName: paymentUser.DisplayName.StringPtr(),
+		Link:        paymentUser.Link.StringPtr(),
 	}
 }
 
 func ToPBContributor(Contributor donationmodule.Contributor) *donationv1.Contributor {
 	return &donationv1.Contributor{
-		DisplayName: Contributor.DisplayName,
-		Link:        Contributor.Link,
+		DisplayName: Contributor.DisplayName.String(),
+		Link:        Contributor.Link.StringPtr(),
 	}
 }
