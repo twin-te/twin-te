@@ -1,44 +1,37 @@
 package donationdomain
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
+	"github.com/samber/lo"
+	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
 	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
 )
 
-// Subscription is identified by one of the following fields.
+// SubscriptionPlan is identified by one of the following fields.
 //   - ID
-type Subscription struct {
-	ID            idtype.SubscriptionID
-	PaymentUserID idtype.PaymentUserID
-	Plans         []*SubscriptionPlan
-	IsActive      bool
-	CreatedAt     time.Time
-}
-
 type SubscriptionPlan struct {
 	ID     idtype.SubscriptionPlanID
 	Name   string
 	Amount int
 }
 
-func ConstructSubscription(fn func(s *Subscription) (err error)) (*Subscription, error) {
-	s := new(Subscription)
-	if err := fn(s); err != nil {
-		return nil, err
-	}
+func (sp *SubscriptionPlan) Clone() *SubscriptionPlan {
+	ret := lo.ToPtr(*sp)
+	return ret
+}
 
-	if len(s.Plans) == 0 {
-		return nil, errors.New("subscription must have at least one plan")
-	}
+// Subscription is identified by one of the following fields.
+//   - ID
+type Subscription struct {
+	ID            idtype.SubscriptionID
+	PaymentUserID idtype.PaymentUserID
+	PlanID        idtype.SubscriptionPlanID
+	IsActive      bool
+	CreatedAt     time.Time
 
-	if s.ID.IsZero() || s.PaymentUserID.IsZero() || s.CreatedAt.IsZero() {
-		return nil, fmt.Errorf("failed to construct %+v", s)
-	}
-
-	return s, nil
+	PlanAssociation shareddomain.Association[*SubscriptionPlan]
 }
 
 func ConstructSubscriptionPlan(fn func(sp *SubscriptionPlan) (err error)) (*SubscriptionPlan, error) {
@@ -52,4 +45,17 @@ func ConstructSubscriptionPlan(fn func(sp *SubscriptionPlan) (err error)) (*Subs
 	}
 
 	return sp, nil
+}
+
+func ConstructSubscription(fn func(s *Subscription) (err error)) (*Subscription, error) {
+	s := new(Subscription)
+	if err := fn(s); err != nil {
+		return nil, err
+	}
+
+	if s.ID.IsZero() || s.PaymentUserID.IsZero() || s.PlanID.IsZero() || s.CreatedAt.IsZero() {
+		return nil, fmt.Errorf("failed to construct %+v", s)
+	}
+
+	return s, nil
 }

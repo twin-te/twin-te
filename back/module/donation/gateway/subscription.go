@@ -6,16 +6,18 @@ import (
 	"time"
 
 	"github.com/stripe/stripe-go/v76"
+	"github.com/stripe/stripe-go/v76/plan"
 	"github.com/stripe/stripe-go/v76/subscription"
 	"github.com/twin-te/twinte-back/base"
 	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
 	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twinte-back/module/shared/port"
 )
 
-func (g *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.PaymentUserID) ([]*donationdomain.Subscription, error) {
+func (g *impl) FindSubscription(ctx context.Context, paymentUserID idtype.PaymentUserID) (*donationdomain.Subscription, error) {
 	var startingAfter *string
 
-	subscriptions := make([]*stripe.Subscription, 0)
+	stripeSubscriptions := make([]*stripe.Subscription, 0)
 
 	for {
 		iter := subscription.List(&stripe.SubscriptionListParams{
@@ -33,7 +35,7 @@ func (g *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.Payme
 
 		data := iter.SubscriptionList().Data
 
-		subscriptions = append(subscriptions, data...)
+		stripeSubscriptions = append(stripeSubscriptions, data...)
 
 		if !iter.Meta().HasMore {
 			break
@@ -44,7 +46,14 @@ func (g *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.Payme
 		time.Sleep(50 * time.Microsecond)
 	}
 
-	return base.MapWithErr(subscriptions, fromStripeSubscription)
+	switch len(stripeSubscriptions) {
+	case 0:
+		return nil, sharedport.ErrNotFound
+	case 1:
+		return fromStripeSubscription(stripeSubscriptions[0])
+	default:
+		return nil, fmt.Errorf("found several subscriptions associated with the user whose payment user id is %s", paymentUserID)
+	}
 }
 
 func (g *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID) (err error) {
@@ -66,6 +75,45 @@ func (g *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID)
 	return
 }
 
+func (g *impl) ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {
+	return base.MapByClone(g.subscriptionPlans), nil
+}
+
+func (g *impl) loadSubscriptionPlans() (err error) {
+	var startingAfter *string
+
+	stripePlans := make([]*stripe.Plan, 0)
+
+	for {
+		iter := plan.List(&stripe.PlanListParams{
+			ListParams: stripe.ListParams{
+				Limit:         stripe.Int64(100),
+				StartingAfter: startingAfter,
+			},
+			Active: stripe.Bool(true),
+		})
+
+		if err := iter.Err(); err != nil {
+			return err
+		}
+
+		data := iter.PlanList().Data
+
+		stripePlans = append(stripePlans, data...)
+
+		if !iter.Meta().HasMore {
+			break
+		}
+
+		startingAfter = &data[len(data)-1].ID
+
+		time.Sleep(50 * time.Microsecond)
+	}
+
+	g.subscriptionPlans, err = base.MapWithErr(stripePlans, fromStripePlan)
+	return
+}
+
 func fromStripeSubscription(stripeSubscription *stripe.Subscription) (*donationdomain.Subscription, error) {
 	return donationdomain.ConstructSubscription(func(s *donationdomain.Subscription) (err error) {
 		s.ID, err = idtype.ParseSubscriptionID(stripeSubscription.ID)
@@ -78,26 +126,34 @@ func fromStripeSubscription(stripeSubscription *stripe.Subscription) (*donationd
 			return
 		}
 
-		s.Plans, err = base.MapWithErr(stripeSubscription.Items.Data, func(item *stripe.SubscriptionItem) (*donationdomain.SubscriptionPlan, error) {
-			return donationdomain.ConstructSubscriptionPlan(func(sp *donationdomain.SubscriptionPlan) (err error) {
-				sp.ID, err = idtype.ParseSubscriptionPlanID(item.Plan.ID)
-				if err != nil {
-					return
-				}
+		if len(stripeSubscription.Items.Data) != 1 {
+			return fmt.Errorf("subscription (%s) must have only one plan, but got %+v", stripeSubscription.ID, stripeSubscription.Items.Data)
+		}
 
-				sp.Name = item.Plan.Nickname
-				sp.Amount = int(item.Plan.Amount)
-
-				return
-			})
-		})
+		plan, err := fromStripePlan(stripeSubscription.Items.Data[0].Plan)
 		if err != nil {
 			return
 		}
+		s.PlanID = plan.ID
+		s.PlanAssociation.Set(plan)
 
 		s.IsActive = stripeSubscription.Status == stripe.SubscriptionStatusActive
 		s.CreatedAt = time.Unix(stripeSubscription.Created, 0)
 
 		return nil
+	})
+}
+
+func fromStripePlan(stripePlan *stripe.Plan) (*donationdomain.SubscriptionPlan, error) {
+	return donationdomain.ConstructSubscriptionPlan(func(sp *donationdomain.SubscriptionPlan) (err error) {
+		sp.ID, err = idtype.ParseSubscriptionPlanID(stripePlan.ID)
+		if err != nil {
+			return
+		}
+
+		sp.Name = stripePlan.Nickname
+		sp.Amount = int(stripePlan.Amount)
+
+		return
 	})
 }

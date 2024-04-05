@@ -41,10 +41,18 @@ type UseCase interface {
 	// [Authentication] required
 	GetPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error)
 
-	// GetSubscriptions returns the subscriptions.
+	// GetSubscriptionPlans returns the subscription plans.
+	//
+	// [Authentication] not required
+	GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error)
+
+	// GetSubscription returns the subscription which has plan association loaded..
 	//
 	// [Authentication] required
-	GetSubscriptions(ctx context.Context) ([]*donationdomain.Subscription, error)
+	//
+	// [Error Code]
+	//   - donation.SubscriptionNotFound
+	GetSubscription(ctx context.Context) (*donationdomain.Subscription, error)
 
 	// Unsubscribe unsubscribes the subscription specified by the given id.
 	//

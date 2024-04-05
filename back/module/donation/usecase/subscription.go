@@ -2,17 +2,22 @@ package donationusecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	"github.com/samber/lo"
 	"github.com/twin-te/twinte-back/apperr"
 	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
 	donationerr "github.com/twin-te/twinte-back/module/donation/err"
 	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twinte-back/module/shared/port"
 )
 
-func (uc *impl) GetSubscriptions(ctx context.Context) ([]*donationdomain.Subscription, error) {
-	_, err := uc.a.Authenticate(ctx)
+func (uc *impl) GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {
+	return uc.g.ListSubscriptionPlans(ctx)
+}
+
+func (uc *impl) GetSubscription(ctx context.Context) (*donationdomain.Subscription, error) {
+	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +27,15 @@ func (uc *impl) GetSubscriptions(ctx context.Context) ([]*donationdomain.Subscri
 		return nil, err
 	}
 
-	return uc.g.ListSubscriptions(ctx, paymentUser.ID)
+	subscription, err := uc.g.FindSubscription(ctx, paymentUser.ID)
+	if errors.Is(err, sharedport.ErrNotFound) {
+		return nil, apperr.New(
+			donationerr.CodeSubscriptionNotFound,
+			fmt.Sprintf("not found subscription associated with the user whose id is %s", userID),
+		)
+	}
+
+	return subscription, err
 }
 
 func (uc *impl) Unsubscribe(ctx context.Context, id idtype.SubscriptionID) error {
@@ -31,14 +44,12 @@ func (uc *impl) Unsubscribe(ctx context.Context, id idtype.SubscriptionID) error
 		return err
 	}
 
-	subscriptions, err := uc.GetSubscriptions(ctx)
+	subscription, err := uc.GetSubscription(ctx)
 	if err != nil {
 		return err
 	}
 
-	if !lo.ContainsBy(subscriptions, func(item *donationdomain.Subscription) bool {
-		return item.ID == id
-	}) {
+	if id != subscription.ID {
 		return apperr.New(
 			donationerr.CodeSubscriptionNotFound,
 			fmt.Sprintf("not found subscription whose id is %s", id),
