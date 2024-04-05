@@ -3,7 +3,7 @@ package donation.v1;
 
 import "shared/type.proto";
 
-option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/donation/v1;donationv1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1;donationv1";
 
 message PaymentUser {
   string id = 1;
