@@ -6,10 +6,10 @@ import (
 
 	"github.com/bufbuild/connect-go"
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/appenv"
-	"github.com/twin-te/twinte-back/apperr"
-	authmodule "github.com/twin-te/twinte-back/module/auth"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/apperr"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 func NewErrorInterceptor() connect.UnaryInterceptorFunc {

@@ -4,13 +4,13 @@ package interceptor
 
 import (
 	"github.com/bufbuild/connect-go"
-	"github.com/twin-te/twinte-back/apperr"
-	announcementerr "github.com/twin-te/twinte-back/module/announcement/err"
-	autherr "github.com/twin-te/twinte-back/module/auth/err"
-	donationerr "github.com/twin-te/twinte-back/module/donation/err"
-	schoolcalendarerr "github.com/twin-te/twinte-back/module/schoolcalendar/err"
-	sharederr "github.com/twin-te/twinte-back/module/shared/err"
-	timetableerr "github.com/twin-te/twinte-back/module/timetable/err"
+	"github.com/twin-te/twin-te/back/apperr"
+	announcementerr "github.com/twin-te/twin-te/back/module/announcement/err"
+	autherr "github.com/twin-te/twin-te/back/module/auth/err"
+	donationerr "github.com/twin-te/twin-te/back/module/donation/err"
+	schoolcalendarerr "github.com/twin-te/twin-te/back/module/schoolcalendar/err"
+	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
+	timetableerr "github.com/twin-te/twin-te/back/module/timetable/err"
 )
 
 var AppErrorCodeToConnectErrorCode = map[apperr.Code]connect.Code{
