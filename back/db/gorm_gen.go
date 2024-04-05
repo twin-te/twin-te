@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/twin-te/twinte-back/appenv"
+	"github.com/twin-te/twin-te/back/appenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gen"
 	"gorm.io/gen/field"
