@@ -1,8 +1,11 @@
 package donationgateway
 
 import (
+	"log"
+
 	"github.com/stripe/stripe-go/v76"
 	"github.com/twin-te/twinte-back/appenv"
+	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
 	donationport "github.com/twin-te/twinte-back/module/donation/port"
 )
 
@@ -12,8 +15,16 @@ func init() {
 
 var _ donationport.Gateway = (*impl)(nil)
 
-type impl struct{}
+type impl struct {
+	subscriptionPlans []*donationdomain.SubscriptionPlan
+}
 
 func New() *impl {
-	return &impl{}
+	g := &impl{}
+
+	if err := g.loadSubscriptionPlans(); err != nil {
+		log.Printf("failed to load subscription plans, %+v", err)
+	}
+
+	return g
 }
