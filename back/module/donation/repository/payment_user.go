@@ -113,18 +113,10 @@ func fromDBPaymentUser(dbPaymentUser *model.PaymentUser) (*donationdomain.Paymen
 }
 
 func toDBPaymentUser(paymentUser *donationdomain.PaymentUser) *model.PaymentUser {
-	dbPaymentUser := &model.PaymentUser{
+	return &model.PaymentUser{
 		ID:           paymentUser.ID.String(),
 		TwinteUserID: paymentUser.UserID.String(),
+		DisplayName:  paymentUser.DisplayName.StringPtr(),
+		Link:         paymentUser.Link.StringPtr(),
 	}
-
-	if paymentUser.DisplayName != nil {
-		dbPaymentUser.DisplayName = lo.ToPtr(paymentUser.DisplayName.String())
-	}
-
-	if paymentUser.Link != nil {
-		dbPaymentUser.Link = lo.ToPtr(paymentUser.Link.String())
-	}
-
-	return dbPaymentUser
 }

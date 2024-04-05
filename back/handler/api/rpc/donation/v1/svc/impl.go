@@ -9,6 +9,7 @@ import (
 	donationv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1"
 	"github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1/donationv1connect"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
@@ -63,10 +64,23 @@ func (svc *impl) GetPaymentUser(ctx context.Context, req *connect.Request[donati
 }
 
 func (svc *impl) UpdatePaymentUser(ctx context.Context, req *connect.Request[donationv1.UpdatePaymentUserRequest]) (res *connect.Response[donationv1.UpdatePaymentUserResponse], err error) {
-	paymentUser, err := svc.uc.UpdateOrCreatePaymentUser(ctx, donationmodule.UpdateOrCreatePaymentUserIn{
-		DisplayName: req.Msg.DisplayName,
-		Link:        req.Msg.Link,
-	})
+	in := donationmodule.UpdateOrCreatePaymentUserIn{}
+
+	if req.Msg.DisplayName != nil {
+		in.DisplayName, err = base.ToPtrWithErr(donationdomain.ParseDisplayName(*req.Msg.DisplayName))
+		if err != nil {
+			return
+		}
+	}
+
+	if req.Msg.Link != nil {
+		in.Link, err = base.ToPtrWithErr(donationdomain.ParseLink(*req.Msg.Link))
+		if err != nil {
+			return
+		}
+	}
+
+	paymentUser, err := svc.uc.UpdateOrCreatePaymentUser(ctx, in)
 	if err != nil {
 		return
 	}

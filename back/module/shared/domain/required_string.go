@@ -3,6 +3,8 @@ package shareddomain
 import (
 	"fmt"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 // RequiredString represents non-empty string.
@@ -11,6 +13,13 @@ type RequiredString string
 
 func (rs RequiredString) String() string {
 	return string(rs)
+}
+
+func (rs *RequiredString) StringPtr() *string {
+	if rs == nil {
+		return nil
+	}
+	return lo.ToPtr(rs.String())
 }
 
 func (rs RequiredString) IsZero() bool {

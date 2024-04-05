@@ -17,6 +17,13 @@ func (l Link) String() string {
 	return string(l)
 }
 
+func (l *Link) StringPtr() *string {
+	if l == nil {
+		return nil
+	}
+	return lo.ToPtr(l.String())
+}
+
 func ParseLink(s string) (Link, error) {
 	uri, err := url.ParseRequestURI(s)
 	if err != nil || !uri.IsAbs() {
