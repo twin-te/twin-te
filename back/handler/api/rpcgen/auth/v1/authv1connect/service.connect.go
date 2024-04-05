@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	v1 "github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1"
+	v1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/auth/v1"
 	http "net/http"
 	strings "strings"
 )
