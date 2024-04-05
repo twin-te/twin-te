@@ -2,10 +2,28 @@ package donationdomain
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/samber/lo"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
+
+var ParseDisplayName = shareddomain.NewRequiredStringParser("display name")
+
+type Link string
+
+func (l Link) String() string {
+	return string(l)
+}
+
+func ParseLink(s string) (Link, error) {
+	uri, err := url.ParseRequestURI(s)
+	if err != nil || !uri.IsAbs() {
+		return "", fmt.Errorf("failed to parse link %#v", s)
+	}
+	return Link(s), nil
+}
 
 // PaymentUser is identified by one of the following fields.
 //   - ID
@@ -13,8 +31,8 @@ import (
 type PaymentUser struct {
 	ID          idtype.PaymentUserID
 	UserID      idtype.UserID
-	DisplayName *string
-	Link        *string
+	DisplayName *shareddomain.RequiredString
+	Link        *Link
 
 	EntityBeforeUpdated *PaymentUser
 }
@@ -38,8 +56,8 @@ func (pu *PaymentUser) BeforeUpdateHook() {
 }
 
 type PaymentUserDataToUpdate struct {
-	DisplayName *string
-	Link        *string
+	DisplayName *shareddomain.RequiredString
+	Link        *Link
 }
 
 func (pu *PaymentUser) Update(data PaymentUserDataToUpdate) {

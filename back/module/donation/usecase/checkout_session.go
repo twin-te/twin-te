@@ -2,14 +2,14 @@ package donationusecase
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
 )
 
 func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (idtype.CheckoutSessionID, error) {
 	if amount <= 0 {
-		return "", fmt.Errorf("amount must be greater than 0, but got %d", amount)
+		return "", sharederr.NewInvalidArgument("amount must be greater than 0, but got %d", amount)
 	}
 
 	var paymentUserID *idtype.PaymentUserID
