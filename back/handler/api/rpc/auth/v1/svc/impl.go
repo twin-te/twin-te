@@ -6,12 +6,12 @@ import (
 
 	"github.com/bufbuild/connect-go"
 
-	authv1conv "github.com/twin-te/twinte-back/handler/api/rpc/auth/v1/conv"
-	authv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1"
-	"github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1/authv1connect"
+	authv1conv "github.com/twin-te/twin-te/back/handler/api/rpc/auth/v1/conv"
+	authv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/auth/v1"
+	"github.com/twin-te/twin-te/back/handler/api/rpcgen/auth/v1/authv1connect"
 
-	"github.com/twin-te/twinte-back/appenv"
-	authmodule "github.com/twin-te/twinte-back/module/auth"
+	"github.com/twin-te/twin-te/back/appenv"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
 )
 
 var _ authv1connect.AuthServiceHandler = (*impl)(nil)

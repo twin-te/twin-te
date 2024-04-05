@@ -3,9 +3,9 @@ package donationv1conv
 import (
 	"fmt"
 
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	donationv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/donation/v1"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	donationv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 )
 
 func ToPBPaymentType(paymentType donationdomain.PaymentType) donationv1.PaymentType {

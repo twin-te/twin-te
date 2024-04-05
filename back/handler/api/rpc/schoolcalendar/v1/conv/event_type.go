@@ -3,8 +3,8 @@ package schoolcalendarv1conv
 import (
 	"fmt"
 
-	schoolcalendarv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/schoolcalendar/v1"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
+	schoolcalendarv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolcalendar/v1"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 )
 
 func FromPBEventType(pbEventType schoolcalendarv1.EventType) (schoolcalendardomain.EventType, error) {

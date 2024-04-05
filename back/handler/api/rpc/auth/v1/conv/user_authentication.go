@@ -1,8 +1,8 @@
 package authv1conv
 
 import (
-	authv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1"
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
+	authv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/auth/v1"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 )
 
 func FromPBUserAuthentication(pbUserAuthentication *authv1.UserAuthentication) (authdomain.UserAuthentication, error) {

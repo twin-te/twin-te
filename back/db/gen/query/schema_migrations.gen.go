@@ -16,7 +16,7 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"github.com/twin-te/twinte-back/db/gen/model"
+	"github.com/twin-te/twin-te/back/db/gen/model"
 )
 
 func newSchemaMigration(db *gorm.DB, opts ...gen.DOOption) schemaMigration {

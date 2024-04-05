@@ -3,8 +3,8 @@ package timetablev1conv
 import (
 	"fmt"
 
-	timetablev1 "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 func FromPBCourseMethod(pbCourseMethod timetablev1.CourseMethod) (timetabledomain.CourseMethod, error) {

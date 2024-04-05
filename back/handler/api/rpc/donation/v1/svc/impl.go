@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/bufbuild/connect-go"
-	"github.com/twin-te/twinte-back/base"
-	donationv1conv "github.com/twin-te/twinte-back/handler/api/rpc/donation/v1/conv"
-	donationv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/donation/v1"
-	"github.com/twin-te/twinte-back/handler/api/rpcgen/donation/v1/donationv1connect"
-	donationmodule "github.com/twin-te/twinte-back/module/donation"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	donationv1conv "github.com/twin-te/twin-te/back/handler/api/rpc/donation/v1/conv"
+	donationv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1"
+	"github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1/donationv1connect"
+	donationmodule "github.com/twin-te/twin-te/back/module/donation"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var _ donationv1connect.DonationServiceHandler = (*impl)(nil)

@@ -2,11 +2,11 @@ package timetablev1conv
 
 import (
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	timetablev1 "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	"github.com/twin-te/twin-te/back/base"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 func ToPBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse) (pbRegisteredCourse *timetablev1.RegisteredCourse, err error) {

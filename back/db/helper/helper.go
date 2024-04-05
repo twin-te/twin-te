@@ -3,8 +3,8 @@ package dbhelper
 import (
 	"errors"
 
-	"github.com/twin-te/twinte-back/appenv"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/appenv"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
