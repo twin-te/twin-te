@@ -1,11 +1,11 @@
 package timetablev1conv
 
 import (
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	timetablev1 "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
 
-	"github.com/twin-te/twinte-back/base"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	"github.com/twin-te/twin-te/back/base"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 func ToPBCourse(course *timetabledomain.Course) (pbCourse *timetablev1.Course, err error) {

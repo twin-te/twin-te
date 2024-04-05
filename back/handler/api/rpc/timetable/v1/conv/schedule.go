@@ -1,8 +1,8 @@
 package timetablev1conv
 
 import (
-	timetablev1 "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 func FromPBSchedule(pbSchedule *timetablev1.Schedule) (timetabledomain.Schedule, error) {

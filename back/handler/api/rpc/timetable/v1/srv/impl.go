@@ -4,15 +4,15 @@ import (
 	"context"
 
 	"github.com/bufbuild/connect-go"
-	"github.com/twin-te/twinte-back/base"
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	timetablev1conv "github.com/twin-te/twinte-back/handler/api/rpc/timetable/v1/conv"
-	timetablev1 "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1"
-	"github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1/timetablev1connect"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	timetablemodule "github.com/twin-te/twinte-back/module/timetable"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	"github.com/twin-te/twin-te/back/base"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	timetablev1conv "github.com/twin-te/twin-te/back/handler/api/rpc/timetable/v1/conv"
+	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
+	"github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1/timetablev1connect"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 var _ timetablev1connect.TimetableServiceHandler = (*impl)(nil)

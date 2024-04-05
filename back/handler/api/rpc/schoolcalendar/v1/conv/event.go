@@ -1,9 +1,9 @@
 package schoolcalendarv1conv
 
 import (
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	schoolcalendarv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/schoolcalendar/v1"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	schoolcalendarv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolcalendar/v1"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 )
 
 func ToPBEvent(event *schoolcalendardomain.Event) (*schoolcalendarv1.Event, error) {

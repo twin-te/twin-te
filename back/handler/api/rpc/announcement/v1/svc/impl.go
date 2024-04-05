@@ -5,13 +5,13 @@ import (
 
 	"github.com/bufbuild/connect-go"
 
-	"github.com/twin-te/twinte-back/base"
-	announcementv1conv "github.com/twin-te/twinte-back/handler/api/rpc/announcement/v1/conv"
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	announcementv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/announcement/v1"
-	"github.com/twin-te/twinte-back/handler/api/rpcgen/announcement/v1/announcementv1connect"
-	announcementmodule "github.com/twin-te/twinte-back/module/announcement"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	announcementv1conv "github.com/twin-te/twin-te/back/handler/api/rpc/announcement/v1/conv"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	announcementv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/announcement/v1"
+	"github.com/twin-te/twin-te/back/handler/api/rpcgen/announcement/v1/announcementv1connect"
+	announcementmodule "github.com/twin-te/twin-te/back/module/announcement"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var _ announcementv1connect.AnnouncementServiceHandler = (*impl)(nil)

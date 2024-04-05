@@ -8,8 +8,8 @@ import (
 	"cloud.google.com/go/civil"
 	"github.com/google/uuid"
 
-	"github.com/twin-te/twinte-back/handler/api/rpcgen/sharedpb"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/handler/api/rpcgen/sharedpb"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 )
 
 func FromPBAcadimicYear(pbYear *sharedpb.AcademicYear) (shareddomain.AcademicYear, error) {

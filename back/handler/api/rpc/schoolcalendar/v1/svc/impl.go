@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/bufbuild/connect-go"
-	"github.com/twin-te/twinte-back/base"
-	schoolcalendarv1conv "github.com/twin-te/twinte-back/handler/api/rpc/schoolcalendar/v1/conv"
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	schoolcalendarv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/schoolcalendar/v1"
-	"github.com/twin-te/twinte-back/handler/api/rpcgen/schoolcalendar/v1/schoolcalendarv1connect"
-	schoolcalendarmodule "github.com/twin-te/twinte-back/module/schoolcalendar"
+	"github.com/twin-te/twin-te/back/base"
+	schoolcalendarv1conv "github.com/twin-te/twin-te/back/handler/api/rpc/schoolcalendar/v1/conv"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	schoolcalendarv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolcalendar/v1"
+	"github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolcalendar/v1/schoolcalendarv1connect"
+	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 )
 
 var _ schoolcalendarv1connect.SchoolCalendarServiceHandler = (*impl)(nil)

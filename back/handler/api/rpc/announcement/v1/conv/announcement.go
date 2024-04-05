@@ -2,11 +2,11 @@ package announcementv1conv
 
 import (
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	announcementv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/announcement/v1"
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	announcementv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/announcement/v1"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 func ToPBAnnouncement(announcement *announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool) (*announcementv1.Announcement, error) {

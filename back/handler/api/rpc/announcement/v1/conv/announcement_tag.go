@@ -3,8 +3,8 @@ package announcementv1conv
 import (
 	"fmt"
 
-	announcementv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/announcement/v1"
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
+	announcementv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/announcement/v1"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 )
 
 func FromPBAnnouncementTag(pbAnnouncementTag announcementv1.AnnouncementTag) (announcementdomain.AnnouncementTag, error) {

@@ -1,9 +1,9 @@
 package timetablev1conv
 
 import (
-	sharedconv "github.com/twin-te/twinte-back/handler/api/rpc/shared/conv"
-	timetablev1 "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
+	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 func ToPBTag(tag *timetabledomain.Tag) *timetablev1.Tag {

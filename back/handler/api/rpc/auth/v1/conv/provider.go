@@ -3,8 +3,8 @@ package authv1conv
 import (
 	"fmt"
 
-	authv1 "github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1"
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
+	authv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/auth/v1"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 )
 
 func FromPBProvider(pbProvider authv1.Provider) (authdomain.Provider, error) {
