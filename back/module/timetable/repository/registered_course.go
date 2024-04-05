@@ -285,19 +285,13 @@ func toDBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse, wi
 		UserID:     registeredCourse.UserID.String(),
 		Year:       int16(registeredCourse.Year),
 		CourseID:   registeredCourse.CourseID.StringPtr(),
+		Name:       registeredCourse.Name.StringPtr(),
 		Instractor: registeredCourse.Instructors,
+		Credit:     registeredCourse.Credit.FloatPtr(),
 		Memo:       registeredCourse.Memo,
 		Attendance: int32(registeredCourse.Attendance.Int()),
 		Absence:    int32(registeredCourse.Absence.Int()),
 		Late:       int32(registeredCourse.Late.Int()),
-	}
-
-	if registeredCourse.Name != nil {
-		dbRegisteredCourse.Name = lo.ToPtr(registeredCourse.Name.String())
-	}
-
-	if registeredCourse.Credit != nil {
-		dbRegisteredCourse.Credit = lo.ToPtr(registeredCourse.Credit.Float())
 	}
 
 	if registeredCourse.Methods != nil {
