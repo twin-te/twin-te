@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/twin-te/twinte-back/base"
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
+	"github.com/twin-te/twin-te/back/base"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 )
 
 //go:embed announcement.json

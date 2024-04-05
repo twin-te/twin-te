@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"cloud.google.com/go/civil"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 type Repository interface {

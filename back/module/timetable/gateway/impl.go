@@ -1,6 +1,6 @@
 package timetablegateway
 
-import timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+import timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 
 var _ timetableport.Gateway = (*impl)(nil)
 

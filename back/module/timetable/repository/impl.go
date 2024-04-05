@@ -4,7 +4,7 @@ import (
 	"context"
 	_ "embed"
 
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 	"gorm.io/gorm"
 )
 

@@ -1,8 +1,8 @@
 package schoolcalendarrepository
 
 import (
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	schoolcalendarport "github.com/twin-te/twinte-back/module/schoolcalendar/port"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	schoolcalendarport "github.com/twin-te/twin-te/back/module/schoolcalendar/port"
 )
 
 var _ schoolcalendarport.Repository = (*impl)(nil)

@@ -3,8 +3,8 @@ package timetableport
 import (
 	"time"
 
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 type CourseWithoutID struct {

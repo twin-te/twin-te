@@ -1,9 +1,9 @@
 package announcementusecase
 
 import (
-	announcementmodule "github.com/twin-te/twinte-back/module/announcement"
-	announcementport "github.com/twin-te/twinte-back/module/announcement/port"
-	authmodule "github.com/twin-te/twinte-back/module/auth"
+	announcementmodule "github.com/twin-te/twin-te/back/module/announcement"
+	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
 )
 
 var _ announcementmodule.UseCase = (*impl)(nil)

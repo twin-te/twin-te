@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/twin-te/twinte-back/appenv"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var SessionLifeTime time.Duration

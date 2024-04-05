@@ -2,7 +2,7 @@
 
 package donationerr
 
-import "github.com/twin-te/twinte-back/apperr"
+import "github.com/twin-te/twin-te/back/apperr"
 
 const (
 	CodeSubscriptionNotFound apperr.Code = "donation.SubscriptionNotFound"

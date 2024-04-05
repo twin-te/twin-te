@@ -6,14 +6,14 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/samber/lo"
-	authmodule "github.com/twin-te/twinte-back/module/auth"
-	schoolcalendarmodule "github.com/twin-te/twinte-back/module/schoolcalendar"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	timetablemodule "github.com/twin-te/twinte-back/module/timetable"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
-	unifiedmodule "github.com/twin-te/twinte-back/module/unified"
-	unifieddomain "github.com/twin-te/twinte-back/module/unified/domain"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	unifiedmodule "github.com/twin-te/twin-te/back/module/unified"
+	unifieddomain "github.com/twin-te/twin-te/back/module/unified/domain"
 )
 
 var _ unifiedmodule.UseCase = (*impl)(nil)

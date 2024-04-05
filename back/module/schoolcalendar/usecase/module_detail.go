@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/civil"
-	"github.com/twin-te/twinte-back/apperr"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	schoolcalendarerr "github.com/twin-te/twinte-back/module/schoolcalendar/err"
-	schoolcalendarport "github.com/twin-te/twinte-back/module/schoolcalendar/port"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/apperr"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	schoolcalendarerr "github.com/twin-te/twin-te/back/module/schoolcalendar/err"
+	schoolcalendarport "github.com/twin-te/twin-te/back/module/schoolcalendar/port"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) GetModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error) {

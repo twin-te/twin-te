@@ -3,10 +3,10 @@ package timetablefactory
 import (
 	"database/sql"
 
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 	"gorm.io/gorm"
 )
 

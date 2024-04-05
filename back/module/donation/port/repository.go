@@ -3,9 +3,9 @@ package donationport
 import (
 	"context"
 
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 type Repository interface {

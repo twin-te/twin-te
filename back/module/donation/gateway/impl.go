@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"github.com/stripe/stripe-go/v76"
-	"github.com/twin-te/twinte-back/appenv"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	donationport "github.com/twin-te/twinte-back/module/donation/port"
+	"github.com/twin-te/twin-te/back/appenv"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 )
 
 func init() {

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/samber/lo"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 )
 
 func (uc *impl) GetPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error) {

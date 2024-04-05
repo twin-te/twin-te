@@ -1,9 +1,9 @@
 package timetableport
 
 import (
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 type Factory interface {

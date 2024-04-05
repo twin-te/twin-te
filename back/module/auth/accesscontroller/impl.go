@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/appctx"
-	"github.com/twin-te/twinte-back/apperr"
-	authmodule "github.com/twin-te/twinte-back/module/auth"
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
-	authport "github.com/twin-te/twinte-back/module/auth/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharederr "github.com/twin-te/twinte-back/module/shared/err"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/appctx"
+	"github.com/twin-te/twin-te/back/apperr"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
+	authport "github.com/twin-te/twin-te/back/module/auth/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 var _ authmodule.AccessController = (*impl)(nil)

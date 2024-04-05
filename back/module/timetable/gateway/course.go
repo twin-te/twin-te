@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/twin-te/twinte-back/base"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	"github.com/twin-te/twin-te/back/base"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
 
 func (g *impl) GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableport.CourseWithoutID, error) {

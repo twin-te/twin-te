@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	schoolcalendarport "github.com/twin-te/twinte-back/module/schoolcalendar/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/base"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	schoolcalendarport "github.com/twin-te/twin-te/back/module/schoolcalendar/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (r *impl) ListModuleDetails(ctx context.Context, conds schoolcalendarport.ListModuleDetailsConds, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error) {

@@ -2,7 +2,7 @@
 
 package announcementerr
 
-import "github.com/twin-te/twinte-back/apperr"
+import "github.com/twin-te/twin-te/back/apperr"
 
 const (
 	CodeAnnouncementNotFound apperr.Code = "announcement.AnnouncementNotFound"

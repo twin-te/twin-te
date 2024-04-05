@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var ParsePosition = shareddomain.NewNonNegativeIntParser("position")

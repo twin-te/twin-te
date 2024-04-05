@@ -6,11 +6,11 @@ import (
 	"slices"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	announcementport "github.com/twin-te/twinte-back/module/announcement/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/base"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (r *impl) FindAnnouncement(ctx context.Context, conds announcementport.FindAnnouncementConds, lock sharedport.Lock) (*announcementdomain.Announcement, error) {

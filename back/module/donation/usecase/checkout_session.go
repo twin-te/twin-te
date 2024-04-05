@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (idtype.CheckoutSessionID, error) {

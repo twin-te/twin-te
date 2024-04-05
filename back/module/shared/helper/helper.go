@@ -2,7 +2,7 @@ package sharedhelper
 
 import (
 	"github.com/samber/lo"
-	sharederr "github.com/twin-te/twinte-back/module/shared/err"
+	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
 )
 
 func ValidateDuplicates[T comparable](collection []T) error {

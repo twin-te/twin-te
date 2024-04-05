@@ -7,9 +7,9 @@ import (
 	"github.com/samber/lo"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/paymentintent"
-	"github.com/twin-te/twinte-back/base"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 func (g *impl) ListPaymentHistories(ctx context.Context, paymentUserID *idtype.PaymentUserID) ([]*donationdomain.PaymentHistory, error) {

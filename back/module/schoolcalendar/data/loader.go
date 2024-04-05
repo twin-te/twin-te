@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"encoding/json"
 
-	"github.com/twin-te/twinte-back/base"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
+	"github.com/twin-te/twin-te/back/base"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 )
 
 //go:embed event/prod_gen.json

@@ -1,9 +1,9 @@
 package timetableusecase
 
 import (
-	authmodule "github.com/twin-te/twinte-back/module/auth"
-	timetablemodule "github.com/twin-te/twinte-back/module/timetable"
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
 
 var _ timetablemodule.UseCase = (*impl)(nil)

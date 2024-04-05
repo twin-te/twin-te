@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	schoolcalendarport "github.com/twin-te/twinte-back/module/schoolcalendar/port"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	schoolcalendarport "github.com/twin-te/twin-te/back/module/schoolcalendar/port"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) GetEvents(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.Event, error) {

@@ -3,9 +3,9 @@ package announcementfactory
 import (
 	"time"
 
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	announcementport "github.com/twin-te/twinte-back/module/announcement/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var _ announcementport.Factory = (*impl)(nil)

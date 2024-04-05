@@ -2,7 +2,7 @@
 
 package sharederr
 
-import "github.com/twin-te/twinte-back/apperr"
+import "github.com/twin-te/twin-te/back/apperr"
 
 const (
 	CodeInvalidArgument apperr.Code = "shared.InvalidArgument"

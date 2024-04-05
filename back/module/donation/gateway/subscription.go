@@ -8,10 +8,10 @@ import (
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/plan"
 	"github.com/stripe/stripe-go/v76/subscription"
-	"github.com/twin-te/twinte-back/base"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/base"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (g *impl) FindSubscription(ctx context.Context, paymentUserID idtype.PaymentUserID) (*donationdomain.Subscription, error) {

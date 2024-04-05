@@ -3,7 +3,7 @@ package donationrepository
 import (
 	"context"
 
-	donationport "github.com/twin-te/twinte-back/module/donation/port"
+	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 	"gorm.io/gorm"
 )
 

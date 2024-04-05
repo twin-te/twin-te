@@ -13,8 +13,8 @@ import (
 
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/checkout/session"
-	"github.com/twin-te/twinte-back/appenv"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 func (g *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error) {

@@ -3,8 +3,8 @@ package authmodule
 import (
 	"context"
 
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 type AccessController interface {

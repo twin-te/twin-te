@@ -7,9 +7,9 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=EventType -trimprefix=EventType -output=event_type_string.gen.go

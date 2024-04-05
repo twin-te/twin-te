@@ -3,7 +3,7 @@ package timetabledomain
 import (
 	"fmt"
 
-	"github.com/twin-te/twinte-back/base"
+	"github.com/twin-te/twin-te/back/base"
 )
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=CourseMethod -trimprefix=CourseMethod -output=course_method_string.gen.go
