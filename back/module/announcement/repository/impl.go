@@ -3,8 +3,8 @@ package announcementrepository
 import (
 	"context"
 
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	announcementport "github.com/twin-te/twinte-back/module/announcement/port"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
 	"gorm.io/gorm"
 )
 

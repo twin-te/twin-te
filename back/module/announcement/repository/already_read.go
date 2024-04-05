@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	"github.com/twin-te/twinte-back/db/gen/model"
-	dbhelper "github.com/twin-te/twinte-back/db/helper"
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	announcementport "github.com/twin-te/twinte-back/module/announcement/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/base"
+	"github.com/twin-te/twin-te/back/db/gen/model"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/gorm/clause"
 )
 

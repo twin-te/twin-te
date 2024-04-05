@@ -5,12 +5,12 @@ import (
 	"errors"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	donationmodule "github.com/twin-te/twinte-back/module/donation"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	donationport "github.com/twin-te/twinte-back/module/donation/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/base"
+	donationmodule "github.com/twin-te/twin-te/back/module/donation"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	donationport "github.com/twin-te/twin-te/back/module/donation/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"golang.org/x/sync/errgroup"
 )
 

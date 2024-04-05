@@ -3,7 +3,7 @@ package timetableport
 import (
 	"context"
 
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 )
 
 type Gateway interface {

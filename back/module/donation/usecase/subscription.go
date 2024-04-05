@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/twin-te/twinte-back/apperr"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	donationerr "github.com/twin-te/twinte-back/module/donation/err"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/apperr"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	donationerr "github.com/twin-te/twin-te/back/module/donation/err"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {

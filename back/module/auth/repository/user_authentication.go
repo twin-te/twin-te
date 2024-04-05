@@ -2,10 +2,10 @@ package authrepository
 
 import (
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	"github.com/twin-te/twinte-back/db/gen/model"
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	"github.com/twin-te/twin-te/back/db/gen/model"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	"gorm.io/gorm"
 )
 

@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/twin-te/twinte-back/apperr"
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
-	autherr "github.com/twin-te/twinte-back/module/auth/err"
-	authport "github.com/twin-te/twinte-back/module/auth/port"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/apperr"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
+	autherr "github.com/twin-te/twin-te/back/module/auth/err"
+	authport "github.com/twin-te/twin-te/back/module/auth/port"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) SignUpOrLogin(ctx context.Context, userAuthentication authdomain.UserAuthentication) (*authdomain.Session, error) {

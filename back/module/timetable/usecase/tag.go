@@ -6,16 +6,16 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/apperr"
-	"github.com/twin-te/twinte-back/base"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedhelper "github.com/twin-te/twinte-back/module/shared/helper"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
-	timetablemodule "github.com/twin-te/twinte-back/module/timetable"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
-	timetableerr "github.com/twin-te/twinte-back/module/timetable/err"
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	"github.com/twin-te/twin-te/back/apperr"
+	"github.com/twin-te/twin-te/back/base"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedhelper "github.com/twin-te/twin-te/back/module/shared/helper"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableerr "github.com/twin-te/twin-te/back/module/timetable/err"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
 
 func (uc impl) CreateTag(ctx context.Context, name shareddomain.RequiredString) (*timetabledomain.Tag, error) {

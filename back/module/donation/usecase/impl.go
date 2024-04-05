@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	authmodule "github.com/twin-te/twinte-back/module/auth"
-	donationmodule "github.com/twin-te/twinte-back/module/donation"
-	donationport "github.com/twin-te/twinte-back/module/donation/port"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	donationmodule "github.com/twin-te/twin-te/back/module/donation"
+	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 )
 
 var _ donationmodule.UseCase = (*impl)(nil)

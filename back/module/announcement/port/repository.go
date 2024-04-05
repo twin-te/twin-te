@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 type Repository interface {

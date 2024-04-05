@@ -3,7 +3,7 @@ package authrepository
 import (
 	"context"
 
-	authport "github.com/twin-te/twinte-back/module/auth/port"
+	authport "github.com/twin-te/twin-te/back/module/auth/port"
 	"gorm.io/gorm"
 )
 

@@ -3,9 +3,9 @@ package donationfactory
 import (
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/customer"
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	donationport "github.com/twin-te/twinte-back/module/donation/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	donationport "github.com/twin-te/twin-te/back/module/donation/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var _ donationport.Factory = (*impl)(nil)

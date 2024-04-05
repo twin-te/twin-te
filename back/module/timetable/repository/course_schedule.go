@@ -2,12 +2,12 @@ package timetablerepository
 
 import (
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	"github.com/twin-te/twinte-back/db/gen/model"
+	"github.com/twin-te/twin-te/back/base"
+	"github.com/twin-te/twin-te/back/db/gen/model"
 	"gorm.io/gorm"
 
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 func (r *impl) updateCourseSchedules(db *gorm.DB, course *timetabledomain.Course) error {

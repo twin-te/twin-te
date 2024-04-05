@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/apperr"
-	"github.com/twin-te/twinte-back/base"
-	autherr "github.com/twin-te/twinte-back/module/auth/err"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharederr "github.com/twin-te/twinte-back/module/shared/err"
+	"github.com/twin-te/twin-te/back/apperr"
+	"github.com/twin-te/twin-te/back/base"
+	autherr "github.com/twin-te/twin-te/back/module/auth/err"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
 )
 
 // User is identified by one of the following fields.

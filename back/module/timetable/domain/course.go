@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 // Course is identified by one of the following fields.

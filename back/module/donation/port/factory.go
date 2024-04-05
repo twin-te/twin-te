@@ -1,8 +1,8 @@
 package donationport
 
 import (
-	donationdomain "github.com/twin-te/twinte-back/module/donation/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 type Factory interface {

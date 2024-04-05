@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/twin-te/twinte-back/base"
+	"github.com/twin-te/twin-te/back/base"
 )
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Provider -trimprefix=Provider -output=provider_string.gen.go

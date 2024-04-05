@@ -3,10 +3,10 @@ package timetableport
 import (
 	"context"
 
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 type Repository interface {

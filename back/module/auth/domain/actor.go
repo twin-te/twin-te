@@ -2,7 +2,7 @@ package authdomain
 
 import (
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 type Actor interface {

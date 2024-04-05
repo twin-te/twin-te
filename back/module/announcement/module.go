@@ -3,8 +3,8 @@ package announcementmodule
 import (
 	"context"
 
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 // UseCase represents application specific business rules.

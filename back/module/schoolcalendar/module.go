@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"cloud.google.com/go/civil"
-	schoolcalendardomain "github.com/twin-te/twinte-back/module/schoolcalendar/domain"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
+	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 )
 
 // UseCase represents application specific business rules.

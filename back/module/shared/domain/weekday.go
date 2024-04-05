@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/twin-te/twinte-back/base"
+	"github.com/twin-te/twin-te/back/base"
 )
 
 var AllWeekdays = []time.Weekday{

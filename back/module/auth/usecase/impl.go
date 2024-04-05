@@ -1,8 +1,8 @@
 package authusecase
 
 import (
-	authmodule "github.com/twin-te/twinte-back/module/auth"
-	authport "github.com/twin-te/twinte-back/module/auth/port"
+	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	authport "github.com/twin-te/twin-te/back/module/auth/port"
 )
 
 var _ authmodule.UseCase = (*impl)(nil)

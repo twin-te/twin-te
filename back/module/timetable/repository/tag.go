@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/base"
-	"github.com/twin-te/twinte-back/db/gen/model"
-	dbhelper "github.com/twin-te/twinte-back/db/helper"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	"github.com/twin-te/twin-te/back/base"
+	"github.com/twin-te/twin-te/back/db/gen/model"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 	"gorm.io/gorm/clause"
 )
 

@@ -9,14 +9,14 @@ import (
 	"time"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/appenv"
-	"github.com/twin-te/twinte-back/base"
-	authdomain "github.com/twin-te/twinte-back/module/auth/domain"
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
-	timetablemodule "github.com/twin-te/twinte-back/module/timetable"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
-	timetableport "github.com/twin-te/twinte-back/module/timetable/port"
+	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/base"
+	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
 
 func (uc *impl) GetCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error) {

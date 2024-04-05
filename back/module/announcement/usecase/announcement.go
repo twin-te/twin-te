@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/samber/lo"
-	"github.com/twin-te/twinte-back/apperr"
-	"github.com/twin-te/twinte-back/base"
-	announcementdomain "github.com/twin-te/twinte-back/module/announcement/domain"
-	announcementerr "github.com/twin-te/twinte-back/module/announcement/err"
-	announcementport "github.com/twin-te/twinte-back/module/announcement/port"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	sharedhelper "github.com/twin-te/twinte-back/module/shared/helper"
-	sharedport "github.com/twin-te/twinte-back/module/shared/port"
+	"github.com/twin-te/twin-te/back/apperr"
+	"github.com/twin-te/twin-te/back/base"
+	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
+	announcementerr "github.com/twin-te/twin-te/back/module/announcement/err"
+	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharedhelper "github.com/twin-te/twin-te/back/module/shared/helper"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) GetAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error) {

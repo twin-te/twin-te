@@ -3,9 +3,9 @@ package timetablemodule
 import (
 	"context"
 
-	shareddomain "github.com/twin-te/twinte-back/module/shared/domain"
-	"github.com/twin-te/twinte-back/module/shared/domain/idtype"
-	timetabledomain "github.com/twin-te/twinte-back/module/timetable/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 // UseCase represents application specific business rules.
