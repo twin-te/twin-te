@@ -3,7 +3,7 @@ package timetable.v1;
 
 import "shared/type.proto";
 
-option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/timetable/v1;timetablev1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1;timetablev1";
 
 enum Module {
   MODULE_UNSPECIFIED = 0;

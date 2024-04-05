@@ -3,7 +3,7 @@ package auth.v1;
 
 import "shared/type.proto";
 
-option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/auth/v1;authv1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/auth/v1;authv1";
 
 enum Provider {
   PROVIDER_UNSPECIFIED = 0;

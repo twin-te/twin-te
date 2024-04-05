@@ -5,7 +5,7 @@ import "announcement/v1/type.proto";
 import "shared/option.proto";
 import "shared/type.proto";
 
-option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/announcement/v1;announcementv1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/announcement/v1;announcementv1";
 
 // The following error codes are not stated explicitly in the each rpc, but may be returned.
 //   - shared.InvalidArgument

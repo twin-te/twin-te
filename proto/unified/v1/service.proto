@@ -6,7 +6,7 @@ import "shared/option.proto";
 import "shared/type.proto";
 import "timetable/v1/type.proto";
 
-option go_package = "github.com/twin-te/twinte-back/handler/api/rpcgen/unified/v1;unifiedv1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/unified/v1;unifiedv1";
 
 // The following error codes are not stated explicitly in the each rpc, but may be returned.
 //   - shared.InvalidArgument
