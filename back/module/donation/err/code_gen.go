@@ -5,5 +5,7 @@ package donationerr
 import "github.com/twin-te/twin-te/back/apperr"
 
 const (
-	CodeSubscriptionNotFound apperr.Code = "donation.SubscriptionNotFound"
+	CodeActiveSubscriptionAlreadyExists apperr.Code = "donation.ActiveSubscriptionAlreadyExists"
+	CodeSubscriptionNotFound            apperr.Code = "donation.SubscriptionNotFound"
+	CodeSubscriptionPlanNotFound        apperr.Code = "donation.SubscriptionPlanNotFound"
 )

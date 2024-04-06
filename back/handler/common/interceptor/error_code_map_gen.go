@@ -20,7 +20,9 @@ var AppErrorCodeToConnectErrorCode = map[apperr.Code]connect.Code{
 	autherr.CodeUserHasAtLeastOneAuthentication:                connect.CodeFailedPrecondition,
 	autherr.CodeUserHasAtMostOneAuthenticationFromSameProvider: connect.CodeFailedPrecondition,
 
-	donationerr.CodeSubscriptionNotFound: connect.CodeNotFound,
+	donationerr.CodeActiveSubscriptionAlreadyExists: connect.CodeAlreadyExists,
+	donationerr.CodeSubscriptionNotFound:            connect.CodeNotFound,
+	donationerr.CodeSubscriptionPlanNotFound:        connect.CodeNotFound,
 
 	schoolcalendarerr.CodeModuleNotFound: connect.CodeNotFound,
 

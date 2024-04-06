@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/plan"
 	"github.com/stripe/stripe-go/v76/subscription"
@@ -14,7 +15,7 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (g *impl) FindSubscription(ctx context.Context, paymentUserID idtype.PaymentUserID) (*donationdomain.Subscription, error) {
+func (g *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.PaymentUserID) ([]*donationdomain.Subscription, error) {
 	var startingAfter *string
 
 	stripeSubscriptions := make([]*stripe.Subscription, 0)
@@ -27,6 +28,7 @@ func (g *impl) FindSubscription(ctx context.Context, paymentUserID idtype.Paymen
 				StartingAfter: startingAfter,
 			},
 			Customer: stripe.String(paymentUserID.String()),
+			Status:   stripe.String("all"),
 		})
 
 		if err := iter.Err(); err != nil {
@@ -46,14 +48,7 @@ func (g *impl) FindSubscription(ctx context.Context, paymentUserID idtype.Paymen
 		time.Sleep(50 * time.Microsecond)
 	}
 
-	switch len(stripeSubscriptions) {
-	case 0:
-		return nil, sharedport.ErrNotFound
-	case 1:
-		return fromStripeSubscription(stripeSubscriptions[0])
-	default:
-		return nil, fmt.Errorf("found several subscriptions associated with the user whose payment user id is %s", paymentUserID)
-	}
+	return base.MapWithErr(stripeSubscriptions, fromStripeSubscription)
 }
 
 func (g *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID) (err error) {
@@ -73,6 +68,18 @@ func (g *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID)
 	}
 
 	return
+}
+
+func (g *impl) FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (*donationdomain.SubscriptionPlan, error) {
+	subscriptionPlan, ok := lo.Find(g.subscriptionPlans, func(plan *donationdomain.SubscriptionPlan) bool {
+		return plan.ID == id
+	})
+
+	if ok {
+		return subscriptionPlan, nil
+	}
+
+	return nil, sharedport.ErrNotFound
 }
 
 func (g *impl) ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {

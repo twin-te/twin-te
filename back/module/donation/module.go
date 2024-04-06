@@ -23,6 +23,10 @@ type UseCase interface {
 	// CreateSubscriptionCheckoutSession creates subscription checkout session.
 	//
 	// [Authentication] required
+	//
+	// [Error Code]
+	//   - donation.ActiveSubscriptionAlreadyExists
+	//   - donation.SubscriptionPlanNotFound
 	CreateSubscriptionCheckoutSession(ctx context.Context, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error)
 
 	// GetOrCreatePaymentUser returns the payment user.
@@ -47,13 +51,13 @@ type UseCase interface {
 	// [Authentication] not required
 	GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error)
 
-	// GetSubscription returns the subscription which has plan association loaded..
+	// GetActiveSubscription returns the subscription which is active and has plan association loaded.
 	//
 	// [Authentication] required
 	//
 	// [Error Code]
 	//   - donation.SubscriptionNotFound
-	GetSubscription(ctx context.Context) (*donationdomain.Subscription, error)
+	GetActiveSubscription(ctx context.Context) (*donationdomain.Subscription, error)
 
 	// Unsubscribe unsubscribes the subscription specified by the given id.
 	//

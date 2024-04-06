@@ -2,9 +2,14 @@ package donationusecase
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
+	"github.com/twin-te/twin-te/back/apperr"
+	donationerr "github.com/twin-te/twin-te/back/module/donation/err"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
+	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (idtype.CheckoutSessionID, error) {
@@ -27,8 +32,30 @@ func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (i
 }
 
 func (uc *impl) CreateSubscriptionCheckoutSession(ctx context.Context, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error) {
-	_, err := uc.a.Authenticate(ctx)
+	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
+		return "", err
+	}
+
+	_, err = uc.g.FindSubscriptionPlan(ctx, subscriptionPlanID)
+	if err != nil {
+		if errors.Is(err, sharedport.ErrNotFound) {
+			return "", apperr.New(
+				donationerr.CodeSubscriptionPlanNotFound,
+				fmt.Sprintf("not found subscription plan (%s)", subscriptionPlanID),
+			)
+		}
+		return "", err
+	}
+
+	activeSubscription, err := uc.GetActiveSubscription(ctx)
+	switch {
+	case err == nil:
+		return "", apperr.New(
+			donationerr.CodeActiveSubscriptionAlreadyExists,
+			fmt.Sprintf("user (%s) has already active subscription (%s)", userID, activeSubscription.ID),
+		)
+	case !apperr.Is(err, donationerr.CodeSubscriptionNotFound):
 		return "", err
 	}
 
