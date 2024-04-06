@@ -118,13 +118,13 @@ func (svc *impl) GetSubscriptionPlans(ctx context.Context, req *connect.Request[
 	return
 }
 
-func (svc *impl) GetSubscription(ctx context.Context, req *connect.Request[donationv1.GetSubscriptionRequest]) (res *connect.Response[donationv1.GetSubscriptionResponse], err error) {
-	subscription, err := svc.uc.GetSubscription(ctx)
+func (svc *impl) GetActiveSubscription(ctx context.Context, req *connect.Request[donationv1.GetActiveSubscriptionRequest]) (res *connect.Response[donationv1.GetActiveSubscriptionResponse], err error) {
+	subscription, err := svc.uc.GetActiveSubscription(ctx)
 	if err != nil {
 		return
 	}
 
-	res = connect.NewResponse(&donationv1.GetSubscriptionResponse{
+	res = connect.NewResponse(&donationv1.GetActiveSubscriptionResponse{
 		Subscription: donationv1conv.ToPBSubscription(subscription),
 	})
 
