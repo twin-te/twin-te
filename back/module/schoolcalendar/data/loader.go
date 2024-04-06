@@ -8,10 +8,10 @@ import (
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 )
 
-//go:embed event/prod_gen.json
+//go:embed event_gen.json
 var rawEvents []byte
 
-//go:embed module_detail/prod_gen.json
+//go:embed module_detail_gen.json
 var rawModuleDetails []byte
 
 type jsonEvent struct {
