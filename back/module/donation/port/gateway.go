@@ -13,12 +13,13 @@ type Gateway interface {
 	CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error)
 	CreateSubscriptionCheckoutSession(ctx context.Context, paymentUserID idtype.PaymentUserID, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error)
 	ListPaymentHistories(ctx context.Context, paymentUserID *idtype.PaymentUserID) ([]*donationdomain.PaymentHistory, error)
+
+	FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (*donationdomain.SubscriptionPlan, error)
 	ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error)
 
-	// FindSubscription returns the subscription associated with the given payment user id.
-	// If it does not exist, ErrNotFound is returned.
-	// The returned subscription has plan association loaded.
-	FindSubscription(ctx context.Context, paymentUserID idtype.PaymentUserID) (*donationdomain.Subscription, error)
+	// ListSubscriptions returns the subscriptions associated with the given payment user id.
+	// The each returned subscription has plan association loaded.
+	ListSubscriptions(ctx context.Context, paymentUserID idtype.PaymentUserID) ([]*donationdomain.Subscription, error)
 
 	DeleteSubscription(ctx context.Context, id idtype.SubscriptionID) (err error)
 }
