@@ -1,0 +1,7 @@
+AlreadyReadID
+AnnouncementID
+CourseID
+RegisteredCourseID
+SessionID
+TagID
+UserID
