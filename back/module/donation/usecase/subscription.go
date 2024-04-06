@@ -2,21 +2,20 @@ package donationusecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
+	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/apperr"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationerr "github.com/twin-te/twin-te/back/module/donation/err"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {
 	return uc.g.ListSubscriptionPlans(ctx)
 }
 
-func (uc *impl) GetSubscription(ctx context.Context) (*donationdomain.Subscription, error) {
+func (uc *impl) GetActiveSubscription(ctx context.Context) (*donationdomain.Subscription, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
@@ -27,15 +26,22 @@ func (uc *impl) GetSubscription(ctx context.Context) (*donationdomain.Subscripti
 		return nil, err
 	}
 
-	subscription, err := uc.g.FindSubscription(ctx, paymentUser.ID)
-	if errors.Is(err, sharedport.ErrNotFound) {
-		return nil, apperr.New(
-			donationerr.CodeSubscriptionNotFound,
-			fmt.Sprintf("not found subscription associated with the user whose id is %s", userID),
-		)
+	subscriptions, err := uc.g.ListSubscriptions(ctx, paymentUser.ID)
+	if err != nil {
+		return nil, err
 	}
 
-	return subscription, err
+	activeSubscription, ok := lo.Find(subscriptions, func(subscription *donationdomain.Subscription) bool {
+		return subscription.IsActive
+	})
+	if ok {
+		return activeSubscription, nil
+	}
+
+	return nil, apperr.New(
+		donationerr.CodeSubscriptionNotFound,
+		fmt.Sprintf("not found active subscription associated with the user whose id is %s", userID),
+	)
 }
 
 func (uc *impl) Unsubscribe(ctx context.Context, id idtype.SubscriptionID) error {
@@ -44,12 +50,19 @@ func (uc *impl) Unsubscribe(ctx context.Context, id idtype.SubscriptionID) error
 		return err
 	}
 
-	subscription, err := uc.GetSubscription(ctx)
+	paymentUser, err := uc.GetOrCreatePaymentUser(ctx)
 	if err != nil {
 		return err
 	}
 
-	if id != subscription.ID {
+	subscriptions, err := uc.g.ListSubscriptions(ctx, paymentUser.ID)
+	if err != nil {
+		return err
+	}
+
+	if !lo.ContainsBy(subscriptions, func(subscription *donationdomain.Subscription) bool {
+		return subscription.ID == id
+	}) {
 		return apperr.New(
 			donationerr.CodeSubscriptionNotFound,
 			fmt.Sprintf("not found subscription whose id is %s", id),
