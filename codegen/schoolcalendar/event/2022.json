@@ -1,0 +1,350 @@
+[
+  {
+    "date": "2022-04-05",
+    "type": "Holiday",
+    "description": "入学式"
+  },
+  {
+    "date": "2022-04-06",
+    "type": "Holiday",
+    "description": "学群1年次TOEIC IPテスト"
+  },
+  {
+    "date": "2022-04-07",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション"
+  },
+  {
+    "date": "2022-04-08",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション予備日"
+  },
+  {
+    "date": "2022-04-11",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション予備日"
+  },
+  {
+    "date": "2022-04-12",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション予備日"
+  },
+  {
+    "date": "2022-04-29",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Friday"
+  },
+  {
+    "date": "2022-05-02",
+    "type": "Holiday",
+    "description": "臨時休講"
+  },
+  {
+    "date": "2022-05-03",
+    "type": "PublicHoliday",
+    "description": "憲法記念日"
+  },
+  {
+    "date": "2022-05-04",
+    "type": "PublicHoliday",
+    "description": "みどりの日"
+  },
+  {
+    "date": "2022-05-05",
+    "type": "PublicHoliday",
+    "description": "こどもの日"
+  },
+  {
+    "date": "2022-05-06",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Tuesday"
+  },
+  {
+    "date": "2022-05-14",
+    "type": "Other",
+    "description": "春季スポーツ・デー"
+  },
+  {
+    "date": "2022-05-15",
+    "type": "Other",
+    "description": "春季スポーツ・デー"
+  },
+  {
+    "date": "2022-05-24",
+    "type": "Exam",
+    "description": "春A 期末試験"
+  },
+  {
+    "date": "2022-06-29",
+    "type": "Exam",
+    "description": "春AB 期末試験"
+  },
+  {
+    "date": "2022-06-30",
+    "type": "Exam",
+    "description": "春AB 期末試験"
+  },
+  {
+    "date": "2022-07-01",
+    "type": "Exam",
+    "description": "春AB 期末試験"
+  },
+  {
+    "date": "2022-07-04",
+    "type": "Exam",
+    "description": "春AB 期末試験"
+  },
+  {
+    "date": "2022-07-05",
+    "type": "Exam",
+    "description": "春AB 期末試験"
+  },
+  {
+    "date": "2022-07-18",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "date": "2022-08-03",
+    "type": "Exam",
+    "description": "春ABC 期末試験"
+  },
+  {
+    "date": "2022-08-04",
+    "type": "Exam",
+    "description": "春ABC 期末試験"
+  },
+  {
+    "date": "2022-08-05",
+    "type": "Exam",
+    "description": "春ABC 期末試験"
+  },
+  {
+    "date": "2022-08-08",
+    "type": "Exam",
+    "description": "春ABC 期末試験"
+  },
+  {
+    "date": "2022-08-09",
+    "type": "Exam",
+    "description": "春ABC 期末試験"
+  },
+  {
+    "date": "2022-08-10",
+    "type": "Exam",
+    "description": "春ABC 期末試験"
+  },
+  {
+    "date": "2022-09-22",
+    "type": "Other",
+    "description": "卒業式/学位記授与式"
+  },
+  {
+    "date": "2022-09-30",
+    "type": "Other",
+    "description": "秋学期入学式"
+  },
+  {
+    "date": "2022-10-10",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "date": "2022-11-03",
+    "type": "PublicHoliday",
+    "description": "文化の日"
+  },
+  {
+    "date": "2022-11-04",
+    "type": "Holiday",
+    "description": "学園祭"
+  },
+  {
+    "date": "2022-11-05",
+    "type": "Holiday",
+    "description": "学園祭"
+  },
+  {
+    "date": "2022-11-06",
+    "type": "Holiday",
+    "description": "学園祭"
+  },
+  {
+    "date": "2022-11-07",
+    "type": "Holiday",
+    "description": "臨時休講"
+  },
+  {
+    "date": "2022-11-08",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Thursday"
+  },
+  {
+    "date": "2022-11-09",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Friday"
+  },
+  {
+    "date": "2022-11-10",
+    "type": "Exam",
+    "description": "秋A 期末試験"
+  },
+  {
+    "date": "2022-11-19",
+    "type": "Other",
+    "description": "秋季スポーツ・デー"
+  },
+  {
+    "date": "2022-11-20",
+    "type": "Other",
+    "description": "秋季スポーツ・デー"
+  },
+  {
+    "date": "2022-11-23",
+    "type": "PublicHoliday",
+    "description": "勤労感謝の日"
+  },
+  {
+    "date": "2022-11-25",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Wednesday"
+  },
+  {
+    "date": "2022-11-28",
+    "type": "Other",
+    "description": "学群3年次TOEIC IPテスト"
+  },
+  {
+    "date": "2022-11-29",
+    "type": "Holiday",
+    "description": "推薦入試"
+  },
+  {
+    "date": "2022-11-30",
+    "type": "Holiday",
+    "description": "推薦入試"
+  },
+  {
+    "date": "2022-12-22",
+    "type": "Exam",
+    "description": "秋AB 期末試験"
+  },
+  {
+    "date": "2022-12-23",
+    "type": "Exam",
+    "description": "秋AB 期末試験"
+  },
+  {
+    "date": "2022-12-26",
+    "type": "Exam",
+    "description": "秋AB 期末試験"
+  },
+  {
+    "date": "2022-12-27",
+    "type": "Exam",
+    "description": "秋AB 期末試験"
+  },
+  {
+    "date": "2022-12-28",
+    "type": "Exam",
+    "description": "秋AB 期末試験"
+  },
+  {
+    "date": "2023-01-09",
+    "type": "PublicHoliday",
+    "description": "成人の日"
+  },
+  {
+    "date": "2023-01-13",
+    "type": "Holiday",
+    "description": "大学入学共通テスト準備日"
+  },
+  {
+    "date": "2023-01-14",
+    "type": "Other",
+    "description": "大学入学共通テスト"
+  },
+  {
+    "date": "2023-01-15",
+    "type": "Other",
+    "description": "大学入学共通テスト"
+  },
+  {
+    "date": "2023-01-16",
+    "type": "Holiday",
+    "description": "大学入学共通テスト"
+  },
+  {
+    "date": "2023-01-17",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "date": "2023-02-08",
+    "type": "Exam",
+    "description": "秋ABC 期末試験"
+  },
+  {
+    "date": "2023-02-09",
+    "type": "Exam",
+    "description": "秋ABC 期末試験"
+  },
+  {
+    "date": "2023-02-10",
+    "type": "Exam",
+    "description": "秋ABC 期末試験"
+  },
+  {
+    "date": "2023-02-13",
+    "type": "Exam",
+    "description": "秋ABC 期末試験"
+  },
+  {
+    "date": "2023-02-14",
+    "type": "Exam",
+    "description": "秋ABC 期末試験"
+  },
+  {
+    "date": "2023-02-15",
+    "type": "Exam",
+    "description": "秋C 期末試験"
+  },
+  {
+    "date": "2023-02-16",
+    "type": "Exam",
+    "description": "秋C 期末試験"
+  },
+  {
+    "date": "2023-02-25",
+    "type": "Other",
+    "description": "個別学力検査等前期日程"
+  },
+  {
+    "date": "2023-02-26",
+    "type": "Other",
+    "description": "個別学力検査等前期日程"
+  },
+  {
+    "date": "2023-03-10",
+    "type": "Other",
+    "description": "医学類卒業日"
+  },
+  {
+    "date": "2023-03-12",
+    "type": "Other",
+    "description": "個別学力検査等後期日程"
+  },
+  {
+    "date": "2023-03-24",
+    "type": "Other",
+    "description": "卒業式/学位記授与式"
+  }
+]
