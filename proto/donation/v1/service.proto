@@ -21,7 +21,10 @@ service DonationService {
   rpc CreateSubscriptionCheckoutSession(CreateSubscriptionCheckoutSessionRequest) returns (CreateSubscriptionCheckoutSessionResponse) {
     option (shared.twinte) = {
       authentication: REQURED,
-      error_codes: [],
+      error_codes: [
+        "donation.ActiveSubscriptionAlreadyExists",
+        "donation.SubscriptionPlanNotFound"
+      ],
     };
   }
 
@@ -56,7 +59,7 @@ service DonationService {
     };
   }
 
-  rpc GetSubscription(GetSubscriptionRequest) returns (GetSubscriptionResponse) {
+  rpc GetActiveSubscription(GetActiveSubscriptionRequest) returns (GetActiveSubscriptionResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: REQURED,
@@ -131,9 +134,9 @@ message GetSubscriptionPlansResponse {
   repeated SubscriptionPlan subscription_plans = 1;
 }
 
-message GetSubscriptionRequest {}
+message GetActiveSubscriptionRequest {}
 
-message GetSubscriptionResponse {
+message GetActiveSubscriptionResponse {
   Subscription subscription = 1;
 }
 
