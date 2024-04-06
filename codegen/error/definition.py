@@ -31,7 +31,11 @@ definition: dict[str, list[tuple[str, ConnectErrorCode]]] = {
             FailedPrecondition,
         ),
     ],
-    "donation": [("SubscriptionNotFound", NotFound)],
+    "donation": [
+        ("ActiveSubscriptionAlreadyExists", AlreadyExists),
+        ("SubscriptionNotFound", NotFound),
+        ("SubscriptionPlanNotFound", NotFound),
+    ],
     "schoolcalendar": [
         ("ModuleNotFound", NotFound),
     ],
