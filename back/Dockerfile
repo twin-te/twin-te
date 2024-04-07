@@ -2,7 +2,8 @@ FROM golang:1.22 as dev
 
 WORKDIR /usr/src/twin-te/back
 
-RUN go install github.com/bufbuild/buf/cmd/buf@latest \
+RUN go install golang.org/x/tools/gopls@latest \
+  && go install github.com/bufbuild/buf/cmd/buf@latest \
   && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest \
   && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
   && go install github.com/bufbuild/connect-go/cmd/protoc-gen-connect-go@latest \
