@@ -1,12 +1,12 @@
 # back
 
-generate codes from database
+generate codes related to gorm from database
 
 ```sh
 make gorm-gen
 ```
 
-generate codes about connect from proto files
+generate codes related to connect from proto files
 
 ```sh
 make buf-gen
