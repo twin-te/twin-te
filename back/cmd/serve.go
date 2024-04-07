@@ -61,9 +61,9 @@ var serveCmd = &cobra.Command{
 		schoolcalendarUseCase := schoolcalendarusecase.New(accessController, schoolcalendarRepository)
 
 		timetableFactory := timetablefactory.New(db)
-		timetableGateWay := timetablegateway.New("")
+		timetableGateway := timetablegateway.New("")
 		timetableRepository := timetablerepository.New(db)
-		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableGateWay, timetableRepository)
+		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableGateway, timetableRepository)
 
 		announcements, err := announcementdata.LoadAnnouncements()
 		if err != nil {
