@@ -1,5 +1,5 @@
 <template>
-  <ErrorBoundary>
+  <!-- <ErrorBoundary> -->
     <SuspenseBoundary>
       <InitializeApp>
         <Layout>
@@ -7,7 +7,7 @@
         </Layout>
       </InitializeApp>
     </SuspenseBoundary>
-  </ErrorBoundary>
+  <!-- </ErrorBoundary> -->
 </template>
 
 <script setup lang="ts">
