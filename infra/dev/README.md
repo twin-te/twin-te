@@ -7,7 +7,7 @@ cd infra/dev
 
 prepare environment variables
 ```sh
-copy ../../back/.env.development ../../back/.env.local
+cp ../../back/.env.development ../../back/.env.local
 ```
 
 please edit `../../back/.env.local`
