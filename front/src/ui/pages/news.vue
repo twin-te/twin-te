@@ -38,14 +38,13 @@ import { formatPublishedAt } from "~/presentation/presenters/news";
 import IconButton from "~/ui/components/IconButton.vue";
 import NewsBox from "~/ui/components/NewsBox.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
-import { getNews, setNews } from "../store/news";
+import { useNews } from "../store";
 
 useHead({
   title: "Twin:te | お知らせ",
 });
 
-await setNews();
-const news = getNews();
+const { news } = useNews();
 </script>
 
 <style scoped lang="scss">

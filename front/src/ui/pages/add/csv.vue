@@ -95,8 +95,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { usePorts } from "~/adapter";
-import Usecase from "~/application/usecases";
 import { isResultError, ValueError } from "~/domain/error";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import Button from "~/ui/components/Button.vue";
@@ -106,18 +104,16 @@ import IconButton from "~/ui/components/IconButton.vue";
 import InputButtonFile from "~/ui/components/InputButtonFile.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
-import { addCoursesByCodes } from "~/ui/store/course";
-import { displayToast } from "~/ui/store/toast";
-import { getApplicableYear, setApplicableYear } from "~/ui/store/year";
+import { useSetting, useToast } from "~/ui/store";
+import { timetableUseCase } from "~/usecases";
 import type { Schedule } from "~/domain/schedule";
 import type { DisplayCourse } from "~/presentation/viewmodels/course";
 
-const ports = usePorts();
 const router = useRouter();
+const { displayToast } = useToast();
 
 /** year */
-await setApplicableYear();
-const year = getApplicableYear();
+const { appliedYear: year } = useSetting();
 
 /** result */
 type LoadedResult = {
@@ -221,9 +217,10 @@ const loadCourses = async (file: File) => {
     return;
   }
 
-  const result = await Usecase.getCourses(ports)(
-    codes.map((code) => ({ year: year.value, code }))
-  );
+  const result = await timetableUseCase.getCoursesByCodes({
+    year: year.value,
+    codes,
+  });
   if (isResultError(result)) throw result;
 
   loadedResults.splice(
@@ -257,7 +254,7 @@ const addCourses = async (warning = true) => {
     await Promise.all(
       selectedResults.value.map(async ({ course, schedules }) => ({
         course,
-        result: await Usecase.checkScheduleDuplicate(ports)(
+        result: await timetableUseCase.checkScheduleDuplicate(
           year.value,
           schedules
         ),
@@ -270,12 +267,10 @@ const addCourses = async (warning = true) => {
   }, []);
 
   if (warning && duplicateCourses.value.length > 0) return;
-  await addCoursesByCodes(
-    selectedResults.value.map(({ course }) => ({
-      year: course.year,
-      code: course.code,
-    }))
-  );
+  await timetableUseCase.addCoursesByCodes({
+    year: year.value,
+    codes: selectedResults.value.map(({ course }) => course.code),
+  });
   router.push("/");
 };
 

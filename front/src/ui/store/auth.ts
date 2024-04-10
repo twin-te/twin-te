@@ -1,27 +1,26 @@
 import { computed, ref } from "vue";
-import { usePorts } from "~/adapter";
-import UseCase from "~/application/usecases";
 import { isResultError } from "~/domain/error";
-import { deepCopy } from "~/utils";
+import { authUseCase } from "~/usecases";
 
-// state
-const authState = ref(false);
+const isAuthenticated = ref<boolean>(false);
 
-// getter
-export const getAuthState = () => {
-  return computed(() => deepCopy(authState.value));
+const capturedUnauthenticatedError = () => {
+  isAuthenticated.value = false;
 };
 
-// mutation
-export const updateAuthState = (newAuthState: boolean) => {
-  authState.value = newAuthState;
+const initializeAuth = () => {
+  return authUseCase.checkAuthentication().then((result) => {
+    if (isResultError(result)) throw result;
+    isAuthenticated.value = result;
+  });
 };
 
-// action
-const ports = usePorts();
-
-export const setAuthState = async () => {
-  const result = await UseCase.checkAuthentication(ports)();
-  if (isResultError(result)) throw result;
-  authState.value = result;
+const useAuth = () => {
+  return {
+    isAuthenticated: computed(() => isAuthenticated.value),
+    capturedUnauthenticatedError,
+    initializeAuth,
+  };
 };
+
+export default useAuth;

@@ -1,0 +1,31 @@
+{
+  "folders": [
+    {
+      "path": "back"
+    },
+    {
+      "path": "codegen"
+    },
+    {
+      "path": "db"
+    },
+    {
+      "path": "front"
+    },
+    {
+      "path": "infra"
+    },
+    {
+      "path": "parser"
+    },
+    {
+      "path": "proto"
+    },
+    {
+      "path": "proxy"
+    },
+    {
+      "path": "sponsorship"
+    },
+  ]
+}

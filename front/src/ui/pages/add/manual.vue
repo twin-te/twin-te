@@ -124,8 +124,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { usePorts } from "~/adapter";
-import Usecase from "~/application/usecases";
 import { methods } from "~/domain/method";
 import { removeDuplicateSchedules, sortSchedules } from "~/domain/schedule";
 import {
@@ -155,17 +153,15 @@ import ScheduleEditer, {
 } from "~/ui/components/ScheduleEditer.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { addCustomizedCourse } from "~/ui/store/course";
-import { getApplicableYear, setApplicableYear } from "~/ui/store/year";
+import { useSetting } from "~/ui/store";
+import { timetableUseCase } from "~/usecases";
 import type { RegisteredCourse } from "~/domain/course";
 import type { Room } from "~/domain/room";
 
-const ports = usePorts();
 const router = useRouter();
 
 /** year */
-await setApplicableYear();
-const year = getApplicableYear();
+const { appliedYear: year } = useSetting();
 
 /** name */
 const name = ref("");
@@ -242,12 +238,12 @@ const addCourse = async (warning = true) => {
 
   if (
     warning &&
-    !(await Usecase.checkScheduleDuplicate(ports)(year.value, schedules))
+    !(await timetableUseCase.checkScheduleDuplicate(year.value, schedules))
   ) {
     duplicateScheduleText.value = schedulesToFullString(schedules);
     openDuplicateModal();
   } else {
-    await addCustomizedCourse(course);
+    await timetableUseCase.addCustomizedCourse(course);
     router.push("/");
   }
 };

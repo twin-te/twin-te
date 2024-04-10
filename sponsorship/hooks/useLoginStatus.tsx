@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { apiClient } from '../api/apiClient';
+import { useCase } from '../usecases';
 
 export const useLoginStatus = () => {
 	// undefined: ログイン状態を確認できていなdい
@@ -8,12 +8,8 @@ export const useLoginStatus = () => {
 
 	useEffect(() => {
 		(async () => {
-			try {
-				await apiClient.get('/users/me');
-				setIsLogin(true);
-			} catch (error) {
-				setIsLogin(false);
-			}
+			const isAuthenticated = await useCase.checkAuthentication();
+			setIsLogin(isAuthenticated);
 		})();
 	}, []);
 	return isLogin;

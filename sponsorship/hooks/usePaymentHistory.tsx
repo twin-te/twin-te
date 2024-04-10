@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { apiClient } from '../api/apiClient';
-import { Payment } from '../types';
+import { Payment } from '../domain';
+import { useCase } from '../usecases';
 
 export const usePaymentHistory = () => {
 	// undefined: API呼び出しが完了していない状態
@@ -10,8 +10,8 @@ export const usePaymentHistory = () => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const res = await apiClient.get('/donation/payment');
-				setPaymentHistory(res.data);
+				const payments = await useCase.getPayments();
+				setPaymentHistory(payments as [Payment]);
 			} catch (error) {
 				console.error(error);
 				setPaymentHistory(null);

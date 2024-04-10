@@ -3,14 +3,12 @@ import MobileHeader from './MobileHeader';
 import { useLoginStatus } from '../hooks/useLoginStatus';
 import LoginModalContent from './LoginModalContent';
 import { SweetModal } from './SweetAlert';
-import { useRouter } from 'next/router';
 import { getLogoutUrl } from '../utils/getAuthUrl';
 import Image from 'next/image';
 import styles from '../styles/components/Layout.module.scss';
 
 export const Layout: React.FC = ({ children }) => {
 	const isLogin = useLoginStatus();
-	const router = useRouter();
 
 	const handleLogout = async () => {
 		const result = await SweetModal.fire({
@@ -21,7 +19,7 @@ export const Layout: React.FC = ({ children }) => {
 			cancelButtonText: 'いいえ'
 		});
 		if (result.isConfirmed) {
-			router.push(getLogoutUrl());
+			window.open(getLogoutUrl());
 		}
 	};
 

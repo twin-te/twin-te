@@ -259,11 +259,8 @@ import { useIntersectionObserver } from "@vueuse/core";
 import { useToggle } from "@vueuse/shared";
 import { ComponentPublicInstance, computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { usePorts } from "~/adapter";
-import Usecase from "~/application/usecases";
 import { isResultError } from "~/domain/error";
-import { modules } from "~/domain/module";
-import { initializeTimetable } from "~/domain/timetable";
+import { timetableToSchedules } from "~/domain/timetable";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import {
   editableSchedulesToTimetable,
@@ -285,16 +282,16 @@ import ScheduleEditer, {
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import ToggleButton from "~/ui/components/ToggleButton.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { addCoursesByCodes } from "~/ui/store/course";
-import { displayToast } from "~/ui/store/toast";
-import { getApplicableYear } from "~/ui/store/year";
+import { useSetting, useToast } from "~/ui/store";
+import { timetableUseCase } from "~/usecases";
 import { asyncFilter, deleteElementInArray } from "~/utils";
 import type { Schedule } from "~/domain/schedule";
 import type { DisplayCourse } from "~/presentation/viewmodels/course";
 
 const gtm = useGtm();
-const ports = usePorts();
 const router = useRouter();
+
+const { displayToast } = useToast();
 
 type SearchResult = {
   id: string;
@@ -306,7 +303,7 @@ type SearchResult = {
 const [detailed, toggleDetailed] = useToggle(true);
 
 /** search options */
-const year = getApplicableYear();
+const { appliedYear: year } = useSetting();
 const code = ref("");
 const keyword = ref("");
 const [onlyBlank, toggleOnlyBlank] = useToggle(false);
@@ -354,26 +351,44 @@ const fetching = ref(false);
 const noResultText = ref("");
 
 const search = async (init = true) => {
-  const timetable =
-    onlyBlank.value || schedules.every(isNotSpecifiedSchedule)
-      ? initializeTimetable(modules, true)
-      : editableSchedulesToTimetable(
-          schedules.filter((schedule) => !isNotSpecifiedSchedule(schedule))
-        );
   const offset = init ? 0 : currentOffset;
   fetching.value = true;
   noResultText.value = "";
 
-  const result = await Usecase.searchCourse(ports)(
-    year.value,
-    keyword.value.split(/\s/),
-    code.value.split(/\s/),
-    timetable,
-    onlyBlank.value,
-    "Cover",
+  const codes = code.value.split(/\s/);
+  const conds = {
+    year: year.value,
+    keywords: keyword.value.split(/\s/),
+    codePrefixes: {
+      included: codes.filter((code) => !code.startsWith("-")),
+      excluded: codes
+        .filter((code) => code.startsWith("-"))
+        .map((code) => code.slice(1)),
+    },
+    limit,
     offset,
-    limit
-  );
+  };
+
+  let result;
+  if (onlyBlank.value) {
+    result = await timetableUseCase.searchCoursesOnBlank(conds);
+  } else {
+    const schedulesPartiallyOverlapped = schedules.every(isNotSpecifiedSchedule)
+      ? []
+      : timetableToSchedules(
+          editableSchedulesToTimetable(
+            schedules.filter((schedule) => !isNotSpecifiedSchedule(schedule))
+          )
+        );
+
+    result = await timetableUseCase.searchCourses({
+      ...conds,
+      schedules: {
+        fullyIncluded: [],
+        partiallyOverlapped: schedulesPartiallyOverlapped,
+      },
+    });
+  }
   if (isResultError(result)) throw result;
 
   const newSearchResults: SearchResult[] = result.map((course) => ({
@@ -473,7 +488,7 @@ const buttonState = computed(() =>
 const duplicatedScheduleCourses = ref<DisplayCourse[]>([]);
 
 const addCourses = async (warning = true) => {
-  const registeredCourse = await Usecase.getRegisteredCoursesByYear(ports)(
+  const registeredCourse = await timetableUseCase.getRegisteredCourses(
     year.value
   );
 
@@ -503,7 +518,7 @@ const addCourses = async (warning = true) => {
     await asyncFilter(
       selectedSearchResults,
       async ({ schedules }) =>
-        !(await Usecase.checkScheduleDuplicate(ports)(year.value, schedules))
+        !(await timetableUseCase.checkScheduleDuplicate(year.value, schedules))
     )
   ).map(({ course }) => course);
 
@@ -512,12 +527,10 @@ const addCourses = async (warning = true) => {
     return;
   }
 
-  await addCoursesByCodes(
-    selectedSearchResults.map(({ course }) => ({
-      year: year.value,
-      code: course.code,
-    }))
-  );
+  await timetableUseCase.addCoursesByCodes({
+    year: year.value,
+    codes: selectedSearchResults.map(({ course }) => course.code),
+  });
   router.push("/");
 };
 

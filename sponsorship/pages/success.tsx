@@ -3,7 +3,7 @@ import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
-import { subscriptions } from '../utils/stripe';
+import { subscriptions } from '../stripe';
 
 const Success: NextPage = () => {
 	const router = useRouter();

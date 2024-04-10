@@ -248,6 +248,7 @@ import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { normalDays, specialDays } from "~/domain/day";
+import { isResultError } from "~/domain/error";
 import { baseModules } from "~/domain/module";
 import { daytimePeriods, periods } from "~/domain/period";
 import {
@@ -267,17 +268,17 @@ import PageHeader from "~/ui/components/PageHeader.vue";
 import Popup from "~/ui/components/Popup.vue";
 import PopupContent from "~/ui/components/PopupContent.vue";
 import ToggleButton from "~/ui/components/ToggleButton.vue";
-import { getEvent, setEvent } from "~/ui/store/event";
+import { timetableUseCase } from "~/usecases";
 import { useSwitch } from "../hooks/useSwitch";
-import { toggleCourseType, setModule } from "../store";
-import { getCoursesByYear, setCoursesByYear } from "../store/course";
-import { getCourseType } from "../store/courseType";
-import { getModule, getCurrentModule } from "../store/module";
-import { getUnreadNews, setNews, updateNewsRead } from "../store/news";
-import { getSetting, setSetting } from "../store/setting";
-import { toggleSidebar } from "../store/sidebar";
-import { getAllTags } from "../store/tag";
-import { getApplicableYear, setApplicableYear } from "../store/year";
+import {
+  useCourseType,
+  useEvent,
+  useModule,
+  useNews,
+  useSetting,
+  useSidebar,
+} from "../store";
+
 import type { NormalDay } from "~/domain/day";
 import type { BaseModule } from "~/domain/module";
 import type { Period } from "~/domain/period";
@@ -290,29 +291,16 @@ useHead({
 
 const router = useRouter();
 
-/** year */
-await setApplicableYear();
-const year = getApplicableYear();
+const { courseType, toggleCourseType } = useCourseType();
+const { event, initializeEvent } = useEvent();
+const { module, currentModule, setModule, initializeModule } = useModule();
+const { unreadNews, readNews } = useNews();
+const { setting, appliedYear: year } = useSetting();
+const { toggleSidebar } = useSidebar();
 
-await Promise.all([
-  setCoursesByYear(year.value),
-  setEvent(),
-  setNews(),
-  setSetting(),
-]);
-
-/** courseType */
-const courseType = getCourseType();
-
-/** setting */
-const setting = getSetting();
-
-/** module */
-const module = await getModule();
-const currentModule: BaseModule = await getCurrentModule();
+await Promise.all([initializeEvent(), initializeModule()]);
 
 /** page header */
-const event = getEvent();
 const today = dayjs();
 const calendar: PageHeaderCalendar = {
   schedule: event.value,
@@ -341,11 +329,22 @@ const timelabels = [
   { start: "19:20", end: "20:35" },
 ];
 
+const [registeredCourses, tags] = await Promise.all([
+  timetableUseCase.getRegisteredCourses(year.value).then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  }),
+  timetableUseCase.getTags().then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  }),
+]);
+
 /** timetable */
 const timetable = computed(() =>
   getDisplayTimetable(
-    getCoursesByYear(year.value).value,
-    getAllTags().value,
+    registeredCourses,
+    tags,
     baseModules,
     setting.value.saturdayCourseMode
       ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -402,16 +401,12 @@ const onClickCourseTile = async (
 };
 
 /** news modal */
-const unreadNews = getUnreadNews();
-
 const [isNewsModalVisible, , closeNewsModal] = useSwitch(
   unreadNews.value.length > 0
 );
 
 const onClickNewsModal = async () => {
-  for (const news of unreadNews.value) {
-    await updateNewsRead(news.id, true);
-  }
+  await readNews(unreadNews.value.map(({ id }) => id));
   closeNewsModal();
 };
 </script>

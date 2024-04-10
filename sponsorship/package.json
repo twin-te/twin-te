@@ -7,9 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write './**/*.{ts,tsx}'"
+    "format": "prettier --write './**/*.{ts,tsx}'",
+    "buf-gen": "rm -rf api/gen && buf generate --template buf.gen.yaml ../proto"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^1.8.0",
+    "@connectrpc/connect": "^1.4.0",
+    "@connectrpc/connect-web": "^1.4.0",
     "@stripe/stripe-js": "^1.27.0",
     "axios": "^0.26.1",
     "bulma": "^0.9.3",
@@ -27,6 +31,9 @@
     "sweetalert2-react-content": "^5.0.0"
   },
   "devDependencies": {
+    "@bufbuild/buf": "^1.30.0",
+    "@bufbuild/protoc-gen-es": "^1.8.0",
+    "@connectrpc/protoc-gen-connect-es": "^1.4.0",
     "@types/node": "17.0.23",
     "@types/react": "17.0.43",
     "@types/react-dom": "17.0.14",

@@ -95,8 +95,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { usePorts } from "~/adapter";
-import Usecase from "~/application/usecases";
 import { isResultError, ValueError } from "~/domain/error";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import Button from "~/ui/components/Button.vue";
@@ -106,18 +104,16 @@ import CourseDetailMini from "~/ui/components/CourseDetailMini.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
-import { toggleSidebar } from "~/ui/store/sidebar";
-import { addCoursesByCodes } from "../store/course";
-import { displayToast } from "../store/toast";
-import { getApplicableYear, setApplicableYear } from "../store/year";
+import { timetableUseCase } from "~/usecases";
+import { useSetting, useSidebar, useToast } from "../store";
 import type { DisplayCourse } from "~/presentation/viewmodels/course";
 
-const ports = usePorts();
 const route = useRoute();
 const router = useRouter();
 
-await setApplicableYear();
-const year = getApplicableYear();
+const { appliedYear } = useSetting();
+const { toggleSidebar } = useSidebar();
+const { displayToast } = useToast();
 
 if (typeof route.query.codes !== "string") {
   displayToast("授業のインポートに失敗しました。");
@@ -128,12 +124,15 @@ if (typeof route.query.codes !== "string") {
 const codes: string[] = route.query.codes.split(",");
 
 /** result */
-const result = await Usecase.getCourses(ports)(
-  codes.map((code) => ({ year: year.value, code }))
-);
+const result = await timetableUseCase.getCoursesByCodes({
+  year: appliedYear.value,
+  codes,
+});
 if (isResultError(result)) throw result;
 
-const registered = await Usecase.getRegisteredCoursesByYear(ports)(year.value);
+const registered = await timetableUseCase.getRegisteredCourses(
+  appliedYear.value
+);
 if (isResultError(registered)) throw registered;
 
 const registeredSet = new Set(
@@ -172,10 +171,9 @@ const addCourses = async (warning = true) => {
     await Promise.all(
       selectedCourseResults.value.map(async ({ course, schedules }) => ({
         course,
-        result: await Usecase.checkScheduleDuplicate(ports)(
-          year.value,
-          schedules,
-          registered
+        result: await timetableUseCase.checkScheduleDuplicate(
+          appliedYear.value,
+          schedules
         ),
       }))
     )
@@ -186,12 +184,10 @@ const addCourses = async (warning = true) => {
   }, []);
 
   if (warning && duplicateCourses.value.length > 0) return;
-  await addCoursesByCodes(
-    selectedCourseResults.value.map(({ course }) => ({
-      year: year.value,
-      code: course.code,
-    }))
-  );
+  await timetableUseCase.addCoursesByCodes({
+    year: appliedYear.value,
+    codes: selectedCourseResults.value.map(({ course }) => course.code),
+  });
   router.push("/");
 };
 

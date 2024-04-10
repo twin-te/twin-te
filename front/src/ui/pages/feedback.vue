@@ -80,8 +80,6 @@
 import { useHead } from "@vueuse/head";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import { usePorts } from "~/adapter";
-import Usecase from "~/application/usecases";
 import {
   feedbackTypeMap,
   displayToFeedbackType,
@@ -96,7 +94,8 @@ import Label from "~/ui/components/Label.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import TextFieldMultilines from "~/ui/components/TextFieldMultilines.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
-import { displayToast } from "../store/toast";
+import { feedbackUseCase } from "~/usecases";
+import { useToast } from "../store";
 import type { FeedbackType } from "~/domain/feedback";
 import type { DisplayFeedbackType } from "~/presentation/viewmodels/feedback";
 
@@ -104,8 +103,9 @@ useHead({
   title: "Twin:te | フィードバック",
 });
 
-const ports = usePorts();
 const router = useRouter();
+
+const { displayToast } = useToast();
 
 /** feedback */
 const feedbackType = ref<FeedbackType>("Bug");
@@ -138,12 +138,13 @@ const ButtonState = computed(() => {
 });
 
 const onClickButton = async () => {
-  Usecase.sendFeedback(ports)({
-    type: feedbackType.value,
-    screenShots: screenShot.value ? [screenShot.value] : [],
-    content: feedbackContent.value,
-    email: allowReplies.value ? email.value : "",
-  })
+  feedbackUseCase
+    .sendFeedback("", {
+      type: feedbackType.value,
+      screenShots: screenShot.value ? [screenShot.value] : [],
+      content: feedbackContent.value,
+      email: allowReplies.value ? email.value : "",
+    })
     .then(() => {
       displayToast("フィードバックを送信しました。ありがとうございます。", {
         type: "primary",

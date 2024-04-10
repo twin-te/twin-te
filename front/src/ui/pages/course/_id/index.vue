@@ -180,10 +180,11 @@
 </template>
 
 <script setup lang="ts">
-import { ComputedRef, ref } from "vue";
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { NotFoundError } from "~/domain/error";
+import { NotFoundError, isResultError } from "~/domain/error";
 import { registeredCourseToDisplay } from "~/presentation/presenters/course";
+import { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
 import Button from "~/ui/components/Button.vue";
 import CourseDetail from "~/ui/components/CourseDetail.vue";
 import DecoratedIcon from "~/ui/components/DecoratedIcon.vue";
@@ -197,14 +198,8 @@ import TagEditor from "~/ui/components/TagEditor.vue";
 import TextFieldMultilines from "~/ui/components/TextFieldMultilines.vue";
 import ToggleIconButton from "~/ui/components/ToggleIconButton.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import {
-  dropCourse,
-  getCourseById,
-  setCourseById,
-  updateCourse,
-} from "~/ui/store/course";
-import { createTag, getAllTags, setAllTags } from "~/ui/store/tag";
 import { getSyllabusUrl, openUrl, getResponUrl, getMapUrl } from "~/ui/url";
+import { timetableUseCase } from "~/usecases";
 import type { RegisteredCourse } from "~/domain/course";
 import type { DisplayCourseTag } from "~/presentation/viewmodels/tag";
 import type { PopupContentColor } from "~/ui/components/PopupContent.vue";
@@ -214,20 +209,39 @@ const router = useRouter();
 
 /** course */
 const { id } = route.params as { id: string };
-try {
-  await setCourseById(id);
-} catch (error) {
-  if (error instanceof NotFoundError) router.push("/404");
-  else throw error;
-}
-const course = getCourseById(id) as ComputedRef<RegisteredCourse>;
-
-/** tag */
-await setAllTags();
-const tags = getAllTags();
 
 /** display course */
-const displayCourse = ref(registeredCourseToDisplay(course.value, tags.value));
+const displayCourse = ref<DisplayRegisteredCourse>(
+  {} as DisplayRegisteredCourse
+);
+
+const updateView = async () => {
+  const [registeredCourse, tags] = await Promise.all([
+    timetableUseCase.getRegisteredCourseById(id).then((result) => {
+      if (result instanceof NotFoundError) router.push("/404");
+      if (isResultError(result)) throw result;
+      return result;
+    }),
+    timetableUseCase.getTags().then((result) => {
+      if (isResultError(result)) throw result;
+      return result;
+    }),
+  ]);
+
+  displayCourse.value = registeredCourseToDisplay(registeredCourse, tags);
+};
+
+await updateView();
+
+const updateCourse = (
+  id: string,
+  data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
+) => {
+  return timetableUseCase.updateRegisteredCourse(id, data).then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  });
+};
 
 const updateMemo = async (newMemo: string) => {
   displayCourse.value = { ...displayCourse.value, memo: newMemo };
@@ -248,17 +262,21 @@ const updateCounter = async (
 const add = ref(false);
 
 const onCreateTag = async (name: string) => {
+  const existingAssignedTagIds = displayCourse.value.tags
+    .filter(({ assign }) => assign)
+    .map(({ id }) => id);
   displayCourse.value.tags.push({ id: "new-tag", name, assign: true });
   displayCourse.value = { ...displayCourse.value };
 
-  let createdTag: { id: string } | undefined = undefined;
-  try {
-    createdTag = await createTag(name);
-  } catch (error) {
-    displayCourse.value = registeredCourseToDisplay(course.value, tags.value);
-    throw error;
-  }
-  await updateCourse(id, { tagIds: [...course.value.tagIds, createdTag.id] });
+  const createdTag = await timetableUseCase.createTag(name).then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  });
+
+  await updateCourse(id, {
+    tagIds: [...existingAssignedTagIds, createdTag.id],
+  });
+  await updateView();
 };
 
 const onClickTag = async (clickedTag: DisplayCourseTag) => {
@@ -278,7 +296,10 @@ const [
 ] = useSwitch();
 
 const onClickDeleteCourseButton = async () => {
-  await dropCourse(id);
+  await timetableUseCase.deleteRegisteredCourse(id).then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  });
   await router.push("/");
 };
 
@@ -333,7 +354,7 @@ const popupContents: {
 ];
 
 // If the course is added by manual, the syllabus does not exist.
-if (course.value.code == undefined) popupContents.splice(1, 1);
+if (displayCourse.value.code === "") popupContents.splice(1, 1);
 </script>
 
 <style scoped lang="scss">

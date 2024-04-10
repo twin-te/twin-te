@@ -3,12 +3,13 @@ import type { NextPage } from 'next';
 import { useLoginStatus } from '../hooks/useLoginStatus';
 import Slider from 'react-input-slider';
 import styles from '../styles/pages/Register.module.scss';
-import { registOneTime, registSubscription } from '../api/stripeApi';
-import { subscriptions } from '../utils/stripe';
+import { redirectToCheckout, subscriptions } from '../stripe';
 import { NextSeo } from 'next-seo';
 import { SweetModal } from '../components/SweetAlert';
 import { RadioButton } from '../components/RadioButton';
 import Link from 'next/link';
+import { useCase } from '../usecases';
+import { usePlans } from '../hooks/usePlans';
 
 const ACTUAL_RECEIVED_PERCENTAGE = 0.964;
 const MONTHLY_COST = 7052; // ref: /public/images/twinte-cost.png
@@ -19,7 +20,9 @@ const Register: NextPage = () => {
 	const donationPrices = [500, 1000, 1500, 2000, 3000, 5000, 7000, 10000];
 	const [subscriptionID, setSubscriptionID] = useState(subscriptions[0].planId);
 
-	const confirmRegistOneTime = async () => {
+	const { plans, selectPlanID} = usePlans()
+
+	const confirmmakeOneTimeDonation = async () => {
 		await SweetModal.fire({
 			title: 'ログインをしてください。',
 			text: '寄付をするには、右上のログインボタンよりログインをしてください。',
@@ -27,7 +30,7 @@ const Register: NextPage = () => {
 			confirmButtonText: 'はい'
 		});
 	};
-	const confirmRegistSubscription = async () => {
+	const confirmregisterSubscription = async () => {
 		await SweetModal.fire({
 			title: 'ログインをしてください。',
 			text: '継続的な寄付をするには、右上のログインボタンよりログインをしてください。',
@@ -106,7 +109,9 @@ const Register: NextPage = () => {
 				<button
 					className={`button is-fullwidth is-primary ${styles.buttons}`}
 					onClick={() => {
-						isLogin ? registOneTime(donationPrices[donationPriceIndex]) : confirmRegistOneTime();
+						isLogin
+							? useCase.makeOneTimeDonation(donationPrices[donationPriceIndex]).then(redirectToCheckout)
+							: confirmmakeOneTimeDonation();
 					}}
 				>
 					寄付する
@@ -131,7 +136,9 @@ const Register: NextPage = () => {
 				<button
 					className={`button is-fullwidth is-primary ${styles.buttons}`}
 					onClick={() => {
-						isLogin ? registSubscription(subscriptionID) : confirmRegistSubscription();
+						isLogin
+							? useCase.registerSubscription(subscriptionID).then(redirectToCheckout)
+							: confirmregisterSubscription();
 					}}
 				>
 					登録する

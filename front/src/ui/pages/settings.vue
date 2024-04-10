@@ -143,13 +143,11 @@ declare global {
 import { useHead } from "@vueuse/head";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { usePorts } from "~/adapter";
-import Usecase from "~/application/usecases";
 import {
   InternalServerError,
   isNotResultError,
   NetworkError,
-  UnauthorizedError,
+  UnauthenticatedError,
 } from "~/domain/error";
 import { academicYears } from "~/domain/year";
 import Dropdown from "~/ui/components/Dropdown.vue";
@@ -159,25 +157,25 @@ import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
+import { authUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
-import { getSetting, setSetting, updateSetting } from "../store/setting";
-import { displayToast } from "../store/toast";
+import { useSetting, useToast } from "../store";
 
 const router = useRouter();
+const { displayToast } = useToast();
 
 useHead({
   title: "Twin:te | 設定",
 });
 
-await setSetting();
-const setting = getSetting();
+const { setting, updateSetting } = useSetting();
 
 /** display year */
 const autoOption = "自動(現在の年度)";
 
 const yearOptions: string[] = [
   autoOption,
-  ...academicYears.reverse().map((year) => `${year}年度`),
+  ...academicYears.map((year) => `${year}年度`).reverse(),
 ];
 
 const selectedYearOption = computed<string>(() =>
@@ -211,8 +209,7 @@ const onClickAccountDeleteModel = () => {
   openAccountDeletionModal();
 };
 const confirmDeleteAccount = async () => {
-  const ports = usePorts();
-  const deleteUserResult = await Usecase.deleteUser(ports)();
+  const deleteUserResult = await authUseCase.deleteUser();
   if (isNotResultError(deleteUserResult)) {
     closeAccountDeletionModal();
     displayToast(
@@ -225,7 +222,7 @@ const confirmDeleteAccount = async () => {
   } else {
     const error = deleteUserResult;
     console.log(error);
-    if (error instanceof UnauthorizedError) {
+    if (error instanceof UnauthenticatedError) {
       displayToast(
         "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。",
         { type: "danger" }

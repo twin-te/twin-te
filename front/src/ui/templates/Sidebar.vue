@@ -35,14 +35,16 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Button from "~/ui/components/Button.vue";
 import SidebarContent from "~/ui/components/SidebarContent.vue";
-import { closeSidebar } from "~/ui/store/sidebar";
-import { getApplicableYear } from "~/ui/store/year";
+
 import { isiOS, isMobile } from "~/ui/ua";
-import { getLogoutUrl, openUrl } from "~/ui/url";
+import { getLogoutUrl, openUrl, redirectToUrl } from "~/ui/url";
+import { useSetting, useSidebar } from "../store";
 
 defineProps<{
   isLogin: boolean;
 }>();
+
+const { closeSidebar } = useSidebar();
 
 const route = useRoute();
 const router = useRouter();
@@ -50,11 +52,11 @@ router.afterEach(closeSidebar); // Close sidebar whenever the page transition ha
 
 /** logout */
 const logout = () => {
-  openUrl(getLogoutUrl());
+  redirectToUrl(getLogoutUrl());
 };
 
 /** year */
-const year = getApplicableYear();
+const { appliedYear: year } = useSetting();
 
 /** sidebar content */
 const isSelected = (link: string) => link === route.path.toString();

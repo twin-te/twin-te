@@ -17,10 +17,10 @@ export class NotFoundError extends ResultError {
 }
 
 /**
- * When unauthorized user try to access resource that only authorized user can access, this error occurs.
+ * When an unauthenticated user try to access resource that only authenticated user can access, this error occurs.
  */
-export class UnauthorizedError extends ResultError {
-  readonly name = "UnauthorizedError";
+export class UnauthenticatedError extends ResultError {
+  readonly name = "UnauthenticatedError";
 }
 
 export class NetworkError extends ResultError {

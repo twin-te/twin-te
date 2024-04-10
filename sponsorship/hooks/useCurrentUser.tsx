@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { apiClient } from '../api/apiClient';
-import { User } from '../types';
+import { User } from '../domain';
+import { useCase } from '../usecases';
 
 export const useCurrentUser = (): [User | null | undefined, Dispatch<SetStateAction<User | null | undefined>>] => {
 	// undefined: API呼び出しが完了していない状態
@@ -10,8 +10,8 @@ export const useCurrentUser = (): [User | null | undefined, Dispatch<SetStateAct
 	useEffect(() => {
 		(async () => {
 			try {
-				const res = await apiClient.get('/donation/users/me');
-				setCurrentUser(res.data);
+				const user = await useCase.getUser();
+				setCurrentUser(user);
 			} catch (error) {
 				console.error(error);
 				setCurrentUser(null);

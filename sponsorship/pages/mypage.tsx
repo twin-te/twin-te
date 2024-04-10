@@ -1,23 +1,22 @@
-import dayjs from 'dayjs';
 import type { NextPage } from 'next';
 import { useCurrentUser } from '../hooks/useCurrentUser';
 import { useLoginStatus } from '../hooks/useLoginStatus';
 import { usePaymentHistory } from '../hooks/usePaymentHistory';
-import { useSubscriptions } from '../hooks/useSubscriptions';
-import { cancelSubscription } from '../api/stripeApi';
+import { useActiveSubscription } from '../hooks/useActiveSubscription';
 import { useRouter } from 'next/router';
-import { PaymentTypeMap } from '../types/Payment';
+import { PaymentTypeMap } from '../domain/Payment';
 import { NextSeo } from 'next-seo';
 import { useState } from 'react';
 import styles from '../styles/pages/MyPage.module.scss';
 import EditUserInfoModal from '../components/EditUserInfoModal';
 import { toast } from 'bulma-toast';
 import { MdEdit } from 'react-icons/md';
+import { useCase } from '../usecases';
 
 const MyPage: NextPage = () => {
 	const isLogin = useLoginStatus();
 	const [currentUser, setCurrentUser] = useCurrentUser();
-	const subscriptions = useSubscriptions();
+	const activeSubscription = useActiveSubscription();
 	const paymentHistory = usePaymentHistory();
 	const router = useRouter();
 
@@ -25,7 +24,7 @@ const MyPage: NextPage = () => {
 
 	const handleClick = async (id: string) => {
 		try {
-			await cancelSubscription(id);
+			await useCase.cancelSubscription(id);
 			toast({
 				message: '解約に成功しました',
 				type: 'is-success'
@@ -41,7 +40,12 @@ const MyPage: NextPage = () => {
 		}
 	};
 
-	if (isLogin === undefined || currentUser === undefined || subscriptions === undefined || paymentHistory === undefined)
+	if (
+		isLogin === undefined ||
+		currentUser === undefined ||
+		activeSubscription.isLoading ||
+		paymentHistory === undefined
+	)
 		return <div>loading...</div>;
 
 	return (
@@ -92,8 +96,8 @@ const MyPage: NextPage = () => {
 							<h2 className={`title ${styles.title}`}>サブスクリプションの登録状況</h2>
 							<div className="content">
 								<p className="has-text-primary has-text-weight-bold">ご利用中のプラン</p>
-								{subscriptions != null ? (
-									subscriptions.length ? (
+								{!activeSubscription.failed ? (
+									activeSubscription.value ? (
 										<table>
 											<thead>
 												<tr>
@@ -103,22 +107,18 @@ const MyPage: NextPage = () => {
 												</tr>
 											</thead>
 											<tbody>
-												{subscriptions
-													.filter((subscription) => subscription.status === 'Active')
-													.map((subscription) => (
-														<tr key={subscription.id}>
-															<td>{subscription.plans[0].name}</td>
-															<td>{dayjs(subscription.created).format('YYYY.MM.DD')}</td>
-															<td>
-																<button
-																	className="button is-danger is-small is-inverted"
-																	onClick={() => handleClick(subscription.id)}
-																>
-																	解約
-																</button>
-															</td>
-														</tr>
-													))}
+												<tr key={activeSubscription.value.id}>
+													<td>{activeSubscription.value.plan.name}</td>
+													<td>{activeSubscription.value.createdAt.format('YYYY.MM.DD')}</td>
+													<td>
+														<button
+															className="button is-danger is-small is-inverted"
+															onClick={() => handleClick(activeSubscription.value!.id)}
+														>
+															解約
+														</button>
+													</td>
+												</tr>
 											</tbody>
 										</table>
 									) : (
@@ -148,7 +148,7 @@ const MyPage: NextPage = () => {
 													.filter((payment) => payment.status === 'Succeeded')
 													.map((payment) => (
 														<tr key={payment.id}>
-															<td>{dayjs(payment.created).format('YYYY.MM.DD')}</td>
+															<td>{payment.createdAt.format('YYYY.MM.DD')}</td>
 															<td>
 																<p>{payment.amount}円</p>
 															</td>

@@ -13,16 +13,18 @@ export const openUrl = (url: string) => {
   }
 };
 
-export const getAppUrl = () => {
-  return import.meta.env.VITE_APP_URL ?? "https://app.twinte.net";
+export const redirectToUrl = (url: string) => {
+  location.href = url;
 };
 
-export const getLoginUrl = (provider: Provider, redirectUrl = getAppUrl()) => {
-  return `${getAppUrl()}/auth/v3/${provider}?redirect_url=${redirectUrl}`;
+export const appUrl = import.meta.env.VITE_APP_URL as string;
+
+export const getLoginUrl = (provider: Provider, redirectUrl = appUrl) => {
+  return `${appUrl}/auth/v3/${provider}?redirect_url=${redirectUrl}`;
 };
 
-export const getLogoutUrl = (redirectUrl = getAppUrl()) => {
-  return `${getAppUrl()}/auth/v3/logout?redirect_url=${redirectUrl}`;
+export const getLogoutUrl = (redirectUrl = appUrl) => {
+  return `${appUrl}/auth/v3/logout?redirect_url=${redirectUrl}`;
 };
 
 export const getSyllabusUrl = (year: number, code: string): string => {

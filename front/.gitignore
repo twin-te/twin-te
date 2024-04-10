@@ -5,3 +5,4 @@ dist-ssr
 *.local
 tsconfig.staged.json
 storybook-static
+_*

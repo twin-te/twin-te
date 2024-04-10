@@ -55,8 +55,10 @@ import { useHead } from "@vueuse/head";
 import CardAdd from "~/ui/components/CardAdd.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
-import { openSidebar } from "~/ui/store/sidebar";
+import { useSidebar } from "~/ui/store";
 import { isMobile } from "~/ui/ua";
+
+const { openSidebar } = useSidebar();
 
 useHead({
   title: "Twin:te | 授業追加",
