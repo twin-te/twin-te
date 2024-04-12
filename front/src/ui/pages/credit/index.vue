@@ -35,7 +35,7 @@
           <TagListContent
             v-show="mode === 'default'"
             name="すべての授業"
-            :credit="totalCredit"
+            :credit="totalCredits"
           >
             <template #btns>
               <IconButton
@@ -130,16 +130,16 @@
       </div>
     </section>
     <Modal
-      v-if="tagToDelete"
+      v-if="tagToBeDeleted"
       class="delete-tag-modal"
       size="small"
-      @click="tagToDelete = undefined"
+      @click="tagToBeDeleted = undefined"
     >
       <template #title>タグを削除しますか？</template>
       <template #contents>
-        タグ「{{ tagToDelete.name }}」を削除しますか？<br />
+        タグ「{{ tagToBeDeleted.name }}」を削除しますか？<br />
         現在このタグを{{
-          numberOfCourseAssignedTagToDelete
+          numCoursesAssociatedWithTagToBeDeleted
         }}件の授業に割り当てています。<br />
         タグを削除すると、割り当てた全ての授業との紐付けが解除されます。
       </template>
@@ -148,7 +148,7 @@
           size="medium"
           layout="fill"
           color="base"
-          @click="tagToDelete = undefined"
+          @click="tagToBeDeleted = undefined"
         >
           キャンセル
         </Button>
@@ -167,8 +167,9 @@
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch, watchEffect } from "vue";
 import draggable from "vuedraggable";
+import { isResultError } from "~/domain/error";
 import { academicYears } from "~/domain/year";
 import { creditToDisplay } from "~/presentation/presenters/credit";
 import { getDisplayCreditTags } from "~/presentation/presenters/tag";
@@ -182,38 +183,22 @@ import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useFocus } from "~/ui/hooks/useFocus";
 import { useStringToggle } from "~/ui/hooks/useStringToggle";
 import { isNewTagId, createNewTagId } from "~/ui/shared";
-import {
-  getAllCourses,
-  getCoursesByYear,
-  setAllCourses,
-} from "~/ui/store/course";
-import { getCreditYear, updateCreditYear } from "~/ui/store/creditYear";
-import {
-  createTag,
-  deleteTag,
-  getAllTags,
-  setAllTags,
-  updateTagName,
-  updateTagOrders,
-} from "~/ui/store/tag";
+import { useCreditYear } from "~/ui/store";
+import { timetableUseCase } from "~/usecases";
 import type { DisplayCreditTag } from "~/presentation/viewmodels/tag";
+
+console.log("/credit");
 
 useHead({
   title: "Twin:te | 単位数",
 });
 
 /** year */
-const year = getCreditYear();
-
-/** course */
-await setAllCourses();
-const courses = computed(() =>
-  year.value === 0 ? getAllCourses().value : getCoursesByYear(year.value).value
-);
-
-/** tags */
-await setAllTags();
-const tags = getAllTags();
+const {
+  creditYear: year,
+  setCreditYear,
+  setCreditYearToAll,
+} = useCreditYear();
 
 /** mode */
 const [mode, toggleMode] = useStringToggle("default", "edit");
@@ -225,10 +210,11 @@ const selectedYearOption = computed(() =>
 );
 const yearOptions: string[] = [
   allYearOption,
-  ...academicYears.reverse().map((year) => `${year}年度`),
+  ...academicYears.map((year) => `${year}年度`).reverse(),
 ];
 const updateCreditYearOption = (option: string) => {
-  updateCreditYear(option === allYearOption ? 0 : Number(option.slice(0, 4)));
+  if (option === allYearOption) setCreditYearToAll();
+  else setCreditYear(Number(option.slice(0, 4)));
 };
 
 /** focus */
@@ -238,23 +224,40 @@ const { targetRef: tagsContentsRef, focus } = useFocus();
 const displayCreditTags = ref<DisplayCreditTag[]>([]);
 const editingTagId = ref<string>();
 const dragging = ref(false);
-const totalCredit = computed(() =>
-  creditToDisplay(
-    courses.value.reduce((credit, course) => (credit += course.credit), 0)
-  )
-);
+const totalCredits = ref<string>("0.0");
 
-const updateDisplayCreditTags = () => {
+const updateDisplayCreditTags = async () => {
+  const [registeredCourses, tags] = await Promise.all([
+    timetableUseCase
+      .getRegisteredCourses(year.value == 0 ? undefined : year.value, undefined)
+      .then((result) => {
+        if (isResultError(result)) throw result;
+        return result;
+      }),
+    timetableUseCase.getTags().then((result) => {
+      if (isResultError(result)) throw result;
+      return result;
+    }),
+  ]);
+
   displayCreditTags.value = reactive(
     getDisplayCreditTags(
-      courses.value,
-      tags.value.sort((tagA, tagB) => tagA.order - tagB.order),
+      registeredCourses,
+      tags.sort((tagA, tagB) => tagA.order - tagB.order),
       year.value === 0 ? academicYears : [year.value]
+    )
+  );
+
+  totalCredits.value = creditToDisplay(
+    registeredCourses.reduce(
+      (totalCredits, registeredCourse) =>
+        totalCredits + registeredCourse.credit,
+      0
     )
   );
 };
 
-watch([courses, tags, year], () => updateDisplayCreditTags(), {
+watch(year, () => updateDisplayCreditTags(), {
   immediate: true,
 });
 
@@ -262,11 +265,21 @@ const onClickNormalBtn = async (tag: DisplayCreditTag) => {
   if (editingTagId.value === tag.id) {
     editingTagId.value = undefined;
     try {
-      if (isNewTagId(tag.id)) await createTag(tag.name);
-      else await updateTagName(tag.id, tag.name);
-    } catch (error) {
+      if (isNewTagId(tag.id)) {
+        await timetableUseCase.createTag(tag.name).then((result) => {
+          if (isResultError(result)) throw result;
+          return result;
+        });
+      } else {
+        await timetableUseCase
+          .updateTagName(tag.id, tag.name)
+          .then((result) => {
+            if (isResultError(result)) throw result;
+            return result;
+          });
+      }
+    } finally {
       updateDisplayCreditTags();
-      throw error;
     }
   } else {
     editingTagId.value = tag.id;
@@ -278,12 +291,17 @@ const onClickDangerBtn = async (tag: DisplayCreditTag) => {
   if (isNewTagId(tag.id)) {
     updateDisplayCreditTags();
     editingTagId.value = undefined;
-  } else tagToDelete.value = tag;
+  } else tagToBeDeleted.value = tag;
 };
 
 const onChangeOrder = async (newTags: DisplayCreditTag[]) => {
   displayCreditTags.value = reactive(newTags);
-  await updateTagOrders(displayCreditTags.value.map(({ id }) => id));
+  await timetableUseCase
+    .updateTagOrders(displayCreditTags.value.map(({ id }) => id))
+    .then((result) => {
+      if (isResultError(result)) throw result;
+      return result;
+    });
   updateDisplayCreditTags();
 };
 
@@ -295,19 +313,30 @@ const onClickAddBtn = () => {
 };
 
 /** delete tag modal */
-const tagToDelete = ref<DisplayCreditTag>();
+const tagToBeDeleted = ref<DisplayCreditTag>();
+const numCoursesAssociatedWithTagToBeDeleted = ref<number>(0);
 
-const numberOfCourseAssignedTagToDelete = computed(() => {
-  if (tagToDelete.value == undefined) return 0;
-  const targetId = tagToDelete.value.id;
-  return getAllCourses().value.filter(({ tagIds }) => tagIds.includes(targetId))
-    .length;
+watchEffect(() => {
+  if (tagToBeDeleted.value == undefined) {
+    numCoursesAssociatedWithTagToBeDeleted.value = 0;
+    return;
+  }
+
+  timetableUseCase
+    .getRegisteredCourses(undefined, tagToBeDeleted.value.id)
+    .then((result) => {
+      if (isResultError(result)) throw result;
+      numCoursesAssociatedWithTagToBeDeleted.value = result.length;
+    });
 });
 
 const onClickDeleteModal = async () => {
-  if (tagToDelete.value == undefined) return;
-  await deleteTag(tagToDelete.value.id);
-  tagToDelete.value = undefined;
+  if (tagToBeDeleted.value == undefined) return;
+  await timetableUseCase.deleteTag(tagToBeDeleted.value.id).then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  });
+  tagToBeDeleted.value = undefined;
   updateDisplayCreditTags();
 };
 </script>

@@ -14,21 +14,21 @@
       </div>
       <div class="main__head">ログイン方法を選択</div>
       <div class="main__provider">
-        <button @click="goto(getLoginUrl('apple', redirectUrl))">
+        <button @click="login('apple')">
           <img
             class="main__login-button"
             src="../assets/login-page/login-apple.png"
             alt="appleでログイン"
           />
         </button>
-        <button @click="goto(getLoginUrl('twitter', redirectUrl))">
+        <button @click="login('twitter')">
           <img
             class="main__login-button"
             src="../assets/login-page/login-twitter.svg"
             alt="twitterでログイン"
           />
         </button>
-        <button @click="goto(getLoginUrl('google', redirectUrl))">
+        <button @click="login('google')">
           <img
             class="main__login-button"
             src="../assets/login-page/login-google.svg"
@@ -69,23 +69,24 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { Provider } from "~/domain/user";
 import GrayFilter from "~/ui/components/GrayFilter.vue";
-import { getLoginUrl } from "~/ui/url";
-import { getSetting } from "../store/setting";
+import { getLoginUrl, redirectToUrl } from "~/ui/url";
+import { useSetting } from "../store";
 
 export default defineComponent({
   components: { GrayFilter },
   setup: () => {
     const router = useRouter();
     const route = useRoute();
-    const redirectUrl = route.query.redirectUrl?.toString();
-    const setting = getSetting();
+    const redirectUrl = route.query.redirectUrl?.toString() as string;
+    const { setting } = useSetting();
     const clicked = ref(false);
-    const goto = (url: string) => {
+    const login = (provider: Provider) => {
       clicked.value = true;
-      location.href = url;
+      redirectToUrl(getLoginUrl(provider, redirectUrl));
     };
-    return { router, setting, clicked, goto, redirectUrl, getLoginUrl };
+    return { router, setting, clicked, login };
   },
 });
 </script>
