@@ -35,6 +35,23 @@ services:
     depends_on:
       - back
 
+  sponsorship:
+    container_name: twinte-sponsorship
+    image: twinte-sponsorship-dev
+    build:
+      context: ../../sponsorship
+      dockerfile: Dockerfile
+      target: dev
+    env_file:
+      - ../../sponsorship/.env.development
+    volumes:
+      - ../../:/usr/src/twin-te
+      - /usr/src/twin-te/sponsorship/node_modules
+    networks:
+      - twinte-network
+    depends_on:
+      - back
+
   proxy:
     container_name: twinte-proxy
     image: nginx
@@ -47,6 +64,7 @@ services:
     depends_on:
       - back
       - front
+      - sponsorship
 
   db:
     container_name: twinte-db
