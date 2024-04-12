@@ -1,44 +1,36 @@
-export class ResultError extends Error {
+class BaseResultError extends Error {
   readonly type = "err";
 }
 
-/**
- * An argument has right type, but an inappropriate value.
- */
-export class ValueError extends ResultError {
-  readonly name = "ValueError";
-}
-
-/**
- * The resource is not found.
- */
-export class NotFoundError extends ResultError {
+export class NotFoundError extends BaseResultError {
   readonly name = "NotFoundError";
 }
 
-/**
- * When unauthorized user try to access resource that only authorized user can access, this error occurs.
- */
-export class UnauthorizedError extends ResultError {
-  readonly name = "UnauthorizedError";
+export class UnauthenticatedError extends BaseResultError {
+  readonly name = "UnauthenticatedError";
 }
 
-export class NetworkError extends ResultError {
+export class NetworkError extends BaseResultError {
   readonly name = "NetworkError";
 }
 
-export class InternalServerError extends ResultError {
+export class InternalServerError extends BaseResultError {
   readonly name = "InternalServerError";
 }
 
+export type ResultError =
+  | NotFoundError
+  | UnauthenticatedError
+  | NetworkError
+  | InternalServerError;
+
 export const isResultError = <T>(
-  result: T
-): result is Extract<T, ResultError> => {
-  return result instanceof ResultError;
+  result: T | ResultError
+): result is ResultError => {
+  return result instanceof BaseResultError;
 };
 
-export const isNotResultError = <T>(
-  result: T
-): result is Exclude<T, ResultError> => {
-  return !(result instanceof ResultError);
+export const throwResultError = <T>(result: T | ResultError): T => {
+  if (isResultError(result)) throw result;
+  return result;
 };

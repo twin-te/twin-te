@@ -11,6 +11,8 @@ export type VacationModule = "SummerVacation" | "SpringVacation";
 
 export type Module = BaseModule | VacationModule;
 
+export type SchoolCalendarModule = Module | "WinterVacation";
+
 export type ModuleInformation = {
   year: number;
   module: Module;

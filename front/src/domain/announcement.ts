@@ -1,9 +1,9 @@
 import { Dayjs } from "dayjs";
 
-export type News = {
+export type Announcement = {
   id: string;
   title: string;
   content: string;
   publishedAt: Dayjs;
-  read: boolean;
+  isRead?: boolean;
 };

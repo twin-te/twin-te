@@ -2,12 +2,6 @@ import { Method } from "./method";
 import { Room } from "./room";
 import { Schedule } from "./schedule";
 
-/**
- * "Cover" means that schedules of target courses must be partially contained in specified schedules.
- * "Contain" means that schedules of target courses must be fully contained in specified schedules.
- */
-export type SearchMode = "Cover" | "Contain";
-
 export type Course = {
   id: string;
   year: number;
@@ -26,7 +20,7 @@ export type Course = {
 export type RegisteredCourse = {
   id: string;
   year: number;
-  code?: string; // If the course is added by manual, set to null;
+  code?: string; // If the course is added by manual, code is null.
   name: string;
   instructors: string[];
   credit: number;
