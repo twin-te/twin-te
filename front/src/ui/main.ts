@@ -5,7 +5,7 @@ import * as Sentry from "@sentry/vue";
 import { createHead } from "@vueuse/head";
 import { createApp } from "vue";
 import VueClickAway from "vue3-click-away";
-import App from "./App.vue";
+import App from "./app/App.vue";
 import { router } from "./route";
 import "./styles/_index.scss";
 
@@ -44,10 +44,3 @@ app
     })
   )
   .mount("#app");
-
-window.addEventListener("error", (event) => {
-  Sentry.captureException(event); // 手動でSentryに送信
-});
-window.addEventListener("unhandledrejection", (event) => {
-  Sentry.captureException(event); // 手動でSentryに送信
-});
