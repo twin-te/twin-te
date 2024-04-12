@@ -52,7 +52,7 @@
         :state="currentModule === module ? 'active' : 'default'"
         class="main__btn"
         size="small"
-        @click="() => setModule(currentModule)"
+        @click="setToCurrentModule"
       >
         現在の学期
       </Button>
@@ -221,11 +221,15 @@
         過去のお知らせは <span class="material-icons">campaign</span>お知らせ
         で確認できます。
       </div>
-      <div v-for="news in unreadNews" :key="news.id" class="news-modal__row">
+      <div
+        v-for="{ id, title, content, publishedAt } in unreadAnnouncements"
+        :key="id"
+        class="news-modal__row"
+      >
         <NewsBox
-          :title="news.title"
-          :content="news.content"
-          :publicationDate="formatPublishedAt(news.publishedAt)"
+          :title="title"
+          :content="content"
+          :publicationDate="formatPublishedAt(publishedAt)"
         ></NewsBox>
       </div>
     </template>
@@ -248,6 +252,11 @@ import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { normalDays, specialDays } from "~/domain/day";
+import {
+  UnauthenticatedError,
+  isResultError,
+  throwResultError,
+} from "~/domain/error";
 import { baseModules } from "~/domain/module";
 import { daytimePeriods, periods } from "~/domain/period";
 import {
@@ -267,17 +276,17 @@ import PageHeader from "~/ui/components/PageHeader.vue";
 import Popup from "~/ui/components/Popup.vue";
 import PopupContent from "~/ui/components/PopupContent.vue";
 import ToggleButton from "~/ui/components/ToggleButton.vue";
-import { getEvent, setEvent } from "~/ui/store/event";
+import { announcementUseCase, timetableUseCase } from "~/usecases";
 import { useSwitch } from "../hooks/useSwitch";
-import { toggleCourseType, setModule } from "../store";
-import { getCoursesByYear, setCoursesByYear } from "../store/course";
-import { getCourseType } from "../store/courseType";
-import { getModule, getCurrentModule } from "../store/module";
-import { getUnreadNews, setNews, updateNewsRead } from "../store/news";
-import { getSetting, setSetting } from "../store/setting";
-import { toggleSidebar } from "../store/sidebar";
-import { getAllTags } from "../store/tag";
-import { getApplicableYear, setApplicableYear } from "../store/year";
+import {
+  useAuth,
+  useCourseType,
+  useEvent,
+  useModule,
+  useSetting,
+  useSidebar,
+} from "../store";
+
 import type { NormalDay } from "~/domain/day";
 import type { BaseModule } from "~/domain/module";
 import type { Period } from "~/domain/period";
@@ -290,29 +299,39 @@ useHead({
 
 const router = useRouter();
 
-/** year */
-await setApplicableYear();
-const year = getApplicableYear();
+const { courseType, toggleCourseType } = useCourseType();
+const { event, initializeEvent } = useEvent();
+const {
+  module,
+  currentModule,
+  setModule,
+  setToCurrentModule,
+  initializeModule,
+} = useModule();
+const { setting, appliedYear: year } = useSetting();
+const { toggleSidebar } = useSidebar();
+const { isAuthenticated } = useAuth();
 
-await Promise.all([
-  setCoursesByYear(year.value),
-  setEvent(),
-  setNews(),
-  setSetting(),
+const [, , unreadAnnouncements, registeredCourses, tags] = await Promise.all([
+  initializeEvent(),
+  initializeModule(),
+  announcementUseCase
+    .getAnnouncements()
+    .then(throwResultError)
+    .then((announcements) => announcements.filter(({ isRead }) => !isRead)),
+  timetableUseCase.getRegisteredCourses(year.value).then((result) => {
+    if (result instanceof UnauthenticatedError) return [];
+    if (isResultError(result)) throw result;
+    return result;
+  }),
+  timetableUseCase.getTags().then((result) => {
+    if (result instanceof UnauthenticatedError) return [];
+    if (isResultError(result)) throw result;
+    return result;
+  }),
 ]);
 
-/** courseType */
-const courseType = getCourseType();
-
-/** setting */
-const setting = getSetting();
-
-/** module */
-const module = await getModule();
-const currentModule: BaseModule = await getCurrentModule();
-
 /** page header */
-const event = getEvent();
 const today = dayjs();
 const calendar: PageHeaderCalendar = {
   schedule: event.value,
@@ -344,8 +363,8 @@ const timelabels = [
 /** timetable */
 const timetable = computed(() =>
   getDisplayTimetable(
-    getCoursesByYear(year.value).value,
-    getAllTags().value,
+    registeredCourses,
+    tags,
     baseModules,
     setting.value.saturdayCourseMode
       ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -402,16 +421,14 @@ const onClickCourseTile = async (
 };
 
 /** news modal */
-const unreadNews = getUnreadNews();
-
 const [isNewsModalVisible, , closeNewsModal] = useSwitch(
-  unreadNews.value.length > 0
+  isAuthenticated.value && unreadAnnouncements.length > 0
 );
 
 const onClickNewsModal = async () => {
-  for (const news of unreadNews.value) {
-    await updateNewsRead(news.id, true);
-  }
+  await announcementUseCase
+    .readAnnouncements(unreadAnnouncements.map(({ id }) => id))
+    .then(throwResultError);
   closeNewsModal();
 };
 </script>

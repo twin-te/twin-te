@@ -1,14 +1,21 @@
 import { computed, ref } from "vue";
 
-// state
 const creditYear = ref<number>(0); // 0 means all year.
 
-// getter
-export const getCreditYear = () => {
-  return computed(() => creditYear.value);
-};
-
-// mutation
-export const updateCreditYear = (year = 0) => {
+const setCreditYear = (year: number) => {
   creditYear.value = year;
 };
+
+const setCreditYearToAll = () => {
+  creditYear.value = 0;
+};
+
+const useCreditYear = () => {
+  return {
+    creditYear: computed(() => creditYear.value),
+    setCreditYear,
+    setCreditYearToAll,
+  };
+};
+
+export default useCreditYear;

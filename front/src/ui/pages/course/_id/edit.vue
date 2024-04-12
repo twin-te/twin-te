@@ -108,9 +108,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef, reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { NotFoundError } from "~/domain/error";
+import { isResultError, NotFoundError } from "~/domain/error";
 import { methods } from "~/domain/method";
 import { sortSchedules, removeDuplicateSchedules } from "~/domain/schedule";
 import {
@@ -140,24 +140,23 @@ import ScheduleEditer, {
 } from "~/ui/components/ScheduleEditer.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { getCourseById, setCourseById, updateCourse } from "~/ui/store/course";
-import type { RegisteredCourse } from "~/domain/course";
+import { timetableUseCase } from "~/usecases";
 
 const route = useRoute();
 const router = useRouter();
 
 /** course */
 const { id } = route.params as { id: string };
-try {
-  await setCourseById(id);
-} catch (error) {
-  if (error instanceof NotFoundError) router.push("/404");
-  else throw error;
-}
-const course = getCourseById(id) as ComputedRef<RegisteredCourse>;
+const course = await timetableUseCase
+  .getRegisteredCourseById(id)
+  .then((result) => {
+    if (result instanceof NotFoundError) router.push("/404");
+    if (isResultError(result)) throw result;
+    return result;
+  });
 
 /** name */
-const name = ref(course.value.name);
+const name = ref(course.name);
 
 /** schedule editor */
 const {
@@ -165,13 +164,13 @@ const {
   addSchedule,
   removeSchedule,
   updateSchedules,
-} = useScheduleEditor(schedulesToDisplay(course.value.schedules));
+} = useScheduleEditor(schedulesToDisplay(course.schedules));
 
 /** credit */
-const credit = ref(creditToDisplay(course.value.credit));
+const credit = ref(creditToDisplay(course.credit));
 
 /** instructors */
-const instructors = ref([...course.value.instructors]);
+const instructors = ref([...course.instructors]);
 
 /** room */
 const targetSchedules = computed(() =>
@@ -182,14 +181,14 @@ const targetSchedules = computed(() =>
   )
 );
 
-const rooms = ref([...course.value.rooms]);
+const rooms = ref([...course.rooms]);
 
 /** checkboxes */
 const checkboxContents = reactive(
   methods.map((method) => ({
     key: method,
     label: methodMap[method],
-    checked: course.value.methods.includes(method),
+    checked: course.methods.includes(method),
   }))
 );
 
@@ -215,14 +214,20 @@ const save = async () => {
     .filter(({ checked }) => checked)
     .map(({ key }) => key);
 
-  await updateCourse(id, {
-    name: name.value,
-    credit: displayToCredit(credit.value),
-    instructors: instructors.value,
-    schedules,
-    methods,
-    rooms: rooms.value,
-  });
+  await timetableUseCase
+    .updateRegisteredCourse(id, {
+      name: name.value,
+      credit: displayToCredit(credit.value),
+      instructors: instructors.value,
+      schedules,
+      methods,
+      rooms: rooms.value,
+    })
+    .then((result) => {
+      if (isResultError(result)) throw result;
+      return result;
+    });
+
   router.push(`/course/${id}`);
 };
 

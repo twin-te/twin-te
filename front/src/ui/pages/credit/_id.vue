@@ -20,7 +20,7 @@
       <div class="main__mask">
         <div class="main__courses">
           <CreditCourseListContent
-            v-for="course in displayCourses"
+            v-for="course in courses"
             :key="course.id"
             :state="courseIdToState[course.id]"
             :code="course.code"
@@ -41,110 +41,151 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import { registeredCourseToDisplay } from "~/presentation/presenters/course";
+import { NotFoundError, isResultError } from "~/domain/error";
+import { Tag } from "~/domain/tag";
 import { creditToDisplay } from "~/presentation/presenters/credit";
+import { getDisplayCourseTags } from "~/presentation/presenters/tag";
 import CreditCourseListContent from "~/ui/components/CreditCourseListContent.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import { createNewTagId } from "~/ui/shared";
-import {
-  getAllCourses,
-  getCoursesByYear,
-  setAllCourses,
-  updateCourse,
-} from "~/ui/store/course";
-import { getCreditYear } from "~/ui/store/creditYear";
-import { createTag, getAllTags, getTagById } from "~/ui/store/tag";
-import { initializeObject } from "~/utils";
-import type { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
+import { useCreditYear } from "~/ui/store";
+import { timetableUseCase } from "~/usecases";
 import type { DisplayCourseTag } from "~/presentation/viewmodels/tag";
 import type { CreditCourseListContentState } from "~/ui/components/CreditCourseListContent.vue";
 
 const route = useRoute();
 
 const { id } = route.params as { id: string };
-const year = getCreditYear();
+const { creditYear: year } = useCreditYear();
 
-/** tag */
-const tags = getAllTags();
-const selectedTag = getTagById(id);
+const selectedTag: Tag | undefined = await timetableUseCase
+  .getTagById(id)
+  .then((result) => {
+    if (result instanceof NotFoundError) return undefined;
+    if (isResultError(result)) throw result;
+    return result;
+  });
 
-/** course */
-await setAllCourses();
-const courses = computed(() =>
-  (year.value === 0
-    ? getAllCourses().value
-    : getCoursesByYear(year.value).value
-  ).filter(
-    ({ tagIds }) =>
-      selectedTag.value == undefined || tagIds.includes(selectedTag.value.id)
-  )
+const courseIdToState = reactive<Record<string, CreditCourseListContentState>>(
+  {}
 );
 
-/** info */
-const totalCredit = computed(() =>
-  creditToDisplay(
-    courses.value.reduce((credit, course) => credit + course.credit, 0)
-  )
-);
+const totalCredits = ref<string>("");
+
+type VMCourse = {
+  id: string;
+  name: string;
+  code: string;
+  credit: string;
+  tags: DisplayCourseTag[];
+};
+
+const courses = ref<VMCourse[]>([]);
+
+const noCourseMessage = ref<string>("");
 
 const info = computed(() => ({
   year: year.value === 0 ? "すべての年度" : `${year.value}年度`,
-  tag: selectedTag.value
-    ? `タグ「${selectedTag.value.name}」`
-    : "すべての授業 ",
-  credit: `${totalCredit.value}単位`,
+  tag: selectedTag ? `タグ「${selectedTag.name}」` : "すべての授業 ",
+  credit: `${totalCredits.value}単位`,
 }));
-
-/** display course */
-const displayCourses = computed(() =>
-  reactive(
-    courses.value
-      .map((course) => registeredCourseToDisplay(course, tags.value))
-      .sort((courseA, courseB) => (courseA.code < courseB.code ? -1 : 1))
-  )
-);
-
-const courseIdToState = reactive<Record<string, CreditCourseListContentState>>(
-  initializeObject(
-    courses.value.map(({ id }) => id),
-    "default"
-  )
-);
 
 const toggleState = (id: string) => {
   courseIdToState[id] =
     courseIdToState[id] === "default" ? "selected" : "default";
 };
 
-const onCreateTag = async (
-  course: DisplayRegisteredCourse,
-  tagName: string
-) => {
+const updateView = async (init = false) => {
+  const [registeredCourses, tags] = await Promise.all([
+    timetableUseCase
+      .getRegisteredCourses(
+        year.value === 0 ? undefined : year.value,
+        selectedTag?.id
+      )
+      .then((result) => {
+        if (isResultError(result)) throw result;
+        return result;
+      }),
+    timetableUseCase
+      .getTags()
+      .then((result) => {
+        if (isResultError(result)) throw result;
+        return result;
+      })
+      .then((tags) => {
+        return tags.sort((tagA, tagB) => tagA.order - tagB.order);
+      }),
+  ]);
+
+  courses.value = registeredCourses
+    .map((registeredCourse) => {
+      return {
+        id: registeredCourse.id,
+        name: registeredCourse.name,
+        code: registeredCourse.code ?? "-",
+        credit: creditToDisplay(registeredCourse.credit),
+        tags: getDisplayCourseTags(registeredCourse, tags),
+      };
+    })
+    .sort((courseA, courseB) => {
+      if (courseA.code !== courseB.code) {
+        return courseA.code < courseB.code ? -1 : 1;
+      }
+
+      return courseA.name < courseB.name ? -1 : 1;
+    });
+
+  totalCredits.value = creditToDisplay(
+    registeredCourses.reduce((totalCredits, registeredCourse) => {
+      return totalCredits + registeredCourse.credit;
+    }, 0)
+  );
+
+  if (init) {
+    noCourseMessage.value = await timetableUseCase
+      .getRegisteredCourses()
+      .then((result) => {
+        if (isResultError(result)) throw result;
+        return result;
+      })
+      .then((allRegisteredCourses) => {
+        if (allRegisteredCourses.length === 0) {
+          return "登録済みの授業がありません。";
+        }
+        return "該当する授業がありません。";
+      });
+
+    registeredCourses.forEach(({ id }) => {
+      courseIdToState[id] = "default";
+    });
+  }
+};
+
+await updateView(true);
+
+const onCreateTag = async (course: VMCourse, tagName: string) => {
   const tagIds = course.tags.filter(({ assign }) => assign).map(({ id }) => id);
   course.tags.push({ id: createNewTagId(), name: tagName, assign: true });
-  const newTag = await createTag(tagName);
-  await updateCourse(course.id, { tagIds: [...tagIds, newTag.id] });
+  const newTag = await timetableUseCase.createTag(tagName).then((result) => {
+    if (isResultError(result)) throw result;
+    return result;
+  });
+  await timetableUseCase.updateRegisteredCourse(course.id, {
+    tagIds: [...tagIds, newTag.id],
+  });
+  updateView();
 };
 
-const onClickTag = async (
-  course: DisplayRegisteredCourse,
-  tag: DisplayCourseTag
-) => {
+const onClickTag = async (course: VMCourse, tag: DisplayCourseTag) => {
   tag.assign = !tag.assign;
-  await updateCourse(course.id, {
+  await timetableUseCase.updateRegisteredCourse(course.id, {
     tagIds: course.tags.filter(({ assign }) => assign).map(({ id }) => id),
   });
+  updateView();
 };
-
-/** no course */
-const noCourseMessage = computed(() => {
-  return getAllCourses().value.length === 0
-    ? "登録済みの授業がありません。"
-    : "該当する授業がありません。";
-});
 </script>
 
 <style lang="scss" scoped>

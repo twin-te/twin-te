@@ -14,7 +14,7 @@
     <div class="main">
       <div class="main__news">
         <div
-          v-for="{ id, title, content, publishedAt } in news"
+          v-for="{ id, title, content, publishedAt } in announcements"
           :key="id"
           class="news__row"
         >
@@ -24,7 +24,7 @@
             :publicationDate="formatPublishedAt(publishedAt)"
           ></NewsBox>
         </div>
-        <div v-if="news.length === 0" class="news__not-news">
+        <div v-if="announcements.length === 0" class="news__not-news">
           表示できるお知らせはありません。
         </div>
       </div>
@@ -34,18 +34,20 @@
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
+import { throwResultError } from "~/domain/error";
 import { formatPublishedAt } from "~/presentation/presenters/news";
 import IconButton from "~/ui/components/IconButton.vue";
 import NewsBox from "~/ui/components/NewsBox.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
-import { getNews, setNews } from "../store/news";
+import { announcementUseCase } from "~/usecases";
 
 useHead({
   title: "Twin:te | お知らせ",
 });
 
-await setNews();
-const news = getNews();
+const announcements = await announcementUseCase
+  .getAnnouncements()
+  .then(throwResultError);
 </script>
 
 <style scoped lang="scss">

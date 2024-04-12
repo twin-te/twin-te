@@ -1,45 +1,62 @@
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
-import { usePorts } from "~/adapter";
-import UseCase from "~/application/usecases";
-import { isResultError, UnauthorizedError } from "~/domain/error";
-import { BaseModule, isBaseModule } from "~/domain/module";
-import { currentAcademicYear } from "~/domain/year";
-import { deepCopy } from "~/utils";
+import { isResultError } from "~/domain/error";
+import {
+  BaseModule,
+  SchoolCalendarModule,
+  isBaseModule,
+} from "~/domain/module";
+import { schoolCalendarUseCase } from "~/usecases";
 
-// state
 const module = ref<BaseModule>("SpringA");
-let currentModule: BaseModule;
+const currentModule = ref<BaseModule>("SpringA");
 
-// getter
-export const getModule = async () => {
-  if (currentModule == undefined) {
-    currentModule = await getCurrentModule();
-    setModule(currentModule);
-  }
-
-  return computed(() => deepCopy(module.value));
-};
-
-// mutation
-export const setModule = (newModule: BaseModule) => {
+const setModule = (newModule: BaseModule) => {
   module.value = newModule;
 };
 
-// action
-const ports = usePorts();
-
-export const getCurrentModule = async () => {
-  if (currentModule) return currentModule;
-
-  const result = await UseCase.getCurrentModule(ports)(currentAcademicYear);
-  if (result instanceof UnauthorizedError) return "SpringA";
-  if (isResultError(result)) throw result;
-  return isBaseModule(result)
-    ? result
-    : result === "SummerVacation"
-    ? "SpringC"
-    : dayjs().month() < 3
-    ? "FallC"
-    : "SpringA";
+const setToCurrentModule = () => {
+  module.value = currentModule.value;
 };
+
+const schoolCalendarModuleToBaseModule = (
+  schoolCalendarModule: SchoolCalendarModule
+): BaseModule => {
+  if (isBaseModule(schoolCalendarModule)) return schoolCalendarModule;
+
+  const now = dayjs();
+
+  switch (schoolCalendarModule) {
+    case "SummerVacation":
+      return "SpringC";
+    case "WinterVacation":
+      if (now.month() === 11) return "FallB";
+      return "FallC";
+    case "SpringVacation":
+      if (now.month() === 2) return "FallC";
+      return "SpringA";
+  }
+};
+
+const initializeModule = async () => {
+  return schoolCalendarUseCase.getCurrentModule().then((result) => {
+    if (isResultError(result)) throw result;
+
+    const baseModule: BaseModule = schoolCalendarModuleToBaseModule(result);
+
+    module.value = currentModule.value = baseModule;
+  });
+};
+
+const useModule = () => {
+  return {
+    module: computed(() => module.value),
+    currentModule: computed(() => currentModule.value),
+    isCurrentModule: computed(() => module.value == currentModule.value),
+    setModule,
+    setToCurrentModule,
+    initializeModule,
+  };
+};
+
+export default useModule;

@@ -1,40 +1,55 @@
 import { useDark } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { usePorts } from "~/adapter";
-import UseCase from "~/application/usecases";
 import { isResultError } from "~/domain/error";
 import { getInitialSetting, Setting } from "~/domain/setting";
+import { currentAcademicYear, validateAcademicYear } from "~/domain/year";
+import { settingUseCase } from "~/usecases";
 import { deepCopy } from "~/utils";
+
+const appliedYear = ref<number>(currentAcademicYear);
 
 const isDark = useDark({
   selector: "body",
 });
 
-const setDarkMode = (darkMode: boolean) => {
-  isDark.value = darkMode;
-};
-
-// state
 const setting = ref<Setting>(getInitialSetting());
 
-// getter
-export const getSetting = () => {
-  return computed(() => deepCopy(setting.value));
+const setAppliedYear = (displayYear: number) => {
+  appliedYear.value = validateAcademicYear(displayYear)
+    ? displayYear
+    : currentAcademicYear;
 };
 
-// action
-const ports = usePorts();
-
-export const setSetting = async () => {
-  const result = await UseCase.getSetting(ports)();
-  if (isResultError(result)) throw result;
-  setting.value = result;
-  setDarkMode(setting.value.darkMode);
+const updateSetting = (data: Partial<Setting>) => {
+  return settingUseCase.updateSetting(data).then((result) => {
+    if (isResultError(result)) throw result;
+    setting.value = result;
+    if ("darkMode" in data) {
+      isDark.value = result.darkMode;
+    }
+    if ("displayYear" in data) {
+      setAppliedYear(result.displayYear);
+    }
+  });
 };
 
-export const updateSetting = async (inputData: Partial<Setting>) => {
-  const result = await UseCase.updateSetting(ports)(inputData);
-  if (isResultError(result)) throw result;
-  setting.value = result;
-  if ("darkMode" in inputData) setDarkMode(setting.value.darkMode);
+const initializeSetting = () => {
+  return settingUseCase.getSetting().then((result) => {
+    if (isResultError(result)) throw result;
+    setting.value = result;
+    isDark.value = result.darkMode;
+    setAppliedYear(result.displayYear);
+  });
 };
+
+const useSetting = () => {
+  return {
+    appliedYear: computed(() => appliedYear.value),
+    isDark: computed(() => isDark.value),
+    setting: computed(() => deepCopy(setting.value)),
+    updateSetting,
+    initializeSetting,
+  };
+};
+
+export default useSetting;
