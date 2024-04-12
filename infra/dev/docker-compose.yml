@@ -3,6 +3,7 @@ version: "3"
 services:
   back:
     container_name: twinte-back
+    image: twinte-back-dev
     build:
       context: ../../back
       dockerfile: Dockerfile
@@ -19,6 +20,7 @@ services:
 
   front:
     container_name: twinte-front
+    image: twinte-front-dev
     build:
       context: ../../front
       dockerfile: Dockerfile
@@ -45,7 +47,6 @@ services:
     depends_on:
       - back
       - front
-      - sponsorship
 
   db:
     container_name: twinte-db
@@ -63,6 +64,7 @@ services:
 
   db-migration:
     container_name: twinte-db-migration
+    image: twinte-db-migration
     build:
       context: ../../db
       dockerfile: Dockerfile
@@ -78,6 +80,7 @@ services:
 
   parser:
     container_name: twinte-parser
+    image: twinte-parser
     build:
       context: ../../parser
       dockerfile: Dockerfile
@@ -88,6 +91,7 @@ services:
 
   codegen:
     container_name: twinte-codegen
+    image: twinte-codegen
     build:
       context: ../../codegen
       dockerfile: Dockerfile
