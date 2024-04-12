@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { getSetting } from "../store/setting";
+import { useSetting } from "../store";
 
 export type Calendar = {
   schedule: string;
@@ -24,7 +24,7 @@ export default defineComponent({
 
   emits: ["click"],
   setup: (_, { emit }) => {
-    const setting = getSetting();
+    const { setting } = useSetting();
 
     const handleClick = () => {
       emit("click");
