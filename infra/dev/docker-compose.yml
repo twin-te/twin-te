@@ -1,0 +1,102 @@
+version: "3"
+
+services:
+  back:
+    container_name: twinte-back
+    build:
+      context: ../../back
+      dockerfile: Dockerfile
+      target: dev
+    env_file:
+      - ../../back/.env.development
+      - ../../back/.env.local
+    volumes:
+      - ../../:/usr/src/twin-te
+    networks:
+      - twinte-network
+    depends_on:
+      - db
+
+  front:
+    container_name: twinte-front
+    build:
+      context: ../../front
+      dockerfile: Dockerfile
+      target: dev
+    env_file:
+      - ../../front/.env.development
+    volumes:
+      - ../../:/usr/src/twin-te
+      - /usr/src/twin-te/front/node_modules
+    networks:
+      - twinte-network
+    depends_on:
+      - back
+
+  proxy:
+    container_name: twinte-proxy
+    image: nginx
+    volumes:
+      - ../../proxy/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 8080:80
+    networks:
+      - twinte-network
+    depends_on:
+      - back
+      - front
+      - sponsorship
+
+  db:
+    container_name: twinte-db
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+    volumes:
+      - ../../db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+    networks:
+      - twinte-network
+
+  db-migration:
+    container_name: twinte-db-migration
+    build:
+      context: ../../db
+      dockerfile: Dockerfile
+      target: migration
+    env_file:
+      - ../../db/.env.development
+    volumes:
+      - ../../:/usr/src/twin-te
+    networks:
+      - twinte-network
+    depends_on:
+      - db
+
+  parser:
+    container_name: twinte-parser
+    build:
+      context: ../../parser
+      dockerfile: Dockerfile
+    volumes:
+      - ../../:/usr/src/twin-te
+    networks:
+      - twinte-network
+
+  codegen:
+    container_name: twinte-codegen
+    build:
+      context: ../../codegen
+      dockerfile: Dockerfile
+    volumes:
+      - ../../:/usr/src/twin-te
+    networks:
+      - twinte-network
+
+networks:
+  twinte-network:
+    name: twinte-network
+    driver: bridge
