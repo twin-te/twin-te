@@ -194,11 +194,7 @@ useHead({
 });
 
 /** year */
-const {
-  creditYear: year,
-  setCreditYear,
-  setCreditYearToAll,
-} = useCreditYear();
+const { creditYear: year, setCreditYear, setCreditYearToAll } = useCreditYear();
 
 /** mode */
 const [mode, toggleMode] = useStringToggle("default", "edit");
