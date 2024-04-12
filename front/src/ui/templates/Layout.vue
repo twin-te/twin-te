@@ -5,15 +5,13 @@ import GrayFilter from "~/ui/components/GrayFilter.vue";
 import Modal from "~/ui/components/Modal.vue";
 import Toast from "~/ui/components/Toast.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { getAuthState, setAuthState } from "~/ui/store/auth";
-import { isVisibleSidebar, closeSidebar } from "~/ui/store/sidebar";
-import { deleteToast, getToasts } from "~/ui/store/toast";
-import { getAppUrl } from "~/ui/url";
+import { appUrl } from "~/ui/url";
+import { useAuth, useSidebar, useToast } from "../store";
 import Sidebar from "./Sidebar.vue";
 
-/** auth state */
-const authState = getAuthState();
-await setAuthState();
+const { isAuthenticated } = useAuth();
+const { isVisibleSidebar, closeSidebar } = useSidebar();
+const { toasts, deleteToast } = useToast();
 
 /** welcome modal */
 const [
@@ -22,24 +20,17 @@ const [
   closeWelcomeModal,
   ,
   setWelcomeModal,
-] = useSwitch(false);
-watch(
-  authState,
-  () => {
-    setWelcomeModal(!authState.value);
-  },
-  { immediate: true }
-);
-
-/** toasts */
-const toasts = getToasts();
+] = useSwitch(isAuthenticated.value);
+watch(isAuthenticated, () => setWelcomeModal(!isAuthenticated.value), {
+  immediate: true,
+});
 </script>
 
 <template>
   <div class="layout">
     <Sidebar
       v-if="$route.meta.hasSidebar ?? true"
-      :isLogin="authState"
+      :isLogin="isAuthenticated"
       :class="{ 'sidebar--close': !isVisibleSidebar }"
     ></Sidebar>
     <GrayFilter
@@ -78,7 +69,7 @@ const toasts = getToasts();
           size="medium"
           layout="fill"
           color="primary"
-          @click="$router.push(`/login?redirectUrl=${getAppUrl()}`)"
+          @click="$router.push(`/login?redirectUrl=${appUrl}`)"
         >
           ログインする
         </Button>
@@ -108,6 +99,7 @@ const toasts = getToasts();
   background: var(--base-liner);
   &__article {
     width: 100%;
+    height: 100vh;
     margin: $spacing-0 $spacing-4;
     @include landscape {
       margin: $spacing-0 $spacing-9;
