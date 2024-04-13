@@ -3,6 +3,7 @@ package donationusecase
 import (
 	"context"
 	"errors"
+	"sync"
 
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
@@ -92,7 +93,8 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 		return err
 	}
 
-	paymentIDToIsContributor := make(map[idtype.PaymentUserID]bool, len(paymentUsers))
+	paymentUserIDToIsContributor := make(map[idtype.PaymentUserID]bool, len(paymentUsers))
+	var paymentUserIDToIsContributorMutex sync.Mutex
 
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, paymentUser := range paymentUsers {
@@ -107,9 +109,11 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 					return err
 				}
 
-				paymentIDToIsContributor[paymentUser.ID] = lo.SomeBy(paymentHistories, func(paymentHistory *donationdomain.PaymentHistory) bool {
+				paymentUserIDToIsContributorMutex.Lock()
+				paymentUserIDToIsContributor[paymentUser.ID] = lo.SomeBy(paymentHistories, func(paymentHistory *donationdomain.PaymentHistory) bool {
 					return paymentHistory.Status == donationdomain.PaymentStatusSucceeded && paymentHistory.Amount > 0
 				})
+				paymentUserIDToIsContributorMutex.Unlock()
 				return nil
 			}
 		})
@@ -120,7 +124,7 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 	}
 
 	paymentUsers = lo.Filter(paymentUsers, func(paymentUser *donationdomain.PaymentUser, index int) bool {
-		return paymentIDToIsContributor[paymentUser.ID]
+		return paymentUserIDToIsContributor[paymentUser.ID]
 	})
 
 	contributors := base.Map(paymentUsers, func(paymentUser *donationdomain.PaymentUser) donationmodule.Contributor {
