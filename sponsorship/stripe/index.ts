@@ -1,9 +1,8 @@
+import { ENV_NEXT_PUBLIC_STRIPE_PUBLIC_KEY } from '@/env';
 import { loadStripe } from '@stripe/stripe-js/pure';
 
-const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string;
-
 export const redirectToCheckout = async (sessionId: string) => {
-	const stripe = await loadStripe(stripePublicKey);
+	const stripe = await loadStripe(ENV_NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 	stripe
 		?.redirectToCheckout({
 			sessionId

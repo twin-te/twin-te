@@ -2,13 +2,14 @@ import styles from './Sidebar.module.scss';
 import NavLink from '../NavLink';
 import Image from 'next/image';
 import TwinteLogo from '@/public/images/twinte-sponsor-title.png';
+import { ENV_NEXT_PUBLIC_APP_URL } from '@/env';
 
 export const Sidebar: React.FC = () => {
 	return (
 		<aside className={styles.sidebar}>
 			<div className={styles.menuContent}>
 				<div className={styles.logo}>
-					<a href="https://sponsorship.twinte.net">
+					<a href={ENV_NEXT_PUBLIC_APP_URL}>
 						<Image src={TwinteLogo} alt="Twin:te_Logo" />
 					</a>
 				</div>
