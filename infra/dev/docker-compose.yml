@@ -47,6 +47,7 @@ services:
     volumes:
       - ../../:/usr/src/twin-te
       - /usr/src/twin-te/sponsorship/node_modules
+      - /usr/src/twin-te/sponsorship/.next
     networks:
       - twinte-network
     depends_on:
