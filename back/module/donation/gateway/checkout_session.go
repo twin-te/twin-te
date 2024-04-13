@@ -66,7 +66,8 @@ func (g *impl) CreateSubscriptionCheckoutSession(ctx context.Context, paymentUse
 		Customer:           stripe.String(paymentUserID.String()),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
-				Price: stripe.String(subscriptionPlanID.String()),
+				Price:    stripe.String(subscriptionPlanID.String()),
+				Quantity: stripe.Int64(1),
 			},
 		},
 		Mode:       stripe.String(string(stripe.CheckoutSessionModeSubscription)),
