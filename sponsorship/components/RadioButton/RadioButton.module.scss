@@ -1,0 +1,32 @@
+@import "@/styles/variables.scss";
+
+.radioLabel {
+    display: block;
+  }
+  
+  .radioInput{
+    display: none;
+  }
+  
+  .radioText:before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+    padding: 3px;
+    background-clip: content-box;
+    transform: translateY(3.5px);
+  }
+  
+  .radioInput:not(:checked) + .radioText:before {
+    border-color: #72767b;
+  }
+  
+  .radioInput:checked + .radioText:before {
+    border-color: $primary;
+    background-color: $primary;
+  }

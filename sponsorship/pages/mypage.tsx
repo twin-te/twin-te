@@ -1,31 +1,22 @@
-import dayjs from 'dayjs';
 import type { NextPage } from 'next';
-import { useCurrentUser } from '../hooks/useCurrentUser';
-import { useLoginStatus } from '../hooks/useLoginStatus';
-import { usePaymentHistory } from '../hooks/usePaymentHistory';
-import { useSubscriptions } from '../hooks/useSubscriptions';
-import { cancelSubscription } from '../api/stripeApi';
 import { useRouter } from 'next/router';
-import { PaymentTypeMap } from '../types/Payment';
+import { PaymentHistory, PaymentTypeMap } from '../domain/payment_history';
 import { NextSeo } from 'next-seo';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../styles/pages/MyPage.module.scss';
-import EditUserInfoModal from '../components/EditUserInfoModal';
 import { toast } from 'bulma-toast';
 import { MdEdit } from 'react-icons/md';
+import { useCase } from '@/usecases';
+import { Subscription, User } from '@/domain';
+import { isNotFoundError, isUnauthenticatedError } from '@/usecases/error';
+import EditUserInfoModal from '@/components/EditUserInfoModal';
 
 const MyPage: NextPage = () => {
-	const isLogin = useLoginStatus();
-	const [currentUser, setCurrentUser] = useCurrentUser();
-	const subscriptions = useSubscriptions();
-	const paymentHistory = usePaymentHistory();
 	const router = useRouter();
-
-	const [isEditUserModalOpen, setIsEditUserModalOpen] = useState<boolean>(false);
 
 	const handleClick = async (id: string) => {
 		try {
-			await cancelSubscription(id);
+			await useCase.cancelSubscription(id);
 			toast({
 				message: '解約に成功しました',
 				type: 'is-success'
@@ -41,15 +32,47 @@ const MyPage: NextPage = () => {
 		}
 	};
 
-	if (isLogin === undefined || currentUser === undefined || subscriptions === undefined || paymentHistory === undefined)
-		return <div>loading...</div>;
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [user, setUser] = useState<User | undefined>(undefined);
+	const [activeSubscription, setActiveSubscription] = useState<Subscription | undefined>(undefined);
+	const [paymentHistories, setPaymentHistories] = useState<PaymentHistory[]>([]);
+	const [isEditUserModalOpen, setIsEditUserModalOpen] = useState<boolean>(false);
+
+	useEffect(() => {
+		Promise.all([
+			useCase.getUser().then((user) => {
+				setUser(user);
+			}),
+			useCase
+				.getActiveSubscription()
+				.then((activeSubscription) => {
+					setActiveSubscription(activeSubscription);
+				})
+				.catch((error) => {
+					if (isNotFoundError(error)) return;
+					throw error;
+				}),
+			useCase.getPaymentHistories().then((paymentHistories) => {
+				setPaymentHistories(paymentHistories);
+			})
+		])
+			.catch((error) => {
+				if (isUnauthenticatedError(error)) return;
+				throw error;
+			})
+			.finally(() => setIsLoading(false));
+	}, []);
+
+	if (isLoading) {
+		return <div>now loading...</div>;
+	}
 
 	return (
 		<>
 			<NextSeo title="マイページ" />
 			<div className={styles.content}>
 				<h1 className="title pagetitle">マイページ</h1>
-				{isLogin ? (
+				{user ? (
 					<>
 						<div className="card">
 							<h2 className={`title ${styles.title}`}>ユーザー情報</h2>
@@ -62,25 +85,25 @@ const MyPage: NextPage = () => {
 							<EditUserInfoModal
 								isOpen={isEditUserModalOpen}
 								onClose={() => setIsEditUserModalOpen(false)}
-								setCurrentUser={setCurrentUser}
-								prevDisplayName={currentUser?.displayName}
-								prevLink={currentUser?.link}
+								setCurrentUser={setUser}
+								prevDisplayName={user?.displayName}
+								prevLink={user?.link}
 							/>
 							<div className="content">
 								<p>
 									<a href="https://www.twinte.net/sponsor">寄付者一覧</a>
 									に表示するお名前とリンクです。
 								</p>
-								{currentUser ? (
+								{user ? (
 									<>
 										<p className="has-text-primary has-text-weight-bold is-marginless">ID</p>
-										<p>{currentUser.twinteUserId}</p>
+										<p>{user.twinteUserId}</p>
 
 										<p className="has-text-primary has-text-weight-bold is-marginless">表示名</p>
-										<p>{currentUser.displayName || '未設定'}</p>
+										<p>{user.displayName || '未設定'}</p>
 
 										<p className="has-text-primary has-text-weight-bold is-marginless">リンク</p>
-										<p>{currentUser.link || '未設定'}</p>
+										<p>{user.link || '未設定'}</p>
 									</>
 								) : (
 									<div>情報の取得に失敗しました。</div>
@@ -92,40 +115,32 @@ const MyPage: NextPage = () => {
 							<h2 className={`title ${styles.title}`}>サブスクリプションの登録状況</h2>
 							<div className="content">
 								<p className="has-text-primary has-text-weight-bold">ご利用中のプラン</p>
-								{subscriptions != null ? (
-									subscriptions.length ? (
-										<table>
-											<thead>
-												<tr>
-													<th>プラン</th>
-													<th>登録日</th>
-													<th>解約</th>
-												</tr>
-											</thead>
-											<tbody>
-												{subscriptions
-													.filter((subscription) => subscription.status === 'Active')
-													.map((subscription) => (
-														<tr key={subscription.id}>
-															<td>{subscription.plans[0].name}</td>
-															<td>{dayjs(subscription.created).format('YYYY.MM.DD')}</td>
-															<td>
-																<button
-																	className="button is-danger is-small is-inverted"
-																	onClick={() => handleClick(subscription.id)}
-																>
-																	解約
-																</button>
-															</td>
-														</tr>
-													))}
-											</tbody>
-										</table>
-									) : (
-										<div>ご利用中のプランはありません。</div>
-									)
+								{activeSubscription ? (
+									<table>
+										<thead>
+											<tr>
+												<th>プラン</th>
+												<th>登録日</th>
+												<th>解約</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr key={activeSubscription.id}>
+												<td>{activeSubscription.plan.name}</td>
+												<td>{activeSubscription.createdAt.format('YYYY.MM.DD')}</td>
+												<td>
+													<button
+														className="button is-danger is-small is-inverted"
+														onClick={() => handleClick(activeSubscription.id)}
+													>
+														解約
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								) : (
-									<div>情報の取得に失敗しました。</div>
+									<div>ご利用中のプランはありません。</div>
 								)}
 							</div>
 						</div>
@@ -133,37 +148,33 @@ const MyPage: NextPage = () => {
 						<div className="card">
 							<h2 className={`title ${styles.title}`}>寄付の履歴</h2>
 							<div className="content">
-								{paymentHistory != null ? (
-									paymentHistory.length ? (
-										<table>
-											<thead>
-												<tr>
-													<th>日付</th>
-													<th>金額</th>
-													<th>種別</th>
-												</tr>
-											</thead>
-											<tbody>
-												{paymentHistory
-													.filter((payment) => payment.status === 'Succeeded')
-													.map((payment) => (
-														<tr key={payment.id}>
-															<td>{dayjs(payment.created).format('YYYY.MM.DD')}</td>
-															<td>
-																<p>{payment.amount}円</p>
-															</td>
-															<td>
-																<p className="has-text-grey">{PaymentTypeMap[payment.type]}</p>
-															</td>
-														</tr>
-													))}
-											</tbody>
-										</table>
-									) : (
-										<div>寄付の履歴はありません。</div>
-									)
+								{paymentHistories.length !== 0 ? (
+									<table>
+										<thead>
+											<tr>
+												<th>日付</th>
+												<th>金額</th>
+												<th>種別</th>
+											</tr>
+										</thead>
+										<tbody>
+											{paymentHistories
+												.filter((payment) => payment.status === 'Succeeded')
+												.map((paymentHistory) => (
+													<tr key={paymentHistory.id}>
+														<td>{paymentHistory.createdAt.format('YYYY-MM-DD')}</td>
+														<td>
+															<p>{paymentHistory.amount}円</p>
+														</td>
+														<td>
+															<p className="has-text-grey">{PaymentTypeMap[paymentHistory.type]}</p>
+														</td>
+													</tr>
+												))}
+										</tbody>
+									</table>
 								) : (
-									<div>情報の取得に失敗しました。</div>
+									<div>寄付の履歴はありません。</div>
 								)}
 							</div>
 						</div>
