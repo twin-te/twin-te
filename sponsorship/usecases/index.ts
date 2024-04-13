@@ -6,6 +6,7 @@ import { fromPBPaymentHistory, fromPBPaymentUser, fromPBPlan, fromPBSubscription
 import { assurePresence } from '../api/converters/utils';
 import { createConnectTransport } from '@connectrpc/connect-web';
 import { ConvertAPIError, isUnauthenticatedError } from './error';
+import { ENV_NEXT_PUBLIC_API_BASE_URL } from '@/env';
 
 class UseCase {
 	#authClient: PromiseClient<typeof AuthService>;
@@ -89,7 +90,7 @@ class UseCase {
 }
 
 const transport = createConnectTransport({
-	baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL as string,
+	baseUrl: ENV_NEXT_PUBLIC_API_BASE_URL,
 	useBinaryFormat: false,
 	credentials: 'include',
 	useHttpGet: true
