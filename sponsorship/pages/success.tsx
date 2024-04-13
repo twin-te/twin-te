@@ -1,13 +1,28 @@
+import { SubscriptionPlan } from '@/domain';
+import { useCase } from '@/usecases';
 import type { NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
-import { subscriptions } from '../utils/stripe';
+import { useEffect, useState } from 'react';
 
 const Success: NextPage = () => {
 	const router = useRouter();
-	const { type, amount, plan_id } = router.query;
+	const { type, amount, plan_id: planId } = router.query;
+
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
+
+	useEffect(() => {
+		useCase
+			.getSubscriptionPlans()
+			.then((subscriptionPlans) => {
+				subscriptionPlans.sort((planA, planB) => planA.amount - planB.amount);
+				setSubscriptionPlans(subscriptionPlans);
+			})
+			.finally(() => setIsLoading(false));
+	}, []);
 
 	const getTypeText = () => {
 		if (typeof type !== 'string') return '';
@@ -18,9 +33,9 @@ const Success: NextPage = () => {
 	};
 
 	const amountText = () => {
-		if (type === 'subscription' && plan_id) {
-			const subscription = subscriptions.filter((plan) => plan.planId === plan_id);
-			return subscription.length > 0 ? subscription[0].amount : '';
+		if (type === 'subscription' && planId) {
+			const subscriptionPlan = subscriptionPlans.find((plan) => plan.id === planId);
+			return subscriptionPlan?.amount ?? '';
 		} else if (typeof amount === 'string' && /^[0-9]+(\.[0-9]+)?$/.test(amount)) {
 			return amount;
 		} else {
@@ -36,6 +51,10 @@ const Success: NextPage = () => {
 			return `Twin:teに月課金として${amountText()}円/月の寄付登録をしました！`;
 		else return 'Twin:teに寄付しました！';
 	};
+
+	if (isLoading) {
+		return <div>now loading...</div>;
+	}
 
 	return (
 		<>

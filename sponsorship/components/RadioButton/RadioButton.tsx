@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import styles from '../styles/components/RadioButton.module.scss';
+import styles from './RadioButton.module.scss';
 
 type Props = {
 	defaultChecked: boolean;
@@ -28,5 +28,3 @@ export const RadioButton: React.FC<Props> = ({ defaultChecked, name, id, value, 
 		</div>
 	);
 };
-
-export default RadioButton;

@@ -1,25 +1,42 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
-import { useLoginStatus } from '../hooks/useLoginStatus';
 import Slider from 'react-input-slider';
 import styles from '../styles/pages/Register.module.scss';
-import { registOneTime, registSubscription } from '../api/stripeApi';
-import { subscriptions } from '../utils/stripe';
+import { redirectToCheckout } from '../stripe';
 import { NextSeo } from 'next-seo';
-import { SweetModal } from '../components/SweetAlert';
-import { RadioButton } from '../components/RadioButton';
 import Link from 'next/link';
+import { useCase } from '../usecases';
+import { SubscriptionPlan } from '../domain';
+import SweetModal from '@/components/SweetAlert';
+import RadioButton from '@/components/RadioButton';
 
 const ACTUAL_RECEIVED_PERCENTAGE = 0.964;
 const MONTHLY_COST = 7052; // ref: /public/images/twinte-cost.png
 
 const Register: NextPage = () => {
-	const isLogin = useLoginStatus();
-	const [donationPriceIndex, setDonationPriceIndex] = useState(0);
 	const donationPrices = [500, 1000, 1500, 2000, 3000, 5000, 7000, 10000];
-	const [subscriptionID, setSubscriptionID] = useState(subscriptions[0].planId);
+	const [donationPriceIndex, setDonationPriceIndex] = useState(0);
 
-	const confirmRegistOneTime = async () => {
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+	const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
+	const [subscriptionPlanId, setSubscriptionPlanId] = useState<string>('');
+
+	useEffect(() => {
+		Promise.all([
+			useCase.checkAuthentication().then((isAuthenticated) => {
+				setIsAuthenticated(isAuthenticated);
+			}),
+			useCase.getSubscriptionPlans().then((subscriptionPlans) => {
+				if (subscriptionPlans.length === 0) throw new Error('not found subscription plans');
+				subscriptionPlans.sort((planA, planB) => planA.amount - planB.amount);
+				setSubscriptionPlans(subscriptionPlans);
+				setSubscriptionPlanId(subscriptionPlans[0].id);
+			})
+		]).finally(() => setIsLoading(false));
+	}, []);
+
+	const promptToLoginForOneTimeDonation = async () => {
 		await SweetModal.fire({
 			title: 'ログインをしてください。',
 			text: '寄付をするには、右上のログインボタンよりログインをしてください。',
@@ -27,7 +44,7 @@ const Register: NextPage = () => {
 			confirmButtonText: 'はい'
 		});
 	};
-	const confirmRegistSubscription = async () => {
+	const promptToLoginForSubscription = async () => {
 		await SweetModal.fire({
 			title: 'ログインをしてください。',
 			text: '継続的な寄付をするには、右上のログインボタンよりログインをしてください。',
@@ -37,17 +54,15 @@ const Register: NextPage = () => {
 	};
 
 	const radioButtons = () => {
-		return subscriptions.map((plan, index) => {
+		return subscriptionPlans.map((plan, index) => {
 			return (
-				<div key={index} className="field has-text-weight-bold">
+				<div key={plan.id} className="field has-text-weight-bold">
 					<RadioButton
 						defaultChecked={index === 0}
 						name="priceChoice"
-						id={`plan_${index}`}
-						value={plan.planId}
-						onChange={(inputValue) => {
-							setSubscriptionID(inputValue);
-						}}
+						id={plan.id}
+						value={plan.id}
+						onChange={(newValue) => setSubscriptionPlanId(newValue)}
 					>
 						{plan.amount}円/月
 					</RadioButton>
@@ -55,6 +70,10 @@ const Register: NextPage = () => {
 			);
 		});
 	};
+
+	if (isLoading) {
+		return <div>loading...</div>;
+	}
 
 	return (
 		<>
@@ -106,7 +125,9 @@ const Register: NextPage = () => {
 				<button
 					className={`button is-fullwidth is-primary ${styles.buttons}`}
 					onClick={() => {
-						isLogin ? registOneTime(donationPrices[donationPriceIndex]) : confirmRegistOneTime();
+						isAuthenticated
+							? useCase.makeOneTimeDonation(donationPrices[donationPriceIndex]).then(redirectToCheckout)
+							: promptToLoginForOneTimeDonation();
 					}}
 				>
 					寄付する
@@ -131,7 +152,9 @@ const Register: NextPage = () => {
 				<button
 					className={`button is-fullwidth is-primary ${styles.buttons}`}
 					onClick={() => {
-						isLogin ? registSubscription(subscriptionID) : confirmRegistSubscription();
+						isAuthenticated
+							? useCase.registerSubscription(subscriptionPlanId).then(redirectToCheckout)
+							: promptToLoginForSubscription();
 					}}
 				>
 					登録する

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import styles from '../styles/pages/Home.module.scss';
-import TwinteCost from '../public/images/twinte-cost.png';
+import TwinteCost from '@/public/images/twinte-cost.png';
 import Image from 'next/image';
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';

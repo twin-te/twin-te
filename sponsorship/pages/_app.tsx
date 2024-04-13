@@ -1,14 +1,14 @@
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
-import Layout from '../components/Layout';
 import '@stripe/stripe-js';
 import * as dayjs from 'dayjs';
 import 'dayjs/locale/ja';
 import { DefaultSeo } from 'next-seo';
 import SEO from '../next-seo.config';
 import * as bulmaToast from 'bulma-toast';
-import GoogleTagManager, { GoogleTagManagerId } from '../components/GoogleTagManager';
+import GoogleTagManager, { GoogleTagManagerId } from '@/components/GoogleTagManager';
 import { googleTagManagerId } from '../utils/gtm';
+import Layout from '@/components/Layout';
 
 dayjs.locale('ja');
 

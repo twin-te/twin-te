@@ -1,9 +1,9 @@
-import styles from '../styles/components/Sidebar.module.scss';
-import NavLink from './NavLink';
+import styles from './Sidebar.module.scss';
+import NavLink from '../NavLink';
 import Image from 'next/image';
-import TwinteLogo from '../public/images/twinte-sponsor-title.png';
+import TwinteLogo from '@/public/images/twinte-sponsor-title.png';
 
-const Sidebar: React.FC = () => {
+export const Sidebar: React.FC = () => {
 	return (
 		<aside className={styles.sidebar}>
 			<div className={styles.menuContent}>
@@ -55,5 +55,3 @@ const Sidebar: React.FC = () => {
 		</aside>
 	);
 };
-
-export default Sidebar;

@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { getLoginUrl } from '../utils/getAuthUrl';
-import AppleLogin from '../public/images/auth/login-apple.svg';
-import TwitterLogin from '../public/images/auth/login-twitter.svg';
-import GoogleLogin from '../public/images/auth/login-google.svg';
+import AppleLogin from '@/public/images/auth/login-apple.svg';
+import TwitterLogin from '@/public/images/auth/login-twitter.svg';
+import GoogleLogin from '@/public/images/auth/login-google.svg';
 
 const LoginModalContent = (
 	<>

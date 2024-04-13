@@ -1,19 +1,19 @@
 import { toast } from 'bulma-toast';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import { updateUserInfo } from '../api/updateUserInfo';
-import styles from '../styles/components/EditUserInfoModal.module.scss';
-import { User } from '../types';
+import styles from './EditUserInfoModal.module.scss';
+import { User } from '@/domain';
+import { useCase } from '@/usecases';
 
 type Props = {
 	isOpen: boolean;
 	onClose: () => void;
-	setCurrentUser: Dispatch<SetStateAction<User | null | undefined>>;
+	setCurrentUser: Dispatch<SetStateAction<User | undefined>>;
 	prevDisplayName: undefined | string;
 	prevLink: undefined | string;
 };
 
-const EditUserInfoModal: React.FC<Props> = ({ isOpen, onClose, setCurrentUser, prevDisplayName, prevLink }) => {
+export const EditUserInfoModal: React.FC<Props> = ({ isOpen, onClose, setCurrentUser, prevDisplayName, prevLink }) => {
 	const [displayName, setDisplayName] = useState<string>(prevDisplayName || '');
 	const [link, setLink] = useState<string>(prevLink || '');
 	const [error, setError] = useState({ displayName: '', link: '' });
@@ -44,7 +44,7 @@ const EditUserInfoModal: React.FC<Props> = ({ isOpen, onClose, setCurrentUser, p
 
 	const handleUpdateClick = async () => {
 		try {
-			const user = await updateUserInfo(displayName, link);
+			const user = await useCase.updateUserInfo(displayName, link);
 			toast({
 				message: '情報の更新に成功しました',
 				type: 'is-success'
@@ -109,5 +109,3 @@ const EditUserInfoModal: React.FC<Props> = ({ isOpen, onClose, setCurrentUser, p
 		</Modal>
 	);
 };
-
-export default EditUserInfoModal;

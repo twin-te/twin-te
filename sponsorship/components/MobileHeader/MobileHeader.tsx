@@ -1,12 +1,12 @@
-import styles from '../styles/components/MobileHeader.module.scss';
+import styles from './MobileHeader.module.scss';
 import Link from 'next/link';
 import Drawer from 'react-modern-drawer';
 import 'react-modern-drawer/dist/index.css';
 import { useEffect, useState } from 'react';
-import Sidebar from './Sidebar';
+import Sidebar from '../Sidebar';
 import Router from 'next/router';
 import Image from 'next/image';
-import TwinteLogo from '../public/images/twinte-sponsor-title.png';
+import TwinteLogo from '@/public/images/twinte-sponsor-title.png';
 
 type Props = {
 	isLogin: undefined | boolean;
@@ -14,7 +14,7 @@ type Props = {
 	handleLogout: () => void;
 };
 
-const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogout }) => {
+export const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogout }) => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const toggleDrawer = (state: boolean) => {
 		setIsDrawerOpen(() => state);
@@ -70,5 +70,3 @@ const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogout }) =
 		</header>
 	);
 };
-
-export default MobileHeader;

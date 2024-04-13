@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import styles from '../styles/pages/Gift.module.scss';
-import TwinteSticker from '../public/images/twinte-sticker.jpg';
-import TwinteUSB from '../public/images/twinte-usb.jpg';
+import TwinteSticker from '@/public/images/twinte-sticker.jpg';
+import TwinteUSB from '@/public/images/twinte-usb.jpg';
 import { NextSeo } from 'next-seo';
 
 const Gift: NextPage = () => {
@@ -23,7 +23,6 @@ const Gift: NextPage = () => {
 					<div>
 						<h1 className="title">3000円 Twin:teオリジナルステッカー</h1>
 					</div>
-
 					<div className={styles.imageWrapper}>
 						<Image objectFit="contain" src={TwinteSticker} alt="Twin:teステッカー" />
 					</div>
