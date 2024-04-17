@@ -1,11 +1,11 @@
-FROM node:21 as dev
+FROM oven/bun:1.1 as dev
 
 WORKDIR /usr/src/twin-te/front
 
-COPY package.json yarn.lock ./
+COPY package.json bun.lockb ./
 
-RUN yarn install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 
-CMD ["yarn", "vite", "--host", "0.0.0.0", "--port", "5173"]
+CMD ["bunx", "--bun", "vite", "--host", "0.0.0.0", "--port", "5173"]
