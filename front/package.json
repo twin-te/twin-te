@@ -15,7 +15,7 @@
     "lint:fix": "yarn lint --fix",
     "test": "jest",
     "apigen": "rm -rf src/infrastructure/api/aspida && npx openapi2aspida",
-    "prepare": "husky install && rimraf ./node_modules/@types/react",
+    "prepare": "rimraf ./node_modules/@types/react",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "yarn typecheck && build-storybook",
     "buf-gen": "rm -rf src/infrastructure/api/gen && buf generate --template buf.gen.yaml ../proto"

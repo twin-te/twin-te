@@ -19,6 +19,8 @@ const Import = () => import("./pages/import.vue");
 const Login = () => import("./pages/login.vue");
 const News = () => import("./pages/news.vue");
 const Settings = () => import("./pages/settings.vue");
+const Tags = () => import("./pages/tag/index.vue");
+const Tag = () => import("./pages/tag/_id.vue");
 
 const history = createWebHistory();
 
@@ -45,6 +47,8 @@ const routes: RouteRecordRaw[] = [
   { path: "/news", component: News },
   { path: "/credit", component: Credit },
   { path: "/credit/:id", component: Courses },
+  { path: "/tags", component: Tags },
+  { path: "/tags/:id", component: Tag },
   { path: "/:pathMatch(.*)*", component: Error404 },
 ];
 

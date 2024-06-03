@@ -14,11 +14,12 @@ var ParsePosition = shareddomain.NewNonNegativeIntParser("position")
 //   - ID
 //   - UserID and Position
 type Tag struct {
-	ID       idtype.TagID
-	UserID   idtype.UserID
-	Name     shareddomain.RequiredString
-	Position shareddomain.NonNegativeInt
+	ID     idtype.TagID
+	UserID idtype.UserID
 
+	Name                shareddomain.RequiredString
+	Position            shareddomain.NonNegativeInt
+	ColorHex            shareddomain.RequiredString `gorm:"default:#ed7f93"`
 	EntityBeforeUpdated *Tag
 }
 
@@ -34,6 +35,7 @@ func (t *Tag) BeforeUpdateHook() {
 type TagDataToUpdate struct {
 	Name     *shareddomain.RequiredString
 	Position *shareddomain.NonNegativeInt
+	ColorHex *shareddomain.RequiredString
 }
 
 func (t *Tag) Update(data TagDataToUpdate) {
@@ -43,6 +45,10 @@ func (t *Tag) Update(data TagDataToUpdate) {
 
 	if data.Position != nil {
 		t.Position = *data.Position
+	}
+
+	if data.ColorHex != nil {
+		t.ColorHex = *data.ColorHex
 	}
 }
 
