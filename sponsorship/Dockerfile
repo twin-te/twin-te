@@ -1,4 +1,4 @@
-FROM node:21 as dev
+FROM node:21 AS local
 
 WORKDIR /usr/src/twin-te/sponsorship
 

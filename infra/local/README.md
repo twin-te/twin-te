@@ -1,18 +1,20 @@
+# Local Environment
+
 ## How to run
 
 change directory
 
 ```sh
-cd infra/dev
+cd infra/local
 ```
 
 prepare environment variables
 
 ```sh
-cp ../../back/.env.development ../../back/.env.local
+cp ../../back/.env ../../back/.env.local
 ```
 
-please edit `../../back/.env.local` and configure OAuth2.0 (must, google is recommended) and stripe (optional)
+please edit `../../back/.env.local` and configure OAuth2.0 (required, google is recommended) and stripe (optional)
 
 run containers
 
@@ -36,10 +38,35 @@ docker compose run -u root --rm back go run .  update-courses-based-on-kdb --yea
 rm ../../back/kdb_2024.json
 ```
 
-access to http://localhost:8080
+access to http://localhost:8080 or http://localhost:8080/sponsorship
 
 stop containers
 
 ```sh
 docker compose stop
+```
+
+## Useful commands
+
+start bash in back container
+
+```sh
+docker compose exec -it back bash
+```
+
+start psql in db container
+```sh
+docker compose exec -it db psql -U postgres -d twinte_db
+```
+
+remove all containers
+
+```sh
+docker rm -f $(docker ps -aq)
+```
+
+remove unused data
+
+```sh
+docker system prune --all --force --volumes
 ```

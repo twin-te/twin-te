@@ -1,4 +1,4 @@
-FROM golang:1 as migration
+FROM golang:1 AS migration
 
 WORKDIR /usr/src/twin-te/db
 

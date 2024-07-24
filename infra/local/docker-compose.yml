@@ -1,15 +1,12 @@
-version: "3"
-
 services:
   back:
     container_name: twinte-back
-    image: twinte-back-dev
+    image: twinte-back-local
     build:
       context: ../../back
       dockerfile: Dockerfile
-      target: dev
+      target: local
     env_file:
-      - ../../back/.env.development
       - ../../back/.env.local
     volumes:
       - ../../:/usr/src/twin-te
@@ -20,13 +17,11 @@ services:
 
   front:
     container_name: twinte-front
-    image: twinte-front-dev
+    image: twinte-front-local
     build:
       context: ../../front
       dockerfile: Dockerfile
-      target: dev
-    env_file:
-      - ../../front/.env.development
+      target: local
     volumes:
       - ../../:/usr/src/twin-te
       - /usr/src/twin-te/front/node_modules
@@ -37,13 +32,11 @@ services:
 
   sponsorship:
     container_name: twinte-sponsorship
-    image: twinte-sponsorship-dev
+    image: twinte-sponsorship-local
     build:
       context: ../../sponsorship
       dockerfile: Dockerfile
-      target: dev
-    env_file:
-      - ../../sponsorship/.env.development
+      target: local
     volumes:
       - ../../:/usr/src/twin-te
       - /usr/src/twin-te/sponsorship/node_modules
@@ -89,7 +82,7 @@ services:
       dockerfile: Dockerfile
       target: migration
     env_file:
-      - ../../db/.env.development
+      - ../../db/.env
     volumes:
       - ../../:/usr/src/twin-te
     networks:
