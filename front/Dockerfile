@@ -1,4 +1,4 @@
-FROM oven/bun:1.1 as dev
+FROM oven/bun:1.1 AS local
 
 WORKDIR /usr/src/twin-te/front
 
