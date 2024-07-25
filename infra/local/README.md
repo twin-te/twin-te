@@ -1,6 +1,6 @@
 # Local Environment
 
-## How to run
+## How to Run
 
 change directory
 
@@ -46,7 +46,7 @@ stop containers
 docker compose stop
 ```
 
-## Useful commands
+## Useful Commands
 
 start bash in back container
 
