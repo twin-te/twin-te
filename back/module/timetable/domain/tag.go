@@ -32,17 +32,12 @@ func (t *Tag) BeforeUpdateHook() {
 }
 
 type TagDataToUpdate struct {
-	Name     *shareddomain.RequiredString
-	Position *shareddomain.NonNegativeInt
+	Name *shareddomain.RequiredString
 }
 
 func (t *Tag) Update(data TagDataToUpdate) {
 	if data.Name != nil {
 		t.Name = *data.Name
-	}
-
-	if data.Position != nil {
-		t.Position = *data.Position
 	}
 }
 
@@ -66,8 +61,6 @@ func RearrangeTags(tags []*Tag, ids []idtype.TagID) {
 	}
 
 	for _, tag := range tags {
-		tag.Update(TagDataToUpdate{
-			Position: lo.ToPtr(idToNewPosition[tag.ID]),
-		})
+		tag.Position = idToNewPosition[tag.ID]
 	}
 }
