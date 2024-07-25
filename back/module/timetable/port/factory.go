@@ -4,10 +4,11 @@ import (
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetabledto "github.com/twin-te/twin-te/back/module/timetable/dto"
 )
 
 type Factory interface {
-	NewCourse(courseWithoutID CourseWithoutID) (*timetabledomain.Course, error)
+	NewCourse(courseWithoutID timetabledto.CourseWithoutID) (*timetabledomain.Course, error)
 
 	NewRegisteredCourseFromCourse(userID idtype.UserID, course *timetabledomain.Course) (*timetabledomain.RegisteredCourse, error)
 

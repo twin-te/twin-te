@@ -1,4 +1,4 @@
-package timetableport
+package timetabledto
 
 import (
 	"time"
