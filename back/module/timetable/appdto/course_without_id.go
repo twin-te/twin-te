@@ -1,4 +1,4 @@
-package timetabledto
+package timetableappdto
 
 import (
 	"time"
