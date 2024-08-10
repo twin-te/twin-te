@@ -1,11 +1,15 @@
-FROM node:21 AS local
+FROM oven/bun:1.1 AS local
 
 WORKDIR /usr/src/twin-te/sponsorship
 
-COPY package.json yarn.lock ./
+# install nodejs to prevent the following error.
+# `Watchpack Error (watcher): EINVAL: Invalid argument`
+RUN apt update && apt install -y nodejs
 
-RUN yarn install --frozen-lockfile
+COPY package.json bun.lockb ./
+
+RUN bun install --frozen-lockfile
 
 COPY . .
 
-CMD ["yarn", "dev", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["bun", "run", "dev", "--hostname", "0.0.0.0", "--port", "3000"]
