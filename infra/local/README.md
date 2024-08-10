@@ -14,7 +14,7 @@ prepare environment variables
 cp ../../back/.env ../../back/.env.local
 ```
 
-please edit `../../back/.env.local` and configure OAuth2.0 (required, google is recommended) and stripe (optional)
+please edit `../../back/.env.local` to configure OAuth2.0 (required, google is recommended) and stripe (optional)
 
 run containers
 
