@@ -1,3 +1,5 @@
+name: twinte-local
+
 services:
   back:
     container_name: twinte-back
