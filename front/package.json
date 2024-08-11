@@ -5,18 +5,16 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "vue-tsc --noEmit",
-    "build": "yarn typecheck && vite build",
+    "build": "bun run typecheck && vite build",
     "build:staging": "vite build --mode staging",
-    "build:production": "yarn typecheck && SOURCE_MAP=1 vite build",
-    "preview": "yarn build && vite preview --port 8080",
+    "build:production": "SOURCE_MAP=1 vite build --mode production",
+    "preview": "bun run build && vite preview --port 8080",
     "format": "prettier ./src --check",
     "format:fix": "prettier ./src --write",
     "lint": "eslint --ext .ts,.tsx,.vue ./src",
-    "lint:fix": "yarn lint --fix",
-    "test": "jest",
-    "apigen": "rm -rf src/infrastructure/api/aspida && npx openapi2aspida",
+    "lint:fix": "bun run lint --fix",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "yarn typecheck && build-storybook",
+    "build-storybook": "bun run typecheck && build-storybook",
     "buf-gen": "rm -rf src/infrastructure/api/gen && buf generate --template buf.gen.yaml ../proto"
   },
   "dependencies": {

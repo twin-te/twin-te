@@ -1,0 +1,121 @@
+name: cd-staging
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  push-image-back:
+    runs-on: ubuntu-latest
+    environment: stg
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/twin-te/twinte-back
+          tags: stg
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: back
+          target: deploy
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  push-image-front:
+    runs-on: ubuntu-latest
+    environment: stg
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/twin-te/twinte-front
+          tags: stg
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: front
+          target: staging-deploy
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  push-image-sponsorship:
+    runs-on: ubuntu-latest
+    environment: stg
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/twin-te/twinte-sponsorship
+          tags: stg
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: sponsorship
+          target: staging-runner
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [push-image-back, push-image-front, push-image-sponsorship]
+    environment: stg
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Deploy to APP Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.APP_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: ~/twinte-infra-v4/staging/app/script/deploy.sh
+      - name: Deploy to DB Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DB_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: ~/twin-te/infra/staging/db/deploy.sh
