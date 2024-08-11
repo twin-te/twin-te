@@ -1,0 +1,29 @@
+version: "3"
+services:
+  front:
+    image: ghcr.io/twin-te/twinte-front:stg
+    restart: unless-stopped
+  sponsorship:
+    image: ghcr.io/twin-te/twinte-sponsorship:stg
+    restart: unless-stopped
+  back:
+    image: ghcr.io/twin-te/twinte-back:stg
+    restart: unless-stopped
+    env_file: .twinte-back.env
+    extra_hosts:
+      - "db:10.0.0.3" # TODO: IPアドレスを.env等で指定できると良い
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
+      - "0.0.0.0:443:443/udp"
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
