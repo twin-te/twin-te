@@ -1,72 +1,65 @@
-# Local Environment
+# 開発環境の構築方法
 
-## How to Run
+## Twin:te Web アプリ開発
 
-change directory
+Twin:te をローカルで動かすために最低限の手順を以下に示します。
 
-```sh
-cd infra/local
+### 環境変数の設定
+
+`.env.local` を作成します。
+
+```console
+cp ./back/.env ./back/.env.local
 ```
 
-prepare environment variables
+Twin:te をローカルで動かすためには最低限 Google OAuth2.0 の設定が必要です。
+`.env.local` の `OAUTH_GOOGLE_CLIENT_ID` と `OAUTH_GOOGLE_CLIENT_SECRET` にそれぞれ取得した情報を設定してください。
+Twin:te 関係者は共有されている環境変数を参照できます。
+外部コントリビュータの方は[Google OAuth2.0 の設定(準備中)](./docs/GoogleOAuth.md)で入手した情報を用いてください。
 
-```sh
-cp ../../back/.env ../../back/.env.local
-```
+### 立ち上げ
 
-please edit `../../back/.env.local` to configure OAuth2.0 (required, google is recommended) and stripe (optional)
+最初に DB のマイグレーションをします。
 
-run containers
-
-```sh
-docker compose up -d proxy
-```
-
-db migration
-
-```sh
+```console
 docker compose run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
 docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_URL}'
 ```
 
-update courses based on KdB
+次に [KdB](https://kdb.tsukuba.ac.jp/) から最新の講義情報を取得します。
 
-```sh
+```console
 docker compose run -u root --rm parser python ./download_and_parse.py --year 2024 --output-path kdb_2024.json
 mv ../../parser/kdb_2024.json ../../back/kdb_2024.json
 docker compose run -u root --rm back go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path kdb_2024.json
 rm ../../back/kdb_2024.json
 ```
 
-access to http://localhost:8080 or http://localhost:8080/sponsorship
+アプリケーションを立ち上げます。
 
-stop containers
-
-```sh
-docker compose stop
+```console
+docker compose up proxy back front
 ```
 
-## Useful Commands
+`http://localhost:8080` で Twin:te が使用できます。  
 
-start bash in back container
+`http://localhost:8080/sponsorship` で寄付ページが使用できます。
 
-```sh
-docker compose exec -it back bash
+## 寄付ページの開発
+
+寄付ページをローカルで動かすための手順を以下に示します。
+
+### 環境変数の設定
+
+`/back/.env.local` の `STRIPE_KEY` に Stripe の API キーを設定してください。  
+Twin:te 関係者は共有されている環境変数を参照できます。外部コントリビュータの方は[Stripe の設定(準備中)](./docs/Stripe.md)で入手した情報を用いてください。
+
+### 立ち上げ
+
+アプリケーションを立ち上げます。
+
+```console
+docker compose up proxy back sponsorship
 ```
 
-start psql in db container
-```sh
-docker compose exec -it db psql -U postgres -d twinte_db
-```
-
-remove all containers
-
-```sh
-docker rm -f $(docker ps -aq)
-```
-
-remove unused data
-
-```sh
-docker system prune --all --force --volumes
-```
+`http://localhost:8080/sponsorship` で寄付ページが使用できます。
