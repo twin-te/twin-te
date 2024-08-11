@@ -15,7 +15,7 @@ cp ./back/.env ./back/.env.local
 Twin:te をローカルで動かすためには最低限 Google OAuth2.0 の設定が必要です。
 `.env.local` の `OAUTH_GOOGLE_CLIENT_ID` と `OAUTH_GOOGLE_CLIENT_SECRET` にそれぞれ取得した情報を設定してください。
 Twin:te 関係者は共有されている環境変数を参照できます。
-外部コントリビュータの方は[Google OAuth2.0 の設定(準備中)](./docs/GoogleOAuth.md)で入手した情報を用いてください。
+外部コントリビュータの方は[Google OAuth2.0 の設定](../../docs/setup-google-oauth/README.md)で入手した情報を用いてください。
 
 ### 立ち上げ
 
@@ -52,7 +52,7 @@ docker compose up proxy back front
 ### 環境変数の設定
 
 `/back/.env.local` の `STRIPE_KEY` に Stripe の API キーを設定してください。  
-Twin:te 関係者は共有されている環境変数を参照できます。外部コントリビュータの方は[Stripe の設定(準備中)](./docs/Stripe.md)で入手した情報を用いてください。
+Twin:te 関係者は共有されている環境変数を参照できます。外部コントリビュータの方は[Stripe の設定](../../docs/setup-stripe/README.md)で入手した情報を用いてください。
 
 ### 立ち上げ
 
