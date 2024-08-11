@@ -1,0 +1,25 @@
+version: "3"
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    env_file: .db.env
+    ports: 
+      - "0.0.0.0:5432:5432" # TODO: IPアドレスを.env等で指定できると良い
+    volumes: 
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  db_migration:
+    build:
+      context: ./migration
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .db-migration.env
+
+volumes:
+  db_data:
