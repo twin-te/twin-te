@@ -1,7 +1,6 @@
-version: "3"
 services:
   db:
-    image: postgres:15
+    image: postgres:16
     restart: unless-stopped
     env_file: .db.env
     ports: 
@@ -13,13 +12,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  db_migration:
+  db-migration:
     build:
-      context: ./migration
+      target: db-migration
     depends_on:
       db:
         condition: service_healthy
     env_file: .db-migration.env
+    volumes:
+      - ../../../db/migrations:/app/migrations
 
 volumes:
   db_data:

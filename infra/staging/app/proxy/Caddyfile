@@ -2,7 +2,7 @@
   email info@twinte.net
 }
 
-app.dev.twinte.net {
+app.stg.twinte.net {
   reverse_proxy /api/* back:8080
   reverse_proxy /auth/* back:8080
   reverse_proxy /sponsorship/* sponsorship:3000

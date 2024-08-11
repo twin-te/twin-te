@@ -1,6 +1,7 @@
 #!/bin/bash -eux
 
-cd ~/twinte-infra-v4/staging/app
+cd $(dirname $0) || exit
+cd ../
 
 docker compose pull
 docker compose up -d
