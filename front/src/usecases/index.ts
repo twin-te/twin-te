@@ -11,7 +11,7 @@ import { ITimetableUseCase, TimetableUseCase } from "./timetable";
 
 const transport = createConnectTransport({
   baseUrl: import.meta.env.VITE_API_URL,
-  useBinaryFormat: false,
+  useBinaryFormat: true,
   credentials: "include",
   useHttpGet: true,
 });
