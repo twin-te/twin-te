@@ -125,7 +125,7 @@ const Register: NextPage = () => {
 				<button
 					className={`button is-fullwidth is-primary ${styles.buttons}`}
 					onClick={() => {
-						isAuthenticated
+						isAuthenticated // eslint-disable-line @typescript-eslint/no-unused-expressions
 							? useCase.makeOneTimeDonation(donationPrices[donationPriceIndex]).then(redirectToCheckout)
 							: promptToLoginForOneTimeDonation();
 					}}
@@ -152,7 +152,7 @@ const Register: NextPage = () => {
 				<button
 					className={`button is-fullwidth is-primary ${styles.buttons}`}
 					onClick={() => {
-						isAuthenticated
+						isAuthenticated // eslint-disable-line @typescript-eslint/no-unused-expressions
 							? useCase.registerSubscription(subscriptionPlanId).then(redirectToCheckout)
 							: promptToLoginForSubscription();
 					}}
