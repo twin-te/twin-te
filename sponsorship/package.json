@@ -27,6 +27,7 @@
     "react-input-slider": "^6.0.1",
     "react-modal": "^3.14.4",
     "react-modern-drawer": "^1.1.1",
+    "sharp": "^0.33.4",
     "sweetalert2": "^11.4.8",
     "sweetalert2-react-content": "^5.0.0"
   },
