@@ -9,6 +9,9 @@ jobs:
   push-image-back:
     runs-on: ubuntu-latest
     environment: stg
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,6 +42,9 @@ jobs:
   push-image-front:
     runs-on: ubuntu-latest
     environment: stg
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,6 +75,9 @@ jobs:
   push-image-sponsorship:
     runs-on: ubuntu-latest
     environment: stg
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
