@@ -1,12 +1,12 @@
 services:
   front:
-    image: ghcr.io/twin-te/twinte-front:stg
+    image: ghcr.io/twin-te/twin-te:front-stg
     restart: unless-stopped
   sponsorship:
-    image: ghcr.io/twin-te/twinte-sponsorship:stg
+    image: ghcr.io/twin-te/twin-te:sponsorship-stg
     restart: unless-stopped
   back:
-    image: ghcr.io/twin-te/twinte-back:stg
+    image: ghcr.io/twin-te/twin-te:back-stg
     restart: unless-stopped
     env_file: .back.env
     extra_hosts:
