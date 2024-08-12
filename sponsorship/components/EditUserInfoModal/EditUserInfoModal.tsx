@@ -51,7 +51,7 @@ export const EditUserInfoModal: React.FC<Props> = ({ isOpen, onClose, setCurrent
 			});
 			setCurrentUser(user);
 			onClose();
-		} catch (error) {
+		} catch {
 			toast({
 				message: 'エラーが発生しました',
 				type: 'is-danger'
