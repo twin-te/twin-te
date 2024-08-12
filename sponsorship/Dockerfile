@@ -23,7 +23,7 @@ COPY . .
 COPY .env.staging .env.local
 RUN bun run build
 
-FROM node:22-bullseye-slim AS staging-runner
+FROM node:22-bullseye-slim AS staging-deploy
 WORKDIR /app
 
 COPY --from=staging-builder /app/node_modules ./node_modules
@@ -46,7 +46,7 @@ COPY . .
 COPY .env.production .env.local
 RUN bun run build
 
-FROM node:22-bullseye-slim AS production-runner
+FROM node:22-bullseye-slim AS production-deploy
 WORKDIR /app
 
 COPY --from=production-builder /app/node_modules ./node_modules
