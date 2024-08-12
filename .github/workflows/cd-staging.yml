@@ -101,7 +101,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          script: ~/twinte-infra-v4/staging/app/script/deploy.sh
+          script: ~/twin-te/infra/staging/app/script/deploy.sh
       - name: Deploy to DB Server
         uses: appleboy/ssh-action@v1.0.3
         with:
