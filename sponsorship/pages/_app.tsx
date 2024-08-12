@@ -13,7 +13,7 @@ import Layout from '@/components/Layout';
 dayjs.locale('ja');
 
 bulmaToast.setDefaults({
-	message: "",
+	message: '',
 	position: 'top-center'
 });
 
