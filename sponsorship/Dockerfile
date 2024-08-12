@@ -17,7 +17,7 @@ WORKDIR /app
 RUN npm install -g bun@v1.1.22
 
 COPY package.json bun.lockb ./
-RUN bun install --production --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 COPY .env.staging .env.local
@@ -40,7 +40,7 @@ WORKDIR /app
 RUN npm install -g bun@v1.1.22
 
 COPY package.json bun.lockb ./
-RUN bun install --production --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 COPY .env.production .env.local
