@@ -83,7 +83,7 @@ jobs:
           context: sponsorship
           target: staging-deploy
           push: true
-          tags: ghcr.io/twin-te/twin-te:back-stg
+          tags: ghcr.io/twin-te/twin-te:sponsorship-stg
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
