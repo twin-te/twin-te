@@ -1,7 +1,6 @@
 #!/bin/bash -eux
 
 cd $(dirname $0) || exit
-cd ../
 
 git switch master
 git pull
