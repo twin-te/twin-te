@@ -14,7 +14,7 @@
     "@bufbuild/protobuf": "^2.0.0",
     "@connectrpc/connect": "^1.4.0",
     "@connectrpc/connect-web": "^1.4.0",
-    "@stripe/stripe-js": "^1.54.2",
+    "@stripe/stripe-js": "^4.2.0",
     "axios": "^1.7.3",
     "bulma": "^0.9.4",
     "bulma-toast": "^2.4.4",
