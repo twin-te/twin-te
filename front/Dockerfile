@@ -17,7 +17,7 @@ WORKDIR /app
 RUN npm install -g bun@v1.1.22
 
 COPY package.json bun.lockb ./
-RUN bun install --production --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 RUN bun run build:staging
@@ -32,7 +32,7 @@ WORKDIR /app
 RUN npm install -g bun@v1.1.22
 
 COPY package.json bun.lockb ./
-RUN bun install --production --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY . .
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
