@@ -2,7 +2,7 @@ name: cd-staging
 on:
   push:
     branches:
-      - feature/cd-staging #TODO
+      - master
   workflow_dispatch:
 
 jobs:
