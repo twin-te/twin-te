@@ -26,6 +26,8 @@ RUN bun run build
 FROM node:22-bullseye-slim AS staging-deploy
 WORKDIR /app
 
+RUN npm install -g bun@v1.1.22
+
 COPY --from=staging-builder /app/node_modules ./node_modules
 COPY --from=staging-builder /app/.next ./.next
 COPY --from=staging-builder /app/public ./public
@@ -48,6 +50,8 @@ RUN bun run build
 
 FROM node:22-bullseye-slim AS production-deploy
 WORKDIR /app
+
+RUN npm install -g bun@v1.1.22
 
 COPY --from=production-builder /app/node_modules ./node_modules
 COPY --from=production-builder /app/.next ./.next
