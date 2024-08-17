@@ -34,7 +34,7 @@ COPY --from=staging-builder /app/public ./public
 
 ENV NODE_ENV production
 EXPOSE 3000
-CMD ["bun", "run", "start", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["bun", "run", "next", "start", "--hostname", "0.0.0.0", "--port", "3000"]
 
 FROM node:22-bullseye-slim AS production-builder
 WORKDIR /app
@@ -59,4 +59,4 @@ COPY --from=production-builder /app/public ./public
 
 ENV NODE_ENV production
 EXPOSE 3000
-CMD ["bun", "run", "start", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["bun", "run", "next", "start", "--hostname", "0.0.0.0", "--port", "3000"]

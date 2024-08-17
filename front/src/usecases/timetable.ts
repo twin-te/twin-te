@@ -512,7 +512,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     return registeredCourse ?? new NotFoundError();
   }
 
-  // TODO
+  // If you want to update either schedules or rooms, please specify both.
   async updateRegisteredCourse(
     id: string,
     data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
@@ -537,7 +537,7 @@ export class TimetableUseCase implements ITimetableUseCase {
             })
           : undefined,
         schedules:
-          data.schedules && data.rooms // TODO
+          data.schedules && data.rooms
             ? new TimetableV1PB.ScheduleList({
                 values: toPBSchedules(data.schedules, data.rooms),
               })
