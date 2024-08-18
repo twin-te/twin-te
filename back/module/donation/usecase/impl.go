@@ -16,7 +16,7 @@ var _ donationmodule.UseCase = (*impl)(nil)
 type impl struct {
 	a authmodule.AccessController
 	f donationport.Factory
-	g donationport.Gateway
+	i donationport.Integrator
 	r donationport.Repository
 
 	contributorsCache      []donationmodule.Contributor
@@ -26,8 +26,8 @@ type impl struct {
 	totalAmountCacheMutex sync.RWMutex
 }
 
-func New(a authmodule.AccessController, f donationport.Factory, g donationport.Gateway, r donationport.Repository) *impl {
-	uc := &impl{a: a, f: f, g: g, r: r}
+func New(a authmodule.AccessController, f donationport.Factory, i donationport.Integrator, r donationport.Repository) *impl {
+	uc := &impl{a: a, f: f, i: i, r: r}
 
 	go func() {
 		for {

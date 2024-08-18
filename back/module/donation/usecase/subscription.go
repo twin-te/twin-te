@@ -12,7 +12,7 @@ import (
 )
 
 func (uc *impl) GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {
-	return uc.g.ListSubscriptionPlans(ctx)
+	return uc.i.ListSubscriptionPlans(ctx)
 }
 
 func (uc *impl) GetActiveSubscription(ctx context.Context) (*donationdomain.Subscription, error) {
@@ -26,7 +26,7 @@ func (uc *impl) GetActiveSubscription(ctx context.Context) (*donationdomain.Subs
 		return nil, err
 	}
 
-	subscriptions, err := uc.g.ListSubscriptions(ctx, paymentUser.ID)
+	subscriptions, err := uc.i.ListSubscriptions(ctx, paymentUser.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (uc *impl) Unsubscribe(ctx context.Context, id idtype.SubscriptionID) error
 		return err
 	}
 
-	subscriptions, err := uc.g.ListSubscriptions(ctx, paymentUser.ID)
+	subscriptions, err := uc.i.ListSubscriptions(ctx, paymentUser.ID)
 	if err != nil {
 		return err
 	}
@@ -69,5 +69,5 @@ func (uc *impl) Unsubscribe(ctx context.Context, id idtype.SubscriptionID) error
 		)
 	}
 
-	return uc.g.DeleteSubscription(ctx, id)
+	return uc.i.DeleteSubscription(ctx, id)
 }

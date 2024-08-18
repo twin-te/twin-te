@@ -1,4 +1,4 @@
-package donationgateway
+package donationintegrator
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-func (g *impl) ListPaymentHistories(ctx context.Context, paymentUserID *idtype.PaymentUserID) ([]*donationdomain.PaymentHistory, error) {
+func (i *impl) ListPaymentHistories(ctx context.Context, paymentUserID *idtype.PaymentUserID) ([]*donationdomain.PaymentHistory, error) {
 	var startingAfter *string
 
 	var customer *string

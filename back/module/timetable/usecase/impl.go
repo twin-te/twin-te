@@ -11,10 +11,10 @@ var _ timetablemodule.UseCase = (*impl)(nil)
 type impl struct {
 	a authmodule.AccessController
 	f timetableport.Factory
-	g timetableport.Gateway
+	i timetableport.Integrator
 	r timetableport.Repository
 }
 
-func New(a authmodule.AccessController, f timetableport.Factory, g timetableport.Gateway, r timetableport.Repository) *impl {
-	return &impl{a, f, g, r}
+func New(a authmodule.AccessController, f timetableport.Factory, i timetableport.Integrator, r timetableport.Repository) *impl {
+	return &impl{a, f, i, r}
 }
