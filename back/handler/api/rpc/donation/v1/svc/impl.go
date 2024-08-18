@@ -10,6 +10,7 @@ import (
 	"github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1/donationv1connect"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
@@ -67,16 +68,24 @@ func (svc *impl) UpdatePaymentUser(ctx context.Context, req *connect.Request[don
 	in := donationmodule.UpdateOrCreatePaymentUserIn{}
 
 	if req.Msg.DisplayName != nil {
-		in.DisplayName, err = base.ToPtrWithErr(donationdomain.ParseDisplayName(*req.Msg.DisplayName))
-		if err != nil {
-			return
+		if req.Msg.DisplayName.Value == nil {
+			in.DisplayName = new(*shareddomain.RequiredString)
+		} else {
+			in.DisplayName, err = base.ToDoublePtrWithErr(donationdomain.ParseDisplayName(req.Msg.DisplayName.GetValue()))
+			if err != nil {
+				return
+			}
 		}
 	}
 
 	if req.Msg.Link != nil {
-		in.Link, err = base.ToPtrWithErr(donationdomain.ParseLink(*req.Msg.Link))
-		if err != nil {
-			return
+		if req.Msg.Link.Value == nil {
+			in.Link = new(*donationdomain.Link)
+		} else {
+			in.Link, err = base.ToDoublePtrWithErr(donationdomain.ParseLink(req.Msg.Link.GetValue()))
+			if err != nil {
+				return
+			}
 		}
 	}
 

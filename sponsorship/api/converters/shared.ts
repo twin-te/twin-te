@@ -1,6 +1,10 @@
 import dayjs, { Dayjs } from 'dayjs';
 import * as SharedPB from '../../api/gen/shared/type_pb';
 
+export const toOptionalString = (value?: string): SharedPB.OptionalString => {
+	return new SharedPB.OptionalString({ value });
+};
+
 export const fromPBUUID = (pbUUID: SharedPB.UUID): string => {
 	return pbUUID.value;
 };

@@ -9,6 +9,10 @@ func ToPtrWithErr[T any](x T, err error) (*T, error) {
 	return &x, nil
 }
 
+func ToDoublePtrWithErr[T any](x T, err error) (**T, error) {
+	return ToPtrWithErr(ToPtrWithErr(x, err))
+}
+
 func EqualPtr[T comparable](p1, p2 *T) bool {
 	if p1 == nil && p2 == nil {
 		return true
