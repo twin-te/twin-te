@@ -13,80 +13,80 @@ option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation
 service DonationService {
   rpc CreateOneTimeCheckoutSession(CreateOneTimeCheckoutSessionRequest) returns (CreateOneTimeCheckoutSessionResponse) {
     option (shared.twinte) = {
-      authentication: OPTIONAL,
-      error_codes: [],
+      authentication: OPTIONAL
+      error_codes: []
     };
   }
 
   rpc CreateSubscriptionCheckoutSession(CreateSubscriptionCheckoutSessionRequest) returns (CreateSubscriptionCheckoutSessionResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
+      authentication: REQURED
       error_codes: [
         "donation.ActiveSubscriptionAlreadyExists",
         "donation.SubscriptionPlanNotFound"
-      ],
+      ]
     };
   }
 
   rpc GetPaymentUser(GetPaymentUserRequest) returns (GetPaymentUserResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc UpdatePaymentUser(UpdatePaymentUserRequest) returns (UpdatePaymentUserResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc GetPaymentHistories(GetPaymentHistoriesRequest) returns (GetPaymentHistoriesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc GetSubscriptionPlans(GetSubscriptionPlansRequest) returns (GetSubscriptionPlansResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: [],
+      authentication: NOT_REQURED
+      error_codes: []
     };
   }
 
   rpc GetActiveSubscription(GetActiveSubscriptionRequest) returns (GetActiveSubscriptionResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["donation.SubscriptionNotFound"],
+      authentication: REQURED
+      error_codes: ["donation.SubscriptionNotFound"]
     };
   }
 
   rpc Unsubscribe(UnsubscribeRequest) returns (UnsubscribeResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["donation.SubscriptionNotFound"],
+      authentication: REQURED
+      error_codes: ["donation.SubscriptionNotFound"]
     };
   }
 
   rpc GetTotalAmount(GetTotalAmountRequest) returns (GetTotalAmountResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: [],
+      authentication: NOT_REQURED
+      error_codes: []
     };
   }
 
   rpc GetContributors(GetContributorsRequest) returns (GetContributorsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: [],
+      authentication: NOT_REQURED
+      error_codes: []
     };
   }
 }

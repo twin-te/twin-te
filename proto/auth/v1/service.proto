@@ -14,24 +14,22 @@ service AuthService {
   rpc GetMe(GetMeRequest) returns (GetMeResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc DeleteUserAuthentication(DeleteUserAuthenticationRequest) returns (DeleteUserAuthenticationResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [
-        "auth.UserHasAtLeastOneAuthentication"
-      ],
+      authentication: REQURED
+      error_codes: ["auth.UserHasAtLeastOneAuthentication"]
     };
   }
 
   rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 }
