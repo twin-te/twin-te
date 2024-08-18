@@ -80,8 +80,8 @@ type UseCase interface {
 }
 
 type UpdateOrCreatePaymentUserIn struct {
-	DisplayName *shareddomain.RequiredString
-	Link        *donationdomain.Link
+	DisplayName **shareddomain.RequiredString
+	Link        **donationdomain.Link
 }
 
 type Contributor struct {

@@ -44,7 +44,10 @@ export const EditUserInfoModal: React.FC<Props> = ({ isOpen, onClose, setCurrent
 
 	const handleUpdateClick = async () => {
 		try {
-			const user = await useCase.updateUserInfo(displayName, link);
+			const user = await useCase.updateUserInfo(
+				displayName == '' ? undefined : displayName,
+				link == '' ? undefined : link
+			);
 			toast({
 				message: '情報の更新に成功しました',
 				type: 'is-success'

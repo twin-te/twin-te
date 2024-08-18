@@ -3,6 +3,10 @@ package shared;
 
 option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/sharedpb";
 
+message OptionalString {
+  optional string value = 1;
+}
+
 message AcademicYear {
   int32 value = 1;
 }

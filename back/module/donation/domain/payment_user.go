@@ -63,17 +63,17 @@ func (pu *PaymentUser) BeforeUpdateHook() {
 }
 
 type PaymentUserDataToUpdate struct {
-	DisplayName *shareddomain.RequiredString
-	Link        *Link
+	DisplayName **shareddomain.RequiredString
+	Link        **Link
 }
 
 func (pu *PaymentUser) Update(data PaymentUserDataToUpdate) {
 	if data.DisplayName != nil {
-		pu.DisplayName = data.DisplayName
+		pu.DisplayName = *data.DisplayName
 	}
 
 	if data.Link != nil {
-		pu.Link = data.Link
+		pu.Link = *data.Link
 	}
 }
 

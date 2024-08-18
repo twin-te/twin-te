@@ -70,7 +70,7 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 		return
 	}
 
-	paymentUser, err = uc.f.NewPaymentUser(userID, in.DisplayName, in.Link)
+	paymentUser, err = uc.f.NewPaymentUser(userID, *in.DisplayName, *in.Link)
 	if err != nil {
 		return
 	}

@@ -3,6 +3,7 @@ package donation.v1;
 
 import "donation/v1/type.proto";
 import "shared/option.proto";
+import "shared/type.proto";
 
 option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1;donationv1";
 
@@ -114,8 +115,8 @@ message GetPaymentUserResponse {
 }
 
 message UpdatePaymentUserRequest {
-  optional string display_name = 1;
-  optional string link = 2;
+  optional shared.OptionalString display_name = 1;
+  optional shared.OptionalString link = 2;
 }
 
 message UpdatePaymentUserResponse {

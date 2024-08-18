@@ -7,6 +7,7 @@ import { assurePresence } from '../api/converters/utils';
 import { createConnectTransport } from '@connectrpc/connect-web';
 import { ConvertAPIError, isUnauthenticatedError } from './error';
 import { ENV_NEXT_PUBLIC_API_BASE_URL } from '@/env';
+import { toOptionalString } from '@/api/converters/shared';
 
 class UseCase {
 	#authClient: PromiseClient<typeof AuthService>;
@@ -24,9 +25,9 @@ class UseCase {
 			.catch(ConvertAPIError);
 	}
 
-	async updateUserInfo(newDisplayName: string, newLink: string): Promise<User> {
+	async updateUserInfo(newDisplayName?: string, newLink?: string): Promise<User> {
 		return this.#donationClient
-			.updatePaymentUser({ displayName: newDisplayName, link: newLink })
+			.updatePaymentUser({ displayName: toOptionalString(newDisplayName), link: toOptionalString(newLink) })
 			.then((res) => fromPBPaymentUser(assurePresence(res.paymentUser)))
 			.catch(ConvertAPIError);
 	}
