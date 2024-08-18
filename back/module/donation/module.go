@@ -3,6 +3,7 @@ package donationmodule
 import (
 	"context"
 
+	donationappdto "github.com/twin-te/twin-te/back/module/donation/appdto"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -76,15 +77,10 @@ type UseCase interface {
 	// Contributor is payment user who has made at least one donation and has registered name for display.
 	//
 	// [Authentication] not required
-	GetContributors(ctx context.Context) ([]Contributor, error)
+	GetContributors(ctx context.Context) ([]donationappdto.Contributor, error)
 }
 
 type UpdateOrCreatePaymentUserIn struct {
 	DisplayName **shareddomain.RequiredString
 	Link        **donationdomain.Link
-}
-
-type Contributor struct {
-	DisplayName shareddomain.RequiredString
-	Link        *donationdomain.Link
 }
