@@ -1,4 +1,4 @@
-package donationgateway
+package donationintegrator
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (g *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.PaymentUserID) ([]*donationdomain.Subscription, error) {
+func (i *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.PaymentUserID) ([]*donationdomain.Subscription, error) {
 	var startingAfter *string
 
 	stripeSubscriptions := make([]*stripe.Subscription, 0)
@@ -51,7 +51,7 @@ func (g *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.Payme
 	return base.MapWithErr(stripeSubscriptions, fromStripeSubscription)
 }
 
-func (g *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID) (err error) {
+func (i *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID) (err error) {
 	params := &stripe.SubscriptionCancelParams{
 		Params: stripe.Params{
 			Context: ctx,
@@ -70,8 +70,8 @@ func (g *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID)
 	return
 }
 
-func (g *impl) FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (*donationdomain.SubscriptionPlan, error) {
-	subscriptionPlan, ok := lo.Find(g.subscriptionPlans, func(plan *donationdomain.SubscriptionPlan) bool {
+func (i *impl) FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (*donationdomain.SubscriptionPlan, error) {
+	subscriptionPlan, ok := lo.Find(i.subscriptionPlans, func(plan *donationdomain.SubscriptionPlan) bool {
 		return plan.ID == id
 	})
 
@@ -82,11 +82,11 @@ func (g *impl) FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionP
 	return nil, sharedport.ErrNotFound
 }
 
-func (g *impl) ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {
-	return base.MapByClone(g.subscriptionPlans), nil
+func (i *impl) ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {
+	return base.MapByClone(i.subscriptionPlans), nil
 }
 
-func (g *impl) loadSubscriptionPlans() (err error) {
+func (i *impl) loadSubscriptionPlans() (err error) {
 	var startingAfter *string
 
 	stripePlans := make([]*stripe.Plan, 0)
@@ -117,7 +117,7 @@ func (g *impl) loadSubscriptionPlans() (err error) {
 		time.Sleep(50 * time.Microsecond)
 	}
 
-	g.subscriptionPlans, err = base.MapWithErr(stripePlans, fromStripePlan)
+	i.subscriptionPlans, err = base.MapWithErr(stripePlans, fromStripePlan)
 	return
 }
 

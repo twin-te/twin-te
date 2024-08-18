@@ -5,7 +5,7 @@
 		- https://stripe.com/docs/billing/subscriptions/build-subscriptions?ui=checkout
 */
 
-package donationgateway
+package donationintegrator
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-func (g *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error) {
+func (i *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error) {
 	var customer *string
 	if paymentUserID != nil {
 		customer = stripe.String(paymentUserID.String())
@@ -57,7 +57,7 @@ func (g *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *
 	return idtype.ParseCheckoutSessionID(s.ID)
 }
 
-func (g *impl) CreateSubscriptionCheckoutSession(ctx context.Context, paymentUserID idtype.PaymentUserID, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error) {
+func (i *impl) CreateSubscriptionCheckoutSession(ctx context.Context, paymentUserID idtype.PaymentUserID, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error) {
 	params := &stripe.CheckoutSessionParams{
 		Params: stripe.Params{
 			Context: ctx,

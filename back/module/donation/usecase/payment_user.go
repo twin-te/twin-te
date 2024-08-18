@@ -105,7 +105,7 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 			case <-ctx.Done():
 				return nil
 			default:
-				paymentHistories, err := uc.g.ListPaymentHistories(ctx, &paymentUser.ID)
+				paymentHistories, err := uc.i.ListPaymentHistories(ctx, &paymentUser.ID)
 				if err != nil {
 					return err
 				}

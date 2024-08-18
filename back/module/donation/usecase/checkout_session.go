@@ -28,7 +28,7 @@ func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (i
 		paymentUserID = &paymentUser.ID
 	}
 
-	return uc.g.CreateOneTimeCheckoutSession(ctx, paymentUserID, amount)
+	return uc.i.CreateOneTimeCheckoutSession(ctx, paymentUserID, amount)
 }
 
 func (uc *impl) CreateSubscriptionCheckoutSession(ctx context.Context, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error) {
@@ -37,7 +37,7 @@ func (uc *impl) CreateSubscriptionCheckoutSession(ctx context.Context, subscript
 		return "", err
 	}
 
-	_, err = uc.g.FindSubscriptionPlan(ctx, subscriptionPlanID)
+	_, err = uc.i.FindSubscriptionPlan(ctx, subscriptionPlanID)
 	if err != nil {
 		if errors.Is(err, sharedport.ErrNotFound) {
 			return "", apperr.New(
@@ -64,5 +64,5 @@ func (uc *impl) CreateSubscriptionCheckoutSession(ctx context.Context, subscript
 		return "", nil
 	}
 
-	return uc.g.CreateSubscriptionCheckoutSession(ctx, paymentUser.ID, subscriptionPlanID)
+	return uc.i.CreateSubscriptionCheckoutSession(ctx, paymentUser.ID, subscriptionPlanID)
 }

@@ -19,14 +19,14 @@ import (
 	authrepository "github.com/twin-te/twin-te/back/module/auth/repository"
 	authusecase "github.com/twin-te/twin-te/back/module/auth/usecase"
 	donationfactory "github.com/twin-te/twin-te/back/module/donation/factory"
-	donationgateway "github.com/twin-te/twin-te/back/module/donation/gateway"
+	donationintegrator "github.com/twin-te/twin-te/back/module/donation/integrator"
 	donationrepository "github.com/twin-te/twin-te/back/module/donation/repository"
 	donationusecase "github.com/twin-te/twin-te/back/module/donation/usecase"
 	schoolcalendardata "github.com/twin-te/twin-te/back/module/schoolcalendar/data"
 	schoolcalendarrepository "github.com/twin-te/twin-te/back/module/schoolcalendar/repository"
 	schoolcalendarusecase "github.com/twin-te/twin-te/back/module/schoolcalendar/usecase"
 	timetablefactory "github.com/twin-te/twin-te/back/module/timetable/factory"
-	timetablegateway "github.com/twin-te/twin-te/back/module/timetable/gateway"
+	timetableintegrator "github.com/twin-te/twin-te/back/module/timetable/integrator"
 	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/repository"
 	timetableusecase "github.com/twin-te/twin-te/back/module/timetable/usecase"
 )
@@ -53,17 +53,17 @@ var serveCmd = &cobra.Command{
 		announcementUsecase := announcementusecase.New(accessController, announcementFactory, announcementRepository)
 
 		donationFactory := donationfactory.New()
-		donationGateway := donationgateway.New()
+		donationIntegrator := donationintegrator.New()
 		donationRepository := donationrepository.New(db)
-		donationUseCase := donationusecase.New(accessController, donationFactory, donationGateway, donationRepository)
+		donationUseCase := donationusecase.New(accessController, donationFactory, donationIntegrator, donationRepository)
 
 		schoolcalendarRepository := schoolcalendarrepository.New()
 		schoolcalendarUseCase := schoolcalendarusecase.New(accessController, schoolcalendarRepository)
 
 		timetableFactory := timetablefactory.New(db)
-		timetableGateway := timetablegateway.New("")
+		timetableIntegrator := timetableintegrator.New("")
 		timetableRepository := timetablerepository.New(db)
-		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableGateway, timetableRepository)
+		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableRepository)
 
 		announcements, err := announcementdata.LoadAnnouncements()
 		if err != nil {

@@ -18,7 +18,7 @@ func (uc *impl) GetPaymentHistories(ctx context.Context) ([]*donationdomain.Paym
 		return nil, err
 	}
 
-	return uc.g.ListPaymentHistories(ctx, &paymentUser.ID)
+	return uc.i.ListPaymentHistories(ctx, &paymentUser.ID)
 }
 
 func (uc *impl) GetTotalAmount(ctx context.Context) (int, error) {
@@ -29,7 +29,7 @@ func (uc *impl) GetTotalAmount(ctx context.Context) (int, error) {
 }
 
 func (uc *impl) updateTotalAmountCache(ctx context.Context) error {
-	paymentHistories, err := uc.g.ListPaymentHistories(ctx, nil)
+	paymentHistories, err := uc.i.ListPaymentHistories(ctx, nil)
 	if err != nil {
 		return err
 	}

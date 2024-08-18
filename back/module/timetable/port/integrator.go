@@ -7,7 +7,7 @@ import (
 	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 )
 
-type Gateway interface {
+type Integrator interface {
 	// GetCourseWithoutIDsFromKdB returns the latest course data retrieved from KdB.
 	GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error)
 }

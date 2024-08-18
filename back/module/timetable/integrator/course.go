@@ -1,4 +1,4 @@
-package timetablegateway
+package timetableintegrator
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
-func (g *impl) GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error) {
-	kdbCourses, err := loadKdBCourseFromJSON(g.kdbJSONFilePath)
+func (i *impl) GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error) {
+	kdbCourses, err := loadKdBCourseFromJSON(i.kdbJSONFilePath)
 	if err != nil {
 		return nil, err
 	}

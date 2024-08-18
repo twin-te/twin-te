@@ -12,7 +12,7 @@ import (
 	authrepository "github.com/twin-te/twin-te/back/module/auth/repository"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	timetablefactory "github.com/twin-te/twin-te/back/module/timetable/factory"
-	timetablegateway "github.com/twin-te/twin-te/back/module/timetable/gateway"
+	timetableintegrator "github.com/twin-te/twin-te/back/module/timetable/integrator"
 	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/repository"
 	timetableusecase "github.com/twin-te/twin-te/back/module/timetable/usecase"
 )
@@ -36,9 +36,9 @@ var UpdateCoursesBasedOnKdBCmd = &cobra.Command{
 		accessController := accesscontroller.New(authRepository)
 
 		timetableFactory := timetablefactory.New(db)
-		timetableGateway := timetablegateway.New(kdbJSONFilePath)
+		timetableIntegrator := timetableintegrator.New(kdbJSONFilePath)
 		timetableRepository := timetablerepository.New(db)
-		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableGateway, timetableRepository)
+		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableRepository)
 
 		year, err := shareddomain.ParseAcademicYear(year)
 		if err != nil {
@@ -57,5 +57,5 @@ func init() {
 	rootCmd.AddCommand(UpdateCoursesBasedOnKdBCmd)
 
 	UpdateCoursesBasedOnKdBCmd.Flags().IntVar(&year, "year", 0, "academic year of courses you want to update")
-	UpdateCoursesBasedOnKdBCmd.Flags().StringVar(&kdbJSONFilePath, "kdb-json-file-path", "", "kdb json file path that is used in timetable gateway")
+	UpdateCoursesBasedOnKdBCmd.Flags().StringVar(&kdbJSONFilePath, "kdb-json-file-path", "", "kdb json file path that is used in timetable integrator")
 }

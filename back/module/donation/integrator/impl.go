@@ -1,4 +1,4 @@
-package donationgateway
+package donationintegrator
 
 import (
 	"log"
@@ -13,7 +13,7 @@ func init() {
 	stripe.Key = appenv.STRIPE_KEY
 }
 
-var _ donationport.Gateway = (*impl)(nil)
+var _ donationport.Integrator = (*impl)(nil)
 
 type impl struct {
 	subscriptionPlans []*donationdomain.SubscriptionPlan

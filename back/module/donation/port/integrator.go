@@ -7,7 +7,7 @@ import (
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-type Gateway interface {
+type Integrator interface {
 	// Stripe
 
 	CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error)
