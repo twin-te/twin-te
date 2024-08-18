@@ -15,15 +15,15 @@ service AnnouncementService {
   rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: OPTIONAL,
-      error_codes: [],
+      authentication: OPTIONAL
+      error_codes: []
     };
   }
 
   rpc ReadAnnouncements(ReadAnnouncementsRequest) returns (ReadAnnouncementsResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["announcement.AnnouncementNotFound"],
+      authentication: REQURED
+      error_codes: ["announcement.AnnouncementNotFound"]
     };
   }
 }

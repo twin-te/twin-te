@@ -15,91 +15,91 @@ service TimetableService {
   rpc GetCoursesByCodes(GetCoursesByCodesRequest) returns (GetCoursesByCodesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: [],
+      authentication: NOT_REQURED
+      error_codes: []
     };
   }
 
   rpc SearchCourses(SearchCoursesRequest) returns (SearchCoursesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: [],
+      authentication: NOT_REQURED
+      error_codes: []
     };
   }
 
   rpc CreateRegisteredCoursesByCodes(CreateRegisteredCoursesByCodesRequest) returns (CreateRegisteredCoursesByCodesResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
+      authentication: REQURED
       error_codes: [
         "timetable.CourseNotFound",
         "timetable.RegisteredCourseAlreadyExists"
-      ],
+      ]
     };
   }
 
   rpc CreateRegisteredCourseManually(CreateRegisteredCourseManuallyRequest) returns (CreateRegisteredCourseManuallyResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc GetRegisteredCourses(GetRegisteredCoursesRequest) returns (GetRegisteredCoursesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc UpdateRegisteredCourse(UpdateRegisteredCourseRequest) returns (UpdateRegisteredCourseResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["timetable.RegisteredCourseNotFound"],
+      authentication: REQURED
+      error_codes: ["timetable.RegisteredCourseNotFound"]
     };
   }
 
   rpc DeleteRegisteredCourse(DeleteRegisteredCourseRequest) returns (DeleteRegisteredCourseResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["timetable.RegisteredCourseNotFound"],
+      authentication: REQURED
+      error_codes: ["timetable.RegisteredCourseNotFound"]
     };
   }
 
   rpc CreateTag(CreateTagRequest) returns (CreateTagResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 
   rpc UpdateTag(UpdateTagRequest) returns (UpdateTagResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["timetable.TagNotFound"],
+      authentication: REQURED
+      error_codes: ["timetable.TagNotFound"]
     };
   }
 
   rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: ["timetable.TagNotFound"],
+      authentication: REQURED
+      error_codes: ["timetable.TagNotFound"]
     };
   }
 
   rpc RearrangeTags(RearrangeTagsRequest) returns (RearrangeTagsResponse) {
     option (shared.twinte) = {
-      authentication: REQURED,
-      error_codes: [],
+      authentication: REQURED
+      error_codes: []
     };
   }
 }

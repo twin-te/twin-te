@@ -18,7 +18,7 @@ service UnifiedService {
   rpc GetByDate(GetByDateRequest) returns (GetByDateResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: REQURED,
+      authentication: REQURED
       error_codes: ["schoolcalendar.ModuleNotFound"]
     };
   }

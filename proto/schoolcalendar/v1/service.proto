@@ -15,16 +15,16 @@ service SchoolCalendarService {
   rpc GetEventsByDate(GetEventsByDateRequest) returns (GetEventsByDateResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: [],
+      authentication: NOT_REQURED
+      error_codes: []
     };
   }
 
   rpc GetModuleByDate(GetModuleByDateRequest) returns (GetModuleByDateResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
-      authentication: NOT_REQURED,
-      error_codes: ["schoolcalendar.ModuleNotFound"],
+      authentication: NOT_REQURED
+      error_codes: ["schoolcalendar.ModuleNotFound"]
     };
   }
 }
