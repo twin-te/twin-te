@@ -8,6 +8,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
+	donationappdto "github.com/twin-te/twin-te/back/module/donation/appdto"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -78,7 +79,7 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 	return paymentUser, uc.r.CreatePaymentUsers(ctx, paymentUser)
 }
 
-func (uc *impl) GetContributors(ctx context.Context) ([]donationmodule.Contributor, error) {
+func (uc *impl) GetContributors(ctx context.Context) ([]donationappdto.Contributor, error) {
 	uc.contributorsCacheMutex.RLock()
 	defer uc.contributorsCacheMutex.RUnlock()
 
@@ -127,8 +128,8 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 		return paymentUserIDToIsContributor[paymentUser.ID]
 	})
 
-	contributors := base.Map(paymentUsers, func(paymentUser *donationdomain.PaymentUser) donationmodule.Contributor {
-		return donationmodule.Contributor{
+	contributors := base.Map(paymentUsers, func(paymentUser *donationdomain.PaymentUser) donationappdto.Contributor {
+		return donationappdto.Contributor{
 			DisplayName: *paymentUser.DisplayName,
 			Link:        paymentUser.Link,
 		}
