@@ -20,6 +20,7 @@ Example in Mac
 ```sh
 brew install direnv
 echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
 Please Install [Bun](https://bun.sh/docs/installation).
