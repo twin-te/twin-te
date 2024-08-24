@@ -41,9 +41,9 @@ rm ../../back/kdb_2024.json
 docker compose up proxy back front
 ```
 
-`http://localhost:8080` で Twin:te が使用できます。  
+`http://localhost` で Twin:te が使用できます。  
 
-`http://localhost:8080/sponsorship` で寄付ページが使用できます。
+`http://localhost/sponsorship` で寄付ページが使用できます。
 
 ## 寄付ページの開発
 
@@ -62,4 +62,4 @@ Twin:te 関係者は共有されている環境変数を参照できます。外
 docker compose up proxy back sponsorship
 ```
 
-`http://localhost:8080/sponsorship` で寄付ページが使用できます。
+`http://localhost/sponsorship` で寄付ページが使用できます。
