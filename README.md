@@ -51,7 +51,7 @@ cd back
 cp .env .env.local // please edit .env.local file
 direnv allow .
 
-// download course data from kdb
+// update courses based on kdb
 go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path ../parser/kdb.json
 
 // hot reload
