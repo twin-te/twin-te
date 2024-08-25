@@ -2,7 +2,31 @@
 
 ## Local Development - only docker
 
-Please see [infra/local](./infra/local/README.md)
+environment variables on backend
+```sh
+cp back/.env back/.env.local // please edit it
+```
+
+db migration
+```sh
+docker compose run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
+docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_URL}'
+```
+
+update courses based on kdb
+```sh
+docker compose run -u root --rm parser python ./download_and_parse.py --year 2024 --output-path kdb_2024.json
+mv ../../parser/kdb_2024.json ../../back/kdb_2024.json
+docker compose run -u root --rm back go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path kdb_2024.json
+rm ../../back/kdb_2024.json
+```
+
+start services
+```sh
+docker compose up db back front sponsorship proxy-docker
+```
+
+Access to http://localhost:4000 or http://localhost:4000/sponsorship
 
 ## Local Development - docker + host machine
 
@@ -40,7 +64,7 @@ docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_U
 Terminal parser
 ```sh
 pip install -r requirements.txt
-python download_and_parse.py --year 2024 --output-path kdb.json
+python download_and_parse.py --year 2024 --output-path kdb_2024.json
 ```
 
 Terminal back
@@ -52,11 +76,10 @@ cp .env .env.local // please edit .env.local file
 direnv allow .
 
 // update courses based on kdb
-go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path ../parser/kdb.json
+go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path ../parser/kdb_2024.json
 
 // hot reload
 go install github.com/air-verse/air@latest
-asdf reshim golang
 air
 ```
 
@@ -79,4 +102,4 @@ Terminal workspace
 docker compose up proxy-host
 ```
 
-Access to http://localhost or http://localhost/sponsorship
+Access to http://localhost:4000 or http://localhost:4000/sponsorship
