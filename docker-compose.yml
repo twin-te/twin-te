@@ -48,9 +48,13 @@ services:
     volumes:
       - ./proxy/nginx.docker.conf:/etc/nginx/nginx.conf
     ports:
-      - 80:80
+      - 4000:80
     networks:
       - twinte-network
+    depends_on:
+      - back
+      - front
+      - sponsorship
 
   proxy-host:
     container_name: twinte-proxy-host
@@ -58,9 +62,11 @@ services:
     volumes:
       - ./proxy/nginx.host.conf:/etc/nginx/nginx.conf
     ports:
-      - 80:80
+      - 4000:80
     networks:
-      - twinte-network      
+      - twinte-network
+    depends_on:
+      - db
 
   db:
     container_name: twinte-db
@@ -89,6 +95,8 @@ services:
       - ./db:/usr/src/twin-te/db
     networks:
       - twinte-network
+    depends_on:
+      - db
 
   parser:
     container_name: twinte-parser
