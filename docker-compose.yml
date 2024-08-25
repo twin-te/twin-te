@@ -14,6 +14,8 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
+    depends_on:
+      - db
 
   front:
     container_name: twinte-front
@@ -55,6 +57,7 @@ services:
       - back
       - front
       - sponsorship
+      - db
 
   proxy-host:
     container_name: twinte-proxy-host

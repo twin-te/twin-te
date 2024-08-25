@@ -16,9 +16,9 @@ docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_U
 update courses based on kdb
 ```sh
 docker compose run -u root --rm parser python ./download_and_parse.py --year 2024 --output-path kdb_2024.json
-mv ../../parser/kdb_2024.json ../../back/kdb_2024.json
+mv ./parser/kdb_2024.json ./back/kdb_2024.json
 docker compose run -u root --rm back go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path kdb_2024.json
-rm ../../back/kdb_2024.json
+rm ./back/kdb_2024.json
 ```
 
 start services
