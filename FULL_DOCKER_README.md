@@ -22,23 +22,23 @@ Twin:te 関係者は共有されている環境変数を参照できます。
 最初に DB のマイグレーションをします。
 
 ```console
-docker compose run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
-docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_URL}'
+docker compose -f docker-compose.yml -f docker-compose.override.yml run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
+docker compose -f docker-compose.yml -f docker-compose.override.yml run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_URL}'
 ```
 
 次に [KdB](https://kdb.tsukuba.ac.jp/) から最新の講義情報を取得します。
 
 ```console
-docker compose run -u root --rm parser python ./download_and_parse.py --year 2024 --output-path kdb_2024.json
-mv ../../parser/kdb_2024.json ../../back/kdb_2024.json
-docker compose run -u root --rm back go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path kdb_2024.json
-rm ../../back/kdb_2024.json
+docker compose -f docker-compose.yml -f docker-compose.override.yml run -u root --rm parser python ./download_and_parse.py --year 2024 --output-path kdb_2024.json
+mv ./parser/kdb_2024.json ./back/kdb_2024.json
+docker compose -f docker-compose.yml -f docker-compose.override.yml run -u root --rm back go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path kdb_2024.json
+rm ./back/kdb_2024.json
 ```
 
 アプリケーションを立ち上げます。
 
 ```console
-docker compose up proxy back front
+docker compose -f docker-compose.yml -f docker-compose.override.yml up proxy back front
 ```
 
 `http://localhost` で Twin:te が使用できます。  
@@ -59,7 +59,7 @@ Twin:te 関係者は共有されている環境変数を参照できます。外
 アプリケーションを立ち上げます。
 
 ```console
-docker compose up proxy back sponsorship
+docker compose -f docker-compose.yml -f docker-compose.override.yml up proxy back sponsorship
 ```
 
 `http://localhost:4000/sponsorship` で寄付ページが使用できます。
