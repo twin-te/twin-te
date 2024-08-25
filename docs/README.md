@@ -2,6 +2,11 @@
 
 ## Local Development - only docker
 
+build images
+```sh
+docker compose build db db-migration back front sponsorship proxy-docker parser codegen
+```
+
 environment variables on backend
 ```sh
 cp back/.env back/.env.local // please edit it
@@ -52,6 +57,11 @@ Please Install [Bun](https://bun.sh/docs/installation).
 Example in Mac
 ```sh
 brew install oven-sh/bun/bun
+```
+
+Build Images
+```sh
+docker compose build db db-migration proxy-host
 ```
 
 Terminal workspace
