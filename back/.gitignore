@@ -28,5 +28,3 @@ go.work
 
 *.local
 tmp
-
-*_test*
