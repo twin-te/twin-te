@@ -9,10 +9,8 @@
 		"build:staging": "vite build --mode staging",
 		"build:production": "SOURCE_MAP=1 vite build --mode production",
 		"preview": "bun run build && vite preview --port 8080",
-		"format": "prettier ./src --check",
-		"format:fix": "prettier ./src --write",
-		"lint": "eslint --ext .ts,.tsx,.vue ./src",
-		"lint:fix": "bun run lint --fix",
+		"check": "bunx biome check --write .",
+		"check:unsafe": "bunx biome check --write --unsafe .",
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "bun run typecheck && build-storybook",
 		"buf-gen": "rm -rf src/infrastructure/api/gen && buf generate --template buf.gen.yaml ../proto"

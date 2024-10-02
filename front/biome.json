@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": ["infrastructure/api/gen"]
 	},
 	"formatter": {
 		"enabled": true,
