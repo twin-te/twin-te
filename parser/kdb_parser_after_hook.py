@@ -26,6 +26,7 @@ class Day(str):
     Intensive = "Intensive"
     Appointment = "Appointment"
     AnyTime = "AnyTime"
+    NT = "NT"  # NT
 
 
 @dataclasses.dataclass
@@ -118,11 +119,15 @@ def convert_day(d: kdb_parser.Day) -> Day:
     if d == kdb_parser.Day.Appointment:
         return Day.Appointment
 
+    # NT
+    if d == kdb_parser.Day.NT:
+        return Day.NT
+
     raise ValueError("invalid day", d)
 
 
 def is_special_day(d: Day) -> bool:
-    return d in [Day.Intensive, Day.AnyTime, Day.Appointment]
+    return d in [Day.Intensive, Day.AnyTime, Day.Appointment, Day.NT]
 
 
 def convert_schedule(s: dict) -> Schedule:

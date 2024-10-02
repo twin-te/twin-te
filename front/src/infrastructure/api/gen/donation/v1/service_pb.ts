@@ -6,6 +6,7 @@
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
 import { Contributor, PaymentHistory, PaymentUser, Subscription, SubscriptionPlan } from "./type_pb.js";
+import { OptionalString } from "../../shared/type_pb.js";
 
 /**
  * @generated from message donation.v1.CreateOneTimeCheckoutSessionRequest
@@ -228,14 +229,14 @@ export class GetPaymentUserResponse extends Message<GetPaymentUserResponse> {
  */
 export class UpdatePaymentUserRequest extends Message<UpdatePaymentUserRequest> {
   /**
-   * @generated from field: optional string display_name = 1;
+   * @generated from field: optional shared.OptionalString display_name = 1;
    */
-  displayName?: string;
+  displayName?: OptionalString;
 
   /**
-   * @generated from field: optional string link = 2;
+   * @generated from field: optional shared.OptionalString link = 2;
    */
-  link?: string;
+  link?: OptionalString;
 
   constructor(data?: PartialMessage<UpdatePaymentUserRequest>) {
     super();
@@ -245,8 +246,8 @@ export class UpdatePaymentUserRequest extends Message<UpdatePaymentUserRequest> 
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "donation.v1.UpdatePaymentUserRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "display_name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 2, name: "link", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 1, name: "display_name", kind: "message", T: OptionalString, opt: true },
+    { no: 2, name: "link", kind: "message", T: OptionalString, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdatePaymentUserRequest {

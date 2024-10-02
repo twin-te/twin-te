@@ -2,7 +2,7 @@ import { isContained } from "~/utils";
 
 export type NormalDay = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
 
-export type SpecialDay = "Intensive" | "Appointment" | "AnyTime";
+export type SpecialDay = "Intensive" | "Appointment" | "AnyTime" | "NT";
 
 export type Day = NormalDay | SpecialDay;
 
@@ -20,6 +20,7 @@ export const specialDays: SpecialDay[] = [
   "Intensive",
   "Appointment",
   "AnyTime",
+  "NT",
 ];
 
 export const days: Day[] = [
@@ -33,6 +34,7 @@ export const days: Day[] = [
   "Intensive",
   "Appointment",
   "AnyTime",
+  "NT",
 ];
 
 export const isNormalDay = (day: unknown): day is NormalDay => {

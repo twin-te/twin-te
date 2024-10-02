@@ -1,4 +1,4 @@
-version: v2
+version: v1
 lint:
   ignore_only:
     PACKAGE_VERSION_SUFFIX:

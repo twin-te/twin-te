@@ -127,6 +127,11 @@ export enum Day {
    * @generated from enum value: DAY_ANY_TIME = 10;
    */
   ANY_TIME = 10,
+
+  /**
+   * @generated from enum value: DAY_NT = 11;
+   */
+  NT = 11,
 }
 // Retrieve enum metadata with: proto3.getEnumType(Day)
 proto3.util.setEnumType(Day, "timetable.v1.Day", [
@@ -141,6 +146,7 @@ proto3.util.setEnumType(Day, "timetable.v1.Day", [
   { no: 8, name: "DAY_INTENSIVE" },
   { no: 9, name: "DAY_APPOINTMENT" },
   { no: 10, name: "DAY_ANY_TIME" },
+  { no: 11, name: "DAY_NT" },
 ]);
 
 /**

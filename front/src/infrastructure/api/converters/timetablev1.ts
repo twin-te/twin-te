@@ -76,6 +76,8 @@ export const fromPBDay = (pbDay: TimetableV1PB.Day): Day => {
       return "Appointment";
     case TimetableV1PB.Day.ANY_TIME:
       return "AnyTime";
+    case TimetableV1PB.Day.NT:
+      return "NT";
   }
   throw Error(`invalid enum ${pbDay}`);
 };
@@ -102,6 +104,8 @@ export const toPBDay = (day: Day): TimetableV1PB.Day => {
       return TimetableV1PB.Day.APPOINTMENT;
     case "AnyTime":
       return TimetableV1PB.Day.ANY_TIME;
+    case "NT":
+      return TimetableV1PB.Day.NT;
   }
 };
 

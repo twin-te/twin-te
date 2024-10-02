@@ -18,11 +18,12 @@ func _() {
 	_ = x[DayIntensive-8]
 	_ = x[DayAppointment-9]
 	_ = x[DayAnyTime-10]
+	_ = x[DayNT-11]
 }
 
-const _Day_name = "SunMonTueWedThuFriSatIntensiveAppointmentAnyTime"
+const _Day_name = "SunMonTueWedThuFriSatIntensiveAppointmentAnyTimeNT"
 
-var _Day_index = [...]uint8{0, 3, 6, 9, 12, 15, 18, 21, 30, 41, 48}
+var _Day_index = [...]uint8{0, 3, 6, 9, 12, 15, 18, 21, 30, 41, 48, 50}
 
 func (i Day) String() string {
 	i -= 1

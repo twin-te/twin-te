@@ -63,6 +63,43 @@ proto3.util.setEnumType(Weekday, "shared.Weekday", [
 ]);
 
 /**
+ * @generated from message shared.OptionalString
+ */
+export class OptionalString extends Message<OptionalString> {
+  /**
+   * @generated from field: optional string value = 1;
+   */
+  value?: string;
+
+  constructor(data?: PartialMessage<OptionalString>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "shared.OptionalString";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OptionalString {
+    return new OptionalString().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OptionalString {
+    return new OptionalString().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OptionalString {
+    return new OptionalString().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: OptionalString | PlainMessage<OptionalString> | undefined, b: OptionalString | PlainMessage<OptionalString> | undefined): boolean {
+    return proto3.util.equals(OptionalString, a, b);
+  }
+}
+
+/**
  * @generated from message shared.AcademicYear
  */
 export class AcademicYear extends Message<AcademicYear> {

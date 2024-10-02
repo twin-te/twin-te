@@ -72,7 +72,7 @@ func (d Day) IsNormal() bool {
 }
 
 func (d Day) IsSpecial() bool {
-	return DayIntensive <= d && d <= DayAnyTime
+	return DayIntensive <= d && d <= DayNT
 }
 
 const (
@@ -86,6 +86,7 @@ const (
 	DayIntensive
 	DayAppointment
 	DayAnyTime
+	DayNT
 )
 
 var NormalDays = []Day{
@@ -102,6 +103,7 @@ var SpecialDays = []Day{
 	DayIntensive,
 	DayAppointment,
 	DayAnyTime,
+	DayNT,
 }
 
 var AllDays = []Day{
@@ -115,6 +117,7 @@ var AllDays = []Day{
 	DayIntensive,
 	DayAppointment,
 	DayAnyTime,
+	DayNT,
 }
 
 func ParseDay(s string) (Day, error) {
