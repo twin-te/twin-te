@@ -42,16 +42,6 @@ Version
 - Nodejs : nodejs 22.x.x
 - Python : 3.12.x
 
-Please install [direnv](https://github.com/direnv/direnv).
-Remember to set [hook](https://direnv.net/docs/hook.html).
-
-Example in Mac
-```sh
-brew install direnv
-echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
-source ~/.zshrc
-```
-
 Please Install [Bun](https://bun.sh/docs/installation).
 
 Example in Mac
@@ -73,6 +63,7 @@ docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_U
 
 Terminal parser
 ```sh
+cd parser
 pip install -r requirements.txt
 python download_and_parse.py --year 2024 --output-path kdb_2024.json
 ```
@@ -83,7 +74,7 @@ cd back
 
 // setup environment variables
 cp .env .env.local // please edit .env.local file
-direnv allow .
+set -a; source .env.local; set +a;
 
 // update courses based on kdb
 go run .  update-courses-based-on-kdb --year 2024 --kdb-json-file-path ../parser/kdb_2024.json
