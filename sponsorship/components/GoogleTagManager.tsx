@@ -1,5 +1,5 @@
-import Script from 'next/script';
-import React from 'react';
+import Script from "next/script";
+import type React from "react";
 
 export type GoogleTagManagerId = `GTM-${string}`;
 
@@ -18,7 +18,7 @@ const GoogleTagManager: React.FC<Props> = ({ googleTagManagerId }) => (
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','${googleTagManagerId}');
-      `
+      `,
 		}}
 	/>
 );

@@ -1,6 +1,6 @@
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { ReactNode } from 'react';
+import Link from "next/link";
+import { useRouter } from "next/router";
+import type { ReactNode } from "react";
 
 type Props = {
 	href: string;
@@ -12,7 +12,10 @@ const NavLink = ({ href, activeClassName, children }: Props) => {
 	const router = useRouter();
 
 	return (
-		<Link href={href} className={router.pathname === href ? activeClassName : undefined}>
+		<Link
+			href={href}
+			className={router.pathname === href ? activeClassName : undefined}
+		>
 			{children}
 		</Link>
 	);

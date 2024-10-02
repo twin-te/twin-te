@@ -1,8 +1,8 @@
-import styles from './Sidebar.module.scss';
-import NavLink from '../NavLink';
-import Image from 'next/image';
-import TwinteLogo from '@/public/images/twinte-sponsor-title.png';
-import { ENV_NEXT_PUBLIC_APP_URL } from '@/env';
+import { ENV_NEXT_PUBLIC_APP_URL } from "@/env";
+import TwinteLogo from "@/public/images/twinte-sponsor-title.png";
+import Image from "next/image";
+import NavLink from "../NavLink";
+import styles from "./Sidebar.module.scss";
 
 export const Sidebar: React.FC = () => {
 	return (
@@ -50,7 +50,9 @@ export const Sidebar: React.FC = () => {
 				<p>
 					<span className="has-text-weight-bold">E-mail</span>
 					<br />
-					<a href="mailto:info@twinte.net?subject=お問い合わせ">info@twinte.net</a>
+					<a href="mailto:info@twinte.net?subject=お問い合わせ">
+						info@twinte.net
+					</a>
 				</p>
 			</div>
 		</aside>

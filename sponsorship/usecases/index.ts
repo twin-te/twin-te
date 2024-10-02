@@ -1,13 +1,27 @@
-import { createPromiseClient, PromiseClient, Transport } from '@connectrpc/connect';
-import { PaymentHistory, SubscriptionPlan, Subscription, User } from '../domain';
-import { DonationService } from '../api/gen/donation/v1/service_connect';
-import { AuthService } from '../api/gen/auth/v1/service_connect';
-import { fromPBPaymentHistory, fromPBPaymentUser, fromPBPlan, fromPBSubscription } from '../api/converters/donationv1';
-import { assurePresence } from '../api/converters/utils';
-import { createConnectTransport } from '@connectrpc/connect-web';
-import { ConvertAPIError, isUnauthenticatedError } from './error';
-import { ENV_NEXT_PUBLIC_API_BASE_URL } from '@/env';
-import { toOptionalString } from '@/api/converters/shared';
+import { toOptionalString } from "@/api/converters/shared";
+import { ENV_NEXT_PUBLIC_API_BASE_URL } from "@/env";
+import {
+	type PromiseClient,
+	type Transport,
+	createPromiseClient,
+} from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
+import {
+	fromPBPaymentHistory,
+	fromPBPaymentUser,
+	fromPBPlan,
+	fromPBSubscription,
+} from "../api/converters/donationv1";
+import { assurePresence } from "../api/converters/utils";
+import { AuthService } from "../api/gen/auth/v1/service_connect";
+import { DonationService } from "../api/gen/donation/v1/service_connect";
+import type {
+	PaymentHistory,
+	Subscription,
+	SubscriptionPlan,
+	User,
+} from "../domain";
+import { ConvertAPIError, isUnauthenticatedError } from "./error";
 
 class UseCase {
 	#authClient: PromiseClient<typeof AuthService>;
@@ -25,9 +39,15 @@ class UseCase {
 			.catch(ConvertAPIError);
 	}
 
-	async updateUserInfo(newDisplayName?: string, newLink?: string): Promise<User> {
+	async updateUserInfo(
+		newDisplayName?: string,
+		newLink?: string,
+	): Promise<User> {
 		return this.#donationClient
-			.updatePaymentUser({ displayName: toOptionalString(newDisplayName), link: toOptionalString(newLink) })
+			.updatePaymentUser({
+				displayName: toOptionalString(newDisplayName),
+				link: toOptionalString(newLink),
+			})
 			.then((res) => fromPBPaymentUser(assurePresence(res.paymentUser)))
 			.catch(ConvertAPIError);
 	}
@@ -93,8 +113,8 @@ class UseCase {
 const transport = createConnectTransport({
 	baseUrl: ENV_NEXT_PUBLIC_API_BASE_URL,
 	useBinaryFormat: false,
-	credentials: 'include',
-	useHttpGet: true
+	credentials: "include",
+	useHttpGet: true,
 });
 
 export const useCase = new UseCase(transport);
