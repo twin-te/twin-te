@@ -43,7 +43,7 @@ func New${id_name}() ${id_name} {
 func Parse${id_name}(s string) (${id_name}, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return ${id_name}{}, fmt.Errorf("failed to parse ${id_name} %#v", s)
+		return ${id_name}{}, fmt.Errorf("failed to parse ${id_name} %v", s)
 	}
 	return ${id_name}(id), nil
 }

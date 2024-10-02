@@ -16,7 +16,7 @@ func (id CheckoutSessionID) IsZero() bool {
 
 func ParseCheckoutSessionID(s string) (CheckoutSessionID, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse CheckoutSessionID %#v", s)
+		return "", fmt.Errorf("failed to parse CheckoutSessionID %v", s)
 	}
 	return CheckoutSessionID(s), nil
 }

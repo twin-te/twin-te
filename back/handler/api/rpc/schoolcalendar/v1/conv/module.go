@@ -28,7 +28,7 @@ func FromPBModule(pbModule schoolcalendarv1.Module) (schoolcalendardomain.Module
 	case schoolcalendarv1.Module_MODULE_SPRING_VACATION:
 		return schoolcalendardomain.ModuleSpringVacation, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbModule)
+	return 0, fmt.Errorf("invalid %v", pbModule)
 }
 
 func ToPBModule(module schoolcalendardomain.Module) (schoolcalendarv1.Module, error) {
@@ -52,5 +52,5 @@ func ToPBModule(module schoolcalendardomain.Module) (schoolcalendarv1.Module, er
 	case schoolcalendardomain.ModuleSpringVacation:
 		return schoolcalendarv1.Module_MODULE_SPRING_VACATION, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", module)
+	return 0, fmt.Errorf("invalid %v", module)
 }

@@ -16,7 +16,7 @@ func FromPBProvider(pbProvider authv1.Provider) (authdomain.Provider, error) {
 	case authv1.Provider_PROVIDER_TWITTER:
 		return authdomain.ProviderTwitter, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbProvider)
+	return 0, fmt.Errorf("invalid %v", pbProvider)
 }
 
 func ToPBProvider(provider authdomain.Provider) (authv1.Provider, error) {
@@ -28,5 +28,5 @@ func ToPBProvider(provider authdomain.Provider) (authv1.Provider, error) {
 	case authdomain.ProviderTwitter:
 		return authv1.Provider_PROVIDER_TWITTER, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", provider)
+	return 0, fmt.Errorf("invalid %v", provider)
 }

@@ -16,7 +16,7 @@ func (id SubscriptionID) IsZero() bool {
 
 func ParseSubscriptionID(s string) (SubscriptionID, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse SubscriptionID %#v", s)
+		return "", fmt.Errorf("failed to parse SubscriptionID %v", s)
 	}
 	return SubscriptionID(s), nil
 }

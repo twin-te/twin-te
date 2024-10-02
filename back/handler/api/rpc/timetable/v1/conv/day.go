@@ -32,7 +32,7 @@ func FromPBDay(pbDay timetablev1.Day) (timetabledomain.Day, error) {
 	case timetablev1.Day_DAY_NT:
 		return timetabledomain.DayNT, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbDay)
+	return 0, fmt.Errorf("invalid %v", pbDay)
 }
 
 func ToPBDay(day timetabledomain.Day) (timetablev1.Day, error) {
@@ -60,5 +60,5 @@ func ToPBDay(day timetabledomain.Day) (timetablev1.Day, error) {
 	case timetabledomain.DayNT:
 		return timetablev1.Day_DAY_NT, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", day)
+	return 0, fmt.Errorf("invalid %v", day)
 }

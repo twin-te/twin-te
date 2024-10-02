@@ -43,7 +43,7 @@ func NewUserID() UserID {
 func ParseUserID(s string) (UserID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return UserID{}, fmt.Errorf("failed to parse UserID %#v", s)
+		return UserID{}, fmt.Errorf("failed to parse UserID %v", s)
 	}
 	return UserID(id), nil
 }

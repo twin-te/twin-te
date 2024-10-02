@@ -73,7 +73,7 @@ func FromPBWeekday(pbWeekday sharedpb.Weekday) (time.Weekday, error) {
 	case sharedpb.Weekday_WEEKDAY_SATURDAY:
 		return time.Saturday, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbWeekday)
+	return 0, fmt.Errorf("invalid %v", pbWeekday)
 }
 
 func ToPBWeekday(weekday time.Weekday) (sharedpb.Weekday, error) {
@@ -93,5 +93,5 @@ func ToPBWeekday(weekday time.Weekday) (sharedpb.Weekday, error) {
 	case time.Saturday:
 		return sharedpb.Weekday_WEEKDAY_SATURDAY, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", weekday)
+	return 0, fmt.Errorf("invalid %v", weekday)
 }

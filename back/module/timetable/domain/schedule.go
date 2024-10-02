@@ -38,7 +38,7 @@ func ParseModule(s string) (Module, error) {
 	if ok {
 		return ret, nil
 	}
-	return 0, fmt.Errorf("failed to parse Module %#v", s)
+	return 0, fmt.Errorf("failed to parse Module %v", s)
 }
 
 //go:generate go run golang.org/x/tools/cmd/stringer -type=Day -trimprefix=Day -output=day_string.gen.go
@@ -64,7 +64,7 @@ func (d Day) Weekday() time.Weekday {
 		return time.Saturday
 	}
 
-	panic(fmt.Errorf("day (%#v) can't convert weekday", d))
+	panic(fmt.Errorf("day (%v) can't convert weekday", d))
 }
 
 func (d Day) IsNormal() bool {
@@ -125,7 +125,7 @@ func ParseDay(s string) (Day, error) {
 	if ok {
 		return ret, nil
 	}
-	return 0, fmt.Errorf("failed to parse Day %#v", s)
+	return 0, fmt.Errorf("failed to parse Day %v", s)
 }
 
 // Period is between 1 and 8.
@@ -143,7 +143,7 @@ func ParsePeriod[T constraints.Signed](i T) (Period, error) {
 	if 1 <= i && i <= 8 {
 		return Period(i), nil
 	}
-	return 0, fmt.Errorf("failed to parse Period %#v", i)
+	return 0, fmt.Errorf("failed to parse Period %v", i)
 }
 
 // Schedule shows when the course is offered.
@@ -186,7 +186,7 @@ func ConstructSchedule(fn func() (schedule Schedule, err error)) (schedule Sched
 		return
 	}
 
-	return schedule, fmt.Errorf("failed to construct %#v", schedule)
+	return schedule, fmt.Errorf("failed to construct %v", schedule)
 }
 
 func ParseSchedule(module string, day string, period int, rooms string) (schedule Schedule, err error) {

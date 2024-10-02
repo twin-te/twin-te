@@ -26,7 +26,7 @@ func FromPBModule(pbModule timetablev1.Module) (timetabledomain.Module, error) {
 	case timetablev1.Module_MODULE_SPRING_VACATION:
 		return timetabledomain.ModuleSpringVacation, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbModule)
+	return 0, fmt.Errorf("invalid %v", pbModule)
 }
 
 func ToPBModule(module timetabledomain.Module) (timetablev1.Module, error) {
@@ -48,5 +48,5 @@ func ToPBModule(module timetabledomain.Module) (timetablev1.Module, error) {
 	case timetabledomain.ModuleSpringVacation:
 		return timetablev1.Module_MODULE_SPRING_VACATION, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", module)
+	return 0, fmt.Errorf("invalid %v", module)
 }

@@ -37,5 +37,5 @@ func ParseCredit(s string) (Credit, error) {
 	if creditRegexp.MatchString(s) {
 		return Credit(s), nil
 	}
-	return "", fmt.Errorf("failed to parse Credit %#v", s)
+	return "", fmt.Errorf("failed to parse Credit %v", s)
 }

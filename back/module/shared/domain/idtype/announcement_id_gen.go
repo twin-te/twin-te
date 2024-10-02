@@ -43,7 +43,7 @@ func NewAnnouncementID() AnnouncementID {
 func ParseAnnouncementID(s string) (AnnouncementID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return AnnouncementID{}, fmt.Errorf("failed to parse AnnouncementID %#v", s)
+		return AnnouncementID{}, fmt.Errorf("failed to parse AnnouncementID %v", s)
 	}
 	return AnnouncementID(id), nil
 }

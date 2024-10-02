@@ -20,7 +20,7 @@ func FromPBEventType(pbEventType schoolcalendarv1.EventType) (schoolcalendardoma
 	case schoolcalendarv1.EventType_EVENT_TYPE_OTHER:
 		return schoolcalendardomain.EventTypeOther, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbEventType)
+	return 0, fmt.Errorf("invalid %v", pbEventType)
 }
 
 func ToPBEventType(eventType schoolcalendardomain.EventType) (schoolcalendarv1.EventType, error) {
@@ -36,5 +36,5 @@ func ToPBEventType(eventType schoolcalendardomain.EventType) (schoolcalendarv1.E
 	case schoolcalendardomain.EventTypeOther:
 		return schoolcalendarv1.EventType_EVENT_TYPE_OTHER, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", eventType)
+	return 0, fmt.Errorf("invalid %v", eventType)
 }

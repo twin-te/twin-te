@@ -15,7 +15,7 @@ func ToPBPaymentType(paymentType donationdomain.PaymentType) donationv1.PaymentT
 	case donationdomain.PaymentTypeSubscription:
 		return donationv1.PaymentType_PAYMENT_TYPE_SUBSCRIPTION
 	}
-	panic(fmt.Sprintf("never happened %#v", paymentType))
+	panic(fmt.Sprintf("never happened %v", paymentType))
 }
 
 func ToPBPaymentStatus(paymentStatus donationdomain.PaymentStatus) donationv1.PaymentStatus {
@@ -27,7 +27,7 @@ func ToPBPaymentStatus(paymentStatus donationdomain.PaymentStatus) donationv1.Pa
 	case donationdomain.PaymentStatusSucceeded:
 		return donationv1.PaymentStatus_PAYMENT_STATUS_SUCCEEDED
 	}
-	panic(fmt.Sprintf("never happened %#v", paymentStatus))
+	panic(fmt.Sprintf("never happened %v", paymentStatus))
 }
 
 func ToPBPaymentHistory(paymentHistory *donationdomain.PaymentHistory) *donationv1.PaymentHistory {

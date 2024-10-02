@@ -23,5 +23,5 @@ func ParseCode(s string) (Code, error) {
 	if codeRegexp.MatchString(s) {
 		return Code(s), nil
 	}
-	return "", fmt.Errorf("failed to parse Code %#v", s)
+	return "", fmt.Errorf("failed to parse Code %v", s)
 }

@@ -44,7 +44,7 @@ func ParseEventType(s string) (EventType, error) {
 	if ok {
 		return ret, nil
 	}
-	return 0, fmt.Errorf("failed to parse EventType %#v", s)
+	return 0, fmt.Errorf("failed to parse EventType %v", s)
 }
 
 type Event struct {

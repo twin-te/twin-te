@@ -28,5 +28,5 @@ func ParseCourseMethod(s string) (CourseMethod, error) {
 	if ok {
 		return courseMethod, nil
 	}
-	return 0, fmt.Errorf("failed to parse CourseMethod %#v", s)
+	return 0, fmt.Errorf("failed to parse CourseMethod %v", s)
 }
