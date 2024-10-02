@@ -124,19 +124,21 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import type { RegisteredCourse } from "~/domain/course";
 import { methods } from "~/domain/method";
+import type { Room } from "~/domain/room";
 import { removeDuplicateSchedules, sortSchedules } from "~/domain/schedule";
 import {
-  displayToCredit,
-  validateCredit,
+	displayToCredit,
+	validateCredit,
 } from "~/presentation/presenters/credit";
 import { validateInstructors } from "~/presentation/presenters/instructor";
 import { methodMap } from "~/presentation/presenters/method";
 import { validateRooms } from "~/presentation/presenters/room";
 import {
-  displayToSchedules,
-  isDisplaySchedule,
-  schedulesToFullString,
+	displayToSchedules,
+	isDisplaySchedule,
+	schedulesToFullString,
 } from "~/presentation/presenters/schedule";
 import Button from "~/ui/components/Button.vue";
 import CheckContent from "~/ui/components/CheckContent.vue";
@@ -149,14 +151,12 @@ import MultiTextFieldEditor from "~/ui/components/MultiTextFieldEditor.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import RoomEditor from "~/ui/components/RoomEditor.vue";
 import ScheduleEditer, {
-  useScheduleEditor,
+	useScheduleEditor,
 } from "~/ui/components/ScheduleEditer.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
 import { useSetting } from "~/ui/store";
 import { timetableUseCase } from "~/usecases";
-import type { RegisteredCourse } from "~/domain/course";
-import type { Room } from "~/domain/room";
 
 const router = useRouter();
 
@@ -173,86 +173,83 @@ const instructors = ref([]);
 
 /** room */
 const targetSchedules = computed(() =>
-  sortSchedules(
-    removeDuplicateSchedules(
-      displayToSchedules(editableSchedules.filter(isDisplaySchedule))
-    )
-  )
+	sortSchedules(
+		removeDuplicateSchedules(
+			displayToSchedules(editableSchedules.filter(isDisplaySchedule)),
+		),
+	),
 );
 
 const rooms = ref<Room[]>([]);
 
 /** checkboxes */
 const checkboxContents = reactive(
-  methods.map((method) => ({
-    key: method,
-    label: methodMap[method],
-    checked: false,
-  }))
+	methods.map((method) => ({
+		key: method,
+		label: methodMap[method],
+		checked: false,
+	})),
 );
 
 /** schedule editor */
 const {
-  schedules: editableSchedules,
-  addSchedule,
-  removeSchedule,
-  updateSchedules,
+	schedules: editableSchedules,
+	addSchedule,
+	removeSchedule,
+	updateSchedules,
 } = useScheduleEditor();
 
 /** save button */
 const buttonState = computed(() => {
-  return name.value !== "" &&
-    validateInstructors(instructors.value) &&
-    validateCredit(credit.value) &&
-    validateRooms(rooms.value) &&
-    editableSchedules.every(isDisplaySchedule)
-    ? "default"
-    : "disabled";
+	return name.value !== "" &&
+		validateInstructors(instructors.value) &&
+		validateCredit(credit.value) &&
+		validateRooms(rooms.value) &&
+		editableSchedules.every(isDisplaySchedule)
+		? "default"
+		: "disabled";
 });
 
 const addCourse = async (warning = true) => {
-  if (buttonState.value === "disabled") return;
-  if (!editableSchedules.every(isDisplaySchedule)) return;
+	if (buttonState.value === "disabled") return;
+	if (!editableSchedules.every(isDisplaySchedule)) return;
 
-  const schedules = sortSchedules(
-    removeDuplicateSchedules(displayToSchedules(editableSchedules))
-  );
-  const methods = checkboxContents
-    .filter(({ checked }) => checked)
-    .map(({ key }) => key);
-  const course: Omit<RegisteredCourse, "id" | "code"> = {
-    year: year.value,
-    name: name.value,
-    instructors: instructors.value,
-    credit: displayToCredit(credit.value),
-    methods,
-    schedules,
-    rooms: rooms.value,
-    memo: "",
-    attendance: 0,
-    absence: 0,
-    late: 0,
-    tagIds: [],
-  };
+	const schedules = sortSchedules(
+		removeDuplicateSchedules(displayToSchedules(editableSchedules)),
+	);
+	const methods = checkboxContents
+		.filter(({ checked }) => checked)
+		.map(({ key }) => key);
+	const course: Omit<RegisteredCourse, "id" | "code"> = {
+		year: year.value,
+		name: name.value,
+		instructors: instructors.value,
+		credit: displayToCredit(credit.value),
+		methods,
+		schedules,
+		rooms: rooms.value,
+		memo: "",
+		attendance: 0,
+		absence: 0,
+		late: 0,
+		tagIds: [],
+	};
 
-  if (
-    warning &&
-    !(await timetableUseCase.checkScheduleDuplicate(year.value, schedules))
-  ) {
-    duplicateScheduleText.value = schedulesToFullString(schedules);
-    openDuplicateModal();
-  } else {
-    await timetableUseCase.addCourseManually(course);
-    router.push("/");
-  }
+	if (
+		warning &&
+		!(await timetableUseCase.checkScheduleDuplicate(year.value, schedules))
+	) {
+		duplicateScheduleText.value = schedulesToFullString(schedules);
+		openDuplicateModal();
+	} else {
+		await timetableUseCase.addCourseManually(course);
+		router.push("/");
+	}
 };
 
 /** duplicate modal */
-const [
-  isDuplicateModalVisible,
-  openDuplicateModal,
-  closeDuplicateModal,
-] = useSwitch(false);
+const [isDuplicateModalVisible, openDuplicateModal, closeDuplicateModal] =
+	useSwitch(false);
 
 const duplicateScheduleText = ref("");
 </script>

@@ -1,26 +1,26 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { type PropType, defineComponent } from "vue";
 import Label from "~/ui/components/Label.vue";
 
 export default defineComponent({
-  name: "LabeledTextField",
-  components: {
-    Label,
-  },
-  props: {
-    label: {
-      type: String,
-      required: true,
-    },
-    mandatory: {
-      type: Boolean,
-      default: false,
-    },
-    size: {
-      type: String as PropType<"normal" | "slim">,
-      default: "normal",
-    },
-  },
+	name: "LabeledTextField",
+	components: {
+		Label,
+	},
+	props: {
+		label: {
+			type: String,
+			required: true,
+		},
+		mandatory: {
+			type: Boolean,
+			default: false,
+		},
+		size: {
+			type: String as PropType<"normal" | "slim">,
+			default: "normal",
+		},
+	},
 });
 </script>
 

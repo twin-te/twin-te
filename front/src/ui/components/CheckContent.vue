@@ -3,21 +3,21 @@ import { defineComponent } from "vue";
 import Checkbox from "./Checkbox.vue";
 
 export default defineComponent({
-  name: "CheckContent",
-  components: {
-    Checkbox,
-  },
-  props: {
-    checked: {
-      type: Boolean,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["update:checked"],
+	name: "CheckContent",
+	components: {
+		Checkbox,
+	},
+	props: {
+		checked: {
+			type: Boolean,
+			required: true,
+		},
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ["update:checked"],
 });
 </script>
 

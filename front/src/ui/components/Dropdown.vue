@@ -1,84 +1,84 @@
 <script lang="ts">
 import { useToggle } from "@vueuse/core";
-import { computed, defineComponent, PropType, ref, watch } from "vue";
+import { type PropType, computed, defineComponent, ref, watch } from "vue";
 import DropdownContent from "./DropdownContent.vue";
 
 type Props = {
-  options: string[];
-  selectedOption: string;
-  label: string;
-  placeholder: string;
-  state: string;
+	options: string[];
+	selectedOption: string;
+	label: string;
+	placeholder: string;
+	state: string;
 };
 
 export default defineComponent({
-  components: { DropdownContent },
-  props: {
-    options: {
-      type: Object as PropType<string[]>,
-      required: true,
-    },
-    selectedOption: {
-      type: String,
-      required: true,
-    },
-    label: {
-      type: String,
-      default: "",
-    },
-    placeholder: {
-      type: String,
-      default: "指定なし",
-    },
-    state: {
-      type: String as PropType<"default" | "disabled">,
-      default: "default",
-    },
-  },
-  emits: ["update:selectedOption"],
-  setup(props: Props, { emit }) {
-    const [isOptionsShown, toggleShown] = useToggle();
+	components: { DropdownContent },
+	props: {
+		options: {
+			type: Object as PropType<string[]>,
+			required: true,
+		},
+		selectedOption: {
+			type: String,
+			required: true,
+		},
+		label: {
+			type: String,
+			default: "",
+		},
+		placeholder: {
+			type: String,
+			default: "指定なし",
+		},
+		state: {
+			type: String as PropType<"default" | "disabled">,
+			default: "default",
+		},
+	},
+	emits: ["update:selectedOption"],
+	setup(props: Props, { emit }) {
+		const [isOptionsShown, toggleShown] = useToggle();
 
-    const unselectedOptions = ref(props.options);
+		const unselectedOptions = ref(props.options);
 
-    watch(isOptionsShown, (isOptionsShown) => {
-      if (!isOptionsShown) return;
-      unselectedOptions.value = props.options.filter(
-        (o) => o !== props.selectedOption
-      );
-    });
+		watch(isOptionsShown, (isOptionsShown) => {
+			if (!isOptionsShown) return;
+			unselectedOptions.value = props.options.filter(
+				(o) => o !== props.selectedOption,
+			);
+		});
 
-    const isDefault = computed(() => {
-      return props.placeholder === props.selectedOption;
-    });
+		const isDefault = computed(() => {
+			return props.placeholder === props.selectedOption;
+		});
 
-    const hasLabel = computed(() => {
-      return props.label !== "";
-    });
+		const hasLabel = computed(() => {
+			return props.label !== "";
+		});
 
-    const isSelected = (value: string) => {
-      return value === props.selectedOption;
-    };
+		const isSelected = (value: string) => {
+			return value === props.selectedOption;
+		};
 
-    const closeOptions = () => {
-      isOptionsShown.value = false;
-    };
+		const closeOptions = () => {
+			isOptionsShown.value = false;
+		};
 
-    const emitSelectedEvent = (option: string) => {
-      emit("update:selectedOption", option);
-    };
+		const emitSelectedEvent = (option: string) => {
+			emit("update:selectedOption", option);
+		};
 
-    return {
-      unselectedOptions,
-      isOptionsShown,
-      isDefault,
-      isSelected,
-      hasLabel,
-      toggleShown,
-      closeOptions,
-      emitSelectedEvent,
-    };
-  },
+		return {
+			unselectedOptions,
+			isOptionsShown,
+			isDefault,
+			isSelected,
+			hasLabel,
+			toggleShown,
+			closeOptions,
+			emitSelectedEvent,
+		};
+	},
 });
 </script>
 

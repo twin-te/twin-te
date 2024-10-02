@@ -42,12 +42,12 @@ import PageHeader from "~/ui/components/PageHeader.vue";
 import { announcementUseCase } from "~/usecases";
 
 useHead({
-  title: "Twin:te | お知らせ",
+	title: "Twin:te | お知らせ",
 });
 
 const announcements = await announcementUseCase
-  .getAnnouncements()
-  .then(throwResultError);
+	.getAnnouncements()
+	.then(throwResultError);
 </script>
 
 <style scoped lang="scss">

@@ -1,11 +1,11 @@
-import { Room } from "~/domain/room";
+import type { Room } from "~/domain/room";
 
 export const roomsToDisplay = (rooms: Room[]): string => {
-  return rooms.map(({ name }) => name).join(",");
+	return rooms.map(({ name }) => name).join(",");
 };
 
 export const validateRooms = (rooms: Room[]): boolean => {
-  return rooms.every(
-    ({ name, schedules }) => name !== "" && schedules.length > 0
-  );
+	return rooms.every(
+		({ name, schedules }) => name !== "" && schedules.length > 0,
+	);
 };

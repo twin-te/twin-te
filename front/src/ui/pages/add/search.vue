@@ -257,15 +257,23 @@
 import { useGtm } from "@gtm-support/vue-gtm";
 import { useIntersectionObserver } from "@vueuse/core";
 import { useToggle } from "@vueuse/shared";
-import { ComponentPublicInstance, computed, reactive, ref } from "vue";
+import { type ComponentPublicInstance, computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { isResultError } from "~/domain/error";
+import type { Course } from "~/domain/course";
+import {
+	type InternalServerError,
+	type NetworkError,
+	type UnauthenticatedError,
+	isResultError,
+} from "~/domain/error";
+import type { Schedule } from "~/domain/schedule";
 import { timetableToSchedules } from "~/domain/timetable";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import {
-  editableSchedulesToTimetable,
-  isNotSpecifiedSchedule,
+	editableSchedulesToTimetable,
+	isNotSpecifiedSchedule,
 } from "~/presentation/presenters/schedule";
+import type { DisplayCourse } from "~/presentation/viewmodels/course";
 import { notSpecified } from "~/presentation/viewmodels/option";
 import Button from "~/ui/components/Button.vue";
 import Card from "~/ui/components/Card.vue";
@@ -277,7 +285,7 @@ import LabeledTextField from "~/ui/components/LabeledTextField.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import ScheduleEditer, {
-  useScheduleEditor,
+	useScheduleEditor,
 } from "~/ui/components/ScheduleEditer.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import ToggleButton from "~/ui/components/ToggleButton.vue";
@@ -285,8 +293,6 @@ import { useSwitch } from "~/ui/hooks/useSwitch";
 import { useSetting, useToast } from "~/ui/store";
 import { timetableUseCase } from "~/usecases";
 import { asyncFilter, deleteElementInArray } from "~/utils";
-import type { Schedule } from "~/domain/schedule";
-import type { DisplayCourse } from "~/presentation/viewmodels/course";
 
 const gtm = useGtm();
 const router = useRouter();
@@ -294,9 +300,9 @@ const router = useRouter();
 const { displayToast } = useToast();
 
 type SearchResult = {
-  id: string;
-  course: DisplayCourse;
-  schedules: Schedule[];
+	id: string;
+	course: DisplayCourse;
+	schedules: Schedule[];
 };
 
 /** toggle button */
@@ -312,37 +318,32 @@ const [onlyBlank, toggleOnlyBlank] = useToggle(false);
 const [isAccordionOpen, , closeAccordion, toggleAccordion] = useSwitch(false);
 
 const conditions = computed<{ style: "outline" | "filled"; label: string }>(
-  () => {
-    if (onlyBlank.value) return { style: "filled", label: "空きコマのみ" };
-    else if (
-      schedules.every((schedule) =>
-        Object.values(schedule).every((value) => value === notSpecified)
-      )
-    ) {
-      return { style: "outline", label: "未指定" };
-    } else {
-      return {
-        style: "filled",
-        label: schedules
-          .map(
-            (schedule) =>
-              `${schedule.module}${schedule.day}${
-                "period" in schedule ? schedule.period : ""
-              }`
-          )
-          .join(","),
-      };
-    }
-  }
+	() => {
+		if (onlyBlank.value) return { style: "filled", label: "空きコマのみ" };
+		if (
+			schedules.every((schedule) =>
+				Object.values(schedule).every((value) => value === notSpecified),
+			)
+		) {
+			return { style: "outline", label: "未指定" };
+		}
+		return {
+			style: "filled",
+			label: schedules
+				.map(
+					(schedule) =>
+						`${schedule.module}${schedule.day}${
+							"period" in schedule ? schedule.period : ""
+						}`,
+				)
+				.join(","),
+		};
+	},
 );
 
 /** schedule editor */
-const {
-  schedules,
-  addSchedule,
-  removeSchedule,
-  updateSchedules,
-} = useScheduleEditor();
+const { schedules, addSchedule, removeSchedule, updateSchedules } =
+	useScheduleEditor();
 
 /** search */
 let currentOffset = 0;
@@ -351,74 +352,78 @@ const fetching = ref(false);
 const noResultText = ref("");
 
 const search = async (init = true) => {
-  const offset = init ? 0 : currentOffset;
-  fetching.value = true;
-  noResultText.value = "";
+	const offset = init ? 0 : currentOffset;
+	fetching.value = true;
+	noResultText.value = "";
 
-  const codes = code.value.split(/\s/);
-  const conds = {
-    year: year.value,
-    keywords: keyword.value.split(/\s/),
-    codePrefixes: {
-      included: codes.filter((code) => !code.startsWith("-")),
-      excluded: codes
-        .filter((code) => code.startsWith("-"))
-        .map((code) => code.slice(1)),
-    },
-    limit,
-    offset,
-  };
+	const codes = code.value.split(/\s/);
+	const conds = {
+		year: year.value,
+		keywords: keyword.value.split(/\s/),
+		codePrefixes: {
+			included: codes.filter((code) => !code.startsWith("-")),
+			excluded: codes
+				.filter((code) => code.startsWith("-"))
+				.map((code) => code.slice(1)),
+		},
+		limit,
+		offset,
+	};
 
-  let result;
-  if (onlyBlank.value) {
-    result = await timetableUseCase.searchCoursesOnBlank(conds);
-  } else {
-    const schedulesPartiallyOverlapped = schedules.every(isNotSpecifiedSchedule)
-      ? []
-      : timetableToSchedules(
-          editableSchedulesToTimetable(
-            schedules.filter((schedule) => !isNotSpecifiedSchedule(schedule))
-          )
-        );
+	let result:
+		| Course[]
+		| UnauthenticatedError
+		| NetworkError
+		| InternalServerError;
+	if (onlyBlank.value) {
+		result = await timetableUseCase.searchCoursesOnBlank(conds);
+	} else {
+		const schedulesPartiallyOverlapped = schedules.every(isNotSpecifiedSchedule)
+			? []
+			: timetableToSchedules(
+					editableSchedulesToTimetable(
+						schedules.filter((schedule) => !isNotSpecifiedSchedule(schedule)),
+					),
+				);
 
-    result = await timetableUseCase.searchCourses({
-      ...conds,
-      schedules: {
-        fullyIncluded: [],
-        partiallyOverlapped: schedulesPartiallyOverlapped,
-      },
-    });
-  }
-  if (isResultError(result)) throw result;
+		result = await timetableUseCase.searchCourses({
+			...conds,
+			schedules: {
+				fullyIncluded: [],
+				partiallyOverlapped: schedulesPartiallyOverlapped,
+			},
+		});
+	}
+	if (isResultError(result)) throw result;
 
-  const newSearchResults: SearchResult[] = result.map((course) => ({
-    id: course.id,
-    course: courseToDisplay(course),
-    schedules: course.schedules,
-  }));
-  if (offset === 0)
-    searchResults.splice(0, searchResults.length, ...newSearchResults);
-  else searchResults.splice(searchResults.length, 0, ...newSearchResults);
-  result.forEach(({ id }) => (courseIdToExpanded[id] = false));
+	const newSearchResults: SearchResult[] = result.map((course) => ({
+		id: course.id,
+		course: courseToDisplay(course),
+		schedules: course.schedules,
+	}));
+	if (offset === 0)
+		searchResults.splice(0, searchResults.length, ...newSearchResults);
+	else searchResults.splice(searchResults.length, 0, ...newSearchResults);
+	result.forEach(({ id }) => (courseIdToExpanded[id] = false));
 
-  fetching.value = false;
-  if (searchResults.length === 0)
-    noResultText.value = [code.value, keyword.value]
-      .filter((value) => value)
-      .join(" ");
-  currentOffset = offset + limit;
-  closeAccordion();
+	fetching.value = false;
+	if (searchResults.length === 0)
+		noResultText.value = [code.value, keyword.value]
+			.filter((value) => value)
+			.join(" ");
+	currentOffset = offset + limit;
+	closeAccordion();
 
-  // Gather information related to course searches.
-  if (init) {
-    gtm?.trackEvent({
-      event: "search-courses",
-      term: keyword.value,
-      code: code.value,
-      use_only_blank: onlyBlank.value,
-      schedules: JSON.stringify(schedules),
-    });
-  }
+	// Gather information related to course searches.
+	if (init) {
+		gtm?.trackEvent({
+			event: "search-courses",
+			term: keyword.value,
+			code: code.value,
+			use_only_blank: onlyBlank.value,
+			schedules: JSON.stringify(schedules),
+		});
+	}
 };
 
 /** search results */
@@ -430,30 +435,30 @@ const courseIdToExpanded = reactive<Record<string, boolean>>({});
 const searchBoxRef = ref<HTMLElement | null>(null);
 
 const options = {
-  root: searchBoxRef.value,
-  rootMargin: "0px 0px 500px 0px",
-  threshold: 0,
+	root: searchBoxRef.value,
+	rootMargin: "0px 0px 500px 0px",
+	threshold: 0,
 };
 
 const setSearchResultRef = (
-  el: Element | null | ComponentPublicInstance,
-  index: number
+	el: Element | null | ComponentPublicInstance,
+	index: number,
 ) => {
-  // TODO: el === null のエラーハンドリングを実装
-  // TODO: ComponentPublicInstance と Element で振る舞いを分ける必要があるか調査
-  if (!el) return;
-  if (el instanceof Element && !(el instanceof HTMLElement)) return;
-  if (index + 10 === searchResults.length) {
-    useIntersectionObserver(
-      el,
-      ([entry], observer) => {
-        if (!entry.isIntersecting) return;
-        search(false);
-        observer.unobserve(entry.target);
-      },
-      options
-    );
-  }
+	// TODO: el === null のエラーハンドリングを実装
+	// TODO: ComponentPublicInstance と Element で振る舞いを分ける必要があるか調査
+	if (!el) return;
+	if (el instanceof Element && !(el instanceof HTMLElement)) return;
+	if (index + 10 === searchResults.length) {
+		useIntersectionObserver(
+			el,
+			([entry], observer) => {
+				if (!entry.isIntersecting) return;
+				search(false);
+				observer.unobserve(entry.target);
+			},
+			options,
+		);
+	}
 };
 
 /** selected courses */
@@ -462,92 +467,87 @@ const [isSelectedOpen, toggleSelectedOpen] = useToggle(false);
 const selectedSearchResults = reactive<SearchResult[]>([]);
 
 const isChecked = (id: string) => {
-  return computed(
-    () =>
-      selectedSearchResults.findIndex(({ course }) => course.id === id) !== -1
-  );
+	return computed(
+		() =>
+			selectedSearchResults.findIndex(({ course }) => course.id === id) !== -1,
+	);
 };
 
 const onClickCheckbox = (searchResult: SearchResult) => {
-  const index = selectedSearchResults.findIndex(
-    ({ id }) => id === searchResult.id
-  );
-  if (index !== -1) selectedSearchResults.splice(index, 1);
-  else selectedSearchResults.push(searchResult);
+	const index = selectedSearchResults.findIndex(
+		({ id }) => id === searchResult.id,
+	);
+	if (index !== -1) selectedSearchResults.splice(index, 1);
+	else selectedSearchResults.push(searchResult);
 };
 
 const onClickCard = (id: string) => {
-  courseIdToExpanded[id] = !courseIdToExpanded[id];
+	courseIdToExpanded[id] = !courseIdToExpanded[id];
 };
 
 /** add button */
 const buttonState = computed(() =>
-  selectedSearchResults.length > 0 ? "default" : "disabled"
+	selectedSearchResults.length > 0 ? "default" : "disabled",
 );
 
 const duplicatedScheduleCourses = ref<DisplayCourse[]>([]);
 
 const addCourses = async (warning = true) => {
-  const registeredCourse = await timetableUseCase.getRegisteredCourses(
-    year.value
-  );
+	const registeredCourse = await timetableUseCase.getRegisteredCourses(
+		year.value,
+	);
 
-  if (isResultError(registeredCourse)) throw registeredCourse;
+	if (isResultError(registeredCourse)) throw registeredCourse;
 
-  const duplicatedCourses = selectedSearchResults
-    .filter(({ course: { code: selectedCourseCode } }) => {
-      return registeredCourse.some(
-        ({ code: registeredCourseCode }) =>
-          registeredCourseCode === selectedCourseCode
-      );
-    })
-    .map(({ course }) => course);
+	const duplicatedCourses = selectedSearchResults
+		.filter(({ course: { code: selectedCourseCode } }) => {
+			return registeredCourse.some(
+				({ code: registeredCourseCode }) =>
+					registeredCourseCode === selectedCourseCode,
+			);
+		})
+		.map(({ course }) => course);
 
-  if (duplicatedCourses.length > 0) {
-    const text =
-      `以下のコースはすでに登録されているため追加できません。\n` +
-      duplicatedCourses
-        .map(({ code, name }) => `【${code}】${name}`)
-        .join("\n");
-    displayToast(text, { type: "danger" });
-    gtm?.trackEvent({ event: "duplicated-courses-error" });
-    return;
-  }
+	if (duplicatedCourses.length > 0) {
+		const text = `以下のコースはすでに登録されているため追加できません。\n${duplicatedCourses
+			.map(({ code, name }) => `【${code}】${name}`)
+			.join("\n")}`;
+		displayToast(text, { type: "danger" });
+		gtm?.trackEvent({ event: "duplicated-courses-error" });
+		return;
+	}
 
-  duplicatedScheduleCourses.value = await (
-    await asyncFilter(
-      selectedSearchResults,
-      async ({ schedules }) =>
-        !(await timetableUseCase.checkScheduleDuplicate(year.value, schedules))
-    )
-  ).map(({ course }) => course);
+	duplicatedScheduleCourses.value = await (
+		await asyncFilter(
+			selectedSearchResults,
+			async ({ schedules }) =>
+				!(await timetableUseCase.checkScheduleDuplicate(year.value, schedules)),
+		)
+	).map(({ course }) => course);
 
-  if (warning && duplicatedScheduleCourses.value.length > 0) {
-    openDuplicateModal();
-    return;
-  }
+	if (warning && duplicatedScheduleCourses.value.length > 0) {
+		openDuplicateModal();
+		return;
+	}
 
-  await timetableUseCase.addCoursesByCodes({
-    year: year.value,
-    codes: selectedSearchResults.map(({ course }) => course.code),
-  });
-  router.push("/");
+	await timetableUseCase.addCoursesByCodes({
+		year: year.value,
+		codes: selectedSearchResults.map(({ course }) => course.code),
+	});
+	router.push("/");
 };
 
 /** duplicate modal */
-const [
-  isDuplicateModalVisible,
-  openDuplicateModal,
-  closeDuplicateModal,
-] = useSwitch(false);
+const [isDuplicateModalVisible, openDuplicateModal, closeDuplicateModal] =
+	useSwitch(false);
 
 /** unselecte course modal */
 const targetCourseToUnselect = ref<DisplayCourse>();
 
 const unselectTargetCourse = () => {
-  if (targetCourseToUnselect.value == undefined) return;
-  deleteElementInArray(selectedSearchResults, targetCourseToUnselect.value.id);
-  targetCourseToUnselect.value = undefined;
+	if (targetCourseToUnselect.value == undefined) return;
+	deleteElementInArray(selectedSearchResults, targetCourseToUnselect.value.id);
+	targetCourseToUnselect.value = undefined;
 };
 </script>
 

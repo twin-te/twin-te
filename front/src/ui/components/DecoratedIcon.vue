@@ -2,12 +2,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    iconName: {
-      type: String,
-      required: true,
-    },
-  },
+	props: {
+		iconName: {
+			type: String,
+			required: true,
+		},
+	},
 });
 </script>
 

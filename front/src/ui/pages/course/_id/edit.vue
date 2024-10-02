@@ -110,21 +110,21 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { isResultError, NotFoundError } from "~/domain/error";
+import { NotFoundError, isResultError } from "~/domain/error";
 import { methods } from "~/domain/method";
-import { sortSchedules, removeDuplicateSchedules } from "~/domain/schedule";
+import { removeDuplicateSchedules, sortSchedules } from "~/domain/schedule";
 import {
-  creditToDisplay,
-  displayToCredit,
-  validateCredit,
+	creditToDisplay,
+	displayToCredit,
+	validateCredit,
 } from "~/presentation/presenters/credit";
 import { validateInstructors } from "~/presentation/presenters/instructor";
 import { methodMap } from "~/presentation/presenters/method";
 import { validateRooms } from "~/presentation/presenters/room";
 import {
-  schedulesToDisplay,
-  displayToSchedules,
-  isDisplaySchedule,
+	displayToSchedules,
+	isDisplaySchedule,
+	schedulesToDisplay,
 } from "~/presentation/presenters/schedule";
 import Button from "~/ui/components/Button.vue";
 import CheckContent from "~/ui/components/CheckContent.vue";
@@ -136,7 +136,7 @@ import MultiTextFieldEditor from "~/ui/components/MultiTextFieldEditor.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import RoomEditor from "~/ui/components/RoomEditor.vue";
 import ScheduleEditer, {
-  useScheduleEditor,
+	useScheduleEditor,
 } from "~/ui/components/ScheduleEditer.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
@@ -148,22 +148,22 @@ const router = useRouter();
 /** course */
 const { id } = route.params as { id: string };
 const course = await timetableUseCase
-  .getRegisteredCourseById(id)
-  .then((result) => {
-    if (result instanceof NotFoundError) router.push("/404");
-    if (isResultError(result)) throw result;
-    return result;
-  });
+	.getRegisteredCourseById(id)
+	.then((result) => {
+		if (result instanceof NotFoundError) router.push("/404");
+		if (isResultError(result)) throw result;
+		return result;
+	});
 
 /** name */
 const name = ref(course.name);
 
 /** schedule editor */
 const {
-  schedules: editableSchedules,
-  addSchedule,
-  removeSchedule,
-  updateSchedules,
+	schedules: editableSchedules,
+	addSchedule,
+	removeSchedule,
+	updateSchedules,
 } = useScheduleEditor(schedulesToDisplay(course.schedules));
 
 /** credit */
@@ -174,61 +174,61 @@ const instructors = ref([...course.instructors]);
 
 /** room */
 const targetSchedules = computed(() =>
-  sortSchedules(
-    removeDuplicateSchedules(
-      displayToSchedules(editableSchedules.filter(isDisplaySchedule))
-    )
-  )
+	sortSchedules(
+		removeDuplicateSchedules(
+			displayToSchedules(editableSchedules.filter(isDisplaySchedule)),
+		),
+	),
 );
 
 const rooms = ref([...course.rooms]);
 
 /** checkboxes */
 const checkboxContents = reactive(
-  methods.map((method) => ({
-    key: method,
-    label: methodMap[method],
-    checked: course.methods.includes(method),
-  }))
+	methods.map((method) => ({
+		key: method,
+		label: methodMap[method],
+		checked: course.methods.includes(method),
+	})),
 );
 
 /** save button */
 const buttonState = computed(() => {
-  return name.value !== "" &&
-    validateInstructors(instructors.value) &&
-    validateCredit(credit.value) &&
-    validateRooms(rooms.value) &&
-    editableSchedules.every(isDisplaySchedule)
-    ? "default"
-    : "disabled";
+	return name.value !== "" &&
+		validateInstructors(instructors.value) &&
+		validateCredit(credit.value) &&
+		validateRooms(rooms.value) &&
+		editableSchedules.every(isDisplaySchedule)
+		? "default"
+		: "disabled";
 });
 
 const save = async () => {
-  if (buttonState.value === "disabled") return;
-  if (!editableSchedules.every(isDisplaySchedule)) return;
+	if (buttonState.value === "disabled") return;
+	if (!editableSchedules.every(isDisplaySchedule)) return;
 
-  const schedules = sortSchedules(
-    removeDuplicateSchedules(displayToSchedules(editableSchedules))
-  );
-  const methods = checkboxContents
-    .filter(({ checked }) => checked)
-    .map(({ key }) => key);
+	const schedules = sortSchedules(
+		removeDuplicateSchedules(displayToSchedules(editableSchedules)),
+	);
+	const methods = checkboxContents
+		.filter(({ checked }) => checked)
+		.map(({ key }) => key);
 
-  await timetableUseCase
-    .updateRegisteredCourse(id, {
-      name: name.value,
-      credit: displayToCredit(credit.value),
-      instructors: instructors.value,
-      schedules,
-      methods,
-      rooms: rooms.value,
-    })
-    .then((result) => {
-      if (isResultError(result)) throw result;
-      return result;
-    });
+	await timetableUseCase
+		.updateRegisteredCourse(id, {
+			name: name.value,
+			credit: displayToCredit(credit.value),
+			instructors: instructors.value,
+			schedules,
+			methods,
+			rooms: rooms.value,
+		})
+		.then((result) => {
+			if (isResultError(result)) throw result;
+			return result;
+		});
 
-  router.push(`/course/${id}`);
+	router.push(`/course/${id}`);
 };
 
 /** modal */
@@ -236,11 +236,11 @@ const [isVisibleModal, openModal, closeModal] = useSwitch(false);
 
 /** header */
 const onClickIconButton = () => {
-  // TODO:変更していない時はモーダルを表示しない
-  // if (course.value.name === name.value && course.value.credit === Number(credit.value) && ) {
-  //   return;
-  // }
-  openModal();
+	// TODO:変更していない時はモーダルを表示しない
+	// if (course.value.name === name.value && course.value.credit === Number(credit.value) && ) {
+	//   return;
+	// }
+	openModal();
 };
 </script>
 

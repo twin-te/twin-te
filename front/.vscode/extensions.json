@@ -1,6 +1,3 @@
 {
-	"recommendations": [
-		"biomejs.biome",
-		"vue.volar"
-	]
+	"recommendations": ["biomejs.biome", "vue.volar"]
 }

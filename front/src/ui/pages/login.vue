@@ -69,25 +69,25 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Provider } from "~/domain/user";
+import type { Provider } from "~/domain/user";
 import GrayFilter from "~/ui/components/GrayFilter.vue";
 import { getLoginUrl, redirectToUrl } from "~/ui/url";
 import { useSetting } from "../store";
 
 export default defineComponent({
-  components: { GrayFilter },
-  setup: () => {
-    const router = useRouter();
-    const route = useRoute();
-    const redirectUrl = route.query.redirectUrl?.toString() as string;
-    const { setting } = useSetting();
-    const clicked = ref(false);
-    const login = (provider: Provider) => {
-      clicked.value = true;
-      redirectToUrl(getLoginUrl(provider, redirectUrl));
-    };
-    return { router, setting, clicked, login };
-  },
+	components: { GrayFilter },
+	setup: () => {
+		const router = useRouter();
+		const route = useRoute();
+		const redirectUrl = route.query.redirectUrl?.toString() as string;
+		const { setting } = useSetting();
+		const clicked = ref(false);
+		const login = (provider: Provider) => {
+			clicked.value = true;
+			redirectToUrl(getLoginUrl(provider, redirectUrl));
+		};
+		return { router, setting, clicked, login };
+	},
 });
 </script>
 

@@ -1,22 +1,20 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { type PropType, defineComponent } from "vue";
 import GrayFilter from "./GrayFilter.vue";
 
 export default defineComponent({
-  name: "Modal",
-  components: {
-    GrayFilter,
-  },
-  props: {
-    size: {
-      type: String as PropType<"small" | "large">,
-      default: "large",
-      validator: function (value: string) {
-        return ["small", "large"].includes(value);
-      },
-    },
-  },
-  emits: ["click"],
+	name: "Modal",
+	components: {
+		GrayFilter,
+	},
+	props: {
+		size: {
+			type: String as PropType<"small" | "large">,
+			default: "large",
+			validator: (value: string) => ["small", "large"].includes(value),
+		},
+	},
+	emits: ["click"],
 });
 </script>
 

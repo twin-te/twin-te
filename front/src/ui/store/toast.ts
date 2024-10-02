@@ -1,31 +1,31 @@
 import { computed, reactive } from "vue";
-import { Toast, ToastType } from "~/presentation/viewmodels/toast";
-import { deepCopy, deleteElementInArray, createId } from "~/utils";
+import type { Toast, ToastType } from "~/presentation/viewmodels/toast";
+import { createId, deepCopy, deleteElementInArray } from "~/utils";
 
 const toasts = reactive<Toast[]>([]);
 
 const deleteToast = (id: string) => {
-  deleteElementInArray(toasts, id);
+	deleteElementInArray(toasts, id);
 };
 
 const displayToast = (
-  text: string,
-  option?: { displayPeriod?: number; type?: ToastType }
+	text: string,
+	option?: { displayPeriod?: number; type?: ToastType },
 ) => {
-  const id = createId();
-  const displayPeriod = option?.displayPeriod ?? text.length * 240; // 250 characters per minute reading speed
-  const type = option?.type ?? "danger";
+	const id = createId();
+	const displayPeriod = option?.displayPeriod ?? text.length * 240; // 250 characters per minute reading speed
+	const type = option?.type ?? "danger";
 
-  toasts.push({ id, text, type });
-  if (displayPeriod > 0) setTimeout(() => deleteToast(id), displayPeriod);
+	toasts.push({ id, text, type });
+	if (displayPeriod > 0) setTimeout(() => deleteToast(id), displayPeriod);
 };
 
 const useToast = () => {
-  return {
-    toasts: computed(() => deepCopy(toasts)),
-    deleteToast,
-    displayToast,
-  };
+	return {
+		toasts: computed(() => deepCopy(toasts)),
+		deleteToast,
+		displayToast,
+	};
 };
 
 export default useToast;

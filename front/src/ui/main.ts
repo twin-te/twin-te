@@ -12,35 +12,35 @@ import "./styles/_index.scss";
 const app = createApp(App);
 
 Sentry.init({
-  app,
-  dsn: String(import.meta.env.VITE_APP_SENTRY_URL ?? ""),
-  integrations: [
-    new BrowserTracing({
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracingOrigins: ["app.twinte.net"],
-    }),
-    new Sentry.Replay({
-      maskAllText: false,
-    }),
-  ],
-  tracesSampleRate: 1.0,
-  replaysSessionSampleRate: 0.01,
-  replaysOnErrorSampleRate: 1.0,
-  logErrors: true,
+	app,
+	dsn: String(import.meta.env.VITE_APP_SENTRY_URL ?? ""),
+	integrations: [
+		new BrowserTracing({
+			routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+			tracingOrigins: ["app.twinte.net"],
+		}),
+		new Sentry.Replay({
+			maskAllText: false,
+		}),
+	],
+	tracesSampleRate: 1.0,
+	replaysSessionSampleRate: 0.01,
+	replaysOnErrorSampleRate: 1.0,
+	logErrors: true,
 });
 
 const head = createHead();
 
 app
-  .use(router)
-  .use(VueClickAway)
-  .use(head)
-  .use(
-    createGtm({
-      id: "GTM-PHSLD8B",
-      vueRouter: router,
-      enabled: import.meta.env.PROD,
-      debug: import.meta.env.DEV,
-    })
-  )
-  .mount("#app");
+	.use(router)
+	.use(VueClickAway)
+	.use(head)
+	.use(
+		createGtm({
+			id: "GTM-PHSLD8B",
+			vueRouter: router,
+			enabled: import.meta.env.PROD,
+			debug: import.meta.env.DEV,
+		}),
+	)
+	.mount("#app");

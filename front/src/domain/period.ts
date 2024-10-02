@@ -13,15 +13,15 @@ export const nighttimePeriods: NighttimePeriod[] = ["7", "8"];
 export const periods: Period[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
 export const isDaytimePeriod = (period: unknown): period is DaytimePeriod => {
-  return isContained(period, daytimePeriods);
+	return isContained(period, daytimePeriods);
 };
 
 export const isNighttimePeriod = (
-  period: unknown
+	period: unknown,
 ): period is NighttimePeriod => {
-  return isContained(period, nighttimePeriods);
+	return isContained(period, nighttimePeriods);
 };
 
 export const isPeriod = (period: unknown): period is Period => {
-  return isContained(period, periods);
+	return isContained(period, periods);
 };

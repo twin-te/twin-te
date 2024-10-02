@@ -97,6 +97,7 @@ import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { isResultError } from "~/domain/error";
 import { courseToDisplay } from "~/presentation/presenters/course";
+import type { DisplayCourse } from "~/presentation/viewmodels/course";
 import Button from "~/ui/components/Button.vue";
 import Card from "~/ui/components/Card.vue";
 import CardCourse from "~/ui/components/CardCourse.vue";
@@ -106,7 +107,6 @@ import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import { timetableUseCase } from "~/usecases";
 import { useSetting, useSidebar, useToast } from "../store";
-import type { DisplayCourse } from "~/presentation/viewmodels/course";
 
 const route = useRoute();
 const router = useRouter();
@@ -116,86 +116,86 @@ const { toggleSidebar } = useSidebar();
 const { displayToast } = useToast();
 
 if (typeof route.query.codes !== "string") {
-  displayToast("授業のインポートに失敗しました。");
-  await router.push("/");
+	displayToast("授業のインポートに失敗しました。");
+	await router.push("/");
 }
 
 const codes: string[] = (route.query.codes as string).split(",");
 
 /** result */
 const result = await timetableUseCase.getCoursesByCodes({
-  year: appliedYear.value,
-  codes,
+	year: appliedYear.value,
+	codes,
 });
 if (isResultError(result)) throw result;
 
 const registered = await timetableUseCase.getRegisteredCourses(
-  appliedYear.value
+	appliedYear.value,
 );
 if (isResultError(registered)) throw registered;
 
 const registeredSet = new Set(
-  registered.map((course) => `${course.year}_${course.code}`)
+	registered.map((course) => `${course.year}_${course.code}`),
 );
 
 const courseResults = reactive(
-  result.map((course) => ({
-    course: courseToDisplay(course),
-    schedules: course.schedules,
-    selected: !registeredSet.has(`${course.year}_${course.code}`),
-    expanded: false,
-  }))
+	result.map((course) => ({
+		course: courseToDisplay(course),
+		schedules: course.schedules,
+		selected: !registeredSet.has(`${course.year}_${course.code}`),
+		expanded: false,
+	})),
 );
 
 const selectedCourseResults = computed(() =>
-  courseResults.filter(({ selected }) => selected)
+	courseResults.filter(({ selected }) => selected),
 );
 
 const missingCodes = codes.filter(
-  (code) => result.find((course) => course.code === code) == undefined
+	(code) => result.find((course) => course.code === code) == undefined,
 );
 if (missingCodes.length > 0) {
-  displayToast(
-    `以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
-      "  "
-    )}`,
-    { displayPeriod: 0 }
-  );
+	displayToast(
+		`以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
+			"  ",
+		)}`,
+		{ displayPeriod: 0 },
+	);
 }
 
 const addCourses = async (warning = true) => {
-  if (buttonState.value === "disabled") return;
+	if (buttonState.value === "disabled") return;
 
-  duplicateCourses.value = (
-    await Promise.all(
-      selectedCourseResults.value.map(async ({ course, schedules }) => ({
-        course,
-        result: await timetableUseCase.checkScheduleDuplicate(
-          appliedYear.value,
-          schedules
-        ),
-      }))
-    )
-  ).reduce<DisplayCourse[]>((ret, { course, result }) => {
-    if (isResultError(result)) throw result;
-    if (!result) ret.push(course);
-    return ret;
-  }, []);
+	duplicateCourses.value = (
+		await Promise.all(
+			selectedCourseResults.value.map(async ({ course, schedules }) => ({
+				course,
+				result: await timetableUseCase.checkScheduleDuplicate(
+					appliedYear.value,
+					schedules,
+				),
+			})),
+		)
+	).reduce<DisplayCourse[]>((ret, { course, result }) => {
+		if (isResultError(result)) throw result;
+		if (!result) ret.push(course);
+		return ret;
+	}, []);
 
-  if (warning && duplicateCourses.value.length > 0) return;
-  await timetableUseCase.addCoursesByCodes({
-    year: appliedYear.value,
-    codes: selectedCourseResults.value.map(({ course }) => course.code),
-  });
-  router.push("/");
+	if (warning && duplicateCourses.value.length > 0) return;
+	await timetableUseCase.addCoursesByCodes({
+		year: appliedYear.value,
+		codes: selectedCourseResults.value.map(({ course }) => course.code),
+	});
+	router.push("/");
 };
 
 /** duplicate modal */
 const duplicateCourses = ref<DisplayCourse[]>();
 
 const buttonState = computed(() => {
-  if (selectedCourseResults.value.length > 0) return "default";
-  return "disabled";
+	if (selectedCourseResults.value.length > 0) return "default";
+	return "disabled";
 });
 </script>
 

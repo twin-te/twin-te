@@ -7,44 +7,44 @@ export type SpecialDay = "Intensive" | "Appointment" | "AnyTime" | "NT";
 export type Day = NormalDay | SpecialDay;
 
 export const normalDays: NormalDay[] = [
-  "Mon",
-  "Tue",
-  "Wed",
-  "Thu",
-  "Fri",
-  "Sat",
-  "Sun",
+	"Mon",
+	"Tue",
+	"Wed",
+	"Thu",
+	"Fri",
+	"Sat",
+	"Sun",
 ];
 
 export const specialDays: SpecialDay[] = [
-  "Intensive",
-  "Appointment",
-  "AnyTime",
-  "NT",
+	"Intensive",
+	"Appointment",
+	"AnyTime",
+	"NT",
 ];
 
 export const days: Day[] = [
-  "Mon",
-  "Tue",
-  "Wed",
-  "Thu",
-  "Fri",
-  "Sat",
-  "Sun",
-  "Intensive",
-  "Appointment",
-  "AnyTime",
-  "NT",
+	"Mon",
+	"Tue",
+	"Wed",
+	"Thu",
+	"Fri",
+	"Sat",
+	"Sun",
+	"Intensive",
+	"Appointment",
+	"AnyTime",
+	"NT",
 ];
 
 export const isNormalDay = (day: unknown): day is NormalDay => {
-  return isContained(day, normalDays);
+	return isContained(day, normalDays);
 };
 
 export const isSpecialDay = (day: unknown): day is SpecialDay => {
-  return isContained(day, specialDays);
+	return isContained(day, specialDays);
 };
 
 export const isDay = (day: unknown): day is Day => {
-  return isContained(day, days);
+	return isContained(day, days);
 };

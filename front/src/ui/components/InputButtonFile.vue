@@ -2,39 +2,39 @@
 import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    accept: {
-      type: String,
-      default: "",
-    },
-  },
-  emits: ["change-file"],
-  setup: (_, { emit }) => {
-    const fileName = ref("");
-    const path = ref("");
+	props: {
+		name: {
+			type: String,
+			required: true,
+		},
+		accept: {
+			type: String,
+			default: "",
+		},
+	},
+	emits: ["change-file"],
+	setup: (_, { emit }) => {
+		const fileName = ref("");
+		const path = ref("");
 
-    const changeFile = (e: Event) => {
-      const file = (e.currentTarget as HTMLInputElement).files?.[0];
-      fileName.value = file?.name ?? "";
-      emit("change-file", file);
-    };
+		const changeFile = (e: Event) => {
+			const file = (e.currentTarget as HTMLInputElement).files?.[0];
+			fileName.value = file?.name ?? "";
+			emit("change-file", file);
+		};
 
-    // 同じ名前のファイルを再度選択したとき onChange が機能しないため
-    const resetFileSelect = () => {
-      path.value = "";
-    };
+		// 同じ名前のファイルを再度選択したとき onChange が機能しないため
+		const resetFileSelect = () => {
+			path.value = "";
+		};
 
-    return {
-      fileName,
-      changeFile,
-      path,
-      resetFileSelect,
-    };
-  },
+		return {
+			fileName,
+			changeFile,
+			path,
+			resetFileSelect,
+		};
+	},
 });
 </script>
 

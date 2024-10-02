@@ -1,24 +1,24 @@
 <script lang="ts">
 //Notifcation Settings
 declare global {
-  // eslint-disable-next-line no-unused-vars
-  interface Window {
-    android?: {
-      openSettings: () => void;
-      //shareが無いとTypeError...どこまで弄っていいか分からなかったのでこのまま
-      share: (message: string) => void;
-    };
-    webkit?: {
-      messageHandlers?: {
-        iPhoneSettings?: {
-          postMessage: (hoge: string) => void;
-        };
-        share?: {
-          postMessage: (message: string) => void;
-        };
-      };
-    };
-  }
+	// eslint-disable-next-line no-unused-vars
+	interface Window {
+		android?: {
+			openSettings: () => void;
+			//shareが無いとTypeError...どこまで弄っていいか分からなかったのでこのまま
+			share: (message: string) => void;
+		};
+		webkit?: {
+			messageHandlers?: {
+				iPhoneSettings?: {
+					postMessage: (hoge: string) => void;
+				};
+				share?: {
+					postMessage: (message: string) => void;
+				};
+			};
+		};
+	}
 }
 </script>
 <template>

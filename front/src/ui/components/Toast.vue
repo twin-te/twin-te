@@ -1,31 +1,31 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { ToastType } from "~/presentation/viewmodels/toast";
+import { type PropType, defineComponent } from "vue";
+import type { ToastType } from "~/presentation/viewmodels/toast";
 
 type Props = {
-  text: string;
+	text: string;
 };
 
 export default defineComponent({
-  props: {
-    text: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String as PropType<ToastType>,
-      default: "danger",
-    },
-  },
-  emits: ["click-close-button"],
-  setup: (_: Props, { emit }) => {
-    const close = () => {
-      emit("click-close-button");
-    };
-    return {
-      close,
-    };
-  },
+	props: {
+		text: {
+			type: String,
+			required: true,
+		},
+		type: {
+			type: String as PropType<ToastType>,
+			default: "danger",
+		},
+	},
+	emits: ["click-close-button"],
+	setup: (_: Props, { emit }) => {
+		const close = () => {
+			emit("click-close-button");
+		};
+		return {
+			close,
+		};
+	},
 });
 </script>
 

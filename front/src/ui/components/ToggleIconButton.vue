@@ -2,46 +2,43 @@
 import { defineComponent } from "vue";
 
 type Props = {
-  size: string;
-  color: string;
-  iconName: string;
-  isActive: boolean;
+	size: string;
+	color: string;
+	iconName: string;
+	isActive: boolean;
 };
 
 export default defineComponent({
-  name: "IconButton",
-  props: {
-    size: {
-      type: String,
-      default: "large",
-      validator: function (value: string) {
-        return ["small", "medium", "large"].includes(value);
-      },
-    },
-    color: {
-      type: String,
-      default: "normal",
-      varidator: function (value: string) {
-        return ["normal", "danger"].includes(value);
-      },
-    },
-    iconName: {
-      type: String,
-      default: "",
-    },
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["click"],
-  setup: (_props: Props, { emit }) => {
-    const handleClick = (e: MouseEvent) => {
-      emit("click", e);
-    };
+	name: "IconButton",
+	props: {
+		size: {
+			type: String,
+			default: "large",
+			validator: (value: string) =>
+				["small", "medium", "large"].includes(value),
+		},
+		color: {
+			type: String,
+			default: "normal",
+			varidator: (value: string) => ["normal", "danger"].includes(value),
+		},
+		iconName: {
+			type: String,
+			default: "",
+		},
+		isActive: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ["click"],
+	setup: (_props: Props, { emit }) => {
+		const handleClick = (e: MouseEvent) => {
+			emit("click", e);
+		};
 
-    return { handleClick };
-  },
+		return { handleClick };
+	},
 });
 </script>
 
