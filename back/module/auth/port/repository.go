@@ -20,6 +20,7 @@ type Repository interface {
 	DeleteUsers(ctx context.Context, conds DeleteUserConds) (rowsAffected int, err error)
 
 	FindSession(ctx context.Context, conds FindSessionConds, lock sharedport.Lock) (*authdomain.Session, error)
+	ListSessions(ctx context.Context, conds ListSessionsConds, lock sharedport.Lock) ([]*authdomain.Session, error)
 	CreateSessions(ctx context.Context, sessions ...*authdomain.Session) error
 	DeleteSessions(ctx context.Context, conds DeleteSessionsConds) (rowsAffected int, err error)
 }
@@ -50,6 +51,8 @@ type FindSessionConds struct {
 	ID             idtype.SessionID
 	ExpiredAtAfter *time.Time
 }
+
+type ListSessionsConds struct{}
 
 type DeleteSessionsConds struct {
 	UserID *idtype.UserID
