@@ -1,12 +1,12 @@
-import styles from './MobileHeader.module.scss';
-import Link from 'next/link';
-import Drawer from 'react-modern-drawer';
-import 'react-modern-drawer/dist/index.css';
-import { useEffect, useState } from 'react';
-import Sidebar from '../Sidebar';
-import Router from 'next/router';
-import Image from 'next/image';
-import TwinteLogo from '@/public/images/twinte-sponsor-title.png';
+import Link from "next/link";
+import Drawer from "react-modern-drawer";
+import styles from "./MobileHeader.module.scss";
+import "react-modern-drawer/dist/index.css";
+import TwinteLogo from "@/public/images/twinte-sponsor-title.png";
+import Image from "next/image";
+import Router from "next/router";
+import { useEffect, useState } from "react";
+import Sidebar from "../Sidebar";
 
 type Props = {
 	isLogin: undefined | boolean;
@@ -14,7 +14,11 @@ type Props = {
 	handleLogout: () => void;
 };
 
-export const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogout }) => {
+export const MobileHeader: React.FC<Props> = ({
+	isLogin,
+	handleLogin,
+	handleLogout,
+}) => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const toggleDrawer = (state: boolean) => {
 		setIsDrawerOpen(() => state);
@@ -22,11 +26,11 @@ export const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogo
 
 	// 画面遷移したときに，ドロワーを閉じる
 	useEffect(() => {
-		Router.events.on('routeChangeStart', () => {
+		Router.events.on("routeChangeStart", () => {
 			toggleDrawer(false);
 		});
 		return () => {
-			Router.events.off('routeChangeStart', () => {
+			Router.events.off("routeChangeStart", () => {
 				toggleDrawer(false);
 			});
 		};
@@ -35,7 +39,10 @@ export const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogo
 	return (
 		<header>
 			<div className={styles.navbar}>
-				<button onClick={() => toggleDrawer(true)} className={`navbar-burger ${styles.navbarBurger}`}>
+				<button
+					onClick={() => toggleDrawer(true)}
+					className={`navbar-burger ${styles.navbarBurger}`}
+				>
 					<div aria-hidden="true" />
 					<div aria-hidden="true" />
 					<div aria-hidden="true" />
@@ -51,20 +58,25 @@ export const MobileHeader: React.FC<Props> = ({ isLogin, handleLogin, handleLogo
 					/>
 				</Link>
 				<div className={styles.buttonWrapper}>
-					{isLogin == undefined ? (
+					{isLogin === undefined ? (
 						<button className={`button is-text is-loading ${styles.button}`} />
 					) : (
 						<button
 							className={`button is-text has-text-weight-bold ${styles.button}`}
 							onClick={() => (isLogin ? handleLogout() : handleLogin())}
 						>
-							{isLogin ? 'ログアウト' : 'ログイン'}
+							{isLogin ? "ログアウト" : "ログイン"}
 						</button>
 					)}
 				</div>
 			</div>
 
-			<Drawer open={isDrawerOpen} onClose={() => toggleDrawer(false)} direction="left" size={200}>
+			<Drawer
+				open={isDrawerOpen}
+				onClose={() => toggleDrawer(false)}
+				direction="left"
+				size={200}
+			>
 				<Sidebar />
 			</Drawer>
 		</header>

@@ -1,3 +1,3 @@
-import { EditUserInfoModal } from './EditUserInfoModal';
+import { EditUserInfoModal } from "./EditUserInfoModal";
 
 export default EditUserInfoModal;

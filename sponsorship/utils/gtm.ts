@@ -1,4 +1,4 @@
-export const googleTagManagerId = 'GTM-NZW2GNH';
+export const googleTagManagerId = "GTM-NZW2GNH";
 
 declare global {
 	interface Window {

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import styles from './RadioButton.module.scss';
+import type { ReactNode } from "react";
+import styles from "./RadioButton.module.scss";
 
 type Props = {
 	defaultChecked: boolean;
@@ -10,7 +10,14 @@ type Props = {
 	children: ReactNode;
 };
 
-export const RadioButton: React.FC<Props> = ({ defaultChecked, name, id, value, onChange, children }) => {
+export const RadioButton: React.FC<Props> = ({
+	defaultChecked,
+	name,
+	id,
+	value,
+	onChange,
+	children,
+}) => {
 	return (
 		<div className={styles.radioLabel}>
 			<input

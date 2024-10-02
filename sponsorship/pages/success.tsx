@@ -1,18 +1,20 @@
-import { SubscriptionPlan } from '@/domain';
-import { useCase } from '@/usecases';
-import type { NextPage } from 'next';
-import { NextSeo } from 'next-seo';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import type { SubscriptionPlan } from "@/domain";
+import { useCase } from "@/usecases";
+import type { NextPage } from "next";
+import { NextSeo } from "next-seo";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import Script from "next/script";
+import { useEffect, useState } from "react";
 
 const Success: NextPage = () => {
 	const router = useRouter();
 	const { type, amount, plan_id: planId } = router.query;
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
+	const [subscriptionPlans, setSubscriptionPlans] = useState<
+		SubscriptionPlan[]
+	>([]);
 
 	useEffect(() => {
 		useCase
@@ -25,31 +27,34 @@ const Success: NextPage = () => {
 	}, []);
 
 	const getTypeText = () => {
-		if (typeof type !== 'string') return '';
+		if (typeof type !== "string") return "";
 
-		if (type === 'onetime') return '1回きりの寄付';
-		else if (type === 'subscription') return 'サブスクリプション寄付（継続寄付）';
-		else return '';
+		if (type === "onetime") return "1回きりの寄付";
+		if (type === "subscription") return "サブスクリプション寄付（継続寄付）";
+		return "";
 	};
 
 	const amountText = () => {
-		if (type === 'subscription' && planId) {
-			const subscriptionPlan = subscriptionPlans.find((plan) => plan.id === planId);
-			return subscriptionPlan?.amount ?? '';
-		} else if (typeof amount === 'string' && /^[0-9]+(\.[0-9]+)?$/.test(amount)) {
-			return amount;
-		} else {
-			return '';
+		if (type === "subscription" && planId) {
+			const subscriptionPlan = subscriptionPlans.find(
+				(plan) => plan.id === planId,
+			);
+			return subscriptionPlan?.amount ?? "";
 		}
+		if (typeof amount === "string" && /^[0-9]+(\.[0-9]+)?$/.test(amount)) {
+			return amount;
+		}
+		return "";
 	};
 
 	const getTwitterText = () => {
-		if (typeof type !== 'string') return 'Twin:teに寄付しました！';
+		if (typeof type !== "string") return "Twin:teに寄付しました！";
 
-		if (type === 'onetime' && amountText()) return `Twin:teに${amountText()}円を寄付しました！`;
-		else if (type === 'subscription' && amountText())
+		if (type === "onetime" && amountText())
+			return `Twin:teに${amountText()}円を寄付しました！`;
+		if (type === "subscription" && amountText())
 			return `Twin:teに月課金として${amountText()}円/月の寄付登録をしました！`;
-		else return 'Twin:teに寄付しました！';
+		return "Twin:teに寄付しました！";
 	};
 
 	if (isLoading) {
@@ -63,7 +68,9 @@ const Success: NextPage = () => {
 			<h2 className="has-text-weight-bold">{getTypeText()}</h2>
 			{amountText() ? (
 				<>
-					<p className="has-text-centered has-text-primary has-text-weight-bold is-size-2">¥{amountText()}</p>
+					<p className="has-text-centered has-text-primary has-text-weight-bold is-size-2">
+						¥{amountText()}
+					</p>
 					<p>以上の金額が寄付されました。</p>
 				</>
 			) : null}
@@ -85,7 +92,11 @@ const Success: NextPage = () => {
 				>
 					Tweet
 				</a>
-				<Script async src="https://platform.twitter.com/widgets.js" charSet="utf-8" />
+				<Script
+					async
+					src="https://platform.twitter.com/widgets.js"
+					charSet="utf-8"
+				/>
 			</p>
 		</>
 	);

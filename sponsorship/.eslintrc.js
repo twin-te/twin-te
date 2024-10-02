@@ -1,24 +1,24 @@
 module.exports = {
 	env: {
 		browser: true,
-		es2021: true
+		es2021: true,
 	},
 	extends: [
-		'eslint:recommended',
-		'plugin:react/recommended',
-		'plugin:@typescript-eslint/recommended',
-		'next',
-		'next/core-web-vitals',
-		'prettier'
+		"eslint:recommended",
+		"plugin:react/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"next",
+		"next/core-web-vitals",
+		"prettier",
 	],
-	parser: '@typescript-eslint/parser',
+	parser: "@typescript-eslint/parser",
 	parserOptions: {
 		ecmaFeatures: {
-			jsx: true
+			jsx: true,
 		},
-		ecmaVersion: 'latest',
-		sourceType: 'module'
+		ecmaVersion: "latest",
+		sourceType: "module",
 	},
-	plugins: ['react', '@typescript-eslint'],
-	rules: {}
+	plugins: ["react", "@typescript-eslint"],
+	rules: {},
 };
