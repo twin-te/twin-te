@@ -36,6 +36,17 @@ func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds,
 	return fromDBSession(dbSession)
 }
 
+func (r *impl) ListSessions(ctx context.Context, conds authport.ListSessionsConds, lock sharedport.Lock) ([]*authdomain.Session, error) {
+	var dbSessions []*model.Session
+
+	err := r.db.WithContext(ctx).Find(&dbSessions).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return base.MapWithErr(dbSessions, fromDBSession)
+}
+
 func (r *impl) CreateSessions(ctx context.Context, sessions ...*authdomain.Session) error {
 	dbSessions := base.Map(sessions, toDBSession)
 	return r.db.WithContext(ctx).Create(dbSessions).Error
