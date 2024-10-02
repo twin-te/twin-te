@@ -22,7 +22,7 @@ func (r *impl) updateCourseSchedules(db *gorm.DB, course *timetabledomain.Course
 	}
 
 	if len(toDelete) != 0 {
-		dbCourseSchedules := base.MapWithArg(toCreate, course.ID, toDBCourseSchedule)
+		dbCourseSchedules := base.MapWithArg(toDelete, course.ID, toDBCourseSchedule)
 
 		return db.Where("course_id = ?", course.ID.String()).
 			Where("(module,day,period,room) IN ?", base.Map(dbCourseSchedules, func(dbCourseSchedule model.CourseSchedule) []any {
