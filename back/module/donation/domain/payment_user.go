@@ -27,7 +27,7 @@ func (l *Link) StringPtr() *string {
 func ParseLink(s string) (Link, error) {
 	uri, err := url.ParseRequestURI(s)
 	if err != nil || !uri.IsAbs() {
-		return "", fmt.Errorf("failed to parse link %#v", s)
+		return "", fmt.Errorf("failed to parse link %v", s)
 	}
 	return Link(s), nil
 }

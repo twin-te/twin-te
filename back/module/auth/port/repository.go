@@ -33,7 +33,7 @@ type FindUserConds struct {
 
 func (conds FindUserConds) Validate() error {
 	if conds.ID == nil && conds.UserAuthentication == nil {
-		return fmt.Errorf("invalid %#v", conds)
+		return fmt.Errorf("invalid %v", conds)
 	}
 	return nil
 }

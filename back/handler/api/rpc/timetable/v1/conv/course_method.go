@@ -18,7 +18,7 @@ func FromPBCourseMethod(pbCourseMethod timetablev1.CourseMethod) (timetabledomai
 	case timetablev1.CourseMethod_COURSE_METHOD_OTHERS:
 		return timetabledomain.CourseMethodOthers, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbCourseMethod)
+	return 0, fmt.Errorf("invalid %v", pbCourseMethod)
 }
 
 func ToPBCourseMethod(courseMethod timetabledomain.CourseMethod) (timetablev1.CourseMethod, error) {
@@ -32,5 +32,5 @@ func ToPBCourseMethod(courseMethod timetabledomain.CourseMethod) (timetablev1.Co
 	case timetabledomain.CourseMethodOthers:
 		return timetablev1.CourseMethod_COURSE_METHOD_OTHERS, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", courseMethod)
+	return 0, fmt.Errorf("invalid %v", courseMethod)
 }

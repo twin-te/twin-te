@@ -22,5 +22,5 @@ func ParseWeekday(s string) (time.Weekday, error) {
 	if ok {
 		return ret, nil
 	}
-	return 0, fmt.Errorf("failed to parse Weekday %#v", s)
+	return 0, fmt.Errorf("failed to parse Weekday %v", s)
 }

@@ -21,7 +21,7 @@ func (year AcademicYear) IsZero() bool {
 
 func ParseAcademicYear(i int) (AcademicYear, error) {
 	if i <= 0 {
-		return 0, fmt.Errorf("failed to parse AcademicYear %#v", i)
+		return 0, fmt.Errorf("failed to parse AcademicYear %v", i)
 	}
 	return AcademicYear(i), nil
 }

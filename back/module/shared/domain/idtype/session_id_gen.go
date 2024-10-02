@@ -43,7 +43,7 @@ func NewSessionID() SessionID {
 func ParseSessionID(s string) (SessionID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return SessionID{}, fmt.Errorf("failed to parse SessionID %#v", s)
+		return SessionID{}, fmt.Errorf("failed to parse SessionID %v", s)
 	}
 	return SessionID(id), nil
 }

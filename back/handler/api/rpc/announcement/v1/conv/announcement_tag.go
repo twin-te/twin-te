@@ -14,7 +14,7 @@ func FromPBAnnouncementTag(pbAnnouncementTag announcementv1.AnnouncementTag) (an
 	case announcementv1.AnnouncementTag_ANNOUNCEMENT_TAG_NOTIFICATION:
 		return announcementdomain.AnnouncementTagNotification, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", pbAnnouncementTag)
+	return 0, fmt.Errorf("invalid %v", pbAnnouncementTag)
 }
 
 func ToPBAnnouncementTag(announcementTag announcementdomain.AnnouncementTag) (announcementv1.AnnouncementTag, error) {
@@ -24,5 +24,5 @@ func ToPBAnnouncementTag(announcementTag announcementdomain.AnnouncementTag) (an
 	case announcementdomain.AnnouncementTagNotification:
 		return announcementv1.AnnouncementTag_ANNOUNCEMENT_TAG_NOTIFICATION, nil
 	}
-	return 0, fmt.Errorf("invalid %#v", announcementTag)
+	return 0, fmt.Errorf("invalid %v", announcementTag)
 }

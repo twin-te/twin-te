@@ -43,7 +43,7 @@ func NewAlreadyReadID() AlreadyReadID {
 func ParseAlreadyReadID(s string) (AlreadyReadID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return AlreadyReadID{}, fmt.Errorf("failed to parse AlreadyReadID %#v", s)
+		return AlreadyReadID{}, fmt.Errorf("failed to parse AlreadyReadID %v", s)
 	}
 	return AlreadyReadID(id), nil
 }

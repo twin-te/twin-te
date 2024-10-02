@@ -27,7 +27,7 @@ func ParseProvider(s string) (Provider, error) {
 	if ok {
 		return ret, nil
 	}
-	return 0, fmt.Errorf("failed to parse provider %#v", s)
+	return 0, fmt.Errorf("failed to parse provider %v", s)
 }
 
 // SocialID represents provider's user id

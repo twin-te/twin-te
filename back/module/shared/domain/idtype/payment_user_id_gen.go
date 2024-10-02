@@ -16,7 +16,7 @@ func (id PaymentUserID) IsZero() bool {
 
 func ParsePaymentUserID(s string) (PaymentUserID, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse PaymentUserID %#v", s)
+		return "", fmt.Errorf("failed to parse PaymentUserID %v", s)
 	}
 	return PaymentUserID(s), nil
 }

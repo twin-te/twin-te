@@ -43,7 +43,7 @@ func NewCourseID() CourseID {
 func ParseCourseID(s string) (CourseID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return CourseID{}, fmt.Errorf("failed to parse CourseID %#v", s)
+		return CourseID{}, fmt.Errorf("failed to parse CourseID %v", s)
 	}
 	return CourseID(id), nil
 }

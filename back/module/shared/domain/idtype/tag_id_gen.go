@@ -43,7 +43,7 @@ func NewTagID() TagID {
 func ParseTagID(s string) (TagID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
-		return TagID{}, fmt.Errorf("failed to parse TagID %#v", s)
+		return TagID{}, fmt.Errorf("failed to parse TagID %v", s)
 	}
 	return TagID(id), nil
 }

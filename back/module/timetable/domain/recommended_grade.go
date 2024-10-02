@@ -18,5 +18,5 @@ func ParseRecommendedGrade(i int) (RecommendedGrade, error) {
 	if 1 <= i && i <= 6 {
 		return RecommendedGrade(i), nil
 	}
-	return 0, fmt.Errorf("failed to parse RecommendedGrade %#v", i)
+	return 0, fmt.Errorf("failed to parse RecommendedGrade %v", i)
 }
