@@ -1,101 +1,101 @@
 import { hasProperty } from "~/utils";
 import {
-  isNormalDay,
-  isSpecialDay,
-  NormalDay,
-  normalDays,
-  SpecialDay,
-  specialDays,
+	type NormalDay,
+	type SpecialDay,
+	isNormalDay,
+	isSpecialDay,
+	normalDays,
+	specialDays,
 } from "./day";
-import { isModule, Module, modules } from "./module";
-import { isPeriod, Period, periods } from "./period";
+import { type Module, isModule, modules } from "./module";
+import { type Period, isPeriod, periods } from "./period";
 import { schedulesToTimetable } from "./timetable";
 
 export type NormalSchedule = {
-  module: Module;
-  day: NormalDay;
-  period: Period;
+	module: Module;
+	day: NormalDay;
+	period: Period;
 };
 
 export type SpecialSchedule = {
-  module: Module;
-  day: SpecialDay;
+	module: Module;
+	day: SpecialDay;
 };
 
 export type Schedule = NormalSchedule | SpecialSchedule;
 
 export const isNormalSchedule = (
-  schedule: object
+	schedule: object,
 ): schedule is NormalSchedule => {
-  return (
-    hasProperty(schedule, "module", isModule) &&
-    hasProperty(schedule, "day", isNormalDay) &&
-    hasProperty(schedule, "period", isPeriod)
-  );
+	return (
+		hasProperty(schedule, "module", isModule) &&
+		hasProperty(schedule, "day", isNormalDay) &&
+		hasProperty(schedule, "period", isPeriod)
+	);
 };
 
 export const isSpecialSchedule = (
-  schedule: object
+	schedule: object,
 ): schedule is SpecialSchedule => {
-  return (
-    hasProperty(schedule, "module", isModule) &&
-    hasProperty(schedule, "day", isSpecialDay)
-  );
+	return (
+		hasProperty(schedule, "module", isModule) &&
+		hasProperty(schedule, "day", isSpecialDay)
+	);
 };
 
 export const isSchedule = (schedule: object): schedule is Schedule => {
-  return isNormalSchedule(schedule) || isSpecialSchedule(schedule);
+	return isNormalSchedule(schedule) || isSpecialSchedule(schedule);
 };
 
 export const isEqualSchedule = (
-  scheduleA: Schedule,
-  scheduleB: Schedule
+	scheduleA: Schedule,
+	scheduleB: Schedule,
 ): boolean => {
-  if (isNormalSchedule(scheduleA) && isNormalSchedule(scheduleB)) {
-    return (
-      scheduleA.module === scheduleB.module &&
-      scheduleA.day === scheduleB.day &&
-      scheduleA.period === scheduleB.period
-    );
-  }
+	if (isNormalSchedule(scheduleA) && isNormalSchedule(scheduleB)) {
+		return (
+			scheduleA.module === scheduleB.module &&
+			scheduleA.day === scheduleB.day &&
+			scheduleA.period === scheduleB.period
+		);
+	}
 
-  if (isSpecialSchedule(scheduleA) && isSpecialSchedule(scheduleB)) {
-    return (
-      scheduleA.module === scheduleB.module && scheduleA.day === scheduleB.day
-    );
-  }
+	if (isSpecialSchedule(scheduleA) && isSpecialSchedule(scheduleB)) {
+		return (
+			scheduleA.module === scheduleB.module && scheduleA.day === scheduleB.day
+		);
+	}
 
-  return false;
+	return false;
 };
 
 export const removeDuplicateSchedules = (schedules: Schedule[]) => {
-  return schedules.reduce<Schedule[]>((ret, target) => {
-    if (ret.every((schedule) => !isEqualSchedule(schedule, target))) {
-      ret.push(target);
-    }
-    return ret;
-  }, []);
+	return schedules.reduce<Schedule[]>((ret, target) => {
+		if (ret.every((schedule) => !isEqualSchedule(schedule, target))) {
+			ret.push(target);
+		}
+		return ret;
+	}, []);
 };
 
 export const sortSchedules = (schedules: Schedule[]): Schedule[] => {
-  const timetable = schedulesToTimetable(schedules);
-  const ret: Schedule[] = [];
+	const timetable = schedulesToTimetable(schedules);
+	const ret: Schedule[] = [];
 
-  modules.forEach((module) => {
-    normalDays.forEach((day) => {
-      periods.forEach((period) => {
-        if (timetable.normal[module][day][period]) {
-          ret.push({ module, day, period });
-        }
-      });
-    });
+	modules.forEach((module) => {
+		normalDays.forEach((day) => {
+			periods.forEach((period) => {
+				if (timetable.normal[module][day][period]) {
+					ret.push({ module, day, period });
+				}
+			});
+		});
 
-    specialDays.forEach((day) => {
-      if (timetable.special[module][day]) {
-        ret.push({ module, day });
-      }
-    });
-  });
+		specialDays.forEach((day) => {
+			if (timetable.special[module][day]) {
+				ret.push({ module, day });
+			}
+		});
+	});
 
-  return ret;
+	return ret;
 };

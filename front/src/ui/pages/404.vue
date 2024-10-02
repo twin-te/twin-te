@@ -11,13 +11,13 @@ import { useRouter } from "vue-router";
 import Button from "~/ui/components/Button.vue";
 
 export default defineComponent({
-  components: {
-    Button,
-  },
-  setup: () => {
-    const router = useRouter();
-    return { router };
-  },
+	components: {
+		Button,
+	},
+	setup: () => {
+		const router = useRouter();
+		return { router };
+	},
 });
 </script>
 

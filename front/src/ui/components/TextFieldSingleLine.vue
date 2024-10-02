@@ -1,38 +1,38 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { type PropType, defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    modelValue: {
-      type: String,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
-    type: {
-      type: String as PropType<"normal" | "slim">,
-      default: "normal",
-    },
-    added: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["update:modelValue", "enter-text-field", "close"],
-  setup: (_, { emit }) => {
-    const handleInput = (e: Event) => {
-      if (!(e.target instanceof HTMLInputElement)) return;
-      emit("update:modelValue", e.target.value);
-    };
+	props: {
+		modelValue: {
+			type: String,
+			required: true,
+		},
+		placeholder: {
+			type: String,
+			default: "",
+		},
+		type: {
+			type: String as PropType<"normal" | "slim">,
+			default: "normal",
+		},
+		added: {
+			type: Boolean,
+			default: false,
+		},
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ["update:modelValue", "enter-text-field", "close"],
+	setup: (_, { emit }) => {
+		const handleInput = (e: Event) => {
+			if (!(e.target instanceof HTMLInputElement)) return;
+			emit("update:modelValue", e.target.value);
+		};
 
-    return { handleInput };
-  },
+		return { handleInput };
+	},
 });
 </script>
 

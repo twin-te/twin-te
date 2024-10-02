@@ -1,23 +1,23 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "vite.config.ts"
-  ],
-  "exclude": ["**/*.stories.ts"],
-  "compilerOptions": {
-    "sourceMap": true,
-    "preserveValueImports": false,
-    "isolatedModules": true,
-    "importsNotUsedAsValues": "remove",
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["src/*"]
-    },
-    "lib": ["ES2021", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "jest", "node"]
-  }
+	"extends": "@vue/tsconfig/tsconfig.web.json",
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.tsx",
+		"src/**/*.vue",
+		"vite.config.ts"
+	],
+	"exclude": ["**/*.stories.ts"],
+	"compilerOptions": {
+		"sourceMap": true,
+		"preserveValueImports": false,
+		"isolatedModules": true,
+		"importsNotUsedAsValues": "remove",
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["src/*"]
+		},
+		"lib": ["ES2021", "DOM", "DOM.Iterable"],
+		"types": ["vite/client", "jest", "node"]
+	}
 }

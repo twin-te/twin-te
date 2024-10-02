@@ -2,17 +2,17 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    value: {
-      type: String,
-      required: true,
-    },
-    isSelected: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  emits: ["click"],
+	props: {
+		value: {
+			type: String,
+			required: true,
+		},
+		isSelected: {
+			type: Boolean,
+			required: true,
+		},
+	},
+	emits: ["click"],
 });
 </script>
 

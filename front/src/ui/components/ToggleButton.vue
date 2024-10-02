@@ -1,44 +1,42 @@
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { type PropType, computed, defineComponent } from "vue";
 
 export type Labels = { left: string; right: string };
 export type Select = "left" | "right";
 type Props = {
-  labels: Labels;
-  whichSelected: Select;
-  isDisable: boolean;
+	labels: Labels;
+	whichSelected: Select;
+	isDisable: boolean;
 };
 
 export default defineComponent({
-  props: {
-    labels: {
-      type: Object as PropType<Labels>,
-      required: true,
-    },
-    whichSelected: {
-      type: String as PropType<Select>,
-      required: true,
-      validator: function (value: string) {
-        return ["left", "right"].includes(value);
-      },
-    },
-    isDisable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["click-toggle-button"],
-  setup: (props: Props, { emit }) => {
-    const handleChange = (select: Select, e: MouseEvent) => {
-      emit("click-toggle-button", select, e);
-    };
+	props: {
+		labels: {
+			type: Object as PropType<Labels>,
+			required: true,
+		},
+		whichSelected: {
+			type: String as PropType<Select>,
+			required: true,
+			validator: (value: string) => ["left", "right"].includes(value),
+		},
+		isDisable: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ["click-toggle-button"],
+	setup: (props: Props, { emit }) => {
+		const handleChange = (select: Select, e: MouseEvent) => {
+			emit("click-toggle-button", select, e);
+		};
 
-    const isSelectLeft = computed(() => {
-      return props.whichSelected == "left";
-    });
+		const isSelectLeft = computed(() => {
+			return props.whichSelected == "left";
+		});
 
-    return { handleChange, isSelectLeft };
-  },
+		return { handleChange, isSelectLeft };
+	},
 });
 </script>
 

@@ -1,17 +1,17 @@
-import { Story } from "@storybook/vue3";
+import type { Story } from "@storybook/vue3";
 import LabeledTextField from "./LabeledTextField.vue";
 import TextFieldSingleLine from "./TextFieldSingleLine.vue";
 
 export default {
-  component: LabeledTextField,
+	component: LabeledTextField,
 };
 
 const Template: Story = (args) => ({
-  components: { LabeledTextField, TextFieldSingleLine },
-  setup() {
-    return { args };
-  },
-  template: `
+	components: { LabeledTextField, TextFieldSingleLine },
+	setup() {
+		return { args };
+	},
+	template: `
     <LabeledTextField v-bind="args">
       <TextFieldSingleLine />
     </LabeledTextField>
@@ -21,13 +21,13 @@ const Template: Story = (args) => ({
 export const Normal = Template.bind({});
 
 Normal.args = {
-  label: "キーワード",
-  style: "normal",
+	label: "キーワード",
+	style: "normal",
 };
 
 export const Slim = Template.bind({});
 
 Slim.args = {
-  label: "キーワード",
-  style: "slim",
+	label: "キーワード",
+	style: "slim",
 };

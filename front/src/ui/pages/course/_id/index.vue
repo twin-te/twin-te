@@ -182,9 +182,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import type { RegisteredCourse } from "~/domain/course";
 import { NotFoundError, isResultError } from "~/domain/error";
 import { registeredCourseToDisplay } from "~/presentation/presenters/course";
-import { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
+import type { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
+import type { DisplayCourseTag } from "~/presentation/viewmodels/tag";
 import Button from "~/ui/components/Button.vue";
 import CourseDetail from "~/ui/components/CourseDetail.vue";
 import DecoratedIcon from "~/ui/components/DecoratedIcon.vue";
@@ -193,16 +195,14 @@ import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import Popup from "~/ui/components/Popup.vue";
 import PopupContent from "~/ui/components/PopupContent.vue";
+import type { PopupContentColor } from "~/ui/components/PopupContent.vue";
 import Tag from "~/ui/components/Tag.vue";
 import TagEditor from "~/ui/components/TagEditor.vue";
 import TextFieldMultilines from "~/ui/components/TextFieldMultilines.vue";
 import ToggleIconButton from "~/ui/components/ToggleIconButton.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { getSyllabusUrl, openUrl, getResponUrl, getMapUrl } from "~/ui/url";
+import { getMapUrl, getResponUrl, getSyllabusUrl, openUrl } from "~/ui/url";
 import { timetableUseCase } from "~/usecases";
-import type { RegisteredCourse } from "~/domain/course";
-import type { DisplayCourseTag } from "~/presentation/viewmodels/tag";
-import type { PopupContentColor } from "~/ui/components/PopupContent.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -212,145 +212,145 @@ const { id } = route.params as { id: string };
 
 /** display course */
 const displayCourse = ref<DisplayRegisteredCourse>(
-  {} as DisplayRegisteredCourse
+	{} as DisplayRegisteredCourse,
 );
 
 const updateView = async () => {
-  const [registeredCourse, tags] = await Promise.all([
-    timetableUseCase.getRegisteredCourseById(id).then((result) => {
-      if (result instanceof NotFoundError) router.push("/404");
-      if (isResultError(result)) throw result;
-      return result;
-    }),
-    timetableUseCase.getTags().then((result) => {
-      if (isResultError(result)) throw result;
-      return result;
-    }),
-  ]);
+	const [registeredCourse, tags] = await Promise.all([
+		timetableUseCase.getRegisteredCourseById(id).then((result) => {
+			if (result instanceof NotFoundError) router.push("/404");
+			if (isResultError(result)) throw result;
+			return result;
+		}),
+		timetableUseCase.getTags().then((result) => {
+			if (isResultError(result)) throw result;
+			return result;
+		}),
+	]);
 
-  displayCourse.value = registeredCourseToDisplay(registeredCourse, tags);
+	displayCourse.value = registeredCourseToDisplay(registeredCourse, tags);
 };
 
 await updateView();
 
 const updateCourse = (
-  id: string,
-  data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
+	id: string,
+	data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>,
 ) => {
-  return timetableUseCase.updateRegisteredCourse(id, data).then((result) => {
-    if (isResultError(result)) throw result;
-    return result;
-  });
+	return timetableUseCase.updateRegisteredCourse(id, data).then((result) => {
+		if (isResultError(result)) throw result;
+		return result;
+	});
 };
 
 const updateMemo = async (newMemo: string) => {
-  displayCourse.value = { ...displayCourse.value, memo: newMemo };
-  await updateCourse(id, { memo: newMemo });
+	displayCourse.value = { ...displayCourse.value, memo: newMemo };
+	await updateCourse(id, { memo: newMemo });
 };
 
 const updateCounter = async (
-  key: Extract<keyof RegisteredCourse, "attendance" | "late" | "absence">,
-  diff: number
+	key: Extract<keyof RegisteredCourse, "attendance" | "late" | "absence">,
+	diff: number,
 ) => {
-  const newValue = displayCourse.value[key] + diff;
-  if (newValue < 0) return;
-  displayCourse.value = { ...displayCourse.value, [key]: newValue };
-  await updateCourse(id, { [key]: newValue });
+	const newValue = displayCourse.value[key] + diff;
+	if (newValue < 0) return;
+	displayCourse.value = { ...displayCourse.value, [key]: newValue };
+	await updateCourse(id, { [key]: newValue });
 };
 
 /** tag editor */
 const add = ref(false);
 
 const onCreateTag = async (name: string) => {
-  const existingAssignedTagIds = displayCourse.value.tags
-    .filter(({ assign }) => assign)
-    .map(({ id }) => id);
-  displayCourse.value.tags.push({ id: "new-tag", name, assign: true });
-  displayCourse.value = { ...displayCourse.value };
+	const existingAssignedTagIds = displayCourse.value.tags
+		.filter(({ assign }) => assign)
+		.map(({ id }) => id);
+	displayCourse.value.tags.push({ id: "new-tag", name, assign: true });
+	displayCourse.value = { ...displayCourse.value };
 
-  const createdTag = await timetableUseCase.createTag(name).then((result) => {
-    if (isResultError(result)) throw result;
-    return result;
-  });
+	const createdTag = await timetableUseCase.createTag(name).then((result) => {
+		if (isResultError(result)) throw result;
+		return result;
+	});
 
-  await updateCourse(id, {
-    tagIds: [...existingAssignedTagIds, createdTag.id],
-  });
-  await updateView();
+	await updateCourse(id, {
+		tagIds: [...existingAssignedTagIds, createdTag.id],
+	});
+	await updateView();
 };
 
 const onClickTag = async (clickedTag: DisplayCourseTag) => {
-  clickedTag.assign = !clickedTag.assign;
-  displayCourse.value = { ...displayCourse.value };
-  const assignedTagIds: string[] = displayCourse.value.tags
-    .filter(({ assign }) => assign)
-    .map(({ id }) => id);
-  await updateCourse(id, { tagIds: assignedTagIds });
+	clickedTag.assign = !clickedTag.assign;
+	displayCourse.value = { ...displayCourse.value };
+	const assignedTagIds: string[] = displayCourse.value.tags
+		.filter(({ assign }) => assign)
+		.map(({ id }) => id);
+	await updateCourse(id, { tagIds: assignedTagIds });
 };
 
 /** delete course modal */
 const [
-  isVisibleDeleteCourseModal,
-  openDeleteCourseModal,
-  closeDeleteCourseModal,
+	isVisibleDeleteCourseModal,
+	openDeleteCourseModal,
+	closeDeleteCourseModal,
 ] = useSwitch();
 
 const onClickDeleteCourseButton = async () => {
-  await timetableUseCase.deleteRegisteredCourse(id).then((result) => {
-    if (isResultError(result)) throw result;
-    return result;
-  });
-  await router.push("/");
+	await timetableUseCase.deleteRegisteredCourse(id).then((result) => {
+		if (isResultError(result)) throw result;
+		return result;
+	});
+	await router.push("/");
 };
 
 /** popup */
 const [isVisiblePopup, , closePopup, toggleShowPopup] = useSwitch(false);
 
 const popupContents: {
-  onClick: () => void;
-  link: boolean;
-  value: string;
-  color: PopupContentColor;
-  gtmMarker: string;
+	onClick: () => void;
+	link: boolean;
+	value: string;
+	color: PopupContentColor;
+	gtmMarker: string;
 }[] = [
-  {
-    onClick: () => router.push(`/course/${id}/edit`),
-    link: false,
-    value: "編集する",
-    color: "normal",
-    gtmMarker: "course-edit",
-  },
-  {
-    onClick: () =>
-      openUrl(
-        getSyllabusUrl(displayCourse.value.year, displayCourse.value.code)
-      ),
-    link: true,
-    value: "シラバス",
-    color: "normal",
-    gtmMarker: "course-syllabus",
-  },
-  {
-    onClick: () => openUrl(getResponUrl()),
-    link: true,
-    value: "出席(respon)",
-    color: "normal",
-    gtmMarker: "course-respon",
-  },
-  {
-    onClick: () => openUrl(getMapUrl(displayCourse.value.room)),
-    link: true,
-    value: "地図",
-    color: "normal",
-    gtmMarker: "course-map",
-  },
-  {
-    onClick: openDeleteCourseModal,
-    link: false,
-    value: "削除する",
-    color: "danger",
-    gtmMarker: "course-delete",
-  },
+	{
+		onClick: () => router.push(`/course/${id}/edit`),
+		link: false,
+		value: "編集する",
+		color: "normal",
+		gtmMarker: "course-edit",
+	},
+	{
+		onClick: () =>
+			openUrl(
+				getSyllabusUrl(displayCourse.value.year, displayCourse.value.code),
+			),
+		link: true,
+		value: "シラバス",
+		color: "normal",
+		gtmMarker: "course-syllabus",
+	},
+	{
+		onClick: () => openUrl(getResponUrl()),
+		link: true,
+		value: "出席(respon)",
+		color: "normal",
+		gtmMarker: "course-respon",
+	},
+	{
+		onClick: () => openUrl(getMapUrl(displayCourse.value.room)),
+		link: true,
+		value: "地図",
+		color: "normal",
+		gtmMarker: "course-map",
+	},
+	{
+		onClick: openDeleteCourseModal,
+		link: false,
+		value: "削除する",
+		color: "danger",
+		gtmMarker: "course-delete",
+	},
 ];
 
 // If the course is added by manual, the syllabus does not exist.

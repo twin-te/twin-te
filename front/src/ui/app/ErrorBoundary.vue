@@ -3,9 +3,9 @@ import * as Sentry from "@sentry/vue";
 import { onErrorCaptured, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
-  InternalServerError,
-  NetworkError,
-  UnauthenticatedError,
+	InternalServerError,
+	NetworkError,
+	UnauthenticatedError,
 } from "~/domain/error";
 import Button from "../components/Button.vue";
 import IconButton from "../components/IconButton.vue";
@@ -14,85 +14,85 @@ import PageHeader from "../components/PageHeader.vue";
 const router = useRouter();
 
 const errorDetail = ref<
-  | {
-      messages: string[];
-      buttonText: string;
-      onClickButton: () => void;
-    }
-  | undefined
+	| {
+			messages: string[];
+			buttonText: string;
+			onClickButton: () => void;
+	  }
+	| undefined
 >(undefined);
 
 onErrorCaptured((error) => {
-  console.log("captured the following error in ErrorBoundary");
-  console.log(error);
+	console.log("captured the following error in ErrorBoundary");
+	console.log(error);
 
-  if (error instanceof UnauthenticatedError) {
-    errorDetail.value = {
-      messages: ["未認証です。ログインして下さい。"],
-      buttonText: "ログイン",
-      onClickButton: async () => {
-        await router.push("/login");
-        errorDetail.value = undefined;
-      },
-    };
-    return true;
-  }
+	if (error instanceof UnauthenticatedError) {
+		errorDetail.value = {
+			messages: ["未認証です。ログインして下さい。"],
+			buttonText: "ログイン",
+			onClickButton: async () => {
+				await router.push("/login");
+				errorDetail.value = undefined;
+			},
+		};
+		return true;
+	}
 
-  if (error instanceof NetworkError) {
-    errorDetail.value = {
-      messages: [
-        "ネットワークエラーが発生しました。",
-        "通信状況をご確認下さい。",
-      ],
-      buttonText: "リロード",
-      onClickButton: () => {
-        location.reload();
-        errorDetail.value = undefined;
-      },
-    };
-    return true;
-  }
+	if (error instanceof NetworkError) {
+		errorDetail.value = {
+			messages: [
+				"ネットワークエラーが発生しました。",
+				"通信状況をご確認下さい。",
+			],
+			buttonText: "リロード",
+			onClickButton: () => {
+				location.reload();
+				errorDetail.value = undefined;
+			},
+		};
+		return true;
+	}
 
-  if (error instanceof InternalServerError) {
-    errorDetail.value = {
-      messages: [
-        "申し訳ございません。サーバー内でエラーが発生しました。",
-        "リロードして再度お試しください。",
-        "改善されない場合は運営にお問い合わせ下さい。",
-        error.message,
-      ],
-      buttonText: "リロード",
-      onClickButton: () => {
-        location.reload();
-        errorDetail.value = undefined;
-      },
-    };
+	if (error instanceof InternalServerError) {
+		errorDetail.value = {
+			messages: [
+				"申し訳ございません。サーバー内でエラーが発生しました。",
+				"リロードして再度お試しください。",
+				"改善されない場合は運営にお問い合わせ下さい。",
+				error.message,
+			],
+			buttonText: "リロード",
+			onClickButton: () => {
+				location.reload();
+				errorDetail.value = undefined;
+			},
+		};
 
-    Sentry.captureException(error);
-    return true;
-  }
+		Sentry.captureException(error);
+		return true;
+	}
 
-  errorDetail.value = {
-    messages: [
-      "申し訳ございません。予期せぬエラーが発生しました。",
-      "リロードして再度お試しください。",
-      "改善されない場合は運営にお問い合わせ下さい。",
-      error.message,
-    ],
-    buttonText: "リロード",
-    onClickButton: () => {
-      location.reload();
-      errorDetail.value = undefined;
-    },
-  };
+	errorDetail.value = {
+		messages: [
+			"申し訳ございません。予期せぬエラーが発生しました。",
+			"リロードして再度お試しください。",
+			"改善されない場合は運営にお問い合わせ下さい。",
+			error.message,
+		],
+		buttonText: "リロード",
+		onClickButton: () => {
+			location.reload();
+			errorDetail.value = undefined;
+		},
+	};
 
-  Sentry.captureException(error);
-  return true;
+	Sentry.captureException(error);
+	return true;
 });
 
 const onClickBackButton = () => {
-  router.back();
-  errorDetail.value = undefined;
+	router.back();
+	errorDetail.value = undefined;
 };
 </script>
 

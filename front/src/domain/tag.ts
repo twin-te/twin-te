@@ -1,7 +1,7 @@
 export type Tag = {
-  id: string;
-  name: string;
-  order: number; // 0-indices
+	id: string;
+	name: string;
+	order: number; // 0-indices
 };
 
 export type UndefinedTagOrder = -1;

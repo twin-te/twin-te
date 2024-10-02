@@ -8,12 +8,12 @@ import useSidebar from "./sidebar";
 import useToast from "./toast";
 
 export {
-  useAuth,
-  useCourseType,
-  useCreditYear,
-  useEvent,
-  useModule,
-  useSetting,
-  useSidebar,
-  useToast,
+	useAuth,
+	useCourseType,
+	useCreditYear,
+	useEvent,
+	useModule,
+	useSetting,
+	useSidebar,
+	useToast,
 };

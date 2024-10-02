@@ -1,113 +1,113 @@
 <script lang="ts">
-import { defineComponent, PropType, reactive } from "vue";
+import { type PropType, defineComponent, reactive } from "vue";
 import {
-  editableDays,
-  isDisplaySpecialDay,
+	editableDays,
+	isDisplaySpecialDay,
 } from "~/presentation/presenters/day";
 import { editableModules } from "~/presentation/presenters/module";
 import { editablePeriods } from "~/presentation/presenters/period";
 import { createBlankEditableSchedule } from "~/presentation/presenters/schedule";
-import { notSpecified } from "~/presentation/viewmodels/option";
-import Dropdown from "./Dropdown.vue";
 import type { EditableDay } from "~/presentation/viewmodels/day";
 import type { EditableModule } from "~/presentation/viewmodels/module";
+import { notSpecified } from "~/presentation/viewmodels/option";
 import type { EditablePeriod } from "~/presentation/viewmodels/period";
 import type { EditableSchedule } from "~/presentation/viewmodels/schedule";
+import Dropdown from "./Dropdown.vue";
 
 export const useScheduleEditor = (initValue: EditableSchedule[] = []) => {
-  const schedules = reactive<EditableSchedule[]>(initValue);
-  if (schedules.length === 0) schedules.push(createBlankEditableSchedule());
+	const schedules = reactive<EditableSchedule[]>(initValue);
+	if (schedules.length === 0) schedules.push(createBlankEditableSchedule());
 
-  const addSchedule = () => {
-    schedules.push(createBlankEditableSchedule());
-  };
+	const addSchedule = () => {
+		schedules.push(createBlankEditableSchedule());
+	};
 
-  const removeSchedule = (index: number) => {
-    if (schedules.length === 1) return;
-    schedules.splice(index, 1);
-  };
+	const removeSchedule = (index: number) => {
+		if (schedules.length === 1) return;
+		schedules.splice(index, 1);
+	};
 
-  const updateSchedules = (index: number, schedule: EditableSchedule) => {
-    schedules.splice(index, 1, schedule);
-  };
+	const updateSchedules = (index: number, schedule: EditableSchedule) => {
+		schedules.splice(index, 1, schedule);
+	};
 
-  return {
-    schedules,
-    addSchedule,
-    removeSchedule,
-    updateSchedules,
-  };
+	return {
+		schedules,
+		addSchedule,
+		removeSchedule,
+		updateSchedules,
+	};
 };
 
 export default defineComponent({
-  components: { Dropdown },
-  props: {
-    schedules: {
-      type: Object as PropType<EditableSchedule[]>,
-      required: true,
-    },
-  },
-  emits: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    "update:schedules": (index: number, schedule: EditableSchedule) => true,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    "click-add-button": () => true,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    "click-remove-button": (index: number) => true,
-  },
-  setup(_, { emit }) {
-    const updateModule = (
-      index: number,
-      schedule: EditableSchedule,
-      module: EditableModule
-    ) => {
-      emit("update:schedules", index, { ...schedule, module });
-    };
+	components: { Dropdown },
+	props: {
+		schedules: {
+			type: Object as PropType<EditableSchedule[]>,
+			required: true,
+		},
+	},
+	emits: {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		"update:schedules": (index: number, schedule: EditableSchedule) => true,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		"click-add-button": () => true,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		"click-remove-button": (index: number) => true,
+	},
+	setup(_, { emit }) {
+		const updateModule = (
+			index: number,
+			schedule: EditableSchedule,
+			module: EditableModule,
+		) => {
+			emit("update:schedules", index, { ...schedule, module });
+		};
 
-    const updateDay = (
-      index: number,
-      schedule: EditableSchedule,
-      day: EditableDay
-    ) => {
-      if (isDisplaySpecialDay(day))
-        emit("update:schedules", index, { module: schedule.module, day });
-      else
-        emit("update:schedules", index, {
-          period: notSpecified,
-          ...schedule,
-          day,
-        });
-    };
+		const updateDay = (
+			index: number,
+			schedule: EditableSchedule,
+			day: EditableDay,
+		) => {
+			if (isDisplaySpecialDay(day))
+				emit("update:schedules", index, { module: schedule.module, day });
+			else
+				emit("update:schedules", index, {
+					period: notSpecified,
+					...schedule,
+					day,
+				});
+		};
 
-    const updatePeriod = (
-      index: number,
-      schedule: EditableSchedule,
-      period: EditablePeriod
-    ) => {
-      if ("period" in schedule)
-        emit("update:schedules", index, { ...schedule, period });
-    };
+		const updatePeriod = (
+			index: number,
+			schedule: EditableSchedule,
+			period: EditablePeriod,
+		) => {
+			if ("period" in schedule)
+				emit("update:schedules", index, { ...schedule, period });
+		};
 
-    const onClickAddButton = () => {
-      emit("click-add-button");
-    };
-    const onClickRemoveButton = (index: number) => {
-      emit("click-remove-button", index);
-    };
+		const onClickAddButton = () => {
+			emit("click-add-button");
+		};
+		const onClickRemoveButton = (index: number) => {
+			emit("click-remove-button", index);
+		};
 
-    return {
-      editableDays,
-      editablePeriods,
-      editableModules,
-      notSpecified,
-      isDisplaySpecialDay,
-      updateModule,
-      updateDay,
-      updatePeriod,
-      onClickAddButton,
-      onClickRemoveButton,
-    };
-  },
+		return {
+			editableDays,
+			editablePeriods,
+			editableModules,
+			notSpecified,
+			isDisplaySpecialDay,
+			updateModule,
+			updateDay,
+			updatePeriod,
+			onClickAddButton,
+			onClickRemoveButton,
+		};
+	},
 });
 </script>
 

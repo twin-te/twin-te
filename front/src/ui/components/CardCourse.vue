@@ -1,53 +1,53 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { DisplayCourse } from "~/presentation/viewmodels/course";
+import { type PropType, defineComponent } from "vue";
+import type { DisplayCourse } from "~/presentation/viewmodels/course";
 import { getSyllabusUrl, openUrl } from "../url";
 import Button from "./Button.vue";
 import Checkbox from "./Checkbox.vue";
 import CourseDetailMini from "./CourseDetailMini.vue";
 
 export default defineComponent({
-  components: { Button, CourseDetailMini, Checkbox },
-  props: {
-    isChecked: {
-      type: Boolean,
-      required: true,
-    },
-    isDetailed: {
-      type: Boolean,
-      default: true,
-    },
-    isExpanded: {
-      type: Boolean,
-      default: false,
-    },
-    course: {
-      type: Object as PropType<DisplayCourse>,
-      required: true,
-    },
-    width: {
-      type: String,
-      default: "100%",
-    },
-    withHr: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  emits: ["click-card", "click-checkbox"],
-  setup(props, { emit }) {
-    const emitCardEvent = (e: MouseEvent) => {
-      emit("click-card", e);
-    };
-    const emitCheckboxEvent = (e: MouseEvent) => {
-      emit("click-checkbox", e);
-    };
-    const openSyllabus = () => {
-      openUrl(getSyllabusUrl(props.course.year, props.course.code));
-    };
+	components: { Button, CourseDetailMini, Checkbox },
+	props: {
+		isChecked: {
+			type: Boolean,
+			required: true,
+		},
+		isDetailed: {
+			type: Boolean,
+			default: true,
+		},
+		isExpanded: {
+			type: Boolean,
+			default: false,
+		},
+		course: {
+			type: Object as PropType<DisplayCourse>,
+			required: true,
+		},
+		width: {
+			type: String,
+			default: "100%",
+		},
+		withHr: {
+			type: Boolean,
+			default: true,
+		},
+	},
+	emits: ["click-card", "click-checkbox"],
+	setup(props, { emit }) {
+		const emitCardEvent = (e: MouseEvent) => {
+			emit("click-card", e);
+		};
+		const emitCheckboxEvent = (e: MouseEvent) => {
+			emit("click-checkbox", e);
+		};
+		const openSyllabus = () => {
+			openUrl(getSyllabusUrl(props.course.year, props.course.code));
+		};
 
-    return { emitCardEvent, emitCheckboxEvent, openSyllabus };
-  },
+		return { emitCardEvent, emitCheckboxEvent, openSyllabus };
+	},
 });
 </script>
 

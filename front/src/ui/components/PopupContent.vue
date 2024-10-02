@@ -1,32 +1,30 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { type PropType, defineComponent } from "vue";
 
 export type PopupContentColor = "normal" | "danger";
 
 export default defineComponent({
-  name: "PopupContent",
-  props: {
-    link: {
-      type: Boolean,
-      default: false,
-    },
-    value: {
-      type: String,
-      required: true,
-    },
-    color: {
-      type: String as PropType<PopupContentColor>,
-      default: "normal",
-      validator: function (value: string) {
-        return ["normal", "danger"].includes(value);
-      },
-    },
-    gtmMarker: {
-      type: String,
-      default: "",
-    },
-  },
-  emits: ["click"],
+	name: "PopupContent",
+	props: {
+		link: {
+			type: Boolean,
+			default: false,
+		},
+		value: {
+			type: String,
+			required: true,
+		},
+		color: {
+			type: String as PropType<PopupContentColor>,
+			default: "normal",
+			validator: (value: string) => ["normal", "danger"].includes(value),
+		},
+		gtmMarker: {
+			type: String,
+			default: "",
+		},
+	},
+	emits: ["click"],
 });
 </script>
 

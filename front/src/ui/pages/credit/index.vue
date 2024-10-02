@@ -173,6 +173,7 @@ import { isResultError } from "~/domain/error";
 import { academicYears } from "~/domain/year";
 import { creditToDisplay } from "~/presentation/presenters/credit";
 import { getDisplayCreditTags } from "~/presentation/presenters/tag";
+import type { DisplayCreditTag } from "~/presentation/viewmodels/tag";
 import Button from "~/ui/components/Button.vue";
 import Dropdown from "~/ui/components/Dropdown.vue";
 import IconButton from "~/ui/components/IconButton.vue";
@@ -182,15 +183,14 @@ import TagListContent from "~/ui/components/TagListContent.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useFocus } from "~/ui/hooks/useFocus";
 import { useStringToggle } from "~/ui/hooks/useStringToggle";
-import { isNewTagId, createNewTagId } from "~/ui/shared";
+import { createNewTagId, isNewTagId } from "~/ui/shared";
 import { useCreditYear } from "~/ui/store";
 import { timetableUseCase } from "~/usecases";
-import type { DisplayCreditTag } from "~/presentation/viewmodels/tag";
 
 console.log("/credit");
 
 useHead({
-  title: "Twin:te | 単位数",
+	title: "Twin:te | 単位数",
 });
 
 /** year */
@@ -202,15 +202,15 @@ const [mode, toggleMode] = useStringToggle("default", "edit");
 /** year dropdown */
 const allYearOption = "すべての年度";
 const selectedYearOption = computed(() =>
-  year.value === 0 ? allYearOption : `${year.value}年度`
+	year.value === 0 ? allYearOption : `${year.value}年度`,
 );
 const yearOptions: string[] = [
-  allYearOption,
-  ...academicYears.map((year) => `${year}年度`).reverse(),
+	allYearOption,
+	...academicYears.map((year) => `${year}年度`).reverse(),
 ];
 const updateCreditYearOption = (option: string) => {
-  if (option === allYearOption) setCreditYearToAll();
-  else setCreditYear(Number(option.slice(0, 4)));
+	if (option === allYearOption) setCreditYearToAll();
+	else setCreditYear(Number(option.slice(0, 4)));
 };
 
 /** focus */
@@ -223,89 +223,89 @@ const dragging = ref(false);
 const totalCredits = ref<string>("0.0");
 
 const updateDisplayCreditTags = async () => {
-  const [registeredCourses, tags] = await Promise.all([
-    timetableUseCase
-      .getRegisteredCourses(year.value == 0 ? undefined : year.value, undefined)
-      .then((result) => {
-        if (isResultError(result)) throw result;
-        return result;
-      }),
-    timetableUseCase.getTags().then((result) => {
-      if (isResultError(result)) throw result;
-      return result;
-    }),
-  ]);
+	const [registeredCourses, tags] = await Promise.all([
+		timetableUseCase
+			.getRegisteredCourses(year.value == 0 ? undefined : year.value, undefined)
+			.then((result) => {
+				if (isResultError(result)) throw result;
+				return result;
+			}),
+		timetableUseCase.getTags().then((result) => {
+			if (isResultError(result)) throw result;
+			return result;
+		}),
+	]);
 
-  displayCreditTags.value = reactive(
-    getDisplayCreditTags(
-      registeredCourses,
-      tags.sort((tagA, tagB) => tagA.order - tagB.order),
-      year.value === 0 ? academicYears : [year.value]
-    )
-  );
+	displayCreditTags.value = reactive(
+		getDisplayCreditTags(
+			registeredCourses,
+			tags.sort((tagA, tagB) => tagA.order - tagB.order),
+			year.value === 0 ? academicYears : [year.value],
+		),
+	);
 
-  totalCredits.value = creditToDisplay(
-    registeredCourses.reduce(
-      (totalCredits, registeredCourse) =>
-        totalCredits + registeredCourse.credit,
-      0
-    )
-  );
+	totalCredits.value = creditToDisplay(
+		registeredCourses.reduce(
+			(totalCredits, registeredCourse) =>
+				totalCredits + registeredCourse.credit,
+			0,
+		),
+	);
 };
 
 watch(year, () => updateDisplayCreditTags(), {
-  immediate: true,
+	immediate: true,
 });
 
 const onClickNormalBtn = async (tag: DisplayCreditTag) => {
-  if (editingTagId.value === tag.id) {
-    editingTagId.value = undefined;
-    try {
-      if (isNewTagId(tag.id)) {
-        await timetableUseCase.createTag(tag.name).then((result) => {
-          if (isResultError(result)) throw result;
-          return result;
-        });
-      } else {
-        await timetableUseCase
-          .updateTagName(tag.id, tag.name)
-          .then((result) => {
-            if (isResultError(result)) throw result;
-            return result;
-          });
-      }
-    } finally {
-      updateDisplayCreditTags();
-    }
-  } else {
-    editingTagId.value = tag.id;
-    focus([`#text-field-single-line--${tag.id}`, "input"]);
-  }
+	if (editingTagId.value === tag.id) {
+		editingTagId.value = undefined;
+		try {
+			if (isNewTagId(tag.id)) {
+				await timetableUseCase.createTag(tag.name).then((result) => {
+					if (isResultError(result)) throw result;
+					return result;
+				});
+			} else {
+				await timetableUseCase
+					.updateTagName(tag.id, tag.name)
+					.then((result) => {
+						if (isResultError(result)) throw result;
+						return result;
+					});
+			}
+		} finally {
+			updateDisplayCreditTags();
+		}
+	} else {
+		editingTagId.value = tag.id;
+		focus([`#text-field-single-line--${tag.id}`, "input"]);
+	}
 };
 
 const onClickDangerBtn = async (tag: DisplayCreditTag) => {
-  if (isNewTagId(tag.id)) {
-    updateDisplayCreditTags();
-    editingTagId.value = undefined;
-  } else tagToBeDeleted.value = tag;
+	if (isNewTagId(tag.id)) {
+		updateDisplayCreditTags();
+		editingTagId.value = undefined;
+	} else tagToBeDeleted.value = tag;
 };
 
 const onChangeOrder = async (newTags: DisplayCreditTag[]) => {
-  displayCreditTags.value = reactive(newTags);
-  await timetableUseCase
-    .updateTagOrders(displayCreditTags.value.map(({ id }) => id))
-    .then((result) => {
-      if (isResultError(result)) throw result;
-      return result;
-    });
-  updateDisplayCreditTags();
+	displayCreditTags.value = reactive(newTags);
+	await timetableUseCase
+		.updateTagOrders(displayCreditTags.value.map(({ id }) => id))
+		.then((result) => {
+			if (isResultError(result)) throw result;
+			return result;
+		});
+	updateDisplayCreditTags();
 };
 
 const onClickAddBtn = () => {
-  const id = createNewTagId();
-  displayCreditTags.value.push({ id, name: "", credit: "0.0" });
-  editingTagId.value = id;
-  focus([`#text-field-single-line--${id}`, "input"]);
+	const id = createNewTagId();
+	displayCreditTags.value.push({ id, name: "", credit: "0.0" });
+	editingTagId.value = id;
+	focus([`#text-field-single-line--${id}`, "input"]);
 };
 
 /** delete tag modal */
@@ -313,27 +313,27 @@ const tagToBeDeleted = ref<DisplayCreditTag>();
 const numCoursesAssociatedWithTagToBeDeleted = ref<number>(0);
 
 watchEffect(() => {
-  if (tagToBeDeleted.value == undefined) {
-    numCoursesAssociatedWithTagToBeDeleted.value = 0;
-    return;
-  }
+	if (tagToBeDeleted.value == undefined) {
+		numCoursesAssociatedWithTagToBeDeleted.value = 0;
+		return;
+	}
 
-  timetableUseCase
-    .getRegisteredCourses(undefined, tagToBeDeleted.value.id)
-    .then((result) => {
-      if (isResultError(result)) throw result;
-      numCoursesAssociatedWithTagToBeDeleted.value = result.length;
-    });
+	timetableUseCase
+		.getRegisteredCourses(undefined, tagToBeDeleted.value.id)
+		.then((result) => {
+			if (isResultError(result)) throw result;
+			numCoursesAssociatedWithTagToBeDeleted.value = result.length;
+		});
 });
 
 const onClickDeleteModal = async () => {
-  if (tagToBeDeleted.value == undefined) return;
-  await timetableUseCase.deleteTag(tagToBeDeleted.value.id).then((result) => {
-    if (isResultError(result)) throw result;
-    return result;
-  });
-  tagToBeDeleted.value = undefined;
-  updateDisplayCreditTags();
+	if (tagToBeDeleted.value == undefined) return;
+	await timetableUseCase.deleteTag(tagToBeDeleted.value.id).then((result) => {
+		if (isResultError(result)) throw result;
+		return result;
+	});
+	tagToBeDeleted.value = undefined;
+	updateDisplayCreditTags();
 };
 </script>
 

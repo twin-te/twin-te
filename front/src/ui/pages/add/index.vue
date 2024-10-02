@@ -61,7 +61,7 @@ import { isMobile } from "~/ui/ua";
 const { openSidebar } = useSidebar();
 
 useHead({
-  title: "Twin:te | 授業追加",
+	title: "Twin:te | 授業追加",
 });
 </script>
 

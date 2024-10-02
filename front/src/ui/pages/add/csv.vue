@@ -93,10 +93,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { isResultError } from "~/domain/error";
+import type { Schedule } from "~/domain/schedule";
 import { courseToDisplay } from "~/presentation/presenters/course";
+import type { DisplayCourse } from "~/presentation/viewmodels/course";
 import Button from "~/ui/components/Button.vue";
 import CardCourse from "~/ui/components/CardCourse.vue";
 import CourseDetailMini from "~/ui/components/CourseDetailMini.vue";
@@ -106,8 +108,6 @@ import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import { useSetting, useToast } from "~/ui/store";
 import { timetableUseCase } from "~/usecases";
-import type { Schedule } from "~/domain/schedule";
-import type { DisplayCourse } from "~/presentation/viewmodels/course";
 
 const router = useRouter();
 
@@ -116,169 +116,169 @@ const { displayToast } = useToast();
 
 /** result */
 type LoadedResult = {
-  course: DisplayCourse;
-  schedules: Schedule[];
-  selected: boolean;
-  expanded: boolean;
+	course: DisplayCourse;
+	schedules: Schedule[];
+	selected: boolean;
+	expanded: boolean;
 };
 const loadedResults = reactive<LoadedResult[]>([]);
 const selectedResults = computed(() =>
-  loadedResults.filter(({ selected }) => selected)
+	loadedResults.filter(({ selected }) => selected),
 );
 
 const onClickCard = (courseId: string) => {
-  const course = loadedResults.find((result) => result.course.id === courseId);
-  if (!course) return;
-  course.expanded = !course.expanded;
+	const course = loadedResults.find((result) => result.course.id === courseId);
+	if (!course) return;
+	course.expanded = !course.expanded;
 };
 
 type Risyu = {
-  type: "risyu";
-  codes: string[];
+	type: "risyu";
+	codes: string[];
 };
 
 type Seiseki = {
-  type: "seiseki";
-  data: {
-    code: string;
-    year: number;
-  }[];
+	type: "seiseki";
+	data: {
+		code: string;
+		year: number;
+	}[];
 };
 
 type CSV = Risyu | Seiseki;
 
 const readCSV = async (file: File): Promise<CSV> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = () => {
-      if (typeof reader.result !== "string") return;
-      const line = reader.result
-        .split(/\r\n|\r|\n/)
-        .filter((v) => v) // drop blank line
-        .map((v) => v.replace(/"/g, ""));
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsText(file);
+		reader.onload = () => {
+			if (typeof reader.result !== "string") return;
+			const line = reader.result
+				.split(/\r\n|\r|\n/)
+				.filter((v) => v) // drop blank line
+				.map((v) => v.replace(/"/g, ""));
 
-      // 履修フォーマット
-      if (line[0].length === 7) {
-        resolve({
-          type: "risyu",
-          codes: line,
-        });
-      }
+			// 履修フォーマット
+			if (line[0].length === 7) {
+				resolve({
+					type: "risyu",
+					codes: line,
+				});
+			}
 
-      // 成績フォーマット
-      else if (line[0].split(",").length === 11) {
-        line.splice(0, 1); // delete header
-        resolve({
-          type: "seiseki",
-          data: [
-            ...new Set(
-              line.map((v) => ({
-                code: v.split(",")[2],
-                year: Number(v.split(",")[9]),
-              }))
-            ),
-          ],
-        });
-      } else throw new Error("このフォーマット形式に対応していません");
-    };
-    reader.onerror = (error) => reject(error);
-  });
+			// 成績フォーマット
+			else if (line[0].split(",").length === 11) {
+				line.splice(0, 1); // delete header
+				resolve({
+					type: "seiseki",
+					data: [
+						...new Set(
+							line.map((v) => ({
+								code: v.split(",")[2],
+								year: Number(v.split(",")[9]),
+							})),
+						),
+					],
+				});
+			} else throw new Error("このフォーマット形式に対応していません");
+		};
+		reader.onerror = (error) => reject(error);
+	});
 };
 
 const loadCourses = async (file: File) => {
-  loadedResults.splice(0, loadedResults.length);
-  let codes: string[] = [];
+	loadedResults.splice(0, loadedResults.length);
+	let codes: string[] = [];
 
-  try {
-    const csv = await readCSV(file);
-    switch (csv.type) {
-      case "risyu":
-        codes = csv.codes;
-        break;
-      case "seiseki":
-        codes = csv.data
-          .filter((v) => v.year === year.value)
-          .map(({ code }) => code);
-        displayToast(`${year.value}年度の授業を読み込んでいます。`, {
-          type: "primary",
-        });
-        break;
-    }
-  } catch (error) {
-    console.error(error);
-    displayToast("ファイルの読み込みに失敗しました。");
-    return;
-  }
+	try {
+		const csv = await readCSV(file);
+		switch (csv.type) {
+			case "risyu":
+				codes = csv.codes;
+				break;
+			case "seiseki":
+				codes = csv.data
+					.filter((v) => v.year === year.value)
+					.map(({ code }) => code);
+				displayToast(`${year.value}年度の授業を読み込んでいます。`, {
+					type: "primary",
+				});
+				break;
+		}
+	} catch (error) {
+		console.error(error);
+		displayToast("ファイルの読み込みに失敗しました。");
+		return;
+	}
 
-  if (codes.length === 0) {
-    displayToast(`読み込むコースがありません。`);
-    return;
-  }
+	if (codes.length === 0) {
+		displayToast("読み込むコースがありません。");
+		return;
+	}
 
-  const result = await timetableUseCase.getCoursesByCodes({
-    year: year.value,
-    codes,
-  });
-  if (isResultError(result)) throw result;
+	const result = await timetableUseCase.getCoursesByCodes({
+		year: year.value,
+		codes,
+	});
+	if (isResultError(result)) throw result;
 
-  loadedResults.splice(
-    0,
-    loadedResults.length,
-    ...result.map((course) => ({
-      course: courseToDisplay(course),
-      schedules: course.schedules,
-      selected: true,
-      expanded: false,
-    }))
-  );
+	loadedResults.splice(
+		0,
+		loadedResults.length,
+		...result.map((course) => ({
+			course: courseToDisplay(course),
+			schedules: course.schedules,
+			selected: true,
+			expanded: false,
+		})),
+	);
 
-  const missingCodes = codes.filter(
-    (code) => result.find((course) => course.code === code) == undefined
-  );
-  if (missingCodes.length > 0) {
-    displayToast(
-      `以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
-        "  "
-      )}`,
-      { displayPeriod: 0 }
-    );
-  }
+	const missingCodes = codes.filter(
+		(code) => result.find((course) => course.code === code) == undefined,
+	);
+	if (missingCodes.length > 0) {
+		displayToast(
+			`以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
+				"  ",
+			)}`,
+			{ displayPeriod: 0 },
+		);
+	}
 };
 
 const addCourses = async (warning = true) => {
-  if (buttonState.value === "disabled") return;
+	if (buttonState.value === "disabled") return;
 
-  duplicateCourses.value = (
-    await Promise.all(
-      selectedResults.value.map(async ({ course, schedules }) => ({
-        course,
-        result: await timetableUseCase.checkScheduleDuplicate(
-          year.value,
-          schedules
-        ),
-      }))
-    )
-  ).reduce<DisplayCourse[]>((ret, { course, result }) => {
-    if (isResultError(result)) throw result;
-    if (!result) ret.push(course);
-    return ret;
-  }, []);
+	duplicateCourses.value = (
+		await Promise.all(
+			selectedResults.value.map(async ({ course, schedules }) => ({
+				course,
+				result: await timetableUseCase.checkScheduleDuplicate(
+					year.value,
+					schedules,
+				),
+			})),
+		)
+	).reduce<DisplayCourse[]>((ret, { course, result }) => {
+		if (isResultError(result)) throw result;
+		if (!result) ret.push(course);
+		return ret;
+	}, []);
 
-  if (warning && duplicateCourses.value.length > 0) return;
-  await timetableUseCase.addCoursesByCodes({
-    year: year.value,
-    codes: selectedResults.value.map(({ course }) => course.code),
-  });
-  router.push("/");
+	if (warning && duplicateCourses.value.length > 0) return;
+	await timetableUseCase.addCoursesByCodes({
+		year: year.value,
+		codes: selectedResults.value.map(({ course }) => course.code),
+	});
+	router.push("/");
 };
 
 /** duplicate modal */
 const duplicateCourses = ref<DisplayCourse[]>([]);
 
 const buttonState = computed(() => {
-  if (loadedResults.some(({ selected }) => selected)) return "default";
-  return "disabled";
+	if (loadedResults.some(({ selected }) => selected)) return "default";
+	return "disabled";
 });
 </script>
 

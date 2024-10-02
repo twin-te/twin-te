@@ -1,5 +1,5 @@
-import { Dayjs } from "dayjs";
+import type { Dayjs } from "dayjs";
 
 export const formatPublishedAt = (date: Dayjs): string => {
-  return `${date.year()}.${date.month() + 1}.${date.date()}`;
+	return `${date.year()}.${date.month() + 1}.${date.date()}`;
 };

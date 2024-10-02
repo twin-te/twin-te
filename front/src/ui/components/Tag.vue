@@ -2,14 +2,14 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Tag",
-  props: {
-    assign: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  emits: ["click"],
+	name: "Tag",
+	props: {
+		assign: {
+			type: Boolean,
+			required: true,
+		},
+	},
+	emits: ["click"],
 });
 </script>
 
