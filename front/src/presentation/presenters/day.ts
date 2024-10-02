@@ -26,7 +26,12 @@ export const displayNormalDays: DisplayNormalDay[] = [
 	"日",
 ];
 
-export const displaySpecialDays: DisplaySpecialDay[] = ["集中", "応談", "随時"];
+export const displaySpecialDays: DisplaySpecialDay[] = [
+	"集中",
+	"応談",
+	"随時",
+	"NT",
+];
 
 export const editableNormalDays: EditableNormalDay[] = [
 	"月",
