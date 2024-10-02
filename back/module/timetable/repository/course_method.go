@@ -13,7 +13,7 @@ func (r *impl) updateCourseMethods(db *gorm.DB, course *timetabledomain.Course) 
 	toCreate, toDelete := lo.Difference(course.Methods, course.EntityBeforeUpdated.Methods)
 
 	if len(toCreate) != 0 {
-		dbCourseMethods := base.MapWithArg(toDelete, course.ID, toDBCourseMethod)
+		dbCourseMethods := base.MapWithArg(toCreate, course.ID, toDBCourseMethod)
 
 		if err := db.Create(dbCourseMethods).Error; err != nil {
 			return err
