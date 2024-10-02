@@ -29,6 +29,8 @@ func FromPBDay(pbDay timetablev1.Day) (timetabledomain.Day, error) {
 		return timetabledomain.DayAppointment, nil
 	case timetablev1.Day_DAY_ANY_TIME:
 		return timetabledomain.DayAnyTime, nil
+	case timetablev1.Day_DAY_NT:
+		return timetabledomain.DayNT, nil
 	}
 	return 0, fmt.Errorf("invalid %#v", pbDay)
 }
@@ -55,6 +57,8 @@ func ToPBDay(day timetabledomain.Day) (timetablev1.Day, error) {
 		return timetablev1.Day_DAY_APPOINTMENT, nil
 	case timetabledomain.DayAnyTime:
 		return timetablev1.Day_DAY_ANY_TIME, nil
+	case timetabledomain.DayNT:
+		return timetablev1.Day_DAY_NT, nil
 	}
 	return 0, fmt.Errorf("invalid %#v", day)
 }

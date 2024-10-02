@@ -57,5 +57,4 @@ func toDBCourseSchedule(schedule timetabledomain.Schedule, courseID idtype.Cours
 		Period:   int16(schedule.Period.Int()),
 		Room:     schedule.Rooms,
 	}
-
 }

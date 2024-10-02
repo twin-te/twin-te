@@ -29,6 +29,7 @@ class Day:
     Intensive = "集中"
     Appointment = "応談"
     AnyTime = "随時"
+    NT = "NT"  # NT
     Unknown = "不明"
 
 
@@ -139,6 +140,10 @@ def analyze_day_and_period(s: str) -> list[dict]:
 
     if Day.AnyTime in s:
         result.append({"day": Day.AnyTime, "period": 0})
+
+    # NTの検出
+    if Day.NT in s:
+        result.append({"day": Day.NT, "period": 0})
 
     # どのテストにも合格しなかったが空文字でなければ仮にUnknownとする
     if s != "" and not result:

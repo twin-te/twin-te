@@ -29,6 +29,7 @@ enum Day {
   DAY_INTENSIVE = 8;
   DAY_APPOINTMENT = 9;
   DAY_ANY_TIME = 10;
+  DAY_NT = 11;
 }
 
 enum CourseMethod {

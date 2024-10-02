@@ -43,6 +43,7 @@ export const editableSpecialDays: EditableSpecialDay[] = [
   "集中",
   "応談",
   "随時",
+  "NT",
   "指定なし",
 ];
 
@@ -57,6 +58,7 @@ export const editableDays: EditableDay[] = [
   "集中",
   "応談",
   "随時",
+  "NT",
   "指定なし",
 ];
 
@@ -74,6 +76,7 @@ export const specialDayMap: Record<SpecialDay, DisplaySpecialDay> = {
   Intensive: "集中",
   Appointment: "応談",
   AnyTime: "随時",
+  NT: "NT",
 };
 
 export const dayMap: Record<Day, DisplayDay> = {
@@ -87,6 +90,7 @@ export const dayMap: Record<Day, DisplayDay> = {
   Intensive: "集中",
   Appointment: "応談",
   AnyTime: "随時",
+  NT: "NT",
 };
 
 export const isDisplayNormalDay = (day: unknown): day is DisplayNormalDay => {

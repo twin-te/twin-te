@@ -2,7 +2,7 @@ import { NotSpecified } from "~/presentation/viewmodels/option";
 
 export type DisplayNormalDay = "月" | "火" | "水" | "木" | "金" | "土" | "日";
 
-export type DisplaySpecialDay = "集中" | "応談" | "随時";
+export type DisplaySpecialDay = "集中" | "応談" | "随時" | "NT";
 
 export type DisplayDay = DisplayNormalDay | DisplaySpecialDay;
 
