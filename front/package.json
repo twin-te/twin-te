@@ -46,6 +46,7 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
+		"@biomejs/biome": "1.9.3",		
     "@bufbuild/buf": "^1.30.0",
     "@bufbuild/protoc-gen-es": "^1.8.0",
     "@connectrpc/protoc-gen-connect-es": "^1.4.0",
