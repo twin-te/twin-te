@@ -44,23 +44,27 @@ const MyPage: NextPage = () => {
 		useState<boolean>(false);
 
 	useEffect(() => {
-		Promise.all([
-			useCase.getUser().then((user) => {
+		useCase
+			.getUser()
+			.then((user) => {
 				setUser(user);
-			}),
-			useCase
-				.getActiveSubscription()
-				.then((activeSubscription) => {
-					setActiveSubscription(activeSubscription);
-				})
-				.catch((error) => {
-					if (isNotFoundError(error)) return;
-					throw error;
-				}),
-			useCase.getPaymentHistories().then((paymentHistories) => {
-				setPaymentHistories(paymentHistories);
-			}),
-		])
+			})
+			.then(() => {
+				Promise.all([
+					useCase
+						.getActiveSubscription()
+						.then((activeSubscription) => {
+							setActiveSubscription(activeSubscription);
+						})
+						.catch((error) => {
+							if (isNotFoundError(error)) return;
+							throw error;
+						}),
+					useCase.getPaymentHistories().then((paymentHistories) => {
+						setPaymentHistories(paymentHistories);
+					}),
+				]);
+			})
 			.catch((error) => {
 				if (isUnauthenticatedError(error)) return;
 				throw error;
