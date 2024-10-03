@@ -39,8 +39,6 @@ type PaymentHistory struct {
 	Status        PaymentStatus
 	Amount        int
 	CreatedAt     time.Time
-
-	EntityBeforeUpdated *PaymentHistory
 }
 
 func ConstructPaymentHistory(fn func(ph *PaymentHistory) (err error)) (*PaymentHistory, error) {

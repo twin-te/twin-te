@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	"github.com/twin-te/twin-te/back/base"
 	autherr "github.com/twin-te/twin-te/back/module/auth/err"
@@ -21,7 +22,7 @@ type User struct {
 	Authentications []UserAuthentication
 	CreatedAt       time.Time
 
-	EntityBeforeUpdated *User
+	EntityBeforeUpdated mo.Option[*User]
 }
 
 func (u *User) Clone() *User {
@@ -31,7 +32,7 @@ func (u *User) Clone() *User {
 }
 
 func (u *User) BeforeUpdateHook() {
-	u.EntityBeforeUpdated = u.Clone()
+	u.EntityBeforeUpdated = mo.Some(u.Clone())
 }
 
 // AddAuthentication adds the given authentication.

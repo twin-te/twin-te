@@ -69,17 +69,18 @@ func (r *impl) CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) err
 }
 
 func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
+	before := tag.EntityBeforeUpdated.MustGet()
 	cols := make([]string, 0)
 
-	if tag.UserID != tag.EntityBeforeUpdated.UserID {
+	if tag.UserID != before.UserID {
 		cols = append(cols, "user_id")
 	}
 
-	if tag.Name != tag.EntityBeforeUpdated.Name {
+	if tag.Name != before.Name {
 		cols = append(cols, "name")
 	}
 
-	if tag.Position != tag.EntityBeforeUpdated.Position {
+	if tag.Position != before.Position {
 		cols = append(cols, "position")
 	}
 

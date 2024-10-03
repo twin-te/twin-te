@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -41,7 +42,7 @@ type PaymentUser struct {
 	DisplayName *shareddomain.RequiredString
 	Link        *Link
 
-	EntityBeforeUpdated *PaymentUser
+	EntityBeforeUpdated mo.Option[*PaymentUser]
 }
 
 func (pu *PaymentUser) Clone() *PaymentUser {
@@ -59,7 +60,7 @@ func (pu *PaymentUser) Clone() *PaymentUser {
 }
 
 func (pu *PaymentUser) BeforeUpdateHook() {
-	pu.EntityBeforeUpdated = pu.Clone()
+	pu.EntityBeforeUpdated = mo.Some(pu.Clone())
 }
 
 type PaymentUserDataToUpdate struct {

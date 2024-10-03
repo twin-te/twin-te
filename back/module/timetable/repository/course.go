@@ -87,45 +87,46 @@ func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Co
 }
 
 func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course) error {
+	before := course.EntityBeforeUpdated.MustGet()
 	cols := make([]string, 0)
 
-	if course.Year != course.EntityBeforeUpdated.Year {
+	if course.Year != before.Year {
 		cols = append(cols, "year")
 	}
 
-	if course.Code != course.EntityBeforeUpdated.Code {
+	if course.Code != before.Code {
 		cols = append(cols, "code")
 	}
 
-	if course.Name != course.EntityBeforeUpdated.Name {
+	if course.Name != before.Name {
 		cols = append(cols, "name")
 	}
 
-	if course.Instructors != course.EntityBeforeUpdated.Instructors {
+	if course.Instructors != before.Instructors {
 		cols = append(cols, "instructor")
 	}
 
-	if course.Credit != course.EntityBeforeUpdated.Credit {
+	if course.Credit != before.Credit {
 		cols = append(cols, "credit")
 	}
 
-	if course.Overview != course.EntityBeforeUpdated.Overview {
+	if course.Overview != before.Overview {
 		cols = append(cols, "overview")
 	}
 
-	if course.Remarks != course.EntityBeforeUpdated.Remarks {
+	if course.Remarks != before.Remarks {
 		cols = append(cols, "remarks")
 	}
 
-	if !course.LastUpdatedAt.Equal(course.EntityBeforeUpdated.LastUpdatedAt) {
+	if !course.LastUpdatedAt.Equal(before.LastUpdatedAt) {
 		cols = append(cols, "last_update")
 	}
 
-	if course.HasParseError != course.EntityBeforeUpdated.HasParseError {
+	if course.HasParseError != before.HasParseError {
 		cols = append(cols, "has_parse_error")
 	}
 
-	if course.IsAnnual != course.EntityBeforeUpdated.IsAnnual {
+	if course.IsAnnual != before.IsAnnual {
 		cols = append(cols, "is_annual")
 	}
 

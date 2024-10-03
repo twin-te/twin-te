@@ -87,53 +87,54 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 }
 
 func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error {
+	before := registeredCourse.EntityBeforeUpdated.MustGet()
 	cols := make([]string, 0)
 
-	if registeredCourse.UserID != registeredCourse.EntityBeforeUpdated.UserID {
+	if registeredCourse.UserID != before.UserID {
 		cols = append(cols, "user_id")
 	}
 
-	if registeredCourse.Year != registeredCourse.EntityBeforeUpdated.Year {
+	if registeredCourse.Year != before.Year {
 		cols = append(cols, "year")
 	}
 
-	if !base.EqualPtr(registeredCourse.CourseID, registeredCourse.EntityBeforeUpdated.CourseID) {
+	if !base.EqualPtr(registeredCourse.CourseID, before.CourseID) {
 		cols = append(cols, "course_id")
 	}
 
-	if !base.EqualPtr(registeredCourse.Name, registeredCourse.EntityBeforeUpdated.Name) {
+	if !base.EqualPtr(registeredCourse.Name, before.Name) {
 		cols = append(cols, "name")
 	}
 
-	if !base.EqualPtr(registeredCourse.Instructors, registeredCourse.EntityBeforeUpdated.Instructors) {
+	if !base.EqualPtr(registeredCourse.Instructors, before.Instructors) {
 		cols = append(cols, "instractor")
 	}
 
-	if !base.EqualPtr(registeredCourse.Credit, registeredCourse.EntityBeforeUpdated.Credit) {
+	if !base.EqualPtr(registeredCourse.Credit, before.Credit) {
 		cols = append(cols, "credit")
 	}
 
-	if !base.EqualSlicePtr(registeredCourse.Methods, registeredCourse.EntityBeforeUpdated.Methods) {
+	if !base.EqualSlicePtr(registeredCourse.Methods, before.Methods) {
 		cols = append(cols, "methods")
 	}
 
-	if !base.EqualSlicePtr(registeredCourse.Schedules, registeredCourse.EntityBeforeUpdated.Schedules) {
+	if !base.EqualSlicePtr(registeredCourse.Schedules, before.Schedules) {
 		cols = append(cols, "schedules")
 	}
 
-	if registeredCourse.Memo != registeredCourse.EntityBeforeUpdated.Memo {
+	if registeredCourse.Memo != before.Memo {
 		cols = append(cols, "memo")
 	}
 
-	if registeredCourse.Attendance != registeredCourse.EntityBeforeUpdated.Attendance {
+	if registeredCourse.Attendance != before.Attendance {
 		cols = append(cols, "attendance")
 	}
 
-	if registeredCourse.Absence != registeredCourse.EntityBeforeUpdated.Absence {
+	if registeredCourse.Absence != before.Absence {
 		cols = append(cols, "absence")
 	}
 
-	if registeredCourse.Late != registeredCourse.EntityBeforeUpdated.Late {
+	if registeredCourse.Late != before.Late {
 		cols = append(cols, "late")
 	}
 

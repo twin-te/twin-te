@@ -10,7 +10,8 @@ import (
 )
 
 func (r *impl) updateRegisteredCourseTagIDs(db *gorm.DB, registeredCourse *timetabledomain.RegisteredCourse) error {
-	toCreate, toDelete := lo.Difference(registeredCourse.TagIDs, registeredCourse.EntityBeforeUpdated.TagIDs)
+	before := registeredCourse.EntityBeforeUpdated.MustGet()
+	toCreate, toDelete := lo.Difference(registeredCourse.TagIDs, before.TagIDs)
 
 	if len(toCreate) != 0 {
 		dbTags := base.MapWithArg(toCreate, registeredCourse.ID, toDBRegisteredCourseTag)
