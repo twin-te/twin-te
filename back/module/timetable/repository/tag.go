@@ -70,27 +70,27 @@ func (r *impl) CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) err
 
 func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 	before := tag.EntityBeforeUpdated.MustGet()
-	cols := make([]string, 0)
+	columns := make([]string, 0)
 
 	if tag.UserID != before.UserID {
-		cols = append(cols, "user_id")
+		columns = append(columns, "user_id")
 	}
 
 	if tag.Name != before.Name {
-		cols = append(cols, "name")
+		columns = append(columns, "name")
 	}
 
 	if tag.Position != before.Position {
-		cols = append(cols, "position")
+		columns = append(columns, "position")
 	}
 
-	if len(cols) == 0 {
+	if len(columns) == 0 {
 		return nil
 	}
 
 	dbTag := toDBTag(tag)
 	return r.db.WithContext(ctx).
-		Select(cols).
+		Select(columns).
 		Updates(dbTag).
 		Error
 }

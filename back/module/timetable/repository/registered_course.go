@@ -88,54 +88,54 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 
 func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error {
 	before := registeredCourse.EntityBeforeUpdated.MustGet()
-	cols := make([]string, 0)
+	columns := make([]string, 0)
 
 	if registeredCourse.UserID != before.UserID {
-		cols = append(cols, "user_id")
+		columns = append(columns, "user_id")
 	}
 
 	if registeredCourse.Year != before.Year {
-		cols = append(cols, "year")
+		columns = append(columns, "year")
 	}
 
 	if !base.EqualPtr(registeredCourse.CourseID, before.CourseID) {
-		cols = append(cols, "course_id")
+		columns = append(columns, "course_id")
 	}
 
 	if !base.EqualPtr(registeredCourse.Name, before.Name) {
-		cols = append(cols, "name")
+		columns = append(columns, "name")
 	}
 
 	if !base.EqualPtr(registeredCourse.Instructors, before.Instructors) {
-		cols = append(cols, "instractor")
+		columns = append(columns, "instractor")
 	}
 
 	if !base.EqualPtr(registeredCourse.Credit, before.Credit) {
-		cols = append(cols, "credit")
+		columns = append(columns, "credit")
 	}
 
 	if !base.EqualSlicePtr(registeredCourse.Methods, before.Methods) {
-		cols = append(cols, "methods")
+		columns = append(columns, "methods")
 	}
 
 	if !base.EqualSlicePtr(registeredCourse.Schedules, before.Schedules) {
-		cols = append(cols, "schedules")
+		columns = append(columns, "schedules")
 	}
 
 	if registeredCourse.Memo != before.Memo {
-		cols = append(cols, "memo")
+		columns = append(columns, "memo")
 	}
 
 	if registeredCourse.Attendance != before.Attendance {
-		cols = append(cols, "attendance")
+		columns = append(columns, "attendance")
 	}
 
 	if registeredCourse.Absence != before.Absence {
-		cols = append(cols, "absence")
+		columns = append(columns, "absence")
 	}
 
 	if registeredCourse.Late != before.Late {
-		cols = append(cols, "late")
+		columns = append(columns, "late")
 	}
 
 	dbRegisteredCourse, err := toDBRegisteredCourse(registeredCourse, false)
@@ -144,8 +144,8 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 	}
 
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if len(cols) > 0 {
-			if err := tx.Select(cols).Updates(dbRegisteredCourse).Error; err != nil {
+		if len(columns) > 0 {
+			if err := tx.Select(columns).Updates(dbRegisteredCourse).Error; err != nil {
 				return err
 			}
 		}

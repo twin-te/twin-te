@@ -88,53 +88,53 @@ func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Co
 
 func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course) error {
 	before := course.EntityBeforeUpdated.MustGet()
-	cols := make([]string, 0)
+	columns := make([]string, 0)
 
 	if course.Year != before.Year {
-		cols = append(cols, "year")
+		columns = append(columns, "year")
 	}
 
 	if course.Code != before.Code {
-		cols = append(cols, "code")
+		columns = append(columns, "code")
 	}
 
 	if course.Name != before.Name {
-		cols = append(cols, "name")
+		columns = append(columns, "name")
 	}
 
 	if course.Instructors != before.Instructors {
-		cols = append(cols, "instructor")
+		columns = append(columns, "instructor")
 	}
 
 	if course.Credit != before.Credit {
-		cols = append(cols, "credit")
+		columns = append(columns, "credit")
 	}
 
 	if course.Overview != before.Overview {
-		cols = append(cols, "overview")
+		columns = append(columns, "overview")
 	}
 
 	if course.Remarks != before.Remarks {
-		cols = append(cols, "remarks")
+		columns = append(columns, "remarks")
 	}
 
 	if !course.LastUpdatedAt.Equal(before.LastUpdatedAt) {
-		cols = append(cols, "last_update")
+		columns = append(columns, "last_update")
 	}
 
 	if course.HasParseError != before.HasParseError {
-		cols = append(cols, "has_parse_error")
+		columns = append(columns, "has_parse_error")
 	}
 
 	if course.IsAnnual != before.IsAnnual {
-		cols = append(cols, "is_annual")
+		columns = append(columns, "is_annual")
 	}
 
 	dbCourse := toDBCourse(course, false)
 
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if len(cols) > 0 {
-			if err := tx.Select(cols).Updates(dbCourse).Error; err != nil {
+		if len(columns) > 0 {
+			if err := tx.Select(columns).Updates(dbCourse).Error; err != nil {
 				return err
 			}
 		}
