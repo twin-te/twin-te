@@ -28,13 +28,15 @@ WORKDIR /app
 
 RUN npm install -g bun@v1.1.22
 
-COPY --from=staging-builder /app/node_modules ./node_modules
-COPY --from=staging-builder /app/.next ./.next
 COPY --from=staging-builder /app/public ./public
+COPY --from=staging-builder /app/.next/standalone ./
+COPY --from=staging-builder /app/.next/static ./.next/static
 
-ENV NODE_ENV production
+ENV NODE_ENV="production"
+ENV HOSTNAME="0.0.0.0"
+ENV PORT="3000"
 EXPOSE 3000
-CMD ["bun", "run", "next", "start", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["bun", "server.js"]
 
 FROM node:22-bullseye-slim AS production-builder
 WORKDIR /app
@@ -53,10 +55,12 @@ WORKDIR /app
 
 RUN npm install -g bun@v1.1.22
 
-COPY --from=production-builder /app/node_modules ./node_modules
-COPY --from=production-builder /app/.next ./.next
 COPY --from=production-builder /app/public ./public
+COPY --from=production-builder /app/.next/standalone ./
+COPY --from=production-builder /app/.next/static ./.next/static
 
-ENV NODE_ENV production
+ENV NODE_ENV="production"
+ENV HOSTNAME="0.0.0.0"
+ENV PORT="3000"
 EXPOSE 3000
-CMD ["bun", "run", "next", "start", "--hostname", "0.0.0.0", "--port", "3000"]
+CMD ["bun", "server.js"]
