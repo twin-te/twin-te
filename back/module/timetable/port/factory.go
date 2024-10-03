@@ -3,12 +3,11 @@ package timetableport
 import (
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
-	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 type Factory interface {
-	NewCourse(courseWithoutID timetableappdto.CourseWithoutID) (*timetabledomain.Course, error)
+	NewCourse(courseWithoutID timetabledomain.CourseWithoutID) (*timetabledomain.Course, error)
 
 	NewRegisteredCourseFromCourse(userID idtype.UserID, course *timetabledomain.Course) (*timetabledomain.RegisteredCourse, error)
 

@@ -4,10 +4,10 @@ import (
 	"context"
 
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
-	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
+	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
 type Integrator interface {
 	// GetCourseWithoutIDsFromKdB returns the latest course data retrieved from KdB.
-	GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error)
+	GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetabledomain.CourseWithoutID, error)
 }

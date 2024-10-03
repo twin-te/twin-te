@@ -1,6 +1,7 @@
 package timetabledomain
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -10,6 +11,22 @@ import (
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
+
+type CourseWithoutID struct {
+	Year              shareddomain.AcademicYear
+	Code              Code
+	Name              shareddomain.RequiredString
+	Instructors       string
+	Credit            Credit
+	Overview          string
+	Remarks           string
+	LastUpdatedAt     time.Time
+	HasParseError     bool
+	IsAnnual          bool
+	RecommendedGrades []RecommendedGrade
+	Methods           []CourseMethod
+	Schedules         []Schedule
+}
 
 // Course is identified by one of the following fields.
 //   - ID
@@ -59,50 +76,24 @@ type CourseDataToUpdate struct {
 	Schedules         *[]Schedule
 }
 
-func (c *Course) Update(data CourseDataToUpdate) {
-	if data.Name != nil {
-		c.Name = *data.Name
+func (c *Course) UpdateFromCourseWithoutID(courseWithoutID CourseWithoutID) error {
+	if c.Year != courseWithoutID.Year || c.Code != courseWithoutID.Code {
+		return errors.New("invalid course without id")
 	}
 
-	if data.Instructors != nil {
-		c.Instructors = *data.Instructors
-	}
+	c.Name = courseWithoutID.Name
+	c.Instructors = courseWithoutID.Instructors
+	c.Credit = courseWithoutID.Credit
+	c.Overview = courseWithoutID.Overview
+	c.Remarks = courseWithoutID.Remarks
+	c.LastUpdatedAt = courseWithoutID.LastUpdatedAt
+	c.HasParseError = courseWithoutID.HasParseError
+	c.IsAnnual = courseWithoutID.IsAnnual
+	c.RecommendedGrades = courseWithoutID.RecommendedGrades
+	c.Methods = courseWithoutID.Methods
+	c.Schedules = courseWithoutID.Schedules
 
-	if data.Credit != nil {
-		c.Credit = *data.Credit
-	}
-
-	if data.Overview != nil {
-		c.Overview = *data.Overview
-	}
-
-	if data.Remarks != nil {
-		c.Remarks = *data.Remarks
-	}
-
-	if data.LastUpdatedAt != nil {
-		c.LastUpdatedAt = *data.LastUpdatedAt
-	}
-
-	if data.HasParseError != nil {
-		c.HasParseError = *data.HasParseError
-	}
-
-	if data.IsAnnual != nil {
-		c.IsAnnual = *data.IsAnnual
-	}
-
-	if data.RecommendedGrades != nil {
-		c.RecommendedGrades = *data.RecommendedGrades
-	}
-
-	if data.Methods != nil {
-		c.Methods = *data.Methods
-	}
-
-	if data.Schedules != nil {
-		c.Schedules = *data.Schedules
-	}
+	return nil
 }
 
 func ConstructCourse(fn func(c *Course) (err error)) (*Course, error) {

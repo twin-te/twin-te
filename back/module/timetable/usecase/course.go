@@ -124,19 +124,11 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 
 			if courseWithoutID.LastUpdatedAt.After(savedCourse.LastUpdatedAt) {
 				savedCourse.BeforeUpdateHook()
-				savedCourse.Update(timetabledomain.CourseDataToUpdate{
-					Name:              &courseWithoutID.Name,
-					Instructors:       &courseWithoutID.Instructors,
-					Credit:            &courseWithoutID.Credit,
-					Overview:          &courseWithoutID.Overview,
-					Remarks:           &courseWithoutID.Remarks,
-					LastUpdatedAt:     &courseWithoutID.LastUpdatedAt,
-					HasParseError:     &courseWithoutID.HasParseError,
-					IsAnnual:          &courseWithoutID.IsAnnual,
-					RecommendedGrades: &courseWithoutID.RecommendedGrades,
-					Methods:           &courseWithoutID.Methods,
-					Schedules:         &courseWithoutID.Schedules,
-				})
+
+				if err := savedCourse.UpdateFromCourseWithoutID(courseWithoutID); err != nil {
+					return err
+				}
+
 				return rtx.UpdateCourse(ctx, savedCourse)
 			}
 

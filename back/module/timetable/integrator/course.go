@@ -8,11 +8,10 @@ import (
 
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
-	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
-func (i *impl) GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error) {
+func (i *impl) GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetabledomain.CourseWithoutID, error) {
 	kdbCourses, err := loadKdBCourseFromJSON(i.kdbJSONFilePath)
 	if err != nil {
 		return nil, err
@@ -51,7 +50,7 @@ func loadKdBCourseFromJSON(kdbJsonFilePath string) (ret []*kdbCourse, err error)
 	return ret, json.Unmarshal(data, &ret)
 }
 
-func parseKdbCoure(kdbCourse *kdbCourse, year shareddomain.AcademicYear) (courseWithoutID timetableappdto.CourseWithoutID, err error) {
+func parseKdbCoure(kdbCourse *kdbCourse, year shareddomain.AcademicYear) (courseWithoutID timetabledomain.CourseWithoutID, err error) {
 	courseWithoutID.Year = year
 
 	courseWithoutID.Code, err = timetabledomain.ParseCode(kdbCourse.Code)

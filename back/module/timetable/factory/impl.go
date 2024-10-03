@@ -5,7 +5,6 @@ import (
 
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
-	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 	"gorm.io/gorm"
@@ -17,7 +16,7 @@ type impl struct {
 	db *gorm.DB
 }
 
-func (f *impl) NewCourse(courseWithoutID timetableappdto.CourseWithoutID) (*timetabledomain.Course, error) {
+func (f *impl) NewCourse(courseWithoutID timetabledomain.CourseWithoutID) (*timetabledomain.Course, error) {
 	return timetabledomain.ConstructCourse(func(c *timetabledomain.Course) error {
 		c.ID = idtype.NewCourseID()
 		c.Year = courseWithoutID.Year
