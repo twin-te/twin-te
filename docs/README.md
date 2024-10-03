@@ -49,26 +49,27 @@ Example in Mac
 brew install oven-sh/bun/bun
 ```
 
-Build Images
+terminal root
 ```sh
+// build imaegs
 docker compose build db db-migration proxy-host
-```
 
-Terminal workspace
-```sh
-docker compose up -d db db-migration
+// run containers
+docker compose up -d db db-migration proxy-host
+
+// run db migration
 docker compose run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
 docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_URL}'
 ```
 
-Terminal parser
+terminal parser
 ```sh
 cd parser
 pip install -r requirements.txt
 python download_and_parse.py --year 2024 --output-path kdb_2024.json
 ```
 
-Terminal back
+terminal back
 ```sh
 cd back
 
@@ -84,23 +85,18 @@ go install github.com/air-verse/air@latest
 air
 ```
 
-Terminal front
+terminal front
 ```sh
 cd front
 bun install
 bun run dev
 ```
 
-Terminal sponsorship
+terminal sponsorship
 ```sh
 cd sponsorship
 bun install
 bun run dev
-```
-
-Terminal workspace
-```sh
-docker compose up proxy-host
 ```
 
 Access to http://localhost:4000 or http://localhost:4000/sponsorship
