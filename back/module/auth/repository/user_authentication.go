@@ -10,7 +10,7 @@ import (
 )
 
 func (r *impl) updateUserAuthentications(db *gorm.DB, user *authdomain.User) error {
-	before := user.EntityBeforeUpdated.MustGet()
+	before := user.BeforeUpdated.MustGet()
 	toCreate, toDelete := lo.Difference(user.Authentications, before.Authentications)
 
 	if len(toCreate) != 0 {

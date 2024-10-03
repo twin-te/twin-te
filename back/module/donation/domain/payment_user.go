@@ -42,7 +42,7 @@ type PaymentUser struct {
 	DisplayName *shareddomain.RequiredString
 	Link        *Link
 
-	EntityBeforeUpdated mo.Option[*PaymentUser]
+	BeforeUpdated mo.Option[*PaymentUser]
 }
 
 func (pu *PaymentUser) Clone() *PaymentUser {
@@ -60,7 +60,7 @@ func (pu *PaymentUser) Clone() *PaymentUser {
 }
 
 func (pu *PaymentUser) BeforeUpdateHook() {
-	pu.EntityBeforeUpdated = mo.Some(pu.Clone())
+	pu.BeforeUpdated = mo.Some(pu.Clone())
 }
 
 type PaymentUserDataToUpdate struct {

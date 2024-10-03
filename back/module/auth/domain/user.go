@@ -22,7 +22,7 @@ type User struct {
 	Authentications []UserAuthentication
 	CreatedAt       time.Time
 
-	EntityBeforeUpdated mo.Option[*User]
+	BeforeUpdated mo.Option[*User]
 }
 
 func (u *User) Clone() *User {
@@ -32,7 +32,7 @@ func (u *User) Clone() *User {
 }
 
 func (u *User) BeforeUpdateHook() {
-	u.EntityBeforeUpdated = mo.Some(u.Clone())
+	u.BeforeUpdated = mo.Some(u.Clone())
 }
 
 // AddAuthentication adds the given authentication.

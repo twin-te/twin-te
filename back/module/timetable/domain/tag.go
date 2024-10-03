@@ -20,7 +20,7 @@ type Tag struct {
 	Name     shareddomain.RequiredString
 	Position shareddomain.NonNegativeInt
 
-	EntityBeforeUpdated mo.Option[*Tag]
+	BeforeUpdated mo.Option[*Tag]
 }
 
 func (t *Tag) Clone() *Tag {
@@ -29,7 +29,7 @@ func (t *Tag) Clone() *Tag {
 }
 
 func (t *Tag) BeforeUpdateHook() {
-	t.EntityBeforeUpdated = mo.Some(t.Clone())
+	t.BeforeUpdated = mo.Some(t.Clone())
 }
 
 type TagDataToUpdate struct {

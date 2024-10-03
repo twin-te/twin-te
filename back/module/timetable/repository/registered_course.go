@@ -87,7 +87,7 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 }
 
 func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error {
-	before := registeredCourse.EntityBeforeUpdated.MustGet()
+	before := registeredCourse.BeforeUpdated.MustGet()
 	columns := make([]string, 0)
 
 	if registeredCourse.UserID != before.UserID {

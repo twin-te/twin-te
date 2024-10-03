@@ -11,7 +11,7 @@ import (
 )
 
 func (r *impl) updateCourseSchedules(db *gorm.DB, course *timetabledomain.Course) error {
-	before := course.EntityBeforeUpdated.MustGet()
+	before := course.BeforeUpdated.MustGet()
 	toCreate, toDelete := lo.Difference(course.Schedules, before.Schedules)
 
 	if len(toCreate) != 0 {
