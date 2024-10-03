@@ -55,8 +55,6 @@ type ModuleDetail struct {
 	Module Module
 	Start  civil.Date
 	End    civil.Date
-
-	EntityBeforeUpdated *ModuleDetail
 }
 
 func (md *ModuleDetail) Clone() *ModuleDetail {

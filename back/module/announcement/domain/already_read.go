@@ -15,8 +15,6 @@ type AlreadyRead struct {
 	UserID         idtype.UserID
 	AnnouncementID idtype.AnnouncementID
 	ReadAt         time.Time
-
-	EntityBeforeUpdated *AlreadyRead
 }
 
 func ConstructAlreadyRead(fn func(ar *AlreadyRead) (err error)) (*AlreadyRead, error) {

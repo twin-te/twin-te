@@ -44,8 +44,6 @@ type Announcement struct {
 	Title       shareddomain.RequiredString
 	Content     shareddomain.RequiredString
 	PublishedAt time.Time
-
-	EntityBeforeUpdated *Announcement
 }
 
 func (a *Announcement) Clone() *Announcement {

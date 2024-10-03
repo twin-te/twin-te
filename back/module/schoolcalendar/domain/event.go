@@ -55,8 +55,6 @@ type Event struct {
 
 	// It is not nil, only if Type is EventTypeSubstituteDay.
 	ChangeTo *time.Weekday
-
-	EntityBeforeUpdated *Event
 }
 
 func (e *Event) IsSpringAExam() bool {

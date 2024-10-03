@@ -10,7 +10,8 @@ import (
 )
 
 func (r *impl) updateCourseMethods(db *gorm.DB, course *timetabledomain.Course) error {
-	toCreate, toDelete := lo.Difference(course.Methods, course.EntityBeforeUpdated.Methods)
+	before := course.EntityBeforeUpdated.MustGet()
+	toCreate, toDelete := lo.Difference(course.Methods, before.Methods)
 
 	if len(toCreate) != 0 {
 		dbCourseMethods := base.MapWithArg(toCreate, course.ID, toDBCourseMethod)

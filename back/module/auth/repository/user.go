@@ -83,9 +83,10 @@ func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error
 }
 
 func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
+	before := user.EntityBeforeUpdated.MustGet()
 	cols := make([]string, 0)
 
-	if !user.CreatedAt.Equal(user.EntityBeforeUpdated.CreatedAt) {
+	if !user.CreatedAt.Equal(before.CreatedAt) {
 		cols = append(cols, "createdAt")
 	}
 

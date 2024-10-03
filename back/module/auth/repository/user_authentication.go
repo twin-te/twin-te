@@ -10,7 +10,8 @@ import (
 )
 
 func (r *impl) updateUserAuthentications(db *gorm.DB, user *authdomain.User) error {
-	toCreate, toDelete := lo.Difference(user.Authentications, user.EntityBeforeUpdated.Authentications)
+	before := user.EntityBeforeUpdated.MustGet()
+	toCreate, toDelete := lo.Difference(user.Authentications, before.Authentications)
 
 	if len(toCreate) != 0 {
 		dbUserAuthentications := base.MapWithArg(toCreate, user.ID, toDBUserAuthentication)

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -29,7 +30,7 @@ type Course struct {
 	Methods           []CourseMethod
 	Schedules         []Schedule
 
-	EntityBeforeUpdated *Course
+	EntityBeforeUpdated mo.Option[*Course]
 }
 
 func (c *Course) Clone() *Course {
@@ -41,7 +42,7 @@ func (c *Course) Clone() *Course {
 }
 
 func (c *Course) BeforeUpdateHook() {
-	c.EntityBeforeUpdated = c.Clone()
+	c.EntityBeforeUpdated = mo.Some(c.Clone())
 }
 
 type CourseDataToUpdate struct {

@@ -61,13 +61,14 @@ func (r *impl) CreatePaymentUsers(ctx context.Context, paymentUsers ...*donation
 }
 
 func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomain.PaymentUser) error {
+	before := paymentUser.EntityBeforeUpdated.MustGet()
 	cols := make([]string, 0)
 
-	if !base.EqualPtr(paymentUser.DisplayName, paymentUser.EntityBeforeUpdated.DisplayName) {
+	if !base.EqualPtr(paymentUser.DisplayName, before.DisplayName) {
 		cols = append(cols, "display_name")
 	}
 
-	if !base.EqualPtr(paymentUser.Link, paymentUser.EntityBeforeUpdated.Link) {
+	if !base.EqualPtr(paymentUser.Link, before.Link) {
 		cols = append(cols, "link")
 	}
 

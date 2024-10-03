@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -19,7 +20,7 @@ type Tag struct {
 	Name     shareddomain.RequiredString
 	Position shareddomain.NonNegativeInt
 
-	EntityBeforeUpdated *Tag
+	EntityBeforeUpdated mo.Option[*Tag]
 }
 
 func (t *Tag) Clone() *Tag {
@@ -28,7 +29,7 @@ func (t *Tag) Clone() *Tag {
 }
 
 func (t *Tag) BeforeUpdateHook() {
-	t.EntityBeforeUpdated = t.Clone()
+	t.EntityBeforeUpdated = mo.Some(t.Clone())
 }
 
 type TagDataToUpdate struct {

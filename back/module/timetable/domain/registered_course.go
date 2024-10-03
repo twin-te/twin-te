@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -55,7 +56,7 @@ type RegisteredCourse struct {
 	Late        shareddomain.NonNegativeInt
 	TagIDs      []idtype.TagID
 
-	EntityBeforeUpdated *RegisteredCourse
+	EntityBeforeUpdated mo.Option[*RegisteredCourse]
 
 	CourseAssociation shareddomain.Association[*Course]
 }
@@ -132,7 +133,7 @@ func (rc *RegisteredCourse) Clone() *RegisteredCourse {
 }
 
 func (rc *RegisteredCourse) BeforeUpdateHook() {
-	rc.EntityBeforeUpdated = rc.Clone()
+	rc.EntityBeforeUpdated = mo.Some(rc.Clone())
 }
 
 type RegisteredCourseDataToUpdate struct {
