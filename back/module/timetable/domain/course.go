@@ -30,7 +30,7 @@ type Course struct {
 	Methods           []CourseMethod
 	Schedules         []Schedule
 
-	EntityBeforeUpdated mo.Option[*Course]
+	BeforeUpdated mo.Option[*Course]
 }
 
 func (c *Course) Clone() *Course {
@@ -42,7 +42,7 @@ func (c *Course) Clone() *Course {
 }
 
 func (c *Course) BeforeUpdateHook() {
-	c.EntityBeforeUpdated = mo.Some(c.Clone())
+	c.BeforeUpdated = mo.Some(c.Clone())
 }
 
 type CourseDataToUpdate struct {

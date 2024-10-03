@@ -56,7 +56,7 @@ type RegisteredCourse struct {
 	Late        shareddomain.NonNegativeInt
 	TagIDs      []idtype.TagID
 
-	EntityBeforeUpdated mo.Option[*RegisteredCourse]
+	BeforeUpdated mo.Option[*RegisteredCourse]
 
 	CourseAssociation shareddomain.Association[*Course]
 }
@@ -133,7 +133,7 @@ func (rc *RegisteredCourse) Clone() *RegisteredCourse {
 }
 
 func (rc *RegisteredCourse) BeforeUpdateHook() {
-	rc.EntityBeforeUpdated = mo.Some(rc.Clone())
+	rc.BeforeUpdated = mo.Some(rc.Clone())
 }
 
 type RegisteredCourseDataToUpdate struct {

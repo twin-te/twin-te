@@ -87,7 +87,7 @@ func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Co
 }
 
 func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course) error {
-	before := course.EntityBeforeUpdated.MustGet()
+	before := course.BeforeUpdated.MustGet()
 	columns := make([]string, 0)
 
 	if course.Year != before.Year {

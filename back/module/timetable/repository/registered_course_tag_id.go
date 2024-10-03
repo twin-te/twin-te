@@ -10,7 +10,7 @@ import (
 )
 
 func (r *impl) updateRegisteredCourseTagIDs(db *gorm.DB, registeredCourse *timetabledomain.RegisteredCourse) error {
-	before := registeredCourse.EntityBeforeUpdated.MustGet()
+	before := registeredCourse.BeforeUpdated.MustGet()
 	toCreate, toDelete := lo.Difference(registeredCourse.TagIDs, before.TagIDs)
 
 	if len(toCreate) != 0 {

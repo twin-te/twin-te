@@ -69,7 +69,7 @@ func (r *impl) CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) err
 }
 
 func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
-	before := tag.EntityBeforeUpdated.MustGet()
+	before := tag.BeforeUpdated.MustGet()
 	columns := make([]string, 0)
 
 	if tag.UserID != before.UserID {
