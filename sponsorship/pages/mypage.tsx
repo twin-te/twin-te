@@ -94,37 +94,28 @@ const MyPage: NextPage = () => {
 								isOpen={isEditUserModalOpen}
 								onClose={() => setIsEditUserModalOpen(false)}
 								setCurrentUser={setUser}
-								prevDisplayName={user?.displayName}
-								prevLink={user?.link}
+								prevDisplayName={user.displayName}
+								prevLink={user.link}
 							/>
 							<div className="content">
 								<p>
 									<a href="https://www.twinte.net/sponsor">寄付者一覧</a>
 									に表示するお名前とリンクです。
 								</p>
-								{user ? (
-									<>
-										<p className="has-text-primary has-text-weight-bold is-marginless">
-											ID
-										</p>
-										<p>{user.twinteUserId}</p>
-
-										<p className="has-text-primary has-text-weight-bold is-marginless">
-											表示名
-										</p>
-										<p>{user.displayName || "未設定"}</p>
-
-										<p className="has-text-primary has-text-weight-bold is-marginless">
-											リンク
-										</p>
-										<p>{user.link || "未設定"}</p>
-									</>
-								) : (
-									<div>情報の取得に失敗しました。</div>
-								)}
+								<p className="has-text-primary has-text-weight-bold is-marginless">
+									ID
+								</p>
+								<p>{user.twinteUserId}</p>
+								<p className="has-text-primary has-text-weight-bold is-marginless">
+									表示名
+								</p>
+								<p>{user.displayName || "未設定"}</p>
+								<p className="has-text-primary has-text-weight-bold is-marginless">
+									リンク
+								</p>
+								<p>{user.link || "未設定"}</p>
 							</div>
 						</div>
-
 						<div className="card">
 							<h2 className={`title ${styles.title}`}>
 								サブスクリプションの登録状況
@@ -164,7 +155,6 @@ const MyPage: NextPage = () => {
 								)}
 							</div>
 						</div>
-
 						<div className="card">
 							<h2 className={`title ${styles.title}`}>寄付の履歴</h2>
 							<div className="content">
