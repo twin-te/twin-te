@@ -62,23 +62,23 @@ func (r *impl) CreatePaymentUsers(ctx context.Context, paymentUsers ...*donation
 
 func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomain.PaymentUser) error {
 	before := paymentUser.EntityBeforeUpdated.MustGet()
-	cols := make([]string, 0)
+	columns := make([]string, 0)
 
 	if !base.EqualPtr(paymentUser.DisplayName, before.DisplayName) {
-		cols = append(cols, "display_name")
+		columns = append(columns, "display_name")
 	}
 
 	if !base.EqualPtr(paymentUser.Link, before.Link) {
-		cols = append(cols, "link")
+		columns = append(columns, "link")
 	}
 
-	if len(cols) == 0 {
+	if len(columns) == 0 {
 		return nil
 	}
 
 	dbPaymentUser := toDBPaymentUser(paymentUser)
 	return r.db.WithContext(ctx).
-		Select(cols).
+		Select(columns).
 		Updates(dbPaymentUser).
 		Error
 }

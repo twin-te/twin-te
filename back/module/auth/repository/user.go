@@ -84,17 +84,17 @@ func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error
 
 func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 	before := user.EntityBeforeUpdated.MustGet()
-	cols := make([]string, 0)
+	columns := make([]string, 0)
 
 	if !user.CreatedAt.Equal(before.CreatedAt) {
-		cols = append(cols, "createdAt")
+		columns = append(columns, "createdAt")
 	}
 
 	dbUser := toDBUser(user, false)
 
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if len(cols) > 0 {
-			if err := tx.Select(cols).Updates(dbUser).Error; err != nil {
+		if len(columns) > 0 {
+			if err := tx.Select(columns).Updates(dbUser).Error; err != nil {
 				return err
 			}
 		}
