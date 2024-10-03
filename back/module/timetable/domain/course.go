@@ -62,20 +62,6 @@ func (c *Course) BeforeUpdateHook() {
 	c.BeforeUpdated = mo.Some(c.Clone())
 }
 
-type CourseDataToUpdate struct {
-	Name              *shareddomain.RequiredString
-	Instructors       *string
-	Credit            *Credit
-	Overview          *string
-	Remarks           *string
-	LastUpdatedAt     *time.Time
-	HasParseError     *bool
-	IsAnnual          *bool
-	RecommendedGrades *[]RecommendedGrade
-	Methods           *[]CourseMethod
-	Schedules         *[]Schedule
-}
-
 func (c *Course) UpdateFromCourseWithoutID(courseWithoutID CourseWithoutID) error {
 	if c.Year != courseWithoutID.Year || c.Code != courseWithoutID.Code {
 		return errors.New("invalid course without id")
