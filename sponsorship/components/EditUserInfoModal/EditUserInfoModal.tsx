@@ -30,7 +30,7 @@ export const EditUserInfoModal: React.FC<Props> = ({
 		} else {
 			setError({ ...error, displayName: "" });
 		}
-	}, [displayName, error]);
+	}, [displayName]);
 
 	useEffect(() => {
 		if (!isValidLink(link)) {
@@ -38,7 +38,7 @@ export const EditUserInfoModal: React.FC<Props> = ({
 		} else {
 			setError({ ...error, link: "" });
 		}
-	}, [link, error]);
+	}, [link]);
 
 	const isValidDisplayName = (name: string) => {
 		return name.length < 20;
