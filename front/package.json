@@ -13,6 +13,7 @@
     "format:fix": "prettier ./src --write",
     "lint": "eslint --ext .ts,.tsx,.vue ./src",
     "lint:fix": "bun run lint --fix",
+    "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "bun run typecheck && build-storybook",
     "buf-gen": "rm -rf src/infrastructure/api/gen && buf generate --template buf.gen.yaml ../proto"
