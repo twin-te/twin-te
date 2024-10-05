@@ -1,3 +1,6 @@
 {
-	"recommendations": ["biomejs.biome", "vue.volar"]
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+  ]
 }
