@@ -27,10 +27,10 @@ export const displayNormalDays: DisplayNormalDay[] = [
 ];
 
 export const displaySpecialDays: DisplaySpecialDay[] = [
-	"集中",
-	"応談",
-	"随時",
-	"NT",
+  "集中",
+  "応談",
+  "随時",
+  "NT",
 ];
 
 export const editableNormalDays: EditableNormalDay[] = [
