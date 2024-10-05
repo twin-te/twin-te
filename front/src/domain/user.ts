@@ -1,5 +1,5 @@
 export type User = {
-	id: string;
+  id: string;
 };
 
 export type Provider = "google" | "apple" | "twitter";

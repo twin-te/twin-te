@@ -1,127 +1,125 @@
 import { initializeObject } from "~/utils";
+import { NormalDay, normalDays, SpecialDay, specialDays } from "./day";
+import { Module, modules } from "./module";
+import { Period, periods } from "./period";
 import {
-	type NormalDay,
-	type SpecialDay,
-	normalDays,
-	specialDays,
-} from "./day";
-import { type Module, modules } from "./module";
-import { type Period, periods } from "./period";
-import {
-	type NormalSchedule,
-	type Schedule,
-	type SpecialSchedule,
-	isNormalSchedule,
-	isSpecialSchedule,
+  isNormalSchedule,
+  isSpecialSchedule,
+  NormalSchedule,
+  Schedule,
+  SpecialSchedule,
 } from "./schedule";
 
 export type NormalTimetable<M extends Module, V> = Record<
-	M,
-	Record<NormalDay, Record<Period, V>>
+  M,
+  Record<NormalDay, Record<Period, V>>
 >;
 
 export type SpecialTimetable<M extends Module, V> = Record<
-	M,
-	Record<SpecialDay, V>
+  M,
+  Record<SpecialDay, V>
 >;
 
 export type Timetable<M extends Module, V> = {
-	normal: NormalTimetable<M, V>;
-	special: SpecialTimetable<M, V>;
+  normal: NormalTimetable<M, V>;
+  special: SpecialTimetable<M, V>;
 };
 
 export const initializeNormalTimetable = <M extends Module, V>(
-	modules: M[],
-	initValue: V,
+  modules: M[],
+  initValue: V
 ): NormalTimetable<M, V> => {
-	return initializeObject(
-		modules,
-		initializeObject(normalDays, initializeObject(periods, initValue)),
-	);
+  return initializeObject(
+    modules,
+    initializeObject(normalDays, initializeObject(periods, initValue))
+  );
 };
 
 export const initializeSpecialTimetable = <M extends Module, V>(
-	modules: M[],
-	initValue: V,
+  modules: M[],
+  initValue: V
 ): SpecialTimetable<M, V> => {
-	return initializeObject(modules, initializeObject(specialDays, initValue));
+  return initializeObject(modules, initializeObject(specialDays, initValue));
 };
 
 export const initializeTimetable = <M extends Module, V>(
-	modules: M[],
-	initValue: V,
+  modules: M[],
+  initValue: V
 ): Timetable<M, V> => {
-	return {
-		normal: initializeNormalTimetable(modules, initValue),
-		special: initializeSpecialTimetable(modules, initValue),
-	};
+  return {
+    normal: initializeNormalTimetable(modules, initValue),
+    special: initializeSpecialTimetable(modules, initValue),
+  };
 };
 
 export const normalSchedulesToNormalTimetable = (
-	schedules: NormalSchedule[],
+  schedules: NormalSchedule[]
 ): NormalTimetable<Module, boolean> => {
-	const timetable: NormalTimetable<Module, boolean> = initializeNormalTimetable(
-		modules,
-		false,
-	);
+  const timetable: NormalTimetable<Module, boolean> = initializeNormalTimetable(
+    modules,
+    false
+  );
 
-	schedules.forEach(({ module, day, period }) => {
-		timetable[module][day][period] = true;
-	});
+  schedules.forEach(({ module, day, period }) => {
+    timetable[module][day][period] = true;
+  });
 
-	return timetable;
+  return timetable;
 };
 
 export const specialSchedulesToSpecialTimetable = (
-	schedules: SpecialSchedule[],
+  schedules: SpecialSchedule[]
 ): SpecialTimetable<Module, boolean> => {
-	const timetable: SpecialTimetable<Module, boolean> =
-		initializeSpecialTimetable(modules, false);
+  const timetable: SpecialTimetable<
+    Module,
+    boolean
+  > = initializeSpecialTimetable(modules, false);
 
-	schedules.forEach(({ module, day }) => {
-		timetable[module][day] = true;
-	});
+  schedules.forEach(({ module, day }) => {
+    timetable[module][day] = true;
+  });
 
-	return timetable;
+  return timetable;
 };
 
 export const schedulesToTimetable = (
-	schedules: Schedule[],
+  schedules: Schedule[]
 ): Timetable<Module, boolean> => {
-	const normalSchedules: NormalSchedule[] = schedules.filter(isNormalSchedule);
-	const specialSchedules: SpecialSchedule[] =
-		schedules.filter(isSpecialSchedule);
+  const normalSchedules: NormalSchedule[] = schedules.filter(isNormalSchedule);
+  const specialSchedules: SpecialSchedule[] = schedules.filter(
+    isSpecialSchedule
+  );
 
-	const timetable: Timetable<Module, boolean> = {
-		normal: normalSchedulesToNormalTimetable(normalSchedules),
-		special: specialSchedulesToSpecialTimetable(specialSchedules),
-	};
+  const timetable: Timetable<Module, boolean> = {
+    normal: normalSchedulesToNormalTimetable(normalSchedules),
+    special: specialSchedulesToSpecialTimetable(specialSchedules),
+  };
 
-	return timetable;
+  return timetable;
 };
 
 export const timetableToSchedules = (
-	timetable: Timetable<Module, boolean>,
+  timetable: Timetable<Module, boolean>
 ): Schedule[] => {
-	const schedules: Schedule[] = [];
+  const schedules: Schedule[] = [];
 
-	modules.forEach((module) => {
-		normalDays.forEach((day) => {
-			periods.forEach((period) => {
-				if (timetable.normal[module][day][period]) {
-					schedules.push({ module, day, period });
-				}
-			});
-		});
-	});
+  modules.forEach((module) => {
+    normalDays.forEach((day) => {
+      periods.forEach((period) => {
+        if (timetable.normal[module][day][period]) {
+          schedules.push({ module, day, period });
+        }
+      });
+    });
+  });
 
-	modules.forEach((module) => {
-		specialDays.forEach((day) => {
-			if (timetable.special[module][day]) {
-				schedules.push({ module, day });
-			}
-		});
-	});
+  modules.forEach((module) => {
+    specialDays.forEach((day) => {
+      if (timetable.special[module][day]) {
+        schedules.push({ module, day });
+      }
+    });
+  });
 
-	return schedules;
+  return schedules;
 };

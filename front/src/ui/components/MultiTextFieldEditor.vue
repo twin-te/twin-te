@@ -1,68 +1,68 @@
 <script lang="ts">
-import { type PropType, defineComponent } from "vue";
+import { PropType, defineComponent } from "vue";
 import Label from "~/ui/components/Label.vue";
 import TertiaryButton from "~/ui/components/TertiaryButton.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { useFocus } from "../hooks/useFocus";
 
 export default defineComponent({
-	components: {
-		Label,
-		TextFieldSingleLine,
-		TertiaryButton,
-	},
-	props: {
-		elements: {
-			type: Array as PropType<string[]>,
-			required: true,
-		},
-		placeholder: {
-			type: String,
-			default: "",
-		},
-		label: {
-			type: String,
-			default: "",
-		},
-		mandatory: {
-			type: Boolean,
-			default: false,
-		},
-		size: {
-			type: String as PropType<"normal" | "slim">,
-			default: "normal",
-		},
-	},
-	emits: ["update:elements"],
-	setup(props, { emit }) {
-		const { targetRef, focus } = useFocus();
+  components: {
+    Label,
+    TextFieldSingleLine,
+    TertiaryButton,
+  },
+  props: {
+    elements: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      default: "",
+    },
+    label: {
+      type: String,
+      default: "",
+    },
+    mandatory: {
+      type: Boolean,
+      default: false,
+    },
+    size: {
+      type: String as PropType<"normal" | "slim">,
+      default: "normal",
+    },
+  },
+  emits: ["update:elements"],
+  setup(props, { emit }) {
+    const { targetRef, focus } = useFocus();
 
-		const addElement = () => {
-			const newElements = [...props.elements];
-			newElements.push("");
-			emit("update:elements", newElements);
-			focus([`#text-field-single-line-${newElements.length - 1}`, "input"]);
-		};
+    const addElement = () => {
+      const newElements = [...props.elements];
+      newElements.push("");
+      emit("update:elements", newElements);
+      focus([`#text-field-single-line-${newElements.length - 1}`, "input"]);
+    };
 
-		const updateElement = (i: number, v: string) => {
-			const newElements = [...props.elements];
-			newElements.splice(i, 1, v.trim());
-			emit("update:elements", newElements);
-		};
+    const updateElement = (i: number, v: string) => {
+      const newElements = [...props.elements];
+      newElements.splice(i, 1, v.trim());
+      emit("update:elements", newElements);
+    };
 
-		const deleteElement = (i: number) => {
-			const newElements = [...props.elements];
-			newElements.splice(i, 1);
-			emit("update:elements", newElements);
-		};
+    const deleteElement = (i: number) => {
+      const newElements = [...props.elements];
+      newElements.splice(i, 1);
+      emit("update:elements", newElements);
+    };
 
-		return {
-			targetRef,
-			addElement,
-			updateElement,
-			deleteElement,
-		};
-	},
+    return {
+      targetRef,
+      addElement,
+      updateElement,
+      deleteElement,
+    };
+  },
 });
 </script>
 

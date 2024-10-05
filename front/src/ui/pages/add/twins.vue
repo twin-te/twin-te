@@ -67,21 +67,21 @@ import PageHeader from "~/ui/components/PageHeader.vue";
 import { openUrl } from "~/ui/url";
 
 export default defineComponent({
-	components: {
-		Button,
-		IconButton,
-		PageHeader,
-	},
-	setup: async () => {
-		useHead({
-			title: "Twin:te | TWINSからインポート",
-		});
+  components: {
+    Button,
+    IconButton,
+    PageHeader,
+  },
+  setup: async () => {
+    useHead({
+      title: "Twin:te | TWINSからインポート",
+    });
 
-		const openTwins = () => {
-			openUrl("https://twins.tsukuba.ac.jp");
-		};
-		return { openTwins };
-	},
+    const openTwins = () => {
+      openUrl("https://twins.tsukuba.ac.jp");
+    };
+    return { openTwins };
+  },
 });
 </script>
 

@@ -1,22 +1,22 @@
-import type { Story } from "@storybook/vue3";
+import { Story } from "@storybook/vue3";
 import IconButton from "./IconButton.vue";
 
 export default {
-	component: IconButton,
+  component: IconButton,
 };
 
 const Template: Story = (args) => ({
-	components: { IconButton },
-	setup() {
-		return { args };
-	},
-	template: `<IconButton v-bind="args" />`,
+  components: { IconButton },
+  setup() {
+    return { args };
+  },
+  template: `<IconButton v-bind="args" />`,
 });
 
 export const Default = Template.bind({});
 
 Default.args = {
-	size: "medium",
-	iconName: "search",
-	loading: false,
+  size: "medium",
+  iconName: "search",
+  loading: false,
 };

@@ -1,8 +1,4 @@
-import {
-	type RouteRecordRaw,
-	createRouter,
-	createWebHistory,
-} from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 // ページを追加するときはダイナミックインポートする
 // 必要に応じてvite.config.tsにも設定を追加する
@@ -30,34 +26,34 @@ const history = createWebHistory();
 // Each route should map to a component.
 // We'll talk about nested routes later.
 const routes: RouteRecordRaw[] = [
-	{ path: "/", component: App },
-	{
-		path: "/login",
-		component: Login,
-		meta: { hasSidebar: false, hasWelcomeModal: false },
-	},
-	{ path: "/settings", component: Settings },
-	{ path: "/add", component: Add },
-	{ path: "/add/search", component: Search },
-	{ path: "/add/csv", component: CSV },
-	{ path: "/add/manual", component: Manual },
-	{ path: "/add/twins", component: Twins },
-	{ path: "/course/:id/edit", component: Edit },
-	{ path: "/course/:id", component: Details },
-	{ path: "/Feedback", component: Feedback },
-	{ path: "/import", component: Import },
-	{ path: "/news", component: News },
-	{ path: "/credit", component: Credit },
-	{ path: "/credit/:id", component: Courses },
-	{ path: "/:pathMatch(.*)*", component: Error404 },
+  { path: "/", component: App },
+  {
+    path: "/login",
+    component: Login,
+    meta: { hasSidebar: false, hasWelcomeModal: false },
+  },
+  { path: "/settings", component: Settings },
+  { path: "/add", component: Add },
+  { path: "/add/search", component: Search },
+  { path: "/add/csv", component: CSV },
+  { path: "/add/manual", component: Manual },
+  { path: "/add/twins", component: Twins },
+  { path: "/course/:id/edit", component: Edit },
+  { path: "/course/:id", component: Details },
+  { path: "/Feedback", component: Feedback },
+  { path: "/import", component: Import },
+  { path: "/news", component: News },
+  { path: "/credit", component: Credit },
+  { path: "/credit/:id", component: Courses },
+  { path: "/:pathMatch(.*)*", component: Error404 },
 ];
 
 // 3. Create the router instance and pass the `routes` option
 // You can pass in additional options here, but let's
 // keep it simple for now.
 export const router = createRouter({
-	history,
-	routes,
+  history,
+  routes,
 });
 
 export default router;

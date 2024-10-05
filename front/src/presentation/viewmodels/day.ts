@@ -1,4 +1,4 @@
-import type { NotSpecified } from "~/presentation/viewmodels/option";
+import { NotSpecified } from "~/presentation/viewmodels/option";
 
 export type DisplayNormalDay = "月" | "火" | "水" | "木" | "金" | "土" | "日";
 

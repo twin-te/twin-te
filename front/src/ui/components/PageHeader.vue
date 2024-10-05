@@ -1,37 +1,37 @@
 <script lang="ts">
-import { type PropType, defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import { useSetting } from "../store";
 
 export type Calendar = {
-	schedule: string;
-	month: number;
-	day: number;
-	week: string;
+  schedule: string;
+  month: number;
+  day: number;
+  week: string;
 };
 
 export default defineComponent({
-	name: "PageHeader",
-	props: {
-		atHome: {
-			type: Boolean,
-			default: false,
-		},
-		calendar: {
-			type: Object as PropType<Calendar | null>,
-			default: null,
-		},
-	},
+  name: "PageHeader",
+  props: {
+    atHome: {
+      type: Boolean,
+      default: false,
+    },
+    calendar: {
+      type: Object as PropType<Calendar | null>,
+      default: null,
+    },
+  },
 
-	emits: ["click"],
-	setup: (_, { emit }) => {
-		const { setting } = useSetting();
+  emits: ["click"],
+  setup: (_, { emit }) => {
+    const { setting } = useSetting();
 
-		const handleClick = () => {
-			emit("click");
-		};
+    const handleClick = () => {
+      emit("click");
+    };
 
-		return { handleClick, setting };
-	},
+    return { handleClick, setting };
+  },
 });
 </script>
 

@@ -2,13 +2,13 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	props: {
-		size: {
-			// size is loader's width and height pixel included dots
-			type: Number,
-			default: 20,
-		},
-	},
+  props: {
+    size: {
+      // size is loader's width and height pixel included dots
+      type: Number,
+      default: 20,
+    },
+  },
 });
 </script>
 

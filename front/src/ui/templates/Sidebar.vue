@@ -1,32 +1,32 @@
 <script lang="ts">
 declare global {
-	// eslint-disable-next-line no-unused-vars
-	interface Window {
-		android?: {
-			openSettings: () => void;
-			// eslint-disable-next-line no-unused-vars
-			share: (message: string) => void;
-		};
-		webkit?: {
-			messageHandlers?: {
-				iPhoneSettings?: {
-					// eslint-disable-next-line no-unused-vars
-					postMessage: (hoge: string) => void;
-				};
-				share?: {
-					// eslint-disable-next-line no-unused-vars
-					postMessage: (message: string) => void;
-				};
-			};
-		};
-	}
+  // eslint-disable-next-line no-unused-vars
+  interface Window {
+    android?: {
+      openSettings: () => void;
+      // eslint-disable-next-line no-unused-vars
+      share: (message: string) => void;
+    };
+    webkit?: {
+      messageHandlers?: {
+        iPhoneSettings?: {
+          // eslint-disable-next-line no-unused-vars
+          postMessage: (hoge: string) => void;
+        };
+        share?: {
+          // eslint-disable-next-line no-unused-vars
+          postMessage: (message: string) => void;
+        };
+      };
+    };
+  }
 }
 
 type Content = {
-	iconName: string;
-	item: string;
-	link: string;
-	show: boolean;
+  iconName: string;
+  item: string;
+  link: string;
+  show: boolean;
 };
 </script>
 

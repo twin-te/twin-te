@@ -1,60 +1,60 @@
 <script lang="ts">
-import { type PropType, computed, defineComponent, ref } from "vue";
-import type { DisplayCourseTag } from "~/presentation/viewmodels/tag";
+import { computed, defineComponent, PropType, ref } from "vue";
+import { DisplayCourseTag } from "~/presentation/viewmodels/tag";
 import Tag from "./Tag.vue";
 import TagEditor from "./TagEditor.vue";
 
 export type CreditCourseListContentState = "default" | "selected";
 
 export default defineComponent({
-	name: "CreditCourseListContent",
-	components: {
-		Tag,
-		TagEditor,
-	},
-	props: {
-		state: {
-			type: String as PropType<"default" | "selected">,
-			default: "default",
-		},
-		code: {
-			// 科目番号
-			type: String,
-			required: true,
-		},
-		name: {
-			// 授業名
-			type: String,
-			required: true,
-		},
-		credit: {
-			// 単位数
-			type: String,
-			required: true,
-		},
-		tags: {
-			type: Object as PropType<DisplayCourseTag[]>,
-			required: true,
-		},
-	},
-	emits: ["click", "click-tag", "create-tag"],
-	setup(props, { emit }) {
-		const assignedTags = computed(() => props.tags.filter((tag) => tag.assign));
+  name: "CreditCourseListContent",
+  components: {
+    Tag,
+    TagEditor,
+  },
+  props: {
+    state: {
+      type: String as PropType<"default" | "selected">,
+      default: "default",
+    },
+    code: {
+      // 科目番号
+      type: String,
+      required: true,
+    },
+    name: {
+      // 授業名
+      type: String,
+      required: true,
+    },
+    credit: {
+      // 単位数
+      type: String,
+      required: true,
+    },
+    tags: {
+      type: Object as PropType<DisplayCourseTag[]>,
+      required: true,
+    },
+  },
+  emits: ["click", "click-tag", "create-tag"],
+  setup(props, { emit }) {
+    const assignedTags = computed(() => props.tags.filter((tag) => tag.assign));
 
-		const onClick = () => {
-			add.value = false;
-			emit("click");
-		};
+    const onClick = () => {
+      add.value = false;
+      emit("click");
+    };
 
-		/** tag-editor */
-		const add = ref(false);
+    /** tag-editor */
+    const add = ref(false);
 
-		return {
-			assignedTags,
-			onClick,
-			add,
-		};
-	},
+    return {
+      assignedTags,
+      onClick,
+      add,
+    };
+  },
 });
 </script>
 

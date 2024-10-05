@@ -253,16 +253,16 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { normalDays, specialDays } from "~/domain/day";
 import {
-	UnauthenticatedError,
-	isResultError,
-	throwResultError,
+  UnauthenticatedError,
+  isResultError,
+  throwResultError,
 } from "~/domain/error";
 import { baseModules } from "~/domain/module";
 import { daytimePeriods, periods } from "~/domain/period";
 import {
-	dayMap,
-	normalDayMap,
-	specialDayMap,
+  dayMap,
+  normalDayMap,
+  specialDayMap,
 } from "~/presentation/presenters/day";
 import { baseModuleMap, moduleMap } from "~/presentation/presenters/module";
 import { formatPublishedAt } from "~/presentation/presenters/news";
@@ -279,12 +279,12 @@ import ToggleButton from "~/ui/components/ToggleButton.vue";
 import { announcementUseCase, timetableUseCase } from "~/usecases";
 import { useSwitch } from "../hooks/useSwitch";
 import {
-	useAuth,
-	useCourseType,
-	useEvent,
-	useModule,
-	useSetting,
-	useSidebar,
+  useAuth,
+  useCourseType,
+  useEvent,
+  useModule,
+  useSetting,
+  useSidebar,
 } from "../store";
 
 import type { NormalDay } from "~/domain/day";
@@ -294,7 +294,7 @@ import type { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
 import type { Calendar as PageHeaderCalendar } from "~/ui/components/PageHeader.vue";
 
 useHead({
-	title: "Twin:te | ホーム",
+  title: "Twin:te | ホーム",
 });
 
 const router = useRouter();
@@ -302,131 +302,134 @@ const router = useRouter();
 const { courseType, toggleCourseType } = useCourseType();
 const { event, initializeEvent } = useEvent();
 const {
-	module,
-	currentModule,
-	setModule,
-	setToCurrentModule,
-	initializeModule,
+  module,
+  currentModule,
+  setModule,
+  setToCurrentModule,
+  initializeModule,
 } = useModule();
 const { setting, appliedYear: year } = useSetting();
 const { toggleSidebar } = useSidebar();
 const { isAuthenticated } = useAuth();
 
 const [, , unreadAnnouncements, registeredCourses, tags] = await Promise.all([
-	initializeEvent(),
-	initializeModule(),
-	announcementUseCase
-		.getAnnouncements()
-		.then(throwResultError)
-		.then((announcements) => announcements.filter(({ isRead }) => !isRead)),
-	timetableUseCase.getRegisteredCourses(year.value).then((result) => {
-		if (result instanceof UnauthenticatedError) return [];
-		if (isResultError(result)) throw result;
-		return result;
-	}),
-	timetableUseCase.getTags().then((result) => {
-		if (result instanceof UnauthenticatedError) return [];
-		if (isResultError(result)) throw result;
-		return result;
-	}),
+  initializeEvent(),
+  initializeModule(),
+  announcementUseCase
+    .getAnnouncements()
+    .then(throwResultError)
+    .then((announcements) => announcements.filter(({ isRead }) => !isRead)),
+  timetableUseCase.getRegisteredCourses(year.value).then((result) => {
+    if (result instanceof UnauthenticatedError) return [];
+    if (isResultError(result)) throw result;
+    return result;
+  }),
+  timetableUseCase.getTags().then((result) => {
+    if (result instanceof UnauthenticatedError) return [];
+    if (isResultError(result)) throw result;
+    return result;
+  }),
 ]);
 
 /** page header */
 const today = dayjs();
 const calendar: PageHeaderCalendar = {
-	schedule: event.value,
-	month: today.month() + 1,
-	day: today.date(),
-	week: normalDayMap[normalDays[(today.day() + 6) % 7]],
+  schedule: event.value,
+  month: today.month() + 1,
+  day: today.date(),
+  week: normalDayMap[normalDays[(today.day() + 6) % 7]],
 };
 
 /** popup */
 const [isPopupVisible, , closePopup, togglePopup] = useSwitch(false);
 const onClickPopup = (baseModule: BaseModule) => {
-	setModule(baseModule);
-	closePopup();
+  setModule(baseModule);
+  closePopup();
 };
 
 /** timelabel */
 // https://www.tsukuba.ac.jp/education/g-courses-handbook/2.pdf
 const timelabels = [
-	{ start: "8:40", end: "9:55" },
-	{ start: "10:10", end: "11:25" },
-	{ start: "12:15", end: "13:30" },
-	{ start: "13:45", end: "15:00" },
-	{ start: "15:15", end: "16:30" },
-	{ start: "16:45", end: "18:00" },
-	{ start: "18:00", end: "19:15" },
-	{ start: "19:20", end: "20:35" },
+  { start: "8:40", end: "9:55" },
+  { start: "10:10", end: "11:25" },
+  { start: "12:15", end: "13:30" },
+  { start: "13:45", end: "15:00" },
+  { start: "15:15", end: "16:30" },
+  { start: "16:45", end: "18:00" },
+  { start: "18:00", end: "19:15" },
+  { start: "19:20", end: "20:35" },
 ];
 
 /** timetable */
 const timetable = computed(() =>
-	getDisplayTimetable(
-		registeredCourses,
-		tags,
-		baseModules,
-		setting.value.saturdayCourseMode
-			? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-			: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-		specialDays,
-		setting.value.nightPeriodMode ? periods : daytimePeriods,
-	),
+  getDisplayTimetable(
+    registeredCourses,
+    tags,
+    baseModules,
+    setting.value.saturdayCourseMode
+      ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      : ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    specialDays,
+    setting.value.nightPeriodMode ? periods : daytimePeriods
+  )
 );
 
 /** duplicate state */
 const useDuplicateState = () => {
-	type DuplicateState = {
-		day: NormalDay;
-		period: Period;
-		courses: DisplayRegisteredCourse[];
-	};
+  type DuplicateState = {
+    day: NormalDay;
+    period: Period;
+    courses: DisplayRegisteredCourse[];
+  };
 
-	const duplicateState = ref<DuplicateState>();
+  const duplicateState = ref<DuplicateState>();
 
-	const setDuplicateState = (newDuplicateState: DuplicateState) => {
-		duplicateState.value = newDuplicateState;
-	};
+  const setDuplicateState = (newDuplicateState: DuplicateState) => {
+    duplicateState.value = newDuplicateState;
+  };
 
-	const clearDuplicateState = () => {
-		duplicateState.value = undefined;
-	};
+  const clearDuplicateState = () => {
+    duplicateState.value = undefined;
+  };
 
-	return { duplicateState, setDuplicateState, clearDuplicateState };
+  return { duplicateState, setDuplicateState, clearDuplicateState };
 };
 
-const { duplicateState, setDuplicateState, clearDuplicateState } =
-	useDuplicateState();
+const {
+  duplicateState,
+  setDuplicateState,
+  clearDuplicateState,
+} = useDuplicateState();
 
 /** course tile */
 const onClickCourseTile = async (
-	day: NormalDay,
-	period: Period,
-	courses: DisplayRegisteredCourse[],
+  day: NormalDay,
+  period: Period,
+  courses: DisplayRegisteredCourse[]
 ) => {
-	switch (courses.length) {
-		case 0:
-			await router.push("/add/search");
-			break;
-		case 1:
-			await router.push(`/course/${courses[0].id}`);
-			break;
-		default:
-			setDuplicateState({ day, period, courses });
-			break;
-	}
+  switch (courses.length) {
+    case 0:
+      await router.push("/add/search");
+      break;
+    case 1:
+      await router.push(`/course/${courses[0].id}`);
+      break;
+    default:
+      setDuplicateState({ day, period, courses });
+      break;
+  }
 };
 
 /** news modal */
 const [isNewsModalVisible, , closeNewsModal] = useSwitch(
-	isAuthenticated.value && unreadAnnouncements.length > 0,
+  isAuthenticated.value && unreadAnnouncements.length > 0
 );
 
 const onClickNewsModal = async () => {
-	await announcementUseCase
-		.readAnnouncements(unreadAnnouncements.map(({ id }) => id))
-		.then(throwResultError);
-	closeNewsModal();
+  await announcementUseCase
+    .readAnnouncements(unreadAnnouncements.map(({ id }) => id))
+    .then(throwResultError);
+  closeNewsModal();
 };
 </script>
 

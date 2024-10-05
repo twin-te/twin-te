@@ -2,12 +2,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	props: {
-		width: {
-			type: String,
-			default: "100%",
-		},
-	},
+  props: {
+    width: {
+      type: String,
+      default: "100%",
+    },
+  },
 });
 </script>
 

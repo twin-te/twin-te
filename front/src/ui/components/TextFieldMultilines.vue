@@ -2,35 +2,35 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	props: {
-		modelValue: {
-			type: String,
-			required: true,
-		},
-		placeholder: {
-			type: String,
-			default: "",
-		},
-		width: {
-			type: String,
-			default: "100%",
-		},
-		height: {
-			type: String,
-			default: "10rem",
-		},
-	},
-	emits: ["update:modelValue", "enter-text-field"],
-	setup: (_, { emit }) => {
-		const handleInput = (e: Event) => {
-			if (!(e.target instanceof HTMLTextAreaElement)) {
-				return;
-			}
-			emit("update:modelValue", e.target.value);
-		};
+  props: {
+    modelValue: {
+      type: String,
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      default: "",
+    },
+    width: {
+      type: String,
+      default: "100%",
+    },
+    height: {
+      type: String,
+      default: "10rem",
+    },
+  },
+  emits: ["update:modelValue", "enter-text-field"],
+  setup: (_, { emit }) => {
+    const handleInput = (e: Event) => {
+      if (!(e.target instanceof HTMLTextAreaElement)) {
+        return;
+      }
+      emit("update:modelValue", e.target.value);
+    };
 
-		return { handleInput };
-	},
+    return { handleInput };
+  },
 });
 </script>
 

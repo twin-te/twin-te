@@ -1,7 +1,5 @@
 ![](https://camo.githubusercontent.com/2f150fdb9a34699191ce7d2dd4c38d6dcbe7280c9ba7b559ecbad1a3135e6dda/68747470733a2f2f7777772e7477696e74652e6e65742f6f67702e6a7067)
 
-Deprecated
-
 # 必要な依存
 
 - Node.js v16 以上推奨

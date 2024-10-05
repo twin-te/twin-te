@@ -1,74 +1,76 @@
 <script lang="ts">
-import { type PropType, defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import Loader from "./Loader.vue";
 
 type Props = {
-	size: string;
-	color: string;
-	iconName: string;
-	state: "default" | "disabled";
-	loading: boolean;
+  size: string;
+  color: string;
+  iconName: string;
+  state: "default" | "disabled";
+  loading: boolean;
 };
 
 export default defineComponent({
-	name: "IconButton",
-	components: { Loader },
-	props: {
-		onKeyup: {
-			type: Function,
-			default: () => void 0,
-		},
-		size: {
-			type: String,
-			default: "large",
-			validator: (value: string) =>
-				["small", "medium", "large"].includes(value),
-		},
-		color: {
-			type: String,
-			default: "normal",
-			varidator: (value: string) =>
-				["normal", "danger", "primary"].includes(value),
-		},
-		iconName: {
-			type: String,
-			default: "",
-		},
-		state: {
-			type: String as PropType<"default" | "disabled">,
-			default: "default",
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	emits: ["click"],
-	setup: (props: Props, { emit }) => {
-		const handleClick = (e: MouseEvent) => {
-			if (props.state === "disabled") return;
-			emit("click", e);
-		};
+  name: "IconButton",
+  components: { Loader },
+  props: {
+    onKeyup: {
+      type: Function,
+      default: () => void 0,
+    },
+    size: {
+      type: String,
+      default: "large",
+      validator: function (value: string) {
+        return ["small", "medium", "large"].includes(value);
+      },
+    },
+    color: {
+      type: String,
+      default: "normal",
+      varidator: function (value: string) {
+        return ["normal", "danger", "primary"].includes(value);
+      },
+    },
+    iconName: {
+      type: String,
+      default: "",
+    },
+    state: {
+      type: String as PropType<"default" | "disabled">,
+      default: "default",
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ["click"],
+  setup: (props: Props, { emit }) => {
+    const handleClick = (e: MouseEvent) => {
+      if (props.state === "disabled") return;
+      emit("click", e);
+    };
 
-		const getButtonWidthPixel = () => {
-			const documentFontSize = Number.parseFloat(
-				getComputedStyle(document.documentElement).fontSize,
-			);
+    const getButtonWidthPixel = () => {
+      const documentFontSize = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
 
-			switch (props.size) {
-				case "small":
-					return 2.8 * documentFontSize;
-				case "medium":
-					return 3.3 * documentFontSize;
-				case "large":
-					return 4 * documentFontSize;
-				default:
-					return 3.3 * documentFontSize;
-			}
-		};
+      switch (props.size) {
+        case "small":
+          return 2.8 * documentFontSize;
+        case "medium":
+          return 3.3 * documentFontSize;
+        case "large":
+          return 4 * documentFontSize;
+        default:
+          return 3.3 * documentFontSize;
+      }
+    };
 
-		return { handleClick, getButtonWidthPixel };
-	},
+    return { handleClick, getButtonWidthPixel };
+  },
 });
 </script>
 

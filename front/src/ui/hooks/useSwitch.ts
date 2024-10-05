@@ -1,4 +1,4 @@
-import { type Ref, ref } from "vue";
+import { Ref, ref } from "vue";
 
 /**
  * 閉じたり開いたりする
@@ -17,26 +17,26 @@ import { type Ref, ref } from "vue";
  * ```
  */
 export const useSwitch = (
-	initial = false,
+  initial = false
 ): [
-	Ref<boolean>,
-	() => void,
-	() => void,
-	() => void,
-	(bool: boolean) => void,
+  Ref<boolean>,
+  () => void,
+  () => void,
+  () => void,
+  (bool: boolean) => void
 ] => {
-	const v = ref(initial);
-	const open = () => {
-		v.value = true;
-	};
-	const close = () => {
-		v.value = false;
-	};
-	const toggle = () => {
-		v.value = !v.value;
-	};
-	const set = (bool: boolean) => {
-		v.value = bool;
-	};
-	return [v, open, close, toggle, set];
+  const v = ref(initial);
+  const open = () => {
+    v.value = true;
+  };
+  const close = () => {
+    v.value = false;
+  };
+  const toggle = () => {
+    v.value = !v.value;
+  };
+  const set = (bool: boolean) => {
+    v.value = bool;
+  };
+  return [v, open, close, toggle, set];
 };

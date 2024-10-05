@@ -1,4 +1,4 @@
-import type { NotSpecified } from "./option";
+import { NotSpecified } from "./option";
 
 export type DisplayBaseModule = "春A" | "春B" | "春C" | "秋A" | "秋B" | "秋C";
 

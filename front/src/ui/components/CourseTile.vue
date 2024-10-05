@@ -1,47 +1,49 @@
 <script lang="ts">
-import { type PropType, computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 
 export type State = "default" | "none";
 
 type Props = {
-	name: string;
-	room: string;
-	state: State;
-	caution: string;
+  name: string;
+  room: string;
+  state: State;
+  caution: string;
 };
 
 export default defineComponent({
-	props: {
-		name: {
-			type: String,
-			required: true,
-		},
-		room: {
-			type: String,
-			required: true,
-		},
-		state: {
-			type: String as PropType<State>,
-			required: true,
-			validator: (value: string) => ["default", "none"].includes(value),
-		},
-		caution: {
-			type: String,
-			default: "", // 空欄の場合 caution は表示されない
-		},
-	},
-	emits: ["click"],
-	setup: (props: Props, { emit }) => {
-		const handleClick = (e: MouseEvent) => {
-			emit("click", e);
-		};
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    room: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String as PropType<State>,
+      required: true,
+      validator: function (value: string) {
+        return ["default", "none"].includes(value);
+      },
+    },
+    caution: {
+      type: String,
+      default: "", // 空欄の場合 caution は表示されない
+    },
+  },
+  emits: ["click"],
+  setup: (props: Props, { emit }) => {
+    const handleClick = (e: MouseEvent) => {
+      emit("click", e);
+    };
 
-		const hasCaution = computed(() => {
-			return props.caution !== "";
-		});
+    const hasCaution = computed(() => {
+      return props.caution !== "";
+    });
 
-		return { handleClick, hasCaution };
-	},
+    return { handleClick, hasCaution };
+  },
 });
 </script>
 

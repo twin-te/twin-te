@@ -2,32 +2,32 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	name: "SidebarContent",
-	props: {
-		selected: {
-			type: Boolean,
-			default: false,
-		},
-		link: {
-			type: Boolean,
-			default: false,
-		},
-		iconName: {
-			type: String,
-			default: "",
-		},
-		item: {
-			type: String,
-			default: "",
-		},
-	},
-	emits: ["click"],
-	setup: (_, { emit }) => {
-		const handleClick = () => {
-			emit("click");
-		};
-		return { handleClick };
-	},
+  name: "SidebarContent",
+  props: {
+    selected: {
+      type: Boolean,
+      default: false,
+    },
+    link: {
+      type: Boolean,
+      default: false,
+    },
+    iconName: {
+      type: String,
+      default: "",
+    },
+    item: {
+      type: String,
+      default: "",
+    },
+  },
+  emits: ["click"],
+  setup: (_, { emit }) => {
+    const handleClick = () => {
+      emit("click");
+    };
+    return { handleClick };
+  },
 });
 </script>
 <template>

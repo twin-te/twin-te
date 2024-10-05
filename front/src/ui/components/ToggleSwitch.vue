@@ -2,24 +2,24 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	props: {
-		isChecked: {
-			type: Boolean,
-			default: false,
-		},
-		isDisable: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	emits: ["click-toggle-switch"],
-	setup: (_, { emit }) => {
-		const handleChange = (e: MouseEvent) => {
-			emit("click-toggle-switch", e);
-		};
+  props: {
+    isChecked: {
+      type: Boolean,
+      default: false,
+    },
+    isDisable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ["click-toggle-switch"],
+  setup: (_, { emit }) => {
+    const handleChange = (e: MouseEvent) => {
+      emit("click-toggle-switch", e);
+    };
 
-		return { handleChange };
-	},
+    return { handleChange };
+  },
 });
 </script>
 
