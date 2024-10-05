@@ -57,7 +57,7 @@ const MyPage: NextPage = () => {
 						}),
 					useCase.getPaymentHistories().then((paymentHistories) => {
 						setPaymentHistories(paymentHistories);
-					}),
+					})
 				]);
 			})
 			.catch((error) => {
@@ -98,35 +98,12 @@ const MyPage: NextPage = () => {
 									<a href="https://www.twinte.net/sponsor">寄付者一覧</a>
 									に表示するお名前とリンクです。
 								</p>
-<<<<<<< HEAD
-								<p className="has-text-primary has-text-weight-bold is-marginless">
-									ID
-								</p>
+								<p className="has-text-primary has-text-weight-bold is-marginless">ID</p>
 								<p>{user.twinteUserId}</p>
-								<p className="has-text-primary has-text-weight-bold is-marginless">
-									表示名
-								</p>
-								<p>{user.displayName || "未設定"}</p>
-								<p className="has-text-primary has-text-weight-bold is-marginless">
-									リンク
-								</p>
-								<p>{user.link || "未設定"}</p>
-=======
-								{user ? (
-									<>
-										<p className="has-text-primary has-text-weight-bold is-marginless">ID</p>
-										<p>{user.twinteUserId}</p>
-
-										<p className="has-text-primary has-text-weight-bold is-marginless">表示名</p>
-										<p>{user.displayName || '未設定'}</p>
-
-										<p className="has-text-primary has-text-weight-bold is-marginless">リンク</p>
-										<p>{user.link || '未設定'}</p>
-									</>
-								) : (
-									<div>情報の取得に失敗しました。</div>
-								)}
->>>>>>> parent of 5744088 ([sponsorship] biome (#148))
+								<p className="has-text-primary has-text-weight-bold is-marginless">表示名</p>
+								<p>{user.displayName || '未設定'}</p>
+								<p className="has-text-primary has-text-weight-bold is-marginless">リンク</p>
+								<p>{user.link || '未設定'}</p>
 							</div>
 						</div>
 						<div className="card">
