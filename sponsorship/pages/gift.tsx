@@ -1,9 +1,9 @@
-import TwinteSticker from "@/public/images/twinte-sticker.jpg";
-import TwinteUSB from "@/public/images/twinte-usb.jpg";
-import type { NextPage } from "next";
-import { NextSeo } from "next-seo";
-import Image from "next/image";
-import styles from "../styles/pages/Gift.module.scss";
+import type { NextPage } from 'next';
+import Image from 'next/image';
+import styles from '../styles/pages/Gift.module.scss';
+import TwinteSticker from '@/public/images/twinte-sticker.jpg';
+import TwinteUSB from '@/public/images/twinte-usb.jpg';
+import { NextSeo } from 'next-seo';
 
 const Gift: NextPage = () => {
 	return (
@@ -16,10 +16,7 @@ const Gift: NextPage = () => {
 						寄付合計金額が以下に記載の値段を超える方はそれぞれの返礼品を申し込むことができます。
 						<br />
 						返礼品をご希望の場合は、マイページに記載のID・合計金額・希望する返礼品を記載の上
-						<a href="mailto:info@twinte.net?subject=返礼品について">
-							info@twinte.net
-						</a>
-						までご連絡ください。
+						<a href="mailto:info@twinte.net?subject=返礼品について">info@twinte.net</a>までご連絡ください。
 					</p>
 				</div>
 				<div className="card">
@@ -27,15 +24,9 @@ const Gift: NextPage = () => {
 						<h1 className="title">3000円 Twin:teオリジナルステッカー</h1>
 					</div>
 					<div className={styles.imageWrapper}>
-						<Image
-							objectFit="contain"
-							src={TwinteSticker}
-							alt="Twin:teステッカー"
-						/>
+						<Image objectFit="contain" src={TwinteSticker} alt="Twin:teステッカー" />
 					</div>
-					<p>
-						Twin:teのロゴのステッカーです！シールになっているので好きなところに張れますよ！
-					</p>
+					<p>Twin:teのロゴのステッカーです！シールになっているので好きなところに張れますよ！</p>
 				</div>
 				<div className="card">
 					<div>
@@ -43,11 +34,7 @@ const Gift: NextPage = () => {
 					</div>
 
 					<div className={styles.imageWrapper}>
-						<Image
-							objectFit="contain"
-							src={TwinteUSB}
-							alt="Twin:teステッカー"
-						/>
+						<Image objectFit="contain" src={TwinteUSB} alt="Twin:teステッカー" />
 					</div>
 					<p>
 						オリジナルキャラクター「コロン」とロゴが描かれたオリジナルUSBです！
