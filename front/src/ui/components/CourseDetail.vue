@@ -2,16 +2,16 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	props: {
-		item: {
-			type: String,
-			required: true,
-		},
-		value: {
-			type: String,
-			required: true,
-		},
-	},
+  props: {
+    item: {
+      type: String,
+      required: true,
+    },
+    value: {
+      type: String,
+      required: true,
+    },
+  },
 });
 </script>
 

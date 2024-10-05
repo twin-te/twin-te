@@ -6,59 +6,59 @@ import TagListContent from "./TagListContent.vue";
 import TextFieldSingleLine from "./TextFieldSingleLine.vue";
 
 export default defineComponent({
-	name: "TagEditor",
-	components: {
-		IconButton,
-		TextFieldSingleLine,
-		TagListContent,
-	},
-	props: {
-		add: {
-			type: Boolean,
-			required: true,
-		},
-		heading: {
-			// タグ表示欄のタイトル
-			type: String,
-			required: true,
-		},
-	},
-	emits: ["update:add", "create-tag"],
-	setup(_, { emit }) {
-		/** フォーカス用 */
-		const { targetRef: tagEditorRef, focus } = useFocus();
+  name: "TagEditor",
+  components: {
+    IconButton,
+    TextFieldSingleLine,
+    TagListContent,
+  },
+  props: {
+    add: {
+      type: Boolean,
+      required: true,
+    },
+    heading: {
+      // タグ表示欄のタイトル
+      type: String,
+      required: true,
+    },
+  },
+  emits: ["update:add", "create-tag"],
+  setup(_, { emit }) {
+    /** フォーカス用 */
+    const { targetRef: tagEditorRef, focus } = useFocus();
 
-		const tagName = ref("");
+    const tagName = ref("");
 
-		const disabled = computed(() => {
-			return tagName.value == "";
-		});
+    const disabled = computed(() => {
+      return tagName.value == "";
+    });
 
-		const handleClick = () => {
-			tagName.value = "";
-			emit("update:add", true);
-			focus(["input"]);
-		};
+    const handleClick = () => {
+      tagName.value = "";
+      emit("update:add", true);
+      focus(["input"]);
+    };
 
-		const handleCheck = () => {
-			if (disabled.value) return;
-			emit("create-tag", tagName.value);
-			emit("update:add", false);
-		};
+    const handleCheck = () => {
+      if (disabled.value) return;
+      emit("create-tag", tagName.value);
+      emit("update:add", false);
+    };
 
-		const handleClear = () => {
-			emit("update:add", false);
-		};
+    const handleClear = () => {
+      emit("update:add", false);
+    };
 
-		return {
-			tagName,
-			disabled,
-			handleClick,
-			handleCheck,
-			handleClear,
-			tagEditorRef,
-		};
-	},
+    return {
+      tagName,
+      disabled,
+      handleClick,
+      handleCheck,
+      handleClear,
+      tagEditorRef,
+    };
+  },
 });
 </script>
 

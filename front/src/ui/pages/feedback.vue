@@ -81,13 +81,11 @@ import { useHead } from "@vueuse/head";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { throwResultError } from "~/domain/error";
-import type { FeedbackType } from "~/domain/feedback";
 import {
-	displayFeedbackTypes,
-	displayToFeedbackType,
-	feedbackTypeMap,
+  feedbackTypeMap,
+  displayToFeedbackType,
+  displayFeedbackTypes,
 } from "~/presentation/presenters/feedback";
-import type { DisplayFeedbackType } from "~/presentation/viewmodels/feedback";
 import Button from "~/ui/components/Button.vue";
 import CheckContent from "~/ui/components/CheckContent.vue";
 import Dropdown from "~/ui/components/Dropdown.vue";
@@ -99,9 +97,11 @@ import TextFieldMultilines from "~/ui/components/TextFieldMultilines.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
 import { authUseCase, feedbackUseCase } from "~/usecases";
 import { useToast } from "../store";
+import type { FeedbackType } from "~/domain/feedback";
+import type { DisplayFeedbackType } from "~/presentation/viewmodels/feedback";
 
 useHead({
-	title: "Twin:te | フィードバック",
+  title: "Twin:te | フィードバック",
 });
 
 const router = useRouter();
@@ -116,47 +116,48 @@ const allowReplies = ref(true);
 const email = ref("");
 
 const updateSelectedOption = (option: DisplayFeedbackType) => {
-	feedbackType.value = displayToFeedbackType(option);
+  feedbackType.value = displayToFeedbackType(option);
 };
 
 const placeholder: Record<FeedbackType, string> = {
-	Bug: "例）授業の検索ページで「XXXX」という授業を追加しようとしたら、「OOOO」というエラーメッセージが出てきて追加できませんでした。Pixel4a、Android11です。",
-	NewFeature:
-		"例）学部生ですが、検索で大学院の授業ばかりでてきてしまうので大学院の授業を除外して検索する機能がほしいです。",
-	Contact: "例）Twin:te の発音はツインテですか？トゥインテですか？",
-	Other: "",
+  Bug:
+    "例）授業の検索ページで「XXXX」という授業を追加しようとしたら、「OOOO」というエラーメッセージが出てきて追加できませんでした。Pixel4a、Android11です。",
+  NewFeature:
+    "例）学部生ですが、検索で大学院の授業ばかりでてきてしまうので大学院の授業を除外して検索する機能がほしいです。",
+  Contact: "例）Twin:te の発音はツインテですか？トゥインテですか？",
+  Other: "",
 };
 
 const ButtonState = computed(() => {
-	if (
-		feedbackContent.value === "" ||
-		(feedbackType.value === "Contact" &&
-			(email.value === "" || !allowReplies.value))
-	)
-		return "disabled";
-	return "default";
+  if (
+    feedbackContent.value === "" ||
+    (feedbackType.value === "Contact" &&
+      (email.value === "" || !allowReplies.value))
+  )
+    return "disabled";
+  return "default";
 });
 
 const onClickButton = async () => {
-	const user = await authUseCase.getMe().then(throwResultError);
-	feedbackUseCase
-		.sendFeedback(user.id, {
-			type: feedbackType.value,
-			screenShots: screenShot.value ? [screenShot.value] : [],
-			content: feedbackContent.value,
-			email: allowReplies.value ? email.value : "",
-		})
-		.then(() => {
-			displayToast("フィードバックを送信しました。ありがとうございます。", {
-				type: "primary",
-			});
-			router.push("/");
-		})
-		.catch(() => {
-			displayToast(
-				"申し訳ございません。フィードバックの送信に失敗しました。ネットワーク環境をご確認ください。",
-			);
-		});
+  const user = await authUseCase.getMe().then(throwResultError);
+  feedbackUseCase
+    .sendFeedback(user.id, {
+      type: feedbackType.value,
+      screenShots: screenShot.value ? [screenShot.value] : [],
+      content: feedbackContent.value,
+      email: allowReplies.value ? email.value : "",
+    })
+    .then(() => {
+      displayToast("フィードバックを送信しました。ありがとうございます。", {
+        type: "primary",
+      });
+      router.push("/");
+    })
+    .catch(() => {
+      displayToast(
+        "申し訳ございません。フィードバックの送信に失敗しました。ネットワーク環境をご確認ください。"
+      );
+    });
 };
 </script>
 

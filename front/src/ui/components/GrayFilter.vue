@@ -2,8 +2,8 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	name: "GrayFilter",
-	emits: ["click"],
+  name: "GrayFilter",
+  emits: ["click"],
 });
 </script>
 

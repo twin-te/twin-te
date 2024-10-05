@@ -8,16 +8,16 @@ import { schoolCalendarUseCase } from "~/usecases";
 const event = ref<string>(displayNormalEvent);
 
 const initializeEvent = async () => {
-	const result = await schoolCalendarUseCase.getEventByDate(dayjs());
-	if (isResultError(result)) throw result;
-	if (result !== null) event.value = eventToDisplay(result);
+  const result = await schoolCalendarUseCase.getEventByDate(dayjs());
+  if (isResultError(result)) throw result;
+  if (result !== null) event.value = eventToDisplay(result);
 };
 
 const useEvent = () => {
-	return {
-		event: computed(() => event.value),
-		initializeEvent,
-	};
+  return {
+    event: computed(() => event.value),
+    initializeEvent,
+  };
 };
 
 export default useEvent;

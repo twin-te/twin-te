@@ -1,19 +1,19 @@
 <script lang="ts">
-import { type PropType, defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
-	name: "TertiaryButton",
-	props: {
-		color: {
-			type: String as PropType<"ghost" | "primary">,
-			default: "normal",
-		},
-		iconPosition: {
-			type: String as PropType<"left" | "right">,
-			default: "left",
-		},
-	},
-	emits: ["click"],
+  name: "TertiaryButton",
+  props: {
+    color: {
+      type: String as PropType<"ghost" | "primary">,
+      default: "normal",
+    },
+    iconPosition: {
+      type: String as PropType<"left" | "right">,
+      default: "left",
+    },
+  },
+  emits: ["click"],
 });
 </script>
 

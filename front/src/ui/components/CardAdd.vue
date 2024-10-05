@@ -5,33 +5,33 @@ import DecoratedIcon from "./DecoratedIcon.vue";
 import IconButton from "./IconButton.vue";
 
 export default defineComponent({
-	components: { Card, DecoratedIcon, IconButton },
-	props: {
-		iconName: {
-			type: String,
-			required: true,
-		},
-		heading: {
-			type: String,
-			required: true,
-		},
-		text: {
-			type: String,
-			required: true,
-		},
-		width: {
-			type: String,
-			default: "100%",
-		},
-	},
-	emits: ["click-next-button"],
-	setup(_, { emit }) {
-		const emitClickEvent = (e: MouseEvent) => {
-			emit("click-next-button", e);
-		};
+  components: { Card, DecoratedIcon, IconButton },
+  props: {
+    iconName: {
+      type: String,
+      required: true,
+    },
+    heading: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    width: {
+      type: String,
+      default: "100%",
+    },
+  },
+  emits: ["click-next-button"],
+  setup(_, { emit }) {
+    const emitClickEvent = (e: MouseEvent) => {
+      emit("click-next-button", e);
+    };
 
-		return { emitClickEvent };
-	},
+    return { emitClickEvent };
+  },
 });
 </script>
 

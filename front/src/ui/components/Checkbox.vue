@@ -2,30 +2,30 @@
 import { defineComponent } from "vue";
 
 type Props = {
-	isChecked: boolean;
-	isDisable: boolean;
+  isChecked: boolean;
+  isDisable: boolean;
 };
 
 export default defineComponent({
-	props: {
-		isChecked: {
-			type: Boolean,
-			default: false,
-		},
-		isDisable: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	emits: ["click-checkbox"],
-	setup: (props: Props, { emit }) => {
-		const handleClick = (e: MouseEvent) => {
-			if (props.isDisable) return;
-			emit("click-checkbox", e);
-		};
+  props: {
+    isChecked: {
+      type: Boolean,
+      default: false,
+    },
+    isDisable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ["click-checkbox"],
+  setup: (props: Props, { emit }) => {
+    const handleClick = (e: MouseEvent) => {
+      if (props.isDisable) return;
+      emit("click-checkbox", e);
+    };
 
-		return { handleClick };
-	},
+    return { handleClick };
+  },
 });
 </script>
 

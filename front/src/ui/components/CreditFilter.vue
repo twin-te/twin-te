@@ -11,131 +11,131 @@ import TextFieldSingleLine from "./TextFieldSingleLine.vue";
 export type CreditFilterMode = "filtering" | "edit";
 
 export default defineComponent({
-	name: "CreditFilter",
-	components: {
-		draggable,
-		Button,
-		Dropdown,
-		IconButton,
-		TagListContent,
-		TextFieldSingleLine,
-	},
-	props: {
-		mode: {
-			type: String as PropType<CreditFilterMode>,
-			required: true,
-		},
-		yearOptions: {
-			type: Object as PropType<string[]>,
-			required: true,
-		},
-		selectedYear: {
-			type: String,
-			required: true,
-		},
-		totalCredit: {
-			type: String,
-			required: true,
-		},
-		selectedTagId: {
-			type: String,
-			default: undefined,
-		},
-		tags: {
-			type: Object as PropType<DisplayCreditTag[]>,
-			required: true,
-		},
-	},
-	emits: [
-		"create-tag",
-		"update-tag-name",
-		"delete-tag",
-		"change-tag-order",
-		"update:mode",
-		"update:selected-year",
-		"update:selected-tag-id",
-	],
-	setup(props, { emit }) {
-		const opened = ref(true);
-		const textfieldValue = ref<string>("");
-		const edittingTagId = ref<string>("");
-		const dragging = ref(false);
-		const innerTags = computed<DisplayCreditTag[]>(() => reactive(props.tags));
-		const NEW_TAG_ID = "new-tag";
+  name: "CreditFilter",
+  components: {
+    draggable,
+    Button,
+    Dropdown,
+    IconButton,
+    TagListContent,
+    TextFieldSingleLine,
+  },
+  props: {
+    mode: {
+      type: String as PropType<CreditFilterMode>,
+      required: true,
+    },
+    yearOptions: {
+      type: Object as PropType<string[]>,
+      required: true,
+    },
+    selectedYear: {
+      type: String,
+      required: true,
+    },
+    totalCredit: {
+      type: String,
+      required: true,
+    },
+    selectedTagId: {
+      type: String,
+      default: undefined,
+    },
+    tags: {
+      type: Object as PropType<DisplayCreditTag[]>,
+      required: true,
+    },
+  },
+  emits: [
+    "create-tag",
+    "update-tag-name",
+    "delete-tag",
+    "change-tag-order",
+    "update:mode",
+    "update:selected-year",
+    "update:selected-tag-id",
+  ],
+  setup(props, { emit }) {
+    const opened = ref(true);
+    const textfieldValue = ref<string>("");
+    const edittingTagId = ref<string>("");
+    const dragging = ref(false);
+    const innerTags = computed<DisplayCreditTag[]>(() => reactive(props.tags));
+    const NEW_TAG_ID = "new-tag";
 
-		const onClickNormalBtn = (tag: DisplayCreditTag) => {
-			if (edittingTagId.value === "") {
-				edittingTagId.value = tag.id;
-				textfieldValue.value = tag.name;
-			} else if (edittingTagId.value === NEW_TAG_ID) {
-				emit("create-tag", textfieldValue.value);
-				edittingTagId.value = "";
-			} else {
-				emit("update-tag-name", tag.id, textfieldValue.value);
-				edittingTagId.value = "";
-			}
-		};
+    const onClickNormalBtn = (tag: DisplayCreditTag) => {
+      if (edittingTagId.value === "") {
+        edittingTagId.value = tag.id;
+        textfieldValue.value = tag.name;
+      } else if (edittingTagId.value === NEW_TAG_ID) {
+        emit("create-tag", textfieldValue.value);
+        edittingTagId.value = "";
+      } else {
+        emit("update-tag-name", tag.id, textfieldValue.value);
+        edittingTagId.value = "";
+      }
+    };
 
-		const onClickDangerBtn = (tag: DisplayCreditTag) => {
-			if (edittingTagId.value === NEW_TAG_ID) {
-				innerTags.value.splice(innerTags.value.length - 1, 1);
-				edittingTagId.value = "";
-			} else {
-				emit("delete-tag", tag);
-			}
-		};
+    const onClickDangerBtn = (tag: DisplayCreditTag) => {
+      if (edittingTagId.value === NEW_TAG_ID) {
+        innerTags.value.splice(innerTags.value.length - 1, 1);
+        edittingTagId.value = "";
+      } else {
+        emit("delete-tag", tag);
+      }
+    };
 
-		const onChangeOrder = (tags: DisplayCreditTag[]) => {
-			const tagIds = tags.map(({ id }) => id);
-			emit("change-tag-order", tagIds);
-		};
+    const onChangeOrder = (tags: DisplayCreditTag[]) => {
+      const tagIds = tags.map(({ id }) => id);
+      emit("change-tag-order", tagIds);
+    };
 
-		const addNewDisplayCreditTag = () => {
-			if (edittingTagId.value !== "") return;
-			const tag: DisplayCreditTag = {
-				id: NEW_TAG_ID,
-				name: "",
-				credit: "0.0",
-			};
-			innerTags.value.push(tag);
-			edittingTagId.value = NEW_TAG_ID;
-			textfieldValue.value = "";
-		};
+    const addNewDisplayCreditTag = () => {
+      if (edittingTagId.value !== "") return;
+      const tag: DisplayCreditTag = {
+        id: NEW_TAG_ID,
+        name: "",
+        credit: "0.0",
+      };
+      innerTags.value.push(tag);
+      edittingTagId.value = NEW_TAG_ID;
+      textfieldValue.value = "";
+    };
 
-		const info = computed<{ year: string; tag: string; credit: string }>(() => {
-			const info: { year: string; tag: string; credit: string } = {
-				year: props.selectedYear,
-				tag: "",
-				credit: "",
-			};
+    const info = computed<{ year: string; tag: string; credit: string }>(() => {
+      const info: { year: string; tag: string; credit: string } = {
+        year: props.selectedYear,
+        tag: "",
+        credit: "",
+      };
 
-			if (props.selectedTagId == undefined) {
-				info.tag = "すべての授業";
-				info.credit = props.totalCredit;
-			} else {
-				const tag = props.tags.find((tag) => tag.id === props.selectedTagId);
-				info.tag = tag == undefined ? "すべての授業" : `タグ 「${tag.name}」`;
-				info.credit =
-					(tag == undefined ? props.totalCredit : tag.credit) + "単位";
-			}
+      if (props.selectedTagId == undefined) {
+        info.tag = "すべての授業";
+        info.credit = props.totalCredit;
+      } else {
+        const tag = props.tags.find((tag) => tag.id === props.selectedTagId);
+        info.tag = tag == undefined ? "すべての授業" : `タグ 「${tag.name}」`;
+        info.credit =
+          (tag == undefined ? props.totalCredit : tag.credit) + "単位";
+      }
 
-			return info;
-		});
+      return info;
+    });
 
-		return {
-			opened,
-			textfieldValue,
-			edittingTagId,
-			dragging,
-			innerTags,
-			NEW_TAG_ID,
-			onClickNormalBtn,
-			onClickDangerBtn,
-			onChangeOrder,
-			addNewDisplayCreditTag,
-			info,
-		};
-	},
+    return {
+      opened,
+      textfieldValue,
+      edittingTagId,
+      dragging,
+      innerTags,
+      NEW_TAG_ID,
+      onClickNormalBtn,
+      onClickDangerBtn,
+      onChangeOrder,
+      addNewDisplayCreditTag,
+      info,
+    };
+  },
 });
 </script>
 

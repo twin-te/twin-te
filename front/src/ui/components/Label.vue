@@ -1,22 +1,22 @@
 <script lang="ts">
-import { type PropType, defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
-	name: "Label",
-	props: {
-		value: {
-			type: String,
-			required: true,
-		},
-		mandatory: {
-			type: Boolean,
-			default: false,
-		},
-		size: {
-			type: String as PropType<"normal" | "slim">,
-			default: "normal",
-		},
-	},
+  name: "Label",
+  props: {
+    value: {
+      type: String,
+      required: true,
+    },
+    mandatory: {
+      type: Boolean,
+      default: false,
+    },
+    size: {
+      type: String as PropType<"normal" | "slim">,
+      default: "normal",
+    },
+  },
 });
 </script>
 

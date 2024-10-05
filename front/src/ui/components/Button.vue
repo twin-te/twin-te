@@ -1,58 +1,58 @@
 <script lang="ts">
-import { type PropType, defineComponent, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 
 export type State = "active" | "default" | "disabled";
 
 type Props = {
-	size: string;
-	layout: string;
-	color: string;
-	icon: boolean;
-	pauseActiveStyle: boolean;
-	state: State;
+  size: string;
+  layout: string;
+  color: string;
+  icon: boolean;
+  pauseActiveStyle: boolean;
+  state: State;
 };
 
 export default defineComponent({
-	name: "Button",
-	props: {
-		size: {
-			type: String as PropType<"small" | "medium" | "large">,
-			default: "large",
-		},
-		layout: {
-			type: String as PropType<"flexible" | "fill" | "half">,
-			default: "flexible",
-		},
-		color: {
-			type: String as PropType<"base" | "primary" | "danger">,
-			default: "base",
-		},
-		icon: {
-			type: Boolean,
-			default: false,
-		},
-		pauseActiveStyle: {
-			type: Boolean,
-			default: false,
-		},
-		state: {
-			type: String as PropType<State>,
-			default: "default",
-		},
-	},
-	emits: ["click"],
-	setup: (props: Props, { emit }) => {
-		const isActive = ref(false);
+  name: "Button",
+  props: {
+    size: {
+      type: String as PropType<"small" | "medium" | "large">,
+      default: "large",
+    },
+    layout: {
+      type: String as PropType<"flexible" | "fill" | "half">,
+      default: "flexible",
+    },
+    color: {
+      type: String as PropType<"base" | "primary" | "danger">,
+      default: "base",
+    },
+    icon: {
+      type: Boolean,
+      default: false,
+    },
+    pauseActiveStyle: {
+      type: Boolean,
+      default: false,
+    },
+    state: {
+      type: String as PropType<State>,
+      default: "default",
+    },
+  },
+  emits: ["click"],
+  setup: (props: Props, { emit }) => {
+    const isActive = ref(false);
 
-		const handleClick = (e: MouseEvent) => {
-			if (!(e.target instanceof HTMLButtonElement)) return;
-			if (props.state === "disabled") return;
-			isActive.value = props.pauseActiveStyle && !isActive.value;
-			emit("click", e.target.value);
-		};
+    const handleClick = (e: MouseEvent) => {
+      if (!(e.target instanceof HTMLButtonElement)) return;
+      if (props.state === "disabled") return;
+      isActive.value = props.pauseActiveStyle && !isActive.value;
+      emit("click", e.target.value);
+    };
 
-		return { handleClick, isActive };
-	},
+    return { handleClick, isActive };
+  },
 });
 </script>
 

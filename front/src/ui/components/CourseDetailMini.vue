@@ -2,20 +2,20 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-	props: {
-		iconName: {
-			type: String,
-			required: true,
-		},
-		text: {
-			type: String,
-			required: true,
-		},
-		ellipsis: {
-			type: Boolean,
-			default: false,
-		},
-	},
+  props: {
+    iconName: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    ellipsis: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 </script>
 

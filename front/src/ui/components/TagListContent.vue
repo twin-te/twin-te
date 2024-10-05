@@ -1,33 +1,33 @@
 <script lang="ts">
-import { type PropType, defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export type TagListContentMode = "default" | "edit";
 export type TagListContentDragHandle = "show" | "hide" | "disabled";
 
 export default defineComponent({
-	name: "TagListContent",
-	props: {
-		name: {
-			type: String,
-			default: "",
-		},
-		credit: {
-			type: String,
-			default: "0.0",
-		},
-		mode: {
-			type: String as PropType<TagListContentMode>,
-			default: "default",
-		},
-		textfield: {
-			type: Boolean,
-			default: false,
-		},
-		dragHandle: {
-			type: String as PropType<TagListContentDragHandle>,
-			default: "show",
-		},
-	},
+  name: "TagListContent",
+  props: {
+    name: {
+      type: String,
+      default: "",
+    },
+    credit: {
+      type: String,
+      default: "0.0",
+    },
+    mode: {
+      type: String as PropType<TagListContentMode>,
+      default: "default",
+    },
+    textfield: {
+      type: Boolean,
+      default: false,
+    },
+    dragHandle: {
+      type: String as PropType<TagListContentDragHandle>,
+      default: "show",
+    },
+  },
 });
 </script>
 <template>
