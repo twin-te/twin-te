@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 
 def read_csv(path: str) -> pd.DataFrame:
@@ -92,12 +93,22 @@ def migrate_course_schedules():
     df = df[df["module"] != "Annual"]
     df = pd.concat([df, df_to_add], axis=0)
 
+    df.rename(columns={"room": "locations"}, inplace=True)
+
     to_csv(df, "data/processed/course_schedules.csv")
 
 
 def migrate_registered_courses():
     df = read_csv("data/raw/timetables_registered_courses.csv")
     df.rename(columns={"instractor": "instructors"}, inplace=True)
+
+    df_tar = df[df["schedules"] != "null"]
+    for index, row in df_tar.iterrows():
+        schedules = json.loads(row["schedules"])
+        for schedule in schedules:
+            schedule["locations"] = schedule.pop("room")
+        df.at[index, "schedules"] = json.dumps(schedules, ensure_ascii=False)
+
     to_csv(df, "data/processed/registered_courses.csv")
 
 
