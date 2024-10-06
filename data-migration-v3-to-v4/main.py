@@ -55,6 +55,43 @@ def migrate_course_schedules():
     df = read_csv("data/raw/course_course_schedules.csv")
     df = df[df["course_id"] != "null"]
     df.drop(columns=["id"], inplace=True)
+
+    df_annual = df[df["module"] == "Annual"]
+
+    modules: list[str] = []
+    days: list[str] = []
+    periods: list[str] = []
+    rooms: list[str] = []
+    course_ids: list[str] = []
+
+    for _, row in df_annual.iterrows():
+        for module in [
+            "SpringA",
+            "SpringB",
+            "SpringC",
+            "FallA",
+            "FallB",
+            "FallC",
+        ]:
+            modules.append(module)
+            days.append(row["day"])
+            periods.append(row["period"])
+            rooms.append(row["room"])
+            course_ids.append(row["course_id"])
+
+    df_to_add = pd.DataFrame(
+        data={
+            "module": modules,
+            "day": days,
+            "period": periods,
+            "room": rooms,
+            "course_id": course_ids,
+        }
+    )
+
+    df = df[df["module"] != "Annual"]
+    df = pd.concat([df, df_to_add], axis=0)
+
     to_csv(df, "data/processed/course_schedules.csv")
 
 
