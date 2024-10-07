@@ -315,10 +315,10 @@ func toDBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse, wi
 }
 
 type dbRegisteredCourseSchedule struct {
-	Module string `json:"module"`
-	Day    string `json:"day"`
-	Period int    `json:"period"`
-	Room   string `json:"room"`
+	Module    string `json:"module"`
+	Day       string `json:"day"`
+	Period    int    `json:"period"`
+	Locations string `json:"locations"`
 }
 
 func fromDBRegisteredCourseMethods(dbMethods string) ([]timetabledomain.CourseMethod, error) {
@@ -348,7 +348,7 @@ func fromDBRegisteredCourseSchedules(data string) ([]timetabledomain.Schedule, e
 			dbRegisteredCourseSchedule.Module,
 			dbRegisteredCourseSchedule.Day,
 			dbRegisteredCourseSchedule.Period,
-			dbRegisteredCourseSchedule.Room,
+			dbRegisteredCourseSchedule.Locations,
 		)
 	})
 }
@@ -356,10 +356,10 @@ func fromDBRegisteredCourseSchedules(data string) ([]timetabledomain.Schedule, e
 func toDBRegisteredCourseSchedulesJSON(schedules []timetabledomain.Schedule) (string, error) {
 	dbRegisteredCourseSchedules := base.Map(schedules, func(schedule timetabledomain.Schedule) *dbRegisteredCourseSchedule {
 		return &dbRegisteredCourseSchedule{
-			Module: schedule.Module.String(),
-			Day:    schedule.Day.String(),
-			Period: schedule.Period.Int(),
-			Room:   schedule.Rooms,
+			Module:    schedule.Module.String(),
+			Day:       schedule.Day.String(),
+			Period:    schedule.Period.Int(),
+			Locations: schedule.Locations,
 		}
 	})
 
