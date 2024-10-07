@@ -32,14 +32,14 @@ func newRegisteredCourse(db *gorm.DB, opts ...gen.DOOption) registeredCourse {
 	_registeredCourse.Year = field.NewInt16(tableName, "year")
 	_registeredCourse.CourseID = field.NewString(tableName, "course_id")
 	_registeredCourse.Name = field.NewString(tableName, "name")
-	_registeredCourse.Instractor = field.NewString(tableName, "instractor")
+	_registeredCourse.Instructors = field.NewString(tableName, "instructors")
 	_registeredCourse.Credit = field.NewFloat64(tableName, "credit")
 	_registeredCourse.Methods = field.NewString(tableName, "methods")
 	_registeredCourse.Schedules = field.NewString(tableName, "schedules")
 	_registeredCourse.Memo = field.NewString(tableName, "memo")
-	_registeredCourse.Attendance = field.NewInt32(tableName, "attendance")
-	_registeredCourse.Absence = field.NewInt32(tableName, "absence")
-	_registeredCourse.Late = field.NewInt32(tableName, "late")
+	_registeredCourse.Attendance = field.NewInt16(tableName, "attendance")
+	_registeredCourse.Absence = field.NewInt16(tableName, "absence")
+	_registeredCourse.Late = field.NewInt16(tableName, "late")
 
 	_registeredCourse.fillFieldMap()
 
@@ -49,20 +49,20 @@ func newRegisteredCourse(db *gorm.DB, opts ...gen.DOOption) registeredCourse {
 type registeredCourse struct {
 	registeredCourseDo registeredCourseDo
 
-	ALL        field.Asterisk
-	ID         field.String
-	UserID     field.String
-	Year       field.Int16
-	CourseID   field.String
-	Name       field.String
-	Instractor field.String
-	Credit     field.Float64
-	Methods    field.String
-	Schedules  field.String
-	Memo       field.String
-	Attendance field.Int32
-	Absence    field.Int32
-	Late       field.Int32
+	ALL         field.Asterisk
+	ID          field.String
+	UserID      field.String
+	Year        field.Int16
+	CourseID    field.String
+	Name        field.String
+	Instructors field.String
+	Credit      field.Float64
+	Methods     field.String
+	Schedules   field.String
+	Memo        field.String
+	Attendance  field.Int16
+	Absence     field.Int16
+	Late        field.Int16
 
 	fieldMap map[string]field.Expr
 }
@@ -84,14 +84,14 @@ func (r *registeredCourse) updateTableName(table string) *registeredCourse {
 	r.Year = field.NewInt16(table, "year")
 	r.CourseID = field.NewString(table, "course_id")
 	r.Name = field.NewString(table, "name")
-	r.Instractor = field.NewString(table, "instractor")
+	r.Instructors = field.NewString(table, "instructors")
 	r.Credit = field.NewFloat64(table, "credit")
 	r.Methods = field.NewString(table, "methods")
 	r.Schedules = field.NewString(table, "schedules")
 	r.Memo = field.NewString(table, "memo")
-	r.Attendance = field.NewInt32(table, "attendance")
-	r.Absence = field.NewInt32(table, "absence")
-	r.Late = field.NewInt32(table, "late")
+	r.Attendance = field.NewInt16(table, "attendance")
+	r.Absence = field.NewInt16(table, "absence")
+	r.Late = field.NewInt16(table, "late")
 
 	r.fillFieldMap()
 
@@ -126,7 +126,7 @@ func (r *registeredCourse) fillFieldMap() {
 	r.fieldMap["year"] = r.Year
 	r.fieldMap["course_id"] = r.CourseID
 	r.fieldMap["name"] = r.Name
-	r.fieldMap["instractor"] = r.Instractor
+	r.fieldMap["instructors"] = r.Instructors
 	r.fieldMap["credit"] = r.Credit
 	r.fieldMap["methods"] = r.Methods
 	r.fieldMap["schedules"] = r.Schedules

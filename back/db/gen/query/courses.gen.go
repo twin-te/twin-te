@@ -31,11 +31,11 @@ func newCourse(db *gorm.DB, opts ...gen.DOOption) course {
 	_course.Year = field.NewInt16(tableName, "year")
 	_course.Code = field.NewString(tableName, "code")
 	_course.Name = field.NewString(tableName, "name")
-	_course.Instructor = field.NewString(tableName, "instructor")
+	_course.Instructors = field.NewString(tableName, "instructors")
 	_course.Credit = field.NewFloat64(tableName, "credit")
 	_course.Overview = field.NewString(tableName, "overview")
 	_course.Remarks = field.NewString(tableName, "remarks")
-	_course.LastUpdate = field.NewTime(tableName, "last_update")
+	_course.LastUpdatedAt = field.NewTime(tableName, "last_updated_at")
 	_course.HasParseError = field.NewBool(tableName, "has_parse_error")
 	_course.IsAnnual = field.NewBool(tableName, "is_annual")
 
@@ -52,11 +52,11 @@ type course struct {
 	Year          field.Int16
 	Code          field.String
 	Name          field.String
-	Instructor    field.String
+	Instructors   field.String
 	Credit        field.Float64
 	Overview      field.String
 	Remarks       field.String
-	LastUpdate    field.Time
+	LastUpdatedAt field.Time
 	HasParseError field.Bool
 	IsAnnual      field.Bool
 
@@ -79,11 +79,11 @@ func (c *course) updateTableName(table string) *course {
 	c.Year = field.NewInt16(table, "year")
 	c.Code = field.NewString(table, "code")
 	c.Name = field.NewString(table, "name")
-	c.Instructor = field.NewString(table, "instructor")
+	c.Instructors = field.NewString(table, "instructors")
 	c.Credit = field.NewFloat64(table, "credit")
 	c.Overview = field.NewString(table, "overview")
 	c.Remarks = field.NewString(table, "remarks")
-	c.LastUpdate = field.NewTime(table, "last_update")
+	c.LastUpdatedAt = field.NewTime(table, "last_updated_at")
 	c.HasParseError = field.NewBool(table, "has_parse_error")
 	c.IsAnnual = field.NewBool(table, "is_annual")
 
@@ -115,11 +115,11 @@ func (c *course) fillFieldMap() {
 	c.fieldMap["year"] = c.Year
 	c.fieldMap["code"] = c.Code
 	c.fieldMap["name"] = c.Name
-	c.fieldMap["instructor"] = c.Instructor
+	c.fieldMap["instructors"] = c.Instructors
 	c.fieldMap["credit"] = c.Credit
 	c.fieldMap["overview"] = c.Overview
 	c.fieldMap["remarks"] = c.Remarks
-	c.fieldMap["last_update"] = c.LastUpdate
+	c.fieldMap["last_updated_at"] = c.LastUpdatedAt
 	c.fieldMap["has_parse_error"] = c.HasParseError
 	c.fieldMap["is_annual"] = c.IsAnnual
 }

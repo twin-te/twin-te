@@ -6,6 +6,8 @@ package model
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 const TableNameUser = "users"
@@ -13,8 +15,8 @@ const TableNameUser = "users"
 // User mapped from table <users>
 type User struct {
 	ID                  string               `gorm:"column:id;type:uuid;primaryKey" json:"id"`
-	CreatedAt           time.Time            `gorm:"column:createdAt;type:timestamp without time zone;not null;default:now()" json:"createdAt"`
-	DeletedAt           *time.Time           `gorm:"column:deletedAt;type:timestamp without time zone" json:"deletedAt"`
+	CreatedAt           time.Time            `gorm:"column:created_at;type:timestamp without time zone;not null" json:"created_at"`
+	DeletedAt           gorm.DeletedAt       `gorm:"column:deleted_at;type:timestamp without time zone" json:"deleted_at"`
 	UserAuthentications []UserAuthentication `json:"user_authentications"`
 }
 

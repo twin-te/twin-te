@@ -28,8 +28,8 @@ func newAlreadyRead(db *gorm.DB, opts ...gen.DOOption) alreadyRead {
 	tableName := _alreadyRead.alreadyReadDo.TableName()
 	_alreadyRead.ALL = field.NewAsterisk(tableName)
 	_alreadyRead.ID = field.NewString(tableName, "id")
-	_alreadyRead.InformationID = field.NewString(tableName, "information_id")
-	_alreadyRead.ReadUser = field.NewString(tableName, "read_user")
+	_alreadyRead.UserID = field.NewString(tableName, "user_id")
+	_alreadyRead.AnnouncementID = field.NewString(tableName, "announcement_id")
 	_alreadyRead.ReadAt = field.NewTime(tableName, "read_at")
 
 	_alreadyRead.fillFieldMap()
@@ -40,11 +40,11 @@ func newAlreadyRead(db *gorm.DB, opts ...gen.DOOption) alreadyRead {
 type alreadyRead struct {
 	alreadyReadDo alreadyReadDo
 
-	ALL           field.Asterisk
-	ID            field.String
-	InformationID field.String
-	ReadUser      field.String
-	ReadAt        field.Time
+	ALL            field.Asterisk
+	ID             field.String
+	UserID         field.String
+	AnnouncementID field.String
+	ReadAt         field.Time
 
 	fieldMap map[string]field.Expr
 }
@@ -62,8 +62,8 @@ func (a alreadyRead) As(alias string) *alreadyRead {
 func (a *alreadyRead) updateTableName(table string) *alreadyRead {
 	a.ALL = field.NewAsterisk(table)
 	a.ID = field.NewString(table, "id")
-	a.InformationID = field.NewString(table, "information_id")
-	a.ReadUser = field.NewString(table, "read_user")
+	a.UserID = field.NewString(table, "user_id")
+	a.AnnouncementID = field.NewString(table, "announcement_id")
 	a.ReadAt = field.NewTime(table, "read_at")
 
 	a.fillFieldMap()
@@ -93,8 +93,8 @@ func (a *alreadyRead) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 func (a *alreadyRead) fillFieldMap() {
 	a.fieldMap = make(map[string]field.Expr, 4)
 	a.fieldMap["id"] = a.ID
-	a.fieldMap["information_id"] = a.InformationID
-	a.fieldMap["read_user"] = a.ReadUser
+	a.fieldMap["user_id"] = a.UserID
+	a.fieldMap["announcement_id"] = a.AnnouncementID
 	a.fieldMap["read_at"] = a.ReadAt
 }
 

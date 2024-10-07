@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-const TableNameSession = "session"
+const TableNameSession = "sessions"
 
-// Session mapped from table <session>
+// Session mapped from table <sessions>
 type Session struct {
-	ID        string    `gorm:"column:id;type:uuid;primaryKey;index:session.id_expired_at_index,priority:1" json:"id"`
+	ID        string    `gorm:"column:id;type:uuid;primaryKey" json:"id"`
 	UserID    string    `gorm:"column:user_id;type:uuid;not null" json:"user_id"`
-	ExpiredAt time.Time `gorm:"column:expired_at;type:timestamp(3) without time zone;not null;index:session.id_expired_at_index,priority:2" json:"expired_at"`
+	ExpiredAt time.Time `gorm:"column:expired_at;type:timestamp without time zone;not null" json:"expired_at"`
 }
 
 // TableName Session's table name

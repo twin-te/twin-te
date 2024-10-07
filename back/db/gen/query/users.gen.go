@@ -28,8 +28,8 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	tableName := _user.userDo.TableName()
 	_user.ALL = field.NewAsterisk(tableName)
 	_user.ID = field.NewString(tableName, "id")
-	_user.CreatedAt = field.NewTime(tableName, "createdAt")
-	_user.DeletedAt = field.NewTime(tableName, "deletedAt")
+	_user.CreatedAt = field.NewTime(tableName, "created_at")
+	_user.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_user.fillFieldMap()
 
@@ -42,7 +42,7 @@ type user struct {
 	ALL       field.Asterisk
 	ID        field.String
 	CreatedAt field.Time
-	DeletedAt field.Time
+	DeletedAt field.Field
 
 	fieldMap map[string]field.Expr
 }
@@ -60,8 +60,8 @@ func (u user) As(alias string) *user {
 func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
 	u.ID = field.NewString(table, "id")
-	u.CreatedAt = field.NewTime(table, "createdAt")
-	u.DeletedAt = field.NewTime(table, "deletedAt")
+	u.CreatedAt = field.NewTime(table, "created_at")
+	u.DeletedAt = field.NewField(table, "deleted_at")
 
 	u.fillFieldMap()
 
@@ -88,8 +88,8 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 func (u *user) fillFieldMap() {
 	u.fieldMap = make(map[string]field.Expr, 3)
 	u.fieldMap["id"] = u.ID
-	u.fieldMap["createdAt"] = u.CreatedAt
-	u.fieldMap["deletedAt"] = u.DeletedAt
+	u.fieldMap["created_at"] = u.CreatedAt
+	u.fieldMap["deleted_at"] = u.DeletedAt
 }
 
 func (u user) clone(db *gorm.DB) user {

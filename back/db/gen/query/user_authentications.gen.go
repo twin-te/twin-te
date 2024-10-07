@@ -27,10 +27,9 @@ func newUserAuthentication(db *gorm.DB, opts ...gen.DOOption) userAuthentication
 
 	tableName := _userAuthentication.userAuthenticationDo.TableName()
 	_userAuthentication.ALL = field.NewAsterisk(tableName)
-	_userAuthentication.ID = field.NewInt32(tableName, "id")
+	_userAuthentication.UserID = field.NewString(tableName, "user_id")
 	_userAuthentication.Provider = field.NewString(tableName, "provider")
 	_userAuthentication.SocialID = field.NewString(tableName, "social_id")
-	_userAuthentication.UserID = field.NewString(tableName, "user_id")
 
 	_userAuthentication.fillFieldMap()
 
@@ -41,10 +40,9 @@ type userAuthentication struct {
 	userAuthenticationDo userAuthenticationDo
 
 	ALL      field.Asterisk
-	ID       field.Int32
+	UserID   field.String
 	Provider field.String
 	SocialID field.String
-	UserID   field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -61,10 +59,9 @@ func (u userAuthentication) As(alias string) *userAuthentication {
 
 func (u *userAuthentication) updateTableName(table string) *userAuthentication {
 	u.ALL = field.NewAsterisk(table)
-	u.ID = field.NewInt32(table, "id")
+	u.UserID = field.NewString(table, "user_id")
 	u.Provider = field.NewString(table, "provider")
 	u.SocialID = field.NewString(table, "social_id")
-	u.UserID = field.NewString(table, "user_id")
 
 	u.fillFieldMap()
 
@@ -93,11 +90,10 @@ func (u *userAuthentication) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (u *userAuthentication) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 4)
-	u.fieldMap["id"] = u.ID
+	u.fieldMap = make(map[string]field.Expr, 3)
+	u.fieldMap["user_id"] = u.UserID
 	u.fieldMap["provider"] = u.Provider
 	u.fieldMap["social_id"] = u.SocialID
-	u.fieldMap["user_id"] = u.UserID
 }
 
 func (u userAuthentication) clone(db *gorm.DB) userAuthentication {

@@ -12,10 +12,10 @@ const TableNameAlreadyRead = "already_reads"
 
 // AlreadyRead mapped from table <already_reads>
 type AlreadyRead struct {
-	ID            string    `gorm:"column:id;type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
-	InformationID string    `gorm:"column:information_id;type:uuid;not null" json:"information_id"`
-	ReadUser      string    `gorm:"column:read_user;type:text;not null" json:"read_user"`
-	ReadAt        time.Time `gorm:"column:read_at;type:timestamp without time zone;not null" json:"read_at"`
+	ID             string    `gorm:"column:id;type:uuid;primaryKey" json:"id"`
+	UserID         string    `gorm:"column:user_id;type:uuid;not null;uniqueIndex:already_reads_user_id_announcement_id_key,priority:1" json:"user_id"`
+	AnnouncementID string    `gorm:"column:announcement_id;type:uuid;not null;uniqueIndex:already_reads_user_id_announcement_id_key,priority:2" json:"announcement_id"`
+	ReadAt         time.Time `gorm:"column:read_at;type:timestamp without time zone;not null" json:"read_at"`
 }
 
 // TableName AlreadyRead's table name

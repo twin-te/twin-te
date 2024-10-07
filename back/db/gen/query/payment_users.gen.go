@@ -28,7 +28,7 @@ func newPaymentUser(db *gorm.DB, opts ...gen.DOOption) paymentUser {
 	tableName := _paymentUser.paymentUserDo.TableName()
 	_paymentUser.ALL = field.NewAsterisk(tableName)
 	_paymentUser.ID = field.NewString(tableName, "id")
-	_paymentUser.TwinteUserID = field.NewString(tableName, "twinte_user_id")
+	_paymentUser.UserID = field.NewString(tableName, "user_id")
 	_paymentUser.DisplayName = field.NewString(tableName, "display_name")
 	_paymentUser.Link = field.NewString(tableName, "link")
 
@@ -40,11 +40,11 @@ func newPaymentUser(db *gorm.DB, opts ...gen.DOOption) paymentUser {
 type paymentUser struct {
 	paymentUserDo paymentUserDo
 
-	ALL          field.Asterisk
-	ID           field.String
-	TwinteUserID field.String
-	DisplayName  field.String
-	Link         field.String
+	ALL         field.Asterisk
+	ID          field.String
+	UserID      field.String
+	DisplayName field.String
+	Link        field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -62,7 +62,7 @@ func (p paymentUser) As(alias string) *paymentUser {
 func (p *paymentUser) updateTableName(table string) *paymentUser {
 	p.ALL = field.NewAsterisk(table)
 	p.ID = field.NewString(table, "id")
-	p.TwinteUserID = field.NewString(table, "twinte_user_id")
+	p.UserID = field.NewString(table, "user_id")
 	p.DisplayName = field.NewString(table, "display_name")
 	p.Link = field.NewString(table, "link")
 
@@ -93,7 +93,7 @@ func (p *paymentUser) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 func (p *paymentUser) fillFieldMap() {
 	p.fieldMap = make(map[string]field.Expr, 4)
 	p.fieldMap["id"] = p.ID
-	p.fieldMap["twinte_user_id"] = p.TwinteUserID
+	p.fieldMap["user_id"] = p.UserID
 	p.fieldMap["display_name"] = p.DisplayName
 	p.fieldMap["link"] = p.Link
 }

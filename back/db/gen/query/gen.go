@@ -19,17 +19,20 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                     db,
 		AlreadyRead:            newAlreadyRead(db, opts...),
+		AuthProvider:           newAuthProvider(db, opts...),
 		Course:                 newCourse(db, opts...),
 		CourseMethod:           newCourseMethod(db, opts...),
 		CourseRecommendedGrade: newCourseRecommendedGrade(db, opts...),
 		CourseSchedule:         newCourseSchedule(db, opts...),
-		Information:            newInformation(db, opts...),
 		PaymentUser:            newPaymentUser(db, opts...),
 		RegisteredCourse:       newRegisteredCourse(db, opts...),
 		RegisteredCourseTag:    newRegisteredCourseTag(db, opts...),
 		SchemaMigration:        newSchemaMigration(db, opts...),
 		Session:                newSession(db, opts...),
 		Tag:                    newTag(db, opts...),
+		TimetableDay:           newTimetableDay(db, opts...),
+		TimetableMethod:        newTimetableMethod(db, opts...),
+		TimetableModule:        newTimetableModule(db, opts...),
 		User:                   newUser(db, opts...),
 		UserAuthentication:     newUserAuthentication(db, opts...),
 	}
@@ -39,17 +42,20 @@ type Query struct {
 	db *gorm.DB
 
 	AlreadyRead            alreadyRead
+	AuthProvider           authProvider
 	Course                 course
 	CourseMethod           courseMethod
 	CourseRecommendedGrade courseRecommendedGrade
 	CourseSchedule         courseSchedule
-	Information            information
 	PaymentUser            paymentUser
 	RegisteredCourse       registeredCourse
 	RegisteredCourseTag    registeredCourseTag
 	SchemaMigration        schemaMigration
 	Session                session
 	Tag                    tag
+	TimetableDay           timetableDay
+	TimetableMethod        timetableMethod
+	TimetableModule        timetableModule
 	User                   user
 	UserAuthentication     userAuthentication
 }
@@ -60,17 +66,20 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                     db,
 		AlreadyRead:            q.AlreadyRead.clone(db),
+		AuthProvider:           q.AuthProvider.clone(db),
 		Course:                 q.Course.clone(db),
 		CourseMethod:           q.CourseMethod.clone(db),
 		CourseRecommendedGrade: q.CourseRecommendedGrade.clone(db),
 		CourseSchedule:         q.CourseSchedule.clone(db),
-		Information:            q.Information.clone(db),
 		PaymentUser:            q.PaymentUser.clone(db),
 		RegisteredCourse:       q.RegisteredCourse.clone(db),
 		RegisteredCourseTag:    q.RegisteredCourseTag.clone(db),
 		SchemaMigration:        q.SchemaMigration.clone(db),
 		Session:                q.Session.clone(db),
 		Tag:                    q.Tag.clone(db),
+		TimetableDay:           q.TimetableDay.clone(db),
+		TimetableMethod:        q.TimetableMethod.clone(db),
+		TimetableModule:        q.TimetableModule.clone(db),
 		User:                   q.User.clone(db),
 		UserAuthentication:     q.UserAuthentication.clone(db),
 	}
@@ -88,17 +97,20 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                     db,
 		AlreadyRead:            q.AlreadyRead.replaceDB(db),
+		AuthProvider:           q.AuthProvider.replaceDB(db),
 		Course:                 q.Course.replaceDB(db),
 		CourseMethod:           q.CourseMethod.replaceDB(db),
 		CourseRecommendedGrade: q.CourseRecommendedGrade.replaceDB(db),
 		CourseSchedule:         q.CourseSchedule.replaceDB(db),
-		Information:            q.Information.replaceDB(db),
 		PaymentUser:            q.PaymentUser.replaceDB(db),
 		RegisteredCourse:       q.RegisteredCourse.replaceDB(db),
 		RegisteredCourseTag:    q.RegisteredCourseTag.replaceDB(db),
 		SchemaMigration:        q.SchemaMigration.replaceDB(db),
 		Session:                q.Session.replaceDB(db),
 		Tag:                    q.Tag.replaceDB(db),
+		TimetableDay:           q.TimetableDay.replaceDB(db),
+		TimetableMethod:        q.TimetableMethod.replaceDB(db),
+		TimetableModule:        q.TimetableModule.replaceDB(db),
 		User:                   q.User.replaceDB(db),
 		UserAuthentication:     q.UserAuthentication.replaceDB(db),
 	}
@@ -106,17 +118,20 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 
 type queryCtx struct {
 	AlreadyRead            *alreadyReadDo
+	AuthProvider           *authProviderDo
 	Course                 *courseDo
 	CourseMethod           *courseMethodDo
 	CourseRecommendedGrade *courseRecommendedGradeDo
 	CourseSchedule         *courseScheduleDo
-	Information            *informationDo
 	PaymentUser            *paymentUserDo
 	RegisteredCourse       *registeredCourseDo
 	RegisteredCourseTag    *registeredCourseTagDo
 	SchemaMigration        *schemaMigrationDo
 	Session                *sessionDo
 	Tag                    *tagDo
+	TimetableDay           *timetableDayDo
+	TimetableMethod        *timetableMethodDo
+	TimetableModule        *timetableModuleDo
 	User                   *userDo
 	UserAuthentication     *userAuthenticationDo
 }
@@ -124,17 +139,20 @@ type queryCtx struct {
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		AlreadyRead:            q.AlreadyRead.WithContext(ctx),
+		AuthProvider:           q.AuthProvider.WithContext(ctx),
 		Course:                 q.Course.WithContext(ctx),
 		CourseMethod:           q.CourseMethod.WithContext(ctx),
 		CourseRecommendedGrade: q.CourseRecommendedGrade.WithContext(ctx),
 		CourseSchedule:         q.CourseSchedule.WithContext(ctx),
-		Information:            q.Information.WithContext(ctx),
 		PaymentUser:            q.PaymentUser.WithContext(ctx),
 		RegisteredCourse:       q.RegisteredCourse.WithContext(ctx),
 		RegisteredCourseTag:    q.RegisteredCourseTag.WithContext(ctx),
 		SchemaMigration:        q.SchemaMigration.WithContext(ctx),
 		Session:                q.Session.WithContext(ctx),
 		Tag:                    q.Tag.WithContext(ctx),
+		TimetableDay:           q.TimetableDay.WithContext(ctx),
+		TimetableMethod:        q.TimetableMethod.WithContext(ctx),
+		TimetableModule:        q.TimetableModule.WithContext(ctx),
 		User:                   q.User.WithContext(ctx),
 		UserAuthentication:     q.UserAuthentication.WithContext(ctx),
 	}

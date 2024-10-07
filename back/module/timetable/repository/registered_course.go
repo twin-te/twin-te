@@ -228,7 +228,7 @@ func fromDBRegisteredCourse(dbRegisteredCourse *model.RegisteredCourse) (*timeta
 			registeredCourse.Name = &name
 		}
 
-		registeredCourse.Instructors = dbRegisteredCourse.Instractor
+		registeredCourse.Instructors = dbRegisteredCourse.Instructors
 
 		if dbRegisteredCourse.Credit != nil {
 			credit, err := timetabledomain.ParseCredit(fmt.Sprintf("%.1f", *dbRegisteredCourse.Credit))
@@ -282,17 +282,17 @@ func fromDBRegisteredCourse(dbRegisteredCourse *model.RegisteredCourse) (*timeta
 
 func toDBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse, withAssociations bool) (*model.RegisteredCourse, error) {
 	dbRegisteredCourse := &model.RegisteredCourse{
-		ID:         registeredCourse.ID.String(),
-		UserID:     registeredCourse.UserID.String(),
-		Year:       int16(registeredCourse.Year),
-		CourseID:   registeredCourse.CourseID.StringPtr(),
-		Name:       registeredCourse.Name.StringPtr(),
-		Instractor: registeredCourse.Instructors,
-		Credit:     registeredCourse.Credit.FloatPtr(),
-		Memo:       registeredCourse.Memo,
-		Attendance: int32(registeredCourse.Attendance.Int()),
-		Absence:    int32(registeredCourse.Absence.Int()),
-		Late:       int32(registeredCourse.Late.Int()),
+		ID:          registeredCourse.ID.String(),
+		UserID:      registeredCourse.UserID.String(),
+		Year:        int16(registeredCourse.Year),
+		CourseID:    registeredCourse.CourseID.StringPtr(),
+		Name:        registeredCourse.Name.StringPtr(),
+		Instructors: registeredCourse.Instructors,
+		Credit:      registeredCourse.Credit.FloatPtr(),
+		Memo:        registeredCourse.Memo,
+		Attendance:  int16(registeredCourse.Attendance.Int()),
+		Absence:     int16(registeredCourse.Absence.Int()),
+		Late:        int16(registeredCourse.Late.Int()),
 	}
 
 	if registeredCourse.Methods != nil {

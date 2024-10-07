@@ -177,7 +177,7 @@ func fromDBCourse(dbCourse *model.Course) (*timetabledomain.Course, error) {
 			return err
 		}
 
-		c.Instructors = dbCourse.Instructor
+		c.Instructors = dbCourse.Instructors
 
 		c.Credit, err = timetabledomain.ParseCredit(fmt.Sprintf("%.1f", dbCourse.Credit))
 		if err != nil {
@@ -186,7 +186,7 @@ func fromDBCourse(dbCourse *model.Course) (*timetabledomain.Course, error) {
 
 		c.Overview = dbCourse.Overview
 		c.Remarks = dbCourse.Remarks
-		c.LastUpdatedAt = dbCourse.LastUpdate
+		c.LastUpdatedAt = dbCourse.LastUpdatedAt
 		c.HasParseError = dbCourse.HasParseError
 		c.IsAnnual = dbCourse.IsAnnual
 
@@ -212,11 +212,11 @@ func toDBCourse(course *timetabledomain.Course, withAssociations bool) *model.Co
 		Year:          int16(course.Year),
 		Code:          course.Code.String(),
 		Name:          course.Name.String(),
-		Instructor:    course.Instructors,
+		Instructors:   course.Instructors,
 		Credit:        course.Credit.Float(),
 		Overview:      course.Overview,
 		Remarks:       course.Remarks,
-		LastUpdate:    course.LastUpdatedAt,
+		LastUpdatedAt: course.LastUpdatedAt,
 		HasParseError: course.HasParseError,
 		IsAnnual:      course.IsAnnual,
 	}

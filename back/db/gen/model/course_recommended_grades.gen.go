@@ -8,9 +8,8 @@ const TableNameCourseRecommendedGrade = "course_recommended_grades"
 
 // CourseRecommendedGrade mapped from table <course_recommended_grades>
 type CourseRecommendedGrade struct {
-	ID       int32   `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Grade    int16   `gorm:"column:grade;type:smallint;not null" json:"grade"`
-	CourseID *string `gorm:"column:course_id;type:uuid" json:"course_id"`
+	CourseID         string `gorm:"column:course_id;type:uuid;primaryKey" json:"course_id"`
+	RecommendedGrade int16  `gorm:"column:recommended_grade;type:smallint;primaryKey" json:"recommended_grade"`
 }
 
 // TableName CourseRecommendedGrade's table name

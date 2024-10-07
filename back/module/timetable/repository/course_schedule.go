@@ -52,7 +52,7 @@ func fromDBCourseSchedule(dbCourseSchedule model.CourseSchedule) (timetabledomai
 
 func toDBCourseSchedule(schedule timetabledomain.Schedule, courseID idtype.CourseID) model.CourseSchedule {
 	return model.CourseSchedule{
-		CourseID:  courseID.StringPtr(),
+		CourseID:  courseID.String(),
 		Module:    schedule.Module.String(),
 		Day:       schedule.Day.String(),
 		Period:    int16(schedule.Period.Int()),

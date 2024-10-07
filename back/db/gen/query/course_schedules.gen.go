@@ -27,12 +27,11 @@ func newCourseSchedule(db *gorm.DB, opts ...gen.DOOption) courseSchedule {
 
 	tableName := _courseSchedule.courseScheduleDo.TableName()
 	_courseSchedule.ALL = field.NewAsterisk(tableName)
-	_courseSchedule.ID = field.NewInt32(tableName, "id")
+	_courseSchedule.CourseID = field.NewString(tableName, "course_id")
 	_courseSchedule.Module = field.NewString(tableName, "module")
 	_courseSchedule.Day = field.NewString(tableName, "day")
 	_courseSchedule.Period = field.NewInt16(tableName, "period")
-	_courseSchedule.Room = field.NewString(tableName, "room")
-	_courseSchedule.CourseID = field.NewString(tableName, "course_id")
+	_courseSchedule.Locations = field.NewString(tableName, "locations")
 
 	_courseSchedule.fillFieldMap()
 
@@ -42,13 +41,12 @@ func newCourseSchedule(db *gorm.DB, opts ...gen.DOOption) courseSchedule {
 type courseSchedule struct {
 	courseScheduleDo courseScheduleDo
 
-	ALL      field.Asterisk
-	ID       field.Int32
-	Module   field.String
-	Day      field.String
-	Period   field.Int16
-	Room     field.String
-	CourseID field.String
+	ALL       field.Asterisk
+	CourseID  field.String
+	Module    field.String
+	Day       field.String
+	Period    field.Int16
+	Locations field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -65,12 +63,11 @@ func (c courseSchedule) As(alias string) *courseSchedule {
 
 func (c *courseSchedule) updateTableName(table string) *courseSchedule {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewInt32(table, "id")
+	c.CourseID = field.NewString(table, "course_id")
 	c.Module = field.NewString(table, "module")
 	c.Day = field.NewString(table, "day")
 	c.Period = field.NewInt16(table, "period")
-	c.Room = field.NewString(table, "room")
-	c.CourseID = field.NewString(table, "course_id")
+	c.Locations = field.NewString(table, "locations")
 
 	c.fillFieldMap()
 
@@ -99,13 +96,12 @@ func (c *courseSchedule) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (c *courseSchedule) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 6)
-	c.fieldMap["id"] = c.ID
+	c.fieldMap = make(map[string]field.Expr, 5)
+	c.fieldMap["course_id"] = c.CourseID
 	c.fieldMap["module"] = c.Module
 	c.fieldMap["day"] = c.Day
 	c.fieldMap["period"] = c.Period
-	c.fieldMap["room"] = c.Room
-	c.fieldMap["course_id"] = c.CourseID
+	c.fieldMap["locations"] = c.Locations
 }
 
 func (c courseSchedule) clone(db *gorm.DB) courseSchedule {

@@ -8,10 +8,9 @@ const TableNameUserAuthentication = "user_authentications"
 
 // UserAuthentication mapped from table <user_authentications>
 type UserAuthentication struct {
-	ID       int32   `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Provider string  `gorm:"column:provider;type:user_authentications_provider_enum;not null" json:"provider"`
-	SocialID string  `gorm:"column:social_id;type:character varying;not null" json:"social_id"`
-	UserID   *string `gorm:"column:user_id;type:uuid" json:"user_id"`
+	UserID   string `gorm:"column:user_id;type:uuid;primaryKey" json:"user_id"`
+	Provider string `gorm:"column:provider;type:text;primaryKey;uniqueIndex:user_authentications_provider_social_id_key,priority:1" json:"provider"`
+	SocialID string `gorm:"column:social_id;type:text;primaryKey;uniqueIndex:user_authentications_provider_social_id_key,priority:2" json:"social_id"`
 }
 
 // TableName UserAuthentication's table name

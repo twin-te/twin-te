@@ -8,10 +8,10 @@ const TableNameTag = "tags"
 
 // Tag mapped from table <tags>
 type Tag struct {
-	ID       string `gorm:"column:id;type:uuid;primaryKey" json:"id"`
-	UserID   string `gorm:"column:user_id;type:uuid;not null;uniqueIndex:UQ_b861cf6ec9af09190780481a311,priority:1" json:"user_id"`
-	Name     string `gorm:"column:name;type:text;not null" json:"name"`
-	Position int32  `gorm:"column:position;type:integer;not null;uniqueIndex:UQ_b861cf6ec9af09190780481a311,priority:2" json:"position"`
+	ID     string `gorm:"column:id;type:uuid;primaryKey" json:"id"`
+	UserID string `gorm:"column:user_id;type:uuid;not null;uniqueIndex:tags_user_id_order_key,priority:1" json:"user_id"`
+	Name   string `gorm:"column:name;type:text;not null" json:"name"`
+	Order  int16  `gorm:"column:order;type:smallint;not null;uniqueIndex:tags_user_id_order_key,priority:2" json:"order"`
 }
 
 // TableName Tag's table name

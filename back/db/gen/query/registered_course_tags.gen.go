@@ -27,8 +27,8 @@ func newRegisteredCourseTag(db *gorm.DB, opts ...gen.DOOption) registeredCourseT
 
 	tableName := _registeredCourseTag.registeredCourseTagDo.TableName()
 	_registeredCourseTag.ALL = field.NewAsterisk(tableName)
-	_registeredCourseTag.Tag = field.NewString(tableName, "tag")
-	_registeredCourseTag.RegisteredCourse = field.NewString(tableName, "registered_course")
+	_registeredCourseTag.RegisteredCourseID = field.NewString(tableName, "registered_course_id")
+	_registeredCourseTag.TagID = field.NewString(tableName, "tag_id")
 
 	_registeredCourseTag.fillFieldMap()
 
@@ -38,9 +38,9 @@ func newRegisteredCourseTag(db *gorm.DB, opts ...gen.DOOption) registeredCourseT
 type registeredCourseTag struct {
 	registeredCourseTagDo registeredCourseTagDo
 
-	ALL              field.Asterisk
-	Tag              field.String
-	RegisteredCourse field.String
+	ALL                field.Asterisk
+	RegisteredCourseID field.String
+	TagID              field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -57,8 +57,8 @@ func (r registeredCourseTag) As(alias string) *registeredCourseTag {
 
 func (r *registeredCourseTag) updateTableName(table string) *registeredCourseTag {
 	r.ALL = field.NewAsterisk(table)
-	r.Tag = field.NewString(table, "tag")
-	r.RegisteredCourse = field.NewString(table, "registered_course")
+	r.RegisteredCourseID = field.NewString(table, "registered_course_id")
+	r.TagID = field.NewString(table, "tag_id")
 
 	r.fillFieldMap()
 
@@ -88,8 +88,8 @@ func (r *registeredCourseTag) GetFieldByName(fieldName string) (field.OrderExpr,
 
 func (r *registeredCourseTag) fillFieldMap() {
 	r.fieldMap = make(map[string]field.Expr, 2)
-	r.fieldMap["tag"] = r.Tag
-	r.fieldMap["registered_course"] = r.RegisteredCourse
+	r.fieldMap["registered_course_id"] = r.RegisteredCourseID
+	r.fieldMap["tag_id"] = r.TagID
 }
 
 func (r registeredCourseTag) clone(db *gorm.DB) registeredCourseTag {

@@ -90,7 +90,7 @@ func fromDBPaymentUser(dbPaymentUser *model.PaymentUser) (*donationdomain.Paymen
 			return
 		}
 
-		pu.UserID, err = idtype.ParseUserID(dbPaymentUser.TwinteUserID)
+		pu.UserID, err = idtype.ParseUserID(dbPaymentUser.UserID)
 		if err != nil {
 			return
 		}
@@ -115,9 +115,9 @@ func fromDBPaymentUser(dbPaymentUser *model.PaymentUser) (*donationdomain.Paymen
 
 func toDBPaymentUser(paymentUser *donationdomain.PaymentUser) *model.PaymentUser {
 	return &model.PaymentUser{
-		ID:           paymentUser.ID.String(),
-		TwinteUserID: paymentUser.UserID.String(),
-		DisplayName:  paymentUser.DisplayName.StringPtr(),
-		Link:         paymentUser.Link.StringPtr(),
+		ID:          paymentUser.ID.String(),
+		UserID:      paymentUser.UserID.String(),
+		DisplayName: paymentUser.DisplayName.StringPtr(),
+		Link:        paymentUser.Link.StringPtr(),
 	}
 }
