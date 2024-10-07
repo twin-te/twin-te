@@ -34,7 +34,7 @@ class Schedule:
     module: Module
     day: Day
     period: int
-    rooms: str
+    locations: str
 
 
 class CourseMethod(str):
@@ -135,12 +135,12 @@ def convert_schedule(s: dict) -> Schedule:
     day = convert_day(s["day"])
 
     if is_special_day(day):
-        return Schedule(module=module, day=day, period=0, rooms=s["room"])
+        return Schedule(module=module, day=day, period=0, locations=s["location"])
 
     period = s["period"]
 
     if 1 <= period and period <= 8:
-        return Schedule(module=module, day=day, period=period, rooms=s["room"])
+        return Schedule(module=module, day=day, period=period, locations=s["location"])
 
     raise ValueError("invalid schedule", s)
 
@@ -248,7 +248,7 @@ def parse_after_hook(json_data: str) -> str:
                         "module": s.module,
                         "day": s.day,
                         "period": s.period,
-                        "rooms": s.rooms,
+                        "locations": s.locations,
                     }
                     for s in course.schedules
                 ],
