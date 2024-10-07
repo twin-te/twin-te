@@ -153,15 +153,15 @@ func ParsePeriod[T constraints.Signed](i T) (Period, error) {
 //   - special schedule
 //
 // If this struct represents normal schedule,
-// it has module, day, period and rooms fields.
+// it has module, day, period and locations fields.
 //
 // If this struct represents special schedule,
-// it has module, day and rooms fields.
+// it has module, day and locations fields.
 type Schedule struct {
-	Module Module
-	Day    Day
-	Period Period
-	Rooms  string
+	Module    Module
+	Day       Day
+	Period    Period
+	Locations string
 }
 
 func (s Schedule) IsNormal() bool {
@@ -189,7 +189,7 @@ func ConstructSchedule(fn func() (schedule Schedule, err error)) (schedule Sched
 	return schedule, fmt.Errorf("failed to construct %v", schedule)
 }
 
-func ParseSchedule(module string, day string, period int, rooms string) (schedule Schedule, err error) {
+func ParseSchedule(module string, day string, period int, locations string) (schedule Schedule, err error) {
 	schedule.Module, err = ParseModule(module)
 	if err != nil {
 		return
@@ -207,7 +207,7 @@ func ParseSchedule(module string, day string, period int, rooms string) (schedul
 		}
 	}
 
-	schedule.Rooms = rooms
+	schedule.Locations = locations
 
 	return
 }

@@ -24,7 +24,7 @@ func FromPBSchedule(pbSchedule *timetablev1.Schedule) (timetabledomain.Schedule,
 			}
 		}
 
-		schedule.Rooms = pbSchedule.Rooms
+		schedule.Locations = pbSchedule.Locations
 
 		return
 	})
@@ -42,10 +42,10 @@ func ToPBSchedule(schedule timetabledomain.Schedule) (*timetablev1.Schedule, err
 	}
 
 	pbSchedule := &timetablev1.Schedule{
-		Module: pbModule,
-		Day:    pbDay,
-		Period: int32(schedule.Period.Int()),
-		Rooms:  schedule.Rooms,
+		Module:    pbModule,
+		Day:       pbDay,
+		Period:    int32(schedule.Period.Int()),
+		Locations: schedule.Locations,
 	}
 
 	return pbSchedule, nil

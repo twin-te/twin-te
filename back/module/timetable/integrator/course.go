@@ -37,10 +37,10 @@ type kdbCourse struct {
 }
 
 type kdbSchedule struct {
-	Module string `json:"module"`
-	Day    string `json:"day"`
-	Period int    `json:"period"`
-	Rooms  string `json:"rooms"`
+	Module    string `json:"module"`
+	Day       string `json:"day"`
+	Period    int    `json:"period"`
+	Locations string `json:"locations"`
 }
 
 func loadKdBCourseFromJSON(kdbJsonFilePath string) (ret []*kdbCourse, err error) {
@@ -92,7 +92,7 @@ func parseKdbCoure(kdbCourse *kdbCourse, year shareddomain.AcademicYear) (course
 			kdbSchedule.Module,
 			kdbSchedule.Day,
 			kdbSchedule.Period,
-			kdbSchedule.Rooms,
+			kdbSchedule.Locations,
 		)
 	})
 	if err != nil {

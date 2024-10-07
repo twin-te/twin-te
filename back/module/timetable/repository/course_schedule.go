@@ -26,12 +26,12 @@ func (r *impl) updateCourseSchedules(db *gorm.DB, course *timetabledomain.Course
 		dbCourseSchedules := base.MapWithArg(toDelete, course.ID, toDBCourseSchedule)
 
 		return db.Where("course_id = ?", course.ID.String()).
-			Where("(module,day,period,room) IN ?", base.Map(dbCourseSchedules, func(dbCourseSchedule model.CourseSchedule) []any {
+			Where("(module,day,period,locations) IN ?", base.Map(dbCourseSchedules, func(dbCourseSchedule model.CourseSchedule) []any {
 				return []any{
 					dbCourseSchedule.Module,
 					dbCourseSchedule.Day,
 					dbCourseSchedule.Period,
-					dbCourseSchedule.Room,
+					dbCourseSchedule.Locations,
 				}
 			})).
 			Delete(&model.CourseSchedule{}).
@@ -46,16 +46,16 @@ func fromDBCourseSchedule(dbCourseSchedule model.CourseSchedule) (timetabledomai
 		dbCourseSchedule.Module,
 		dbCourseSchedule.Day,
 		int(dbCourseSchedule.Period),
-		dbCourseSchedule.Room,
+		dbCourseSchedule.Locations,
 	)
 }
 
 func toDBCourseSchedule(schedule timetabledomain.Schedule, courseID idtype.CourseID) model.CourseSchedule {
 	return model.CourseSchedule{
-		CourseID: courseID.StringPtr(),
-		Module:   schedule.Module.String(),
-		Day:      schedule.Day.String(),
-		Period:   int16(schedule.Period.Int()),
-		Room:     schedule.Rooms,
+		CourseID:  courseID.StringPtr(),
+		Module:    schedule.Module.String(),
+		Day:       schedule.Day.String(),
+		Period:    int16(schedule.Period.Int()),
+		Locations: schedule.Locations,
 	}
 }
