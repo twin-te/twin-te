@@ -201,7 +201,7 @@ export const fromPBSchedules = (
     const schedule = fromPBSchedule(pbSchedule);
     schedules.push(schedule);
 
-    const roomNames = parseRoom(pbSchedule.rooms);
+    const roomNames = parseRoom(pbSchedule.locations);
     roomNames.forEach((roomName) => {
       if (!(roomName in roomNameToSchedules))
         roomNameToSchedules[roomName] = [];
@@ -222,7 +222,7 @@ export const toPBSchedules = (
   rooms: Room[]
 ): TimetableV1PB.Schedule[] => {
   return schedules.map((schedule) => {
-    const pbRooms = extractRoomsBySchedule(rooms, schedule)
+    const pbLocations = extractRoomsBySchedule(rooms, schedule)
       .map(({ name }) => name)
       .join(",");
     return new TimetableV1PB.Schedule({
@@ -231,7 +231,7 @@ export const toPBSchedules = (
       period: isNormalSchedule(schedule)
         ? toPBPeriod(schedule.period)
         : undefined,
-      rooms: pbRooms,
+      locations: pbLocations,
     });
   });
 };
