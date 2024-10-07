@@ -30,7 +30,7 @@ func newTag(db *gorm.DB, opts ...gen.DOOption) tag {
 	_tag.ID = field.NewString(tableName, "id")
 	_tag.UserID = field.NewString(tableName, "user_id")
 	_tag.Name = field.NewString(tableName, "name")
-	_tag.Position = field.NewInt32(tableName, "position")
+	_tag.Order = field.NewInt16(tableName, "order")
 
 	_tag.fillFieldMap()
 
@@ -40,11 +40,11 @@ func newTag(db *gorm.DB, opts ...gen.DOOption) tag {
 type tag struct {
 	tagDo tagDo
 
-	ALL      field.Asterisk
-	ID       field.String
-	UserID   field.String
-	Name     field.String
-	Position field.Int32
+	ALL    field.Asterisk
+	ID     field.String
+	UserID field.String
+	Name   field.String
+	Order  field.Int16
 
 	fieldMap map[string]field.Expr
 }
@@ -64,7 +64,7 @@ func (t *tag) updateTableName(table string) *tag {
 	t.ID = field.NewString(table, "id")
 	t.UserID = field.NewString(table, "user_id")
 	t.Name = field.NewString(table, "name")
-	t.Position = field.NewInt32(table, "position")
+	t.Order = field.NewInt16(table, "order")
 
 	t.fillFieldMap()
 
@@ -93,7 +93,7 @@ func (t *tag) fillFieldMap() {
 	t.fieldMap["id"] = t.ID
 	t.fieldMap["user_id"] = t.UserID
 	t.fieldMap["name"] = t.Name
-	t.fieldMap["position"] = t.Position
+	t.fieldMap["order"] = t.Order
 }
 
 func (t tag) clone(db *gorm.DB) tag {

@@ -27,9 +27,8 @@ func newCourseRecommendedGrade(db *gorm.DB, opts ...gen.DOOption) courseRecommen
 
 	tableName := _courseRecommendedGrade.courseRecommendedGradeDo.TableName()
 	_courseRecommendedGrade.ALL = field.NewAsterisk(tableName)
-	_courseRecommendedGrade.ID = field.NewInt32(tableName, "id")
-	_courseRecommendedGrade.Grade = field.NewInt16(tableName, "grade")
 	_courseRecommendedGrade.CourseID = field.NewString(tableName, "course_id")
+	_courseRecommendedGrade.RecommendedGrade = field.NewInt16(tableName, "recommended_grade")
 
 	_courseRecommendedGrade.fillFieldMap()
 
@@ -39,10 +38,9 @@ func newCourseRecommendedGrade(db *gorm.DB, opts ...gen.DOOption) courseRecommen
 type courseRecommendedGrade struct {
 	courseRecommendedGradeDo courseRecommendedGradeDo
 
-	ALL      field.Asterisk
-	ID       field.Int32
-	Grade    field.Int16
-	CourseID field.String
+	ALL              field.Asterisk
+	CourseID         field.String
+	RecommendedGrade field.Int16
 
 	fieldMap map[string]field.Expr
 }
@@ -59,9 +57,8 @@ func (c courseRecommendedGrade) As(alias string) *courseRecommendedGrade {
 
 func (c *courseRecommendedGrade) updateTableName(table string) *courseRecommendedGrade {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewInt32(table, "id")
-	c.Grade = field.NewInt16(table, "grade")
 	c.CourseID = field.NewString(table, "course_id")
+	c.RecommendedGrade = field.NewInt16(table, "recommended_grade")
 
 	c.fillFieldMap()
 
@@ -90,10 +87,9 @@ func (c *courseRecommendedGrade) GetFieldByName(fieldName string) (field.OrderEx
 }
 
 func (c *courseRecommendedGrade) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 3)
-	c.fieldMap["id"] = c.ID
-	c.fieldMap["grade"] = c.Grade
+	c.fieldMap = make(map[string]field.Expr, 2)
 	c.fieldMap["course_id"] = c.CourseID
+	c.fieldMap["recommended_grade"] = c.RecommendedGrade
 }
 
 func (c courseRecommendedGrade) clone(db *gorm.DB) courseRecommendedGrade {

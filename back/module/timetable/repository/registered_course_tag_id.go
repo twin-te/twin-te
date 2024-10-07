@@ -34,12 +34,12 @@ func (r *impl) updateRegisteredCourseTagIDs(db *gorm.DB, registeredCourse *timet
 }
 
 func fromDBRegisteredCourseTag(dbRegisteredCourseTag model.RegisteredCourseTag) (idtype.TagID, error) {
-	return idtype.ParseTagID(dbRegisteredCourseTag.Tag)
+	return idtype.ParseTagID(dbRegisteredCourseTag.TagID)
 }
 
 func toDBRegisteredCourseTag(tagID idtype.TagID, registeredCourseID idtype.RegisteredCourseID) model.RegisteredCourseTag {
 	return model.RegisteredCourseTag{
-		Tag:              tagID.String(),
-		RegisteredCourse: registeredCourseID.String(),
+		RegisteredCourseID: registeredCourseID.String(),
+		TagID:              tagID.String(),
 	}
 }

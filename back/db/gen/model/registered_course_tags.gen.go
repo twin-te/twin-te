@@ -8,8 +8,8 @@ const TableNameRegisteredCourseTag = "registered_course_tags"
 
 // RegisteredCourseTag mapped from table <registered_course_tags>
 type RegisteredCourseTag struct {
-	Tag              string `gorm:"column:tag;type:uuid;primaryKey;index:IDX_c102260e1ffed113fef8ead148,priority:1" json:"tag"`
-	RegisteredCourse string `gorm:"column:registered_course;type:uuid;primaryKey;index:IDX_41594bc21c7a7adff5f2a4574c,priority:1" json:"registered_course"`
+	RegisteredCourseID string `gorm:"column:registered_course_id;type:uuid;primaryKey" json:"registered_course_id"`
+	TagID              string `gorm:"column:tag_id;type:uuid;primaryKey" json:"tag_id"`
 }
 
 // TableName RegisteredCourseTag's table name

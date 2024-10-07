@@ -8,10 +8,10 @@ const TableNamePaymentUser = "payment_users"
 
 // PaymentUser mapped from table <payment_users>
 type PaymentUser struct {
-	ID           string  `gorm:"column:id;type:text;primaryKey" json:"id"`
-	TwinteUserID string  `gorm:"column:twinte_user_id;type:uuid;not null" json:"twinte_user_id"`
-	DisplayName  *string `gorm:"column:display_name;type:text" json:"display_name"`
-	Link         *string `gorm:"column:link;type:text" json:"link"`
+	ID          string  `gorm:"column:id;type:text;primaryKey" json:"id"`
+	UserID      string  `gorm:"column:user_id;type:uuid;not null;index:payment_users_user_id_idx,priority:1" json:"user_id"`
+	DisplayName *string `gorm:"column:display_name;type:text" json:"display_name"`
+	Link        *string `gorm:"column:link;type:text" json:"link"`
 }
 
 // TableName PaymentUser's table name

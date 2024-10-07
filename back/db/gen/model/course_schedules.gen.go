@@ -8,12 +8,11 @@ const TableNameCourseSchedule = "course_schedules"
 
 // CourseSchedule mapped from table <course_schedules>
 type CourseSchedule struct {
-	ID       int32   `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Module   string  `gorm:"column:module;type:course_schedules_module_enum;not null" json:"module"`
-	Day      string  `gorm:"column:day;type:course_schedules_day_enum;not null" json:"day"`
-	Period   int16   `gorm:"column:period;type:smallint;not null" json:"period"`
-	Room     string  `gorm:"column:room;type:text;not null" json:"room"`
-	CourseID *string `gorm:"column:course_id;type:uuid" json:"course_id"`
+	CourseID  string `gorm:"column:course_id;type:uuid;primaryKey" json:"course_id"`
+	Module    string `gorm:"column:module;type:text;primaryKey" json:"module"`
+	Day       string `gorm:"column:day;type:text;primaryKey" json:"day"`
+	Period    int16  `gorm:"column:period;type:smallint;primaryKey" json:"period"`
+	Locations string `gorm:"column:locations;type:text;primaryKey" json:"locations"`
 }
 
 // TableName CourseSchedule's table name

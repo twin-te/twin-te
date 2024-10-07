@@ -87,12 +87,12 @@ func fromDBAlreadyRead(dbAlreadyRead *model.AlreadyRead) (*announcementdomain.Al
 			return
 		}
 
-		ar.UserID, err = idtype.ParseUserID(dbAlreadyRead.ReadUser)
+		ar.UserID, err = idtype.ParseUserID(dbAlreadyRead.UserID)
 		if err != nil {
 			return
 		}
 
-		ar.AnnouncementID, err = idtype.ParseAnnouncementID(dbAlreadyRead.InformationID)
+		ar.AnnouncementID, err = idtype.ParseAnnouncementID(dbAlreadyRead.AnnouncementID)
 		if err != nil {
 			return
 		}
@@ -105,9 +105,9 @@ func fromDBAlreadyRead(dbAlreadyRead *model.AlreadyRead) (*announcementdomain.Al
 
 func toDBAlreadyRead(alreadyRead *announcementdomain.AlreadyRead) *model.AlreadyRead {
 	return &model.AlreadyRead{
-		ID:            alreadyRead.ID.String(),
-		InformationID: alreadyRead.AnnouncementID.String(),
-		ReadUser:      alreadyRead.UserID.String(),
-		ReadAt:        alreadyRead.ReadAt,
+		ID:             alreadyRead.ID.String(),
+		UserID:         alreadyRead.UserID.String(),
+		AnnouncementID: alreadyRead.AnnouncementID.String(),
+		ReadAt:         alreadyRead.ReadAt,
 	}
 }

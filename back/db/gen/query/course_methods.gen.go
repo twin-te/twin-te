@@ -27,9 +27,8 @@ func newCourseMethod(db *gorm.DB, opts ...gen.DOOption) courseMethod {
 
 	tableName := _courseMethod.courseMethodDo.TableName()
 	_courseMethod.ALL = field.NewAsterisk(tableName)
-	_courseMethod.ID = field.NewInt32(tableName, "id")
-	_courseMethod.Method = field.NewString(tableName, "method")
 	_courseMethod.CourseID = field.NewString(tableName, "course_id")
+	_courseMethod.Method = field.NewString(tableName, "method")
 
 	_courseMethod.fillFieldMap()
 
@@ -40,9 +39,8 @@ type courseMethod struct {
 	courseMethodDo courseMethodDo
 
 	ALL      field.Asterisk
-	ID       field.Int32
-	Method   field.String
 	CourseID field.String
+	Method   field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -59,9 +57,8 @@ func (c courseMethod) As(alias string) *courseMethod {
 
 func (c *courseMethod) updateTableName(table string) *courseMethod {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewInt32(table, "id")
-	c.Method = field.NewString(table, "method")
 	c.CourseID = field.NewString(table, "course_id")
+	c.Method = field.NewString(table, "method")
 
 	c.fillFieldMap()
 
@@ -90,10 +87,9 @@ func (c *courseMethod) GetFieldByName(fieldName string) (field.OrderExpr, bool) 
 }
 
 func (c *courseMethod) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 3)
-	c.fieldMap["id"] = c.ID
-	c.fieldMap["method"] = c.Method
+	c.fieldMap = make(map[string]field.Expr, 2)
 	c.fieldMap["course_id"] = c.CourseID
+	c.fieldMap["method"] = c.Method
 }
 
 func (c courseMethod) clone(db *gorm.DB) courseMethod {

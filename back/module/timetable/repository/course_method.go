@@ -41,7 +41,7 @@ func fromDBCourseMethod(method model.CourseMethod) (timetabledomain.CourseMethod
 
 func toDBCourseMethod(method timetabledomain.CourseMethod, courseID idtype.CourseID) model.CourseMethod {
 	return model.CourseMethod{
-		CourseID: courseID.StringPtr(),
+		CourseID: courseID.String(),
 		Method:   method.String(),
 	}
 }

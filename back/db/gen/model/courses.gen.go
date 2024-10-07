@@ -12,15 +12,15 @@ const TableNameCourse = "courses"
 
 // Course mapped from table <courses>
 type Course struct {
-	ID                string                   `gorm:"column:id;type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
-	Year              int16                    `gorm:"column:year;type:smallint;not null;uniqueIndex:IDX_68ca51dc447bc2c03d5f1c44b8,priority:1" json:"year"`
-	Code              string                   `gorm:"column:code;type:text;not null;uniqueIndex:IDX_68ca51dc447bc2c03d5f1c44b8,priority:2" json:"code"`
+	ID                string                   `gorm:"column:id;type:uuid;primaryKey" json:"id"`
+	Year              int16                    `gorm:"column:year;type:smallint;not null;uniqueIndex:courses_year_code_key,priority:1" json:"year"`
+	Code              string                   `gorm:"column:code;type:text;not null;uniqueIndex:courses_year_code_key,priority:2" json:"code"`
 	Name              string                   `gorm:"column:name;type:text;not null" json:"name"`
-	Instructor        string                   `gorm:"column:instructor;type:text;not null" json:"instructor"`
-	Credit            float64                  `gorm:"column:credit;type:numeric;not null" json:"credit"`
+	Instructors       string                   `gorm:"column:instructors;type:text;not null" json:"instructors"`
+	Credit            float64                  `gorm:"column:credit;type:numeric(4,1);not null" json:"credit"`
 	Overview          string                   `gorm:"column:overview;type:text;not null" json:"overview"`
 	Remarks           string                   `gorm:"column:remarks;type:text;not null" json:"remarks"`
-	LastUpdate        time.Time                `gorm:"column:last_update;type:timestamp with time zone;not null" json:"last_update"`
+	LastUpdatedAt     time.Time                `gorm:"column:last_updated_at;type:timestamp without time zone;not null" json:"last_updated_at"`
 	HasParseError     bool                     `gorm:"column:has_parse_error;type:boolean;not null" json:"has_parse_error"`
 	IsAnnual          bool                     `gorm:"column:is_annual;type:boolean;not null" json:"is_annual"`
 	RecommendedGrades []CourseRecommendedGrade `json:"recommended_grades"`

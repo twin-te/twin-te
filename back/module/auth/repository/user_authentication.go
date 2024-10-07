@@ -53,7 +53,7 @@ func fromDBUserAuthentication(dbUserAuthentication model.UserAuthentication) (us
 
 func toDBUserAuthentication(userAuthentication authdomain.UserAuthentication, userID idtype.UserID) model.UserAuthentication {
 	return model.UserAuthentication{
-		UserID:   lo.ToPtr(userID.String()),
+		UserID:   userID.String(),
 		Provider: userAuthentication.Provider.String(),
 		SocialID: userAuthentication.SocialID.String(),
 	}

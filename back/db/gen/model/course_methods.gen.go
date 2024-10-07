@@ -8,9 +8,8 @@ const TableNameCourseMethod = "course_methods"
 
 // CourseMethod mapped from table <course_methods>
 type CourseMethod struct {
-	ID       int32   `gorm:"column:id;type:integer;primaryKey;autoIncrement:true" json:"id"`
-	Method   string  `gorm:"column:method;type:course_methods_method_enum;not null" json:"method"`
-	CourseID *string `gorm:"column:course_id;type:uuid" json:"course_id"`
+	CourseID string `gorm:"column:course_id;type:uuid;primaryKey" json:"course_id"`
+	Method   string `gorm:"column:method;type:text;primaryKey" json:"method"`
 }
 
 // TableName CourseMethod's table name

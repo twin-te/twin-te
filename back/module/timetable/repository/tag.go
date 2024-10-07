@@ -126,7 +126,7 @@ func fromDBTag(dbTag *model.Tag) (*timetabledomain.Tag, error) {
 			return err
 		}
 
-		t.Position, err = timetabledomain.ParsePosition(int(dbTag.Position))
+		t.Position, err = timetabledomain.ParsePosition(int(dbTag.Order))
 		if err != nil {
 			return err
 		}
@@ -137,9 +137,9 @@ func fromDBTag(dbTag *model.Tag) (*timetabledomain.Tag, error) {
 
 func toDBTag(tag *timetabledomain.Tag) *model.Tag {
 	return &model.Tag{
-		ID:       tag.ID.String(),
-		UserID:   tag.UserID.String(),
-		Name:     tag.Name.String(),
-		Position: int32(tag.Position.Int()),
+		ID:     tag.ID.String(),
+		UserID: tag.UserID.String(),
+		Name:   tag.Name.String(),
+		Order:  int16(tag.Position.Int()),
 	}
 }
