@@ -172,18 +172,18 @@ def analyze_row(row: list[str]) -> dict:
 
     module_str = row[5]
     period_str = row[6]
-    room_str = row[7]
+    location_str = row[7]
 
     module_array = re.split("\r\n", module_str)
     period_array = re.split("\r\n", period_str)
-    room_array = re.split("\r\n", room_str)
+    location_array = re.split("\r\n", location_str)
 
-    count = max([len(module_array), len(period_array), len(room_array)])
+    count = max([len(module_array), len(period_array), len(location_array)])
 
     if not (
         (len(module_array) == count or len(module_array) == 1)
         and (len(period_array) == count or len(period_array) == 1)
-        and (len(room_array) == count or len(room_array) == 1)
+        and (len(location_array) == count or len(location_array) == 1)
     ):
         course_data["error"] = True
 
@@ -214,12 +214,12 @@ def analyze_row(row: list[str]) -> dict:
                         "module": mod,
                         "period": w["period"],
                         "day": w["day"],
-                        "room": (
-                            room_array[0]
-                            if len(room_array) == 1
+                        "location": (
+                            location_array[0]
+                            if len(location_array) == 1
                             else (
-                                room_array[i]
-                                if len(room_array) > i and room_array[i]
+                                location_array[i]
+                                if len(location_array) > i and location_array[i]
                                 else ""
                             )
                         ),
