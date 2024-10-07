@@ -1,3 +1,5 @@
+import argparse
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -88,3 +90,25 @@ class KDBDownloader:
         kdb_bytes = self._download_excel(year=year)
 
         return kdb_bytes
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--year", type=int, required=True, help="academic year")
+    parser.add_argument(
+        "--output-path",
+        type=str,
+        required=True,
+        help="excel file path such as kdb.xlsx",
+    )
+    args = parser.parse_args()
+
+    kdb_downloader = KDBDownloader()
+    xlsx_bytes = kdb_downloader.download_excel(year=args.year)
+
+    with open(args.output_path, "wb") as f:
+        f.write(xlsx_bytes)
+
+
+if __name__ == "__main__":
+    main()
