@@ -127,6 +127,11 @@ export enum Day {
    * @generated from enum value: DAY_ANY_TIME = 10;
    */
   ANY_TIME = 10,
+
+  /**
+   * @generated from enum value: DAY_NT = 11;
+   */
+  NT = 11,
 }
 // Retrieve enum metadata with: proto3.getEnumType(Day)
 proto3.util.setEnumType(Day, "timetable.v1.Day", [
@@ -141,6 +146,7 @@ proto3.util.setEnumType(Day, "timetable.v1.Day", [
   { no: 8, name: "DAY_INTENSIVE" },
   { no: 9, name: "DAY_APPOINTMENT" },
   { no: 10, name: "DAY_ANY_TIME" },
+  { no: 11, name: "DAY_NT" },
 ]);
 
 /**
@@ -201,9 +207,9 @@ export class Schedule extends Message<Schedule> {
   period = 0;
 
   /**
-   * @generated from field: string rooms = 4;
+   * @generated from field: string locations = 4;
    */
-  rooms = "";
+  locations = "";
 
   constructor(data?: PartialMessage<Schedule>) {
     super();
@@ -216,7 +222,7 @@ export class Schedule extends Message<Schedule> {
     { no: 1, name: "module", kind: "enum", T: proto3.getEnumType(Module) },
     { no: 2, name: "day", kind: "enum", T: proto3.getEnumType(Day) },
     { no: 3, name: "period", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
-    { no: 4, name: "rooms", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "locations", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Schedule {
