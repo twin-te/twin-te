@@ -44,7 +44,7 @@ message Schedule {
   Module module = 1;
   Day day = 2;
   int32 period = 3;
-  string rooms = 4;
+  string locations = 4;
 }
 
 message CourseMethodList {
