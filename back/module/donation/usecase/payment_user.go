@@ -2,7 +2,6 @@ package donationusecase
 
 import (
 	"context"
-	"errors"
 	"sync"
 
 	"github.com/samber/lo"
@@ -24,24 +23,20 @@ func (uc *impl) GetOrCreatePaymentUser(ctx context.Context) (*donationdomain.Pay
 		return nil, err
 	}
 
-	paymentUser, err := uc.r.FindPaymentUser(ctx, donationport.FindPaymentUserConds{
+	paymentUserOption, err := uc.r.FindPaymentUser(ctx, donationport.FindPaymentUserConds{
 		UserID: userID,
 	}, sharedport.LockNone)
-
-	if err != nil && !errors.Is(err, sharedport.ErrNotFound) {
-		return nil, err
-	}
-
-	if err == nil {
-		return paymentUser, nil
-	}
-
-	paymentUser, err = uc.f.NewPaymentUser(userID, mo.None[shareddomain.RequiredString](), mo.None[donationdomain.Link]())
 	if err != nil {
 		return nil, err
 	}
 
-	return paymentUser, uc.r.CreatePaymentUsers(ctx, paymentUser)
+	return base.OptionOrElseByWithErr(paymentUserOption, func() (*donationdomain.PaymentUser, error) {
+		paymentUser, err := uc.f.NewPaymentUser(userID, mo.None[shareddomain.RequiredString](), mo.None[donationdomain.Link]())
+		if err != nil {
+			return nil, err
+		}
+		return paymentUser, uc.r.CreatePaymentUsers(ctx, paymentUser)
+	})
 }
 
 func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule.UpdateOrCreatePaymentUserIn) (paymentUser *donationdomain.PaymentUser, err error) {
@@ -51,38 +46,33 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx donationport.Repository) (err error) {
-		paymentUser, err = rtx.FindPaymentUser(ctx, donationport.FindPaymentUserConds{UserID: userID}, sharedport.LockExclusive)
+		paymentUserOption, err := rtx.FindPaymentUser(ctx, donationport.FindPaymentUserConds{UserID: userID}, sharedport.LockExclusive)
 		if err != nil {
 			return err
 		}
 
-		paymentUser.BeforeUpdateHook()
-		paymentUser.Update(donationdomain.PaymentUserDataToUpdate{
-			DisplayName: in.DisplayName,
-			Link:        in.Link,
-		})
-
-		return rtx.UpdatePaymentUser(ctx, paymentUser)
+		var found bool
+		paymentUser, found = paymentUserOption.Get()
+		if found {
+			paymentUser.BeforeUpdateHook()
+			paymentUser.Update(donationdomain.PaymentUserDataToUpdate{
+				DisplayName: in.DisplayName,
+				Link:        in.Link,
+			})
+			return rtx.UpdatePaymentUser(ctx, paymentUser)
+		} else {
+			paymentUser, err = uc.f.NewPaymentUser(
+				userID,
+				in.DisplayName.OrElse(mo.None[shareddomain.RequiredString]()),
+				in.Link.OrElse(mo.None[donationdomain.Link]()),
+			)
+			if err != nil {
+				return
+			}
+			return uc.r.CreatePaymentUsers(ctx, paymentUser)
+		}
 	})
-
-	if err != nil && !errors.Is(err, sharedport.ErrNotFound) {
-		return
-	}
-
-	if err == nil {
-		return
-	}
-
-	paymentUser, err = uc.f.NewPaymentUser(
-		userID,
-		in.DisplayName.OrElse(mo.None[shareddomain.RequiredString]()),
-		in.Link.OrElse(mo.None[donationdomain.Link]()),
-	)
-	if err != nil {
-		return
-	}
-
-	return paymentUser, uc.r.CreatePaymentUsers(ctx, paymentUser)
+	return paymentUser, err
 }
 
 func (uc *impl) ListContributors(ctx context.Context) ([]donationappdto.Contributor, error) {

@@ -2,19 +2,21 @@ package timetablerepository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lock sharedport.Lock) (*timetabledomain.Tag, error) {
+func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error) {
 	db := r.db.WithContext(ctx).
 		Where("id = ?", conds.ID.String())
 
@@ -31,10 +33,13 @@ func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lo
 
 	dbTag := new(timetabledbmodel.Tag)
 	if err := db.Take(&dbTag).Error; err != nil {
-		return nil, dbhelper.ConvertErrRecordNotFound(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*timetabledomain.Tag](), nil
+		}
+		return mo.None[*timetabledomain.Tag](), err
 	}
 
-	return fromDBTag(dbTag)
+	return base.SomeWithErr(fromDBTag(dbTag))
 }
 
 func (r *impl) ListTags(ctx context.Context, conds timetableport.ListTagsConds, lock sharedport.Lock) ([]*timetabledomain.Tag, error) {

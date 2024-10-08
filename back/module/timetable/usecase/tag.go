@@ -2,7 +2,6 @@ package timetableusecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/samber/lo"
@@ -54,15 +53,18 @@ func (uc impl) UpdateTag(ctx context.Context, in timetablemodule.UpdateTagIn) (t
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
-		tag, err = rtx.FindTag(ctx, timetableport.FindTagConds{
+		tagOption, err := rtx.FindTag(ctx, timetableport.FindTagConds{
 			ID:     in.ID,
 			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
-			if errors.Is(err, sharedport.ErrNotFound) {
-				return apperr.New(timetableerr.CodeTagNotFound, fmt.Sprintf("not found tag whose id is %s", in.ID))
-			}
 			return err
+		}
+
+		var found bool
+		tag, found = tagOption.Get()
+		if !found {
+			return apperr.New(timetableerr.CodeTagNotFound, fmt.Sprintf("not found tag whose id is %s", in.ID))
 		}
 
 		tag.BeforeUpdateHook()

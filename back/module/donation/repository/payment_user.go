@@ -2,18 +2,20 @@ package donationrepository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	donationdbmodel "github.com/twin-te/twin-te/back/module/donation/dbmodel"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPaymentUserConds, lock sharedport.Lock) (*donationdomain.PaymentUser, error) {
+func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPaymentUserConds, lock sharedport.Lock) (mo.Option[*donationdomain.PaymentUser], error) {
 	db := r.db.WithContext(ctx).
 		Where("user_id = ?", conds.UserID.String())
 
@@ -26,10 +28,13 @@ func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPayme
 
 	dbPaymentUser := new(donationdbmodel.PaymentUser)
 	if err := db.Take(&dbPaymentUser).Error; err != nil {
-		return nil, dbhelper.ConvertErrRecordNotFound(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*donationdomain.PaymentUser](), nil
+		}
+		return mo.None[*donationdomain.PaymentUser](), err
 	}
 
-	return donationdbmodel.FromDBPaymentUser(dbPaymentUser)
+	return base.SomeWithErr(donationdbmodel.FromDBPaymentUser(dbPaymentUser))
 }
 
 func (r *impl) ListPaymentUsers(ctx context.Context, conds donationport.ListPaymentUsersConds, lock sharedport.Lock) ([]*donationdomain.PaymentUser, error) {

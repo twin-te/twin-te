@@ -2,18 +2,20 @@ package authrepository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	authdbmodel "github.com/twin-te/twin-te/back/module/auth/dbmodel"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds, lock sharedport.Lock) (*authdomain.Session, error) {
+func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds, lock sharedport.Lock) (mo.Option[*authdomain.Session], error) {
 	db := r.db.WithContext(ctx).Where("id = ?", conds.ID.String())
 
 	if expiredAtAfter, ok := conds.ExpiredAtAfter.Get(); ok {
@@ -29,10 +31,13 @@ func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds,
 
 	dbSession := new(authdbmodel.Session)
 	if err := db.Take(dbSession).Error; err != nil {
-		return nil, dbhelper.ConvertErrRecordNotFound(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*authdomain.Session](), nil
+		}
+		return mo.None[*authdomain.Session](), err
 	}
 
-	return authdbmodel.FromDBSession(dbSession)
+	return base.SomeWithErr(authdbmodel.FromDBSession(dbSession))
 }
 
 func (r *impl) ListSessions(ctx context.Context, conds authport.ListSessionsConds, lock sharedport.Lock) ([]*authdomain.Session, error) {

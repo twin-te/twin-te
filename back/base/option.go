@@ -58,3 +58,10 @@ func SomeWithErr[T any](value T, err error) (mo.Option[T], error) {
 	}
 	return mo.Some(value), nil
 }
+
+func OptionOrElseByWithErr[T any](o mo.Option[T], fallback func() (T, error)) (T, error) {
+	if value, ok := o.Get(); ok {
+		return value, nil
+	}
+	return fallback()
+}

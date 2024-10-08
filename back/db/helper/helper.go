@@ -2,23 +2,13 @@ package dbhelper
 
 import (
 	"database/sql"
-	"errors"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/appenv"
-	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
-
-// ConvertErrRecordNotFound converts gorm.ErrRecordNotFound into sharedport.ErrNotFound,
-func ConvertErrRecordNotFound(err error) error {
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return sharedport.ErrNotFound
-	}
-	return err
-}
 
 func NewDB() (*gorm.DB, error) {
 	return gorm.Open(postgres.New(postgres.Config{

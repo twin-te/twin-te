@@ -2,7 +2,6 @@ package timetableusecase
 
 import (
 	"context"
-	"errors"
 	"sort"
 	"strings"
 	"sync"
@@ -104,18 +103,16 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 
 	for _, courseWithoutID := range courseWithoutIDs {
 		err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
-			savedCourse, err := rtx.FindCourse(ctx, timetableport.FindCourseConds{
+			courseOption, err := rtx.FindCourse(ctx, timetableport.FindCourseConds{
 				Year: year,
 				Code: courseWithoutID.Code,
 			}, sharedport.LockExclusive)
-
-			isErrNotFound := errors.Is(err, sharedport.ErrNotFound)
-
-			if err != nil && !isErrNotFound {
+			if err != nil {
 				return err
 			}
 
-			if isErrNotFound {
+			course, found := courseOption.Get()
+			if !found {
 				newCourse, err := uc.f.NewCourse(courseWithoutID)
 				if err != nil {
 					return err
@@ -123,9 +120,9 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 				return rtx.CreateCourses(ctx, newCourse)
 			}
 
-			if courseWithoutID.LastUpdatedAt.After(savedCourse.LastUpdatedAt) {
-				savedCourse.BeforeUpdateHook()
-				savedCourse.Update(timetabledomain.CourseDataToUpdate{
+			if courseWithoutID.LastUpdatedAt.After(course.LastUpdatedAt) {
+				course.BeforeUpdateHook()
+				course.Update(timetabledomain.CourseDataToUpdate{
 					Name:              mo.Some(courseWithoutID.Name),
 					Instructors:       mo.Some(courseWithoutID.Instructors),
 					Credit:            mo.Some(courseWithoutID.Credit),
@@ -138,7 +135,7 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 					Methods:           mo.Some(courseWithoutID.Methods),
 					Schedules:         mo.Some(courseWithoutID.Schedules),
 				})
-				return rtx.UpdateCourse(ctx, savedCourse)
+				return rtx.UpdateCourse(ctx, course)
 			}
 
 			return nil

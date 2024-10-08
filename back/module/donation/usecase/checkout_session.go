@@ -2,7 +2,6 @@ package donationusecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/samber/mo"
@@ -10,7 +9,6 @@ import (
 	donationerr "github.com/twin-te/twin-te/back/module/donation/err"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
-	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (idtype.CheckoutSessionID, error) {
@@ -38,15 +36,16 @@ func (uc *impl) CreateSubscriptionCheckoutSession(ctx context.Context, subscript
 		return "", err
 	}
 
-	_, err = uc.i.FindSubscriptionPlan(ctx, subscriptionPlanID)
+	subscriptionPlanOption, err := uc.i.FindSubscriptionPlan(ctx, subscriptionPlanID)
 	if err != nil {
-		if errors.Is(err, sharedport.ErrNotFound) {
-			return "", apperr.New(
-				donationerr.CodeSubscriptionPlanNotFound,
-				fmt.Sprintf("not found subscription plan (%s)", subscriptionPlanID),
-			)
-		}
-		return "", err
+		return "", nil
+	}
+
+	if subscriptionPlanOption.IsAbsent() {
+		return "", apperr.New(
+			donationerr.CodeSubscriptionPlanNotFound,
+			fmt.Sprintf("not found subscription plan (%s)", subscriptionPlanID),
+		)
 	}
 
 	activeSubscription, err := uc.GetActiveSubscription(ctx)
@@ -56,14 +55,13 @@ func (uc *impl) CreateSubscriptionCheckoutSession(ctx context.Context, subscript
 			donationerr.CodeActiveSubscriptionAlreadyExists,
 			fmt.Sprintf("user (%s) has already active subscription (%s)", userID, activeSubscription.ID),
 		)
-	case !apperr.Is(err, donationerr.CodeSubscriptionNotFound):
+	case apperr.Is(err, donationerr.CodeSubscriptionNotFound):
+		paymentUser, err := uc.GetOrCreatePaymentUser(ctx)
+		if err != nil {
+			return "", nil
+		}
+		return uc.i.CreateSubscriptionCheckoutSession(ctx, paymentUser.ID, subscriptionPlanID)
+	default:
 		return "", err
 	}
-
-	paymentUser, err := uc.GetOrCreatePaymentUser(ctx)
-	if err != nil {
-		return "", nil
-	}
-
-	return uc.i.CreateSubscriptionCheckoutSession(ctx, paymentUser.ID, subscriptionPlanID)
 }

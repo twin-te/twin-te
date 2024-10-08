@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
@@ -13,19 +14,19 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (r *impl) FindAnnouncement(ctx context.Context, conds announcementport.FindAnnouncementConds, lock sharedport.Lock) (*announcementdomain.Announcement, error) {
+func (r *impl) FindAnnouncement(ctx context.Context, conds announcementport.FindAnnouncementConds, lock sharedport.Lock) (mo.Option[*announcementdomain.Announcement], error) {
 	announcement, ok := lo.Find(r.announcements, func(announcement *announcementdomain.Announcement) bool {
 		return conds.ID == announcement.ID
 	})
 	if !ok {
-		return nil, sharedport.ErrNotFound
+		return mo.None[*announcementdomain.Announcement](), nil
 	}
 
 	if publishedAtBefore, ok := conds.PublishedAtBefore.Get(); ok && !announcement.PublishedAt.Before(publishedAtBefore) {
-		return nil, sharedport.ErrNotFound
+		return mo.None[*announcementdomain.Announcement](), nil
 	}
 
-	return announcement.Clone(), nil
+	return mo.Some(announcement.Clone()), nil
 }
 
 func (r *impl) ListAnnouncements(ctx context.Context, conds announcementport.ListAnnouncementsConds, lock sharedport.Lock) ([]*announcementdomain.Announcement, error) {
