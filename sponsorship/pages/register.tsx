@@ -27,7 +27,7 @@ const Register: NextPage = () => {
 			useCase.checkAuthentication().then((isAuthenticated) => {
 				setIsAuthenticated(isAuthenticated);
 			}),
-			useCase.getSubscriptionPlans().then((subscriptionPlans) => {
+			useCase.listSubscriptionPlans().then((subscriptionPlans) => {
 				if (subscriptionPlans.length === 0) throw new Error('not found subscription plans');
 				subscriptionPlans.sort((planA, planB) => planA.amount - planB.amount);
 				setSubscriptionPlans(subscriptionPlans);

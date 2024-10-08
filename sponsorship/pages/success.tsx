@@ -16,7 +16,7 @@ const Success: NextPage = () => {
 
 	useEffect(() => {
 		useCase
-			.getSubscriptionPlans()
+			.listSubscriptionPlans()
 			.then((subscriptionPlans) => {
 				subscriptionPlans.sort((planA, planB) => planA.amount - planB.amount);
 				setSubscriptionPlans(subscriptionPlans);

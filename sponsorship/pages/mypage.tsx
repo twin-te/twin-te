@@ -55,7 +55,7 @@ const MyPage: NextPage = () => {
 							if (isNotFoundError(error)) return;
 							throw error;
 						}),
-					useCase.getPaymentHistories().then((paymentHistories) => {
+					useCase.listPaymentHistories().then((paymentHistories) => {
 						setPaymentHistories(paymentHistories);
 					})
 				]);

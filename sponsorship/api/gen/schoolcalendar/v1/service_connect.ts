@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GetEventsByDateRequest, GetEventsByDateResponse, GetModuleByDateRequest, GetModuleByDateResponse } from "./service_pb";
+import { GetModuleByDateRequest, GetModuleByDateResponse, ListEventsByDateRequest, ListEventsByDateResponse } from "./service_pb";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -18,12 +18,12 @@ export const SchoolCalendarService = {
   typeName: "schoolcalendar.v1.SchoolCalendarService",
   methods: {
     /**
-     * @generated from rpc schoolcalendar.v1.SchoolCalendarService.GetEventsByDate
+     * @generated from rpc schoolcalendar.v1.SchoolCalendarService.ListEventsByDate
      */
-    getEventsByDate: {
-      name: "GetEventsByDate",
-      I: GetEventsByDateRequest,
-      O: GetEventsByDateResponse,
+    listEventsByDate: {
+      name: "ListEventsByDate",
+      I: ListEventsByDateRequest,
+      O: ListEventsByDateResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
