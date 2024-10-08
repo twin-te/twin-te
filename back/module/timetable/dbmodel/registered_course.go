@@ -1,12 +1,14 @@
 package timetabledbmodel
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
@@ -21,7 +23,7 @@ type RegisteredCourse struct {
 	Instructors mo.Option[string]
 	Credit      mo.Option[string]
 	Methods     mo.Option[string]
-	Schedules   mo.Option[[]byte]
+	Schedules   sql.Null[string] // error will be occurred if mo.Option is used
 	Memo        string
 	Attendance  int
 	Absence     int
@@ -73,7 +75,7 @@ func FromDBRegisteredCourse(dbRegisteredCourse *RegisteredCourse) (*timetabledom
 			return err
 		}
 
-		registeredCourse.Schedules, err = base.OptionMapWithErr(dbRegisteredCourse.Schedules, FromDBRegisteredCourseSchedules)
+		registeredCourse.Schedules, err = base.OptionMapWithErr(dbhelper.NullToOption(dbRegisteredCourse.Schedules), FromDBRegisteredCourseSchedules)
 		if err != nil {
 			return err
 		}
@@ -121,10 +123,11 @@ func ToDBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse, wi
 	}
 
 	var err error
-	dbRegisteredCourse.Schedules, err = base.OptionMapWithErr(registeredCourse.Schedules, ToDBRegisteredCourseSchedulesJSON)
+	stringOption, err := base.OptionMapWithErr(registeredCourse.Schedules, ToDBRegisteredCourseSchedulesJSON)
 	if err != nil {
 		return nil, err
 	}
+	dbRegisteredCourse.Schedules = dbhelper.OptionToNull(stringOption)
 
 	if withAssociations {
 		dbRegisteredCourse.Tags = base.MapWithArg(registeredCourse.TagIDs, registeredCourse.ID, ToDBRegisteredCourseTag)
@@ -155,10 +158,10 @@ func ToDBRegisteredCourseMethods(methods []timetabledomain.CourseMethod) string 
 	return fmt.Sprintf("{%s}", strings.Join(base.MapByString(methods), ","))
 }
 
-func FromDBRegisteredCourseSchedules(data []byte) ([]timetabledomain.Schedule, error) {
+func FromDBRegisteredCourseSchedules(data string) ([]timetabledomain.Schedule, error) {
 	var dbRegisteredCourseSchedules []dbRegisteredCourseSchedule
 
-	if err := json.Unmarshal(data, &dbRegisteredCourseSchedules); err != nil {
+	if err := json.Unmarshal([]byte(data), &dbRegisteredCourseSchedules); err != nil {
 		return nil, err
 	}
 
@@ -172,7 +175,7 @@ func FromDBRegisteredCourseSchedules(data []byte) ([]timetabledomain.Schedule, e
 	})
 }
 
-func ToDBRegisteredCourseSchedulesJSON(schedules []timetabledomain.Schedule) ([]byte, error) {
+func ToDBRegisteredCourseSchedulesJSON(schedules []timetabledomain.Schedule) (string, error) {
 	dbRegisteredCourseSchedules := base.Map(schedules, func(schedule timetabledomain.Schedule) *dbRegisteredCourseSchedule {
 		return &dbRegisteredCourseSchedule{
 			Module:    schedule.Module.String(),
@@ -184,10 +187,10 @@ func ToDBRegisteredCourseSchedulesJSON(schedules []timetabledomain.Schedule) ([]
 
 	data, err := json.Marshal(dbRegisteredCourseSchedules)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return data, nil
+	return string(data), nil
 }
 
 func FromDBRegisteredCourseTag(dbRegisteredCourseTag RegisteredCourseTag) (idtype.TagID, error) {
