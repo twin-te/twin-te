@@ -51,7 +51,7 @@ func FromDBCourse(dbCourse *Course) (*timetabledomain.Course, error) {
 			return err
 		}
 
-		c.Year, err = shareddomain.ParseAcademicYear(int(dbCourse.Year))
+		c.Year, err = shareddomain.ParseAcademicYear(dbCourse.Year)
 		if err != nil {
 			return err
 		}
@@ -131,7 +131,7 @@ func ToDBCourseMethod(method timetabledomain.CourseMethod, courseID idtype.Cours
 }
 
 func FromDBRecommendedGrade(dbRecommendedGrade CourseRecommendedGrade) (timetabledomain.RecommendedGrade, error) {
-	return timetabledomain.ParseRecommendedGrade(int(dbRecommendedGrade.RecommendedGrade))
+	return timetabledomain.ParseRecommendedGrade(dbRecommendedGrade.RecommendedGrade)
 }
 
 func ToDBRecommendedGrade(recommendedGrade timetabledomain.RecommendedGrade, courseID idtype.CourseID) CourseRecommendedGrade {

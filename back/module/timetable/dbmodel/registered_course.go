@@ -46,7 +46,7 @@ func FromDBRegisteredCourse(dbRegisteredCourse *RegisteredCourse) (*timetabledom
 			return err
 		}
 
-		registeredCourse.Year, err = shareddomain.ParseAcademicYear(int(dbRegisteredCourse.Year))
+		registeredCourse.Year, err = shareddomain.ParseAcademicYear(dbRegisteredCourse.Year)
 		if err != nil {
 			return err
 		}
@@ -80,17 +80,17 @@ func FromDBRegisteredCourse(dbRegisteredCourse *RegisteredCourse) (*timetabledom
 
 		registeredCourse.Memo = dbRegisteredCourse.Memo
 
-		registeredCourse.Attendance, err = timetabledomain.ParseAttendance(int(dbRegisteredCourse.Attendance))
+		registeredCourse.Attendance, err = timetabledomain.ParseAttendance(dbRegisteredCourse.Attendance)
 		if err != nil {
 			return
 		}
 
-		registeredCourse.Absence, err = timetabledomain.ParseAbsence(int(dbRegisteredCourse.Absence))
+		registeredCourse.Absence, err = timetabledomain.ParseAbsence(dbRegisteredCourse.Absence)
 		if err != nil {
 			return
 		}
 
-		registeredCourse.Late, err = timetabledomain.ParseLate(int(dbRegisteredCourse.Late))
+		registeredCourse.Late, err = timetabledomain.ParseLate(dbRegisteredCourse.Late)
 		if err != nil {
 			return
 		}
