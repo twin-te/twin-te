@@ -13,11 +13,11 @@ import (
 type Repository interface {
 	Transaction(ctx context.Context, fn func(rtx Repository) error) error
 
-	FindAnnouncement(ctx context.Context, conds FindAnnouncementConds, lock sharedport.Lock) (*announcementdomain.Announcement, error)
+	FindAnnouncement(ctx context.Context, conds FindAnnouncementConds, lock sharedport.Lock) (mo.Option[*announcementdomain.Announcement], error)
 	ListAnnouncements(ctx context.Context, conds ListAnnouncementsConds, lock sharedport.Lock) ([]*announcementdomain.Announcement, error)
 	CreateAnnouncements(ctx context.Context, announcements ...*announcementdomain.Announcement) error
 
-	FindAlreadyRead(ctx context.Context, conds FindAlreadyReadConds, lock sharedport.Lock) (*announcementdomain.AlreadyRead, error)
+	FindAlreadyRead(ctx context.Context, conds FindAlreadyReadConds, lock sharedport.Lock) (mo.Option[*announcementdomain.AlreadyRead], error)
 	ListAlreadyReads(ctx context.Context, conds ListAlreadyReadsConds, lock sharedport.Lock) ([]*announcementdomain.AlreadyRead, error)
 	CreateAlreadyReads(ctx context.Context, alreadyReads ...*announcementdomain.AlreadyRead) error
 	DeleteAlreadyReads(ctx context.Context, conds DeleteAlreadyReadsConds) (rowsAffected int, err error)

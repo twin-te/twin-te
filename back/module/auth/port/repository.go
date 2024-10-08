@@ -14,13 +14,13 @@ import (
 type Repository interface {
 	Transaction(ctx context.Context, fn func(rtx Repository) error) error
 
-	FindUser(ctx context.Context, conds FindUserConds, lock sharedport.Lock) (*authdomain.User, error)
+	FindUser(ctx context.Context, conds FindUserConds, lock sharedport.Lock) (mo.Option[*authdomain.User], error)
 	ListUsers(ctx context.Context, conds ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error)
 	CreateUsers(ctx context.Context, users ...*authdomain.User) error
 	UpdateUser(ctx context.Context, user *authdomain.User) error
 	DeleteUsers(ctx context.Context, conds DeleteUserConds) (rowsAffected int, err error)
 
-	FindSession(ctx context.Context, conds FindSessionConds, lock sharedport.Lock) (*authdomain.Session, error)
+	FindSession(ctx context.Context, conds FindSessionConds, lock sharedport.Lock) (mo.Option[*authdomain.Session], error)
 	ListSessions(ctx context.Context, conds ListSessionsConds, lock sharedport.Lock) ([]*authdomain.Session, error)
 	CreateSessions(ctx context.Context, sessions ...*authdomain.Session) error
 	DeleteSessions(ctx context.Context, conds DeleteSessionsConds) (rowsAffected int, err error)

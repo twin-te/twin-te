@@ -2,10 +2,11 @@ package timetablerepository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
@@ -14,11 +15,11 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseConds, lock sharedport.Lock) (*timetabledomain.Course, error) {
+func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error) {
 	dbCourse := new(timetabledbmodel.Course)
 
 	err := r.db.Transaction(func(tx *gorm.DB) error {
-		err := tx.
+		return tx.
 			WithContext(ctx).
 			Where("year = ?", conds.Year.Int()).
 			Where("code = ?", conds.Code.String()).
@@ -31,13 +32,15 @@ func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseCon
 			Preload("Schedules").
 			Take(dbCourse).
 			Error
-		return dbhelper.ConvertErrRecordNotFound(err)
 	}, nil)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*timetabledomain.Course](), nil
+		}
+		return mo.None[*timetabledomain.Course](), err
 	}
 
-	return timetabledbmodel.FromDBCourse(dbCourse)
+	return base.SomeWithErr(timetabledbmodel.FromDBCourse(dbCourse))
 }
 
 func (r *impl) ListCourses(ctx context.Context, conds timetableport.ListCoursesConds, lock sharedport.Lock) ([]*timetabledomain.Course, error) {

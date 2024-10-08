@@ -2,11 +2,11 @@ package authusecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
+	"github.com/twin-te/twin-te/back/base"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	autherr "github.com/twin-te/twin-te/back/module/auth/err"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
@@ -14,18 +14,20 @@ import (
 )
 
 func (uc *impl) SignUpOrLogin(ctx context.Context, userAuthentication authdomain.UserAuthentication) (*authdomain.Session, error) {
-	user, err := uc.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := uc.r.FindUser(ctx, authport.FindUserConds{
 		UserAuthentication: mo.Some(userAuthentication),
 	}, sharedport.LockNone)
+	if err != nil {
+		return nil, err
+	}
 
-	if errors.Is(err, sharedport.ErrNotFound) {
-		user, err = uc.f.NewUser(userAuthentication)
+	user, err := base.OptionOrElseByWithErr(userOption, func() (*authdomain.User, error) {
+		user, err := uc.f.NewUser(userAuthentication)
 		if err != nil {
 			return nil, err
 		}
-		err = uc.r.CreateUsers(ctx, user)
-	}
-
+		return user, uc.r.CreateUsers(ctx, user)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +45,14 @@ func (uc *impl) GetMe(ctx context.Context) (*authdomain.User, error) {
 		return nil, err
 	}
 
-	return uc.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := uc.r.FindUser(ctx, authport.FindUserConds{
 		ID: mo.Some(userID),
 	}, sharedport.LockNone)
+	if err != nil {
+		return nil, err
+	}
+
+	return userOption.MustGet(), nil
 }
 
 func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication authdomain.UserAuthentication) error {
@@ -54,24 +61,25 @@ func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication au
 		return err
 	}
 
-	_, err = uc.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := uc.r.FindUser(ctx, authport.FindUserConds{
 		UserAuthentication: mo.Some(userAuthentication),
 	}, sharedport.LockNone)
-	if !errors.Is(err, sharedport.ErrNotFound) {
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
+	}
+	if userOption.IsPresent() {
 		return apperr.New(autherr.CodeUserAuthenticationAlreadyExists, fmt.Sprintf("the given user authentication already exists, %+v", userAuthentication))
 	}
 
 	return uc.r.Transaction(ctx, func(rtx authport.Repository) error {
-		user, err := rtx.FindUser(ctx, authport.FindUserConds{
+		userOption, err := rtx.FindUser(ctx, authport.FindUserConds{
 			ID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			return err
 		}
 
+		user := userOption.MustGet()
 		user.BeforeUpdateHook()
 		if err := user.AddAuthentication(userAuthentication); err != nil {
 			return err
@@ -87,13 +95,14 @@ func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomai
 	}
 
 	return uc.r.Transaction(ctx, func(rtx authport.Repository) error {
-		user, err := rtx.FindUser(ctx, authport.FindUserConds{
+		userOption, err := rtx.FindUser(ctx, authport.FindUserConds{
 			ID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			return err
 		}
 
+		user := userOption.MustGet()
 		user.BeforeUpdateHook()
 		if err := user.DeleteAuthentication(provider); err != nil {
 			return err

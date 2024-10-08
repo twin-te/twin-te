@@ -15,14 +15,14 @@ type Repository interface {
 
 	// Course
 
-	FindCourse(ctx context.Context, conds FindCourseConds, lock sharedport.Lock) (*timetabledomain.Course, error)
+	FindCourse(ctx context.Context, conds FindCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error)
 	ListCourses(ctx context.Context, conds ListCoursesConds, lock sharedport.Lock) ([]*timetabledomain.Course, error)
 	CreateCourses(ctx context.Context, courses ...*timetabledomain.Course) error
 	UpdateCourse(ctx context.Context, course *timetabledomain.Course) error
 
 	// RegisteredCourse
 
-	FindRegisteredCourse(ctx context.Context, conds FindRegisteredCourseConds, lock sharedport.Lock) (*timetabledomain.RegisteredCourse, error)
+	FindRegisteredCourse(ctx context.Context, conds FindRegisteredCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error)
 	ListRegisteredCourses(ctx context.Context, conds ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error)
 	CreateRegisteredCourses(ctx context.Context, registeredCourses ...*timetabledomain.RegisteredCourse) error
 	UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error
@@ -32,7 +32,7 @@ type Repository interface {
 
 	// Tag
 
-	FindTag(ctx context.Context, conds FindTagConds, lock sharedport.Lock) (*timetabledomain.Tag, error)
+	FindTag(ctx context.Context, conds FindTagConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error)
 	ListTags(ctx context.Context, conds ListTagsConds, lock sharedport.Lock) ([]*timetabledomain.Tag, error)
 	CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) error
 	UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error

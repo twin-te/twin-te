@@ -2,13 +2,13 @@ package timetablerepository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
@@ -18,7 +18,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.FindRegisteredCourseConds, lock sharedport.Lock) (*timetabledomain.RegisteredCourse, error) {
+func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.FindRegisteredCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error) {
 	db := r.db.WithContext(ctx).Where("id = ?", conds.ID.String())
 
 	if usreID, ok := conds.UserID.Get(); ok {
@@ -33,14 +33,16 @@ func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.Fin
 	dbRegisteredCourse := new(timetabledbmodel.RegisteredCourse)
 
 	err := db.Transaction(func(tx *gorm.DB) error {
-		err := tx.Preload("Tags").Take(dbRegisteredCourse).Error
-		return dbhelper.ConvertErrRecordNotFound(err)
+		return tx.Preload("Tags").Take(dbRegisteredCourse).Error
 	})
 	if err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*timetabledomain.RegisteredCourse](), nil
+		}
+		return mo.None[*timetabledomain.RegisteredCourse](), err
 	}
 
-	return timetabledbmodel.FromDBRegisteredCourse(dbRegisteredCourse)
+	return base.SomeWithErr(timetabledbmodel.FromDBRegisteredCourse(dbRegisteredCourse))
 }
 
 func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error) {

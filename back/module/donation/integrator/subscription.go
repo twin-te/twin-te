@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/plan"
 	"github.com/stripe/stripe-go/v76/subscription"
 	"github.com/twin-te/twin-te/back/base"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
-	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
 func (i *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.PaymentUserID) ([]*donationdomain.Subscription, error) {
@@ -70,16 +70,14 @@ func (i *impl) DeleteSubscription(ctx context.Context, id idtype.SubscriptionID)
 	return
 }
 
-func (i *impl) FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (*donationdomain.SubscriptionPlan, error) {
+func (i *impl) FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (mo.Option[*donationdomain.SubscriptionPlan], error) {
 	subscriptionPlan, ok := lo.Find(i.subscriptionPlans, func(plan *donationdomain.SubscriptionPlan) bool {
 		return plan.ID == id
 	})
-
-	if ok {
-		return subscriptionPlan, nil
+	if !ok {
+		return mo.None[*donationdomain.SubscriptionPlan](), nil
 	}
-
-	return nil, sharedport.ErrNotFound
+	return mo.Some(subscriptionPlan), nil
 }
 
 func (i *impl) ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error) {

@@ -2,7 +2,6 @@ package timetableusecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/samber/lo"
@@ -152,15 +151,18 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) (err error) {
-		registeredCourse, err = rtx.FindRegisteredCourse(ctx, timetableport.FindRegisteredCourseConds{
+		registeredCourseOption, err := rtx.FindRegisteredCourse(ctx, timetableport.FindRegisteredCourseConds{
 			ID:     in.ID,
 			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
-			if errors.Is(err, sharedport.ErrNotFound) {
-				return apperr.New(timetableerr.CodeRegisteredCourseNotFound, fmt.Sprintf("not found registered course whose id is %s", in.ID))
-			}
 			return err
+		}
+
+		var found bool
+		registeredCourse, found = registeredCourseOption.Get()
+		if !found {
+			return apperr.New(timetableerr.CodeRegisteredCourseNotFound, fmt.Sprintf("not found registered course whose id is %s", in.ID))
 		}
 
 		if err := uc.r.LoadCourseAssociationToRegisteredCourse(ctx, []*timetabledomain.RegisteredCourse{registeredCourse}, sharedport.LockNone); err != nil {

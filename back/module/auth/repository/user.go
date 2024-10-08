@@ -2,11 +2,12 @@ package authrepository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	authdbmodel "github.com/twin-te/twin-te/back/module/auth/dbmodel"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
@@ -15,9 +16,9 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock sharedport.Lock) (*authdomain.User, error) {
+func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock sharedport.Lock) (mo.Option[*authdomain.User], error) {
 	if err := conds.Validate(); err != nil {
-		return nil, err
+		return mo.None[*authdomain.User](), err
 	}
 
 	dbUser := new(authdbmodel.User)
@@ -47,10 +48,13 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 			Error
 	}, nil)
 	if err != nil {
-		return nil, dbhelper.ConvertErrRecordNotFound(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*authdomain.User](), nil
+		}
+		return mo.None[*authdomain.User](), err
 	}
 
-	return authdbmodel.FromDBUser(dbUser)
+	return base.SomeWithErr(authdbmodel.FromDBUser(dbUser))
 }
 
 func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error) {

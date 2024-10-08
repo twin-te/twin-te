@@ -3,6 +3,7 @@ package donationport
 import (
 	"context"
 
+	"github.com/samber/mo"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
@@ -13,7 +14,7 @@ type Repository interface {
 
 	// PaymentUser
 
-	FindPaymentUser(ctx context.Context, conds FindPaymentUserConds, lock sharedport.Lock) (*donationdomain.PaymentUser, error)
+	FindPaymentUser(ctx context.Context, conds FindPaymentUserConds, lock sharedport.Lock) (mo.Option[*donationdomain.PaymentUser], error)
 	ListPaymentUsers(ctx context.Context, conds ListPaymentUsersConds, lock sharedport.Lock) ([]*donationdomain.PaymentUser, error)
 	CreatePaymentUsers(ctx context.Context, paymentUsers ...*donationdomain.PaymentUser) error
 	UpdatePaymentUser(ctx context.Context, paymentUser *donationdomain.PaymentUser) error

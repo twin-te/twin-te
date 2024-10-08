@@ -2,18 +2,20 @@ package announcementrepository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
-	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	announcementdbmodel "github.com/twin-te/twin-te/back/module/announcement/dbmodel"
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindAlreadyReadConds, lock sharedport.Lock) (*announcementdomain.AlreadyRead, error) {
+func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindAlreadyReadConds, lock sharedport.Lock) (mo.Option[*announcementdomain.AlreadyRead], error) {
 	db := r.db.
 		WithContext(ctx).
 		Where("user_id = ?", conds.UserID.String()).
@@ -28,10 +30,13 @@ func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindA
 
 	dbAlreadyRead := new(announcementdbmodel.AlreadyRead)
 	if err := db.Take(dbAlreadyRead).Error; err != nil {
-		return nil, dbhelper.ConvertErrRecordNotFound(err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return mo.None[*announcementdomain.AlreadyRead](), nil
+		}
+		return mo.None[*announcementdomain.AlreadyRead](), err
 	}
 
-	return announcementdbmodel.FromDBAlreadyRead(dbAlreadyRead)
+	return base.SomeWithErr(announcementdbmodel.FromDBAlreadyRead(dbAlreadyRead))
 }
 
 func (r *impl) ListAlreadyReads(ctx context.Context, conds announcementport.ListAlreadyReadsConds, lock sharedport.Lock) ([]*announcementdomain.AlreadyRead, error) {
