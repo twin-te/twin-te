@@ -96,7 +96,7 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 		return err
 	}
 
-	courseWithoutIDs, err := uc.i.GetCourseWithoutIDsFromKdB(ctx, year)
+	courseWithoutIDs, err := uc.i.ListCourseWithoutIDsFromKdB(ctx, year)
 	if err != nil {
 		return err
 	}

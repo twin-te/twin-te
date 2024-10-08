@@ -12,7 +12,7 @@ import (
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
-func (i *impl) GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error) {
+func (i *impl) ListCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error) {
 	kdbCourses, err := loadKdBCourseFromJSON(i.kdbJSONFilePath)
 	if err != nil {
 		return nil, err
