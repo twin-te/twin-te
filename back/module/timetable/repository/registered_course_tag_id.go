@@ -3,8 +3,7 @@ package timetablerepository
 import (
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	"gorm.io/gorm"
 )
@@ -14,32 +13,19 @@ func (r *impl) updateRegisteredCourseTagIDs(db *gorm.DB, registeredCourse *timet
 	toCreate, toDelete := lo.Difference(registeredCourse.TagIDs, before.TagIDs)
 
 	if len(toCreate) != 0 {
-		dbTags := base.MapWithArg(toCreate, registeredCourse.ID, toDBRegisteredCourseTag)
-
+		dbTags := base.MapWithArg(toCreate, registeredCourse.ID, timetabledbmodel.ToDBRegisteredCourseTag)
 		if err := db.Create(dbTags).Error; err != nil {
 			return err
 		}
 	}
 
 	if len(toDelete) != 0 {
-		if err := db.Where("registered_course = ?", registeredCourse.ID.String()).
-			Where("tag IN ?", base.MapByString(toDelete)).
-			Delete(&model.RegisteredCourseTag{}).
-			Error; err != nil {
-			return err
-		}
+		return db.
+			Where("registered_course_id = ?", registeredCourse.ID.String()).
+			Where("tag_id IN ?", base.MapByString(toDelete)).
+			Delete(&timetabledbmodel.RegisteredCourseTag{}).
+			Error
 	}
 
 	return nil
-}
-
-func fromDBRegisteredCourseTag(dbRegisteredCourseTag model.RegisteredCourseTag) (idtype.TagID, error) {
-	return idtype.ParseTagID(dbRegisteredCourseTag.TagID)
-}
-
-func toDBRegisteredCourseTag(tagID idtype.TagID, registeredCourseID idtype.RegisteredCourseID) model.RegisteredCourseTag {
-	return model.RegisteredCourseTag{
-		RegisteredCourseID: registeredCourseID.String(),
-		TagID:              tagID.String(),
-	}
 }

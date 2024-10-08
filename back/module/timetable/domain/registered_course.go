@@ -44,12 +44,12 @@ type RegisteredCourse struct {
 	ID          idtype.RegisteredCourseID
 	UserID      idtype.UserID
 	Year        shareddomain.AcademicYear
-	CourseID    *idtype.CourseID
-	Name        *shareddomain.RequiredString
-	Instructors *string
-	Credit      *Credit
-	Methods     *[]CourseMethod
-	Schedules   *[]Schedule
+	CourseID    mo.Option[idtype.CourseID]
+	Name        mo.Option[shareddomain.RequiredString]
+	Instructors mo.Option[string]
+	Credit      mo.Option[Credit]
+	Methods     mo.Option[[]CourseMethod]
+	Schedules   mo.Option[[]Schedule]
 	Memo        string
 	Attendance  shareddomain.NonNegativeInt
 	Absence     shareddomain.NonNegativeInt

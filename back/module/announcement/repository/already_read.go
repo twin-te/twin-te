@@ -5,11 +5,10 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
+	announcementdbmodel "github.com/twin-te/twin-te/back/module/announcement/dbmodel"
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/gorm/clause"
 )
@@ -17,8 +16,8 @@ import (
 func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindAlreadyReadConds, lock sharedport.Lock) (*announcementdomain.AlreadyRead, error) {
 	db := r.db.
 		WithContext(ctx).
-		Where("read_user = ?", conds.UserID.String()).
-		Where("information_id = ?", conds.AnnouncementID.String())
+		Where("user_id = ?", conds.UserID.String()).
+		Where("announcement_id = ?", conds.AnnouncementID.String())
 
 	if lock != sharedport.LockNone {
 		db = db.Clauses(clause.Locking{
@@ -27,23 +26,23 @@ func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindA
 		})
 	}
 
-	dbAlreadyRead := new(model.AlreadyRead)
+	dbAlreadyRead := new(announcementdbmodel.AlreadyRead)
 	if err := db.Take(dbAlreadyRead).Error; err != nil {
 		return nil, dbhelper.ConvertErrRecordNotFound(err)
 	}
 
-	return fromDBAlreadyRead(dbAlreadyRead)
+	return announcementdbmodel.FromDBAlreadyRead(dbAlreadyRead)
 }
 
 func (r *impl) ListAlreadyReads(ctx context.Context, conds announcementport.ListAlreadyReadsConds, lock sharedport.Lock) ([]*announcementdomain.AlreadyRead, error) {
 	db := r.db.WithContext(ctx)
 
 	if conds.UserID != nil {
-		db = db.Where("read_user = ?", conds.UserID.String())
+		db = db.Where("user_id = ?", conds.UserID.String())
 	}
 
 	if conds.AnnouncementIDs != nil {
-		db = db.Where("information_id IN ?", base.MapByString(*conds.AnnouncementIDs))
+		db = db.Where("announcement_id IN ?", base.MapByString(*conds.AnnouncementIDs))
 	}
 
 	if lock != sharedport.LockNone {
@@ -53,16 +52,16 @@ func (r *impl) ListAlreadyReads(ctx context.Context, conds announcementport.List
 		})
 	}
 
-	var dbAlreadyReads []*model.AlreadyRead
+	var dbAlreadyReads []*announcementdbmodel.AlreadyRead
 	if err := db.Find(&dbAlreadyReads).Error; err != nil {
 		return nil, err
 	}
 
-	return base.MapWithErr(dbAlreadyReads, fromDBAlreadyRead)
+	return base.MapWithErr(dbAlreadyReads, announcementdbmodel.FromDBAlreadyRead)
 }
 
 func (r *impl) CreateAlreadyReads(ctx context.Context, alreadyReads ...*announcementdomain.AlreadyRead) error {
-	dbAlreadyReads := base.Map(alreadyReads, toDBAlreadyRead)
+	dbAlreadyReads := base.Map(alreadyReads, announcementdbmodel.ToDBAlreadyRead)
 	return r.db.WithContext(ctx).Create(dbAlreadyReads).Error
 }
 
@@ -70,44 +69,12 @@ func (r *impl) DeleteAlreadyReads(ctx context.Context, conds announcementport.De
 	db := r.db.WithContext(ctx)
 
 	if conds.UserID != nil {
-		db = db.Where("read_user = ?", conds.UserID.String())
+		db = db.Where("user_id = ?", conds.UserID.String())
 	}
 
 	if conds.AnnouncementID != nil {
-		db = db.Where("information_id = ?", conds.AnnouncementID.String())
+		db = db.Where("announcement_id = ?", conds.AnnouncementID.String())
 	}
 
-	return int(db.Delete(&model.AlreadyRead{}).RowsAffected), db.Error
-}
-
-func fromDBAlreadyRead(dbAlreadyRead *model.AlreadyRead) (*announcementdomain.AlreadyRead, error) {
-	return announcementdomain.ConstructAlreadyRead(func(ar *announcementdomain.AlreadyRead) (err error) {
-		ar.ID, err = idtype.ParseAlreadyReadID(dbAlreadyRead.ID)
-		if err != nil {
-			return
-		}
-
-		ar.UserID, err = idtype.ParseUserID(dbAlreadyRead.UserID)
-		if err != nil {
-			return
-		}
-
-		ar.AnnouncementID, err = idtype.ParseAnnouncementID(dbAlreadyRead.AnnouncementID)
-		if err != nil {
-			return
-		}
-
-		ar.ReadAt = dbAlreadyRead.ReadAt
-
-		return
-	})
-}
-
-func toDBAlreadyRead(alreadyRead *announcementdomain.AlreadyRead) *model.AlreadyRead {
-	return &model.AlreadyRead{
-		ID:             alreadyRead.ID.String(),
-		UserID:         alreadyRead.UserID.String(),
-		AnnouncementID: alreadyRead.AnnouncementID.String(),
-		ReadAt:         alreadyRead.ReadAt,
-	}
+	return int(db.Delete(&announcementdbmodel.AlreadyRead{}).RowsAffected), db.Error
 }

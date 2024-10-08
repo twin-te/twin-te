@@ -5,18 +5,17 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
+	donationdbmodel "github.com/twin-te/twin-te/back/module/donation/dbmodel"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/gorm/clause"
 )
 
 func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPaymentUserConds, lock sharedport.Lock) (*donationdomain.PaymentUser, error) {
 	db := r.db.WithContext(ctx).
-		Where("twinte_user_id = ?", conds.UserID.String())
+		Where("user_id = ?", conds.UserID.String())
 
 	if lock != sharedport.LockNone {
 		db = db.Clauses(clause.Locking{
@@ -25,12 +24,12 @@ func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPayme
 		})
 	}
 
-	dbPaymentUser := new(model.PaymentUser)
+	dbPaymentUser := new(donationdbmodel.PaymentUser)
 	if err := db.Take(&dbPaymentUser).Error; err != nil {
 		return nil, dbhelper.ConvertErrRecordNotFound(err)
 	}
 
-	return fromDBPaymentUser(dbPaymentUser)
+	return donationdbmodel.FromDBPaymentUser(dbPaymentUser)
 }
 
 func (r *impl) ListPaymentUsers(ctx context.Context, conds donationport.ListPaymentUsersConds, lock sharedport.Lock) ([]*donationdomain.PaymentUser, error) {
@@ -47,16 +46,16 @@ func (r *impl) ListPaymentUsers(ctx context.Context, conds donationport.ListPaym
 		})
 	}
 
-	var dbPaymentUsers []*model.PaymentUser
+	var dbPaymentUsers []*donationdbmodel.PaymentUser
 	if err := db.Find(&dbPaymentUsers).Error; err != nil {
 		return nil, err
 	}
 
-	return base.MapWithErr(dbPaymentUsers, fromDBPaymentUser)
+	return base.MapWithErr(dbPaymentUsers, donationdbmodel.FromDBPaymentUser)
 }
 
 func (r *impl) CreatePaymentUsers(ctx context.Context, paymentUsers ...*donationdomain.PaymentUser) error {
-	dbPaymentUsers := base.Map(paymentUsers, toDBPaymentUser)
+	dbPaymentUsers := base.Map(paymentUsers, donationdbmodel.ToDBPaymentUser)
 	return r.db.WithContext(ctx).Create(dbPaymentUsers).Error
 }
 
@@ -76,48 +75,9 @@ func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomai
 		return nil
 	}
 
-	dbPaymentUser := toDBPaymentUser(paymentUser)
+	dbPaymentUser := donationdbmodel.ToDBPaymentUser(paymentUser)
 	return r.db.WithContext(ctx).
 		Select(columns).
 		Updates(dbPaymentUser).
 		Error
-}
-
-func fromDBPaymentUser(dbPaymentUser *model.PaymentUser) (*donationdomain.PaymentUser, error) {
-	return donationdomain.ConstructPaymentUser(func(pu *donationdomain.PaymentUser) (err error) {
-		pu.ID, err = idtype.ParsePaymentUserID(dbPaymentUser.ID)
-		if err != nil {
-			return
-		}
-
-		pu.UserID, err = idtype.ParseUserID(dbPaymentUser.UserID)
-		if err != nil {
-			return
-		}
-
-		if dbPaymentUser.DisplayName != nil {
-			pu.DisplayName, err = base.ToPtrWithErr(donationdomain.ParseDisplayName(*dbPaymentUser.DisplayName))
-			if err != nil {
-				return
-			}
-		}
-
-		if dbPaymentUser.Link != nil {
-			pu.Link, err = base.ToPtrWithErr(donationdomain.ParseLink(*dbPaymentUser.Link))
-			if err != nil {
-				return
-			}
-		}
-
-		return
-	})
-}
-
-func toDBPaymentUser(paymentUser *donationdomain.PaymentUser) *model.PaymentUser {
-	return &model.PaymentUser{
-		ID:          paymentUser.ID.String(),
-		UserID:      paymentUser.UserID.String(),
-		DisplayName: paymentUser.DisplayName.StringPtr(),
-		Link:        paymentUser.Link.StringPtr(),
-	}
 }

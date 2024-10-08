@@ -2,11 +2,10 @@ package timetablerepository
 
 import (
 	"github.com/samber/lo"
-	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
 	"gorm.io/gorm"
 
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	"github.com/twin-te/twin-te/back/base"
+	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
@@ -15,18 +14,17 @@ func (r *impl) updateCourseSchedules(db *gorm.DB, course *timetabledomain.Course
 	toCreate, toDelete := lo.Difference(course.Schedules, before.Schedules)
 
 	if len(toCreate) != 0 {
-		dbCourseSchedules := base.MapWithArg(toCreate, course.ID, toDBCourseSchedule)
-
+		dbCourseSchedules := base.MapWithArg(toCreate, course.ID, timetabledbmodel.ToDBCourseSchedule)
 		if err := db.Create(dbCourseSchedules).Error; err != nil {
 			return err
 		}
 	}
 
 	if len(toDelete) != 0 {
-		dbCourseSchedules := base.MapWithArg(toDelete, course.ID, toDBCourseSchedule)
-
-		return db.Where("course_id = ?", course.ID.String()).
-			Where("(module,day,period,locations) IN ?", base.Map(dbCourseSchedules, func(dbCourseSchedule model.CourseSchedule) []any {
+		dbCourseSchedules := base.MapWithArg(toDelete, course.ID, timetabledbmodel.ToDBCourseSchedule)
+		return db.
+			Where("course_id = ?", course.ID.String()).
+			Where("(module, day, period, locations) IN ?", base.Map(dbCourseSchedules, func(dbCourseSchedule timetabledbmodel.CourseSchedule) []any {
 				return []any{
 					dbCourseSchedule.Module,
 					dbCourseSchedule.Day,
@@ -34,28 +32,9 @@ func (r *impl) updateCourseSchedules(db *gorm.DB, course *timetabledomain.Course
 					dbCourseSchedule.Locations,
 				}
 			})).
-			Delete(&model.CourseSchedule{}).
+			Delete(&timetabledbmodel.CourseSchedule{}).
 			Error
 	}
 
 	return nil
-}
-
-func fromDBCourseSchedule(dbCourseSchedule model.CourseSchedule) (timetabledomain.Schedule, error) {
-	return timetabledomain.ParseSchedule(
-		dbCourseSchedule.Module,
-		dbCourseSchedule.Day,
-		int(dbCourseSchedule.Period),
-		dbCourseSchedule.Locations,
-	)
-}
-
-func toDBCourseSchedule(schedule timetabledomain.Schedule, courseID idtype.CourseID) model.CourseSchedule {
-	return model.CourseSchedule{
-		CourseID:  courseID.String(),
-		Module:    schedule.Module.String(),
-		Day:       schedule.Day.String(),
-		Period:    int16(schedule.Period.Int()),
-		Locations: schedule.Locations,
-	}
 }

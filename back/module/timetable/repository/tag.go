@@ -5,10 +5,10 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 	"gorm.io/gorm/clause"
@@ -29,7 +29,7 @@ func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lo
 		})
 	}
 
-	dbTag := new(model.Tag)
+	dbTag := new(timetabledbmodel.Tag)
 	if err := db.Take(&dbTag).Error; err != nil {
 		return nil, dbhelper.ConvertErrRecordNotFound(err)
 	}
@@ -55,7 +55,7 @@ func (r *impl) ListTags(ctx context.Context, conds timetableport.ListTagsConds, 
 		})
 	}
 
-	var dbTags []*model.Tag
+	var dbTags []*timetabledbmodel.Tag
 	if err := db.Find(&dbTags).Error; err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 	}
 
 	if tag.Position != before.Position {
-		columns = append(columns, "position")
+		columns = append(columns, "order")
 	}
 
 	if len(columns) == 0 {
@@ -106,10 +106,10 @@ func (r *impl) DeleteTags(ctx context.Context, conds timetableport.DeleteTagsCon
 		db = db.Where("user_id = ?", conds.UserID.String())
 	}
 
-	return int(db.Delete(&model.Tag{}).RowsAffected), db.Error
+	return int(db.Delete(&timetabledbmodel.Tag{}).RowsAffected), db.Error
 }
 
-func fromDBTag(dbTag *model.Tag) (*timetabledomain.Tag, error) {
+func fromDBTag(dbTag *timetabledbmodel.Tag) (*timetabledomain.Tag, error) {
 	return timetabledomain.ConstructTag(func(t *timetabledomain.Tag) (err error) {
 		t.ID, err = idtype.ParseTagID(dbTag.ID)
 		if err != nil {
@@ -135,11 +135,11 @@ func fromDBTag(dbTag *model.Tag) (*timetabledomain.Tag, error) {
 	})
 }
 
-func toDBTag(tag *timetabledomain.Tag) *model.Tag {
-	return &model.Tag{
+func toDBTag(tag *timetabledomain.Tag) *timetabledbmodel.Tag {
+	return &timetabledbmodel.Tag{
 		ID:     tag.ID.String(),
 		UserID: tag.UserID.String(),
 		Name:   tag.Name.String(),
-		Order:  int16(tag.Position.Int()),
+		Order:  tag.Position.Int(),
 	}
 }

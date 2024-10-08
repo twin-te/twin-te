@@ -6,11 +6,10 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
+	authdbmodel "github.com/twin-te/twin-te/back/module/auth/dbmodel"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -21,7 +20,7 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 		return nil, err
 	}
 
-	dbUser := new(model.User)
+	dbUser := new(authdbmodel.User)
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if conds.ID != nil {
 			tx = tx.Where("id = ?", conds.ID.String())
@@ -38,7 +37,7 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 		}
 
 		return tx.
-			Where(`"deletedAt" IS NULL`).
+			Where("deleted_at IS NULL").
 			Clauses(clause.Locking{
 				Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
 				Table:    clause.Table{Name: clause.CurrentTable},
@@ -51,15 +50,15 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 		return nil, dbhelper.ConvertErrRecordNotFound(err)
 	}
 
-	return fromDBUser(dbUser)
+	return authdbmodel.FromDBUser(dbUser)
 }
 
 func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error) {
-	var dbUsers []*model.User
+	var dbUsers []*authdbmodel.User
 
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		return tx.
-			Where(`"deletedAt" IS NULL`).
+			Where("deleted_at IS NULL").
 			Clauses(clause.Locking{
 				Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
 				Table:    clause.Table{Name: clause.CurrentTable},
@@ -72,11 +71,11 @@ func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, loc
 		return nil, err
 	}
 
-	return base.MapWithErr(dbUsers, fromDBUser)
+	return base.MapWithErr(dbUsers, authdbmodel.FromDBUser)
 }
 
 func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error {
-	dbUsers := base.MapWithArg(users, true, toDBUser)
+	dbUsers := base.MapWithArg(users, true, authdbmodel.ToDBUser)
 	return r.db.WithContext(ctx).Transaction(func(db *gorm.DB) error {
 		return db.Create(dbUsers).Error
 	}, nil)
@@ -87,10 +86,10 @@ func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 	columns := make([]string, 0)
 
 	if !user.CreatedAt.Equal(before.CreatedAt) {
-		columns = append(columns, "createdAt")
+		columns = append(columns, "created_at")
 	}
 
-	dbUser := toDBUser(user, false)
+	dbUser := authdbmodel.ToDBUser(user, false)
 
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if len(columns) > 0 {
@@ -104,7 +103,7 @@ func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 
 func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) (rowsAffected int, err error) {
 	err = r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		var dbUsers []*model.User
+		var dbUsers []*authdbmodel.User
 		tx = tx.Model(&dbUsers)
 
 		if conds.ID != nil {
@@ -112,7 +111,7 @@ func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) 
 		}
 
 		if err := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
-			Update(`"deletedAt"`, time.Now()).
+			Update("deleted_at", time.Now()).
 			Error; err != nil {
 			return err
 		}
@@ -122,42 +121,11 @@ func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) 
 		}
 
 		return r.db.
-			Where("user_id IN ?", base.Map(dbUsers, func(dbUser *model.User) string {
+			Where("user_id IN ?", base.Map(dbUsers, func(dbUser *authdbmodel.User) string {
 				return dbUser.ID
 			})).
-			Delete(&model.UserAuthentication{}).
+			Delete(&authdbmodel.UserAuthentication{}).
 			Error
 	}, nil)
 	return
-}
-
-func fromDBUser(dbUser *model.User) (*authdomain.User, error) {
-	return authdomain.ConstructUser(func(u *authdomain.User) (err error) {
-		u.ID, err = idtype.ParseUserID(dbUser.ID)
-		if err != nil {
-			return err
-		}
-
-		u.CreatedAt = dbUser.CreatedAt
-
-		u.Authentications, err = base.MapWithErr(dbUser.UserAuthentications, fromDBUserAuthentication)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-}
-
-func toDBUser(user *authdomain.User, withAssociations bool) *model.User {
-	dbUser := &model.User{
-		ID:        user.ID.String(),
-		CreatedAt: user.CreatedAt,
-	}
-
-	if withAssociations {
-		dbUser.UserAuthentications = base.MapWithArg(user.Authentications, user.ID, toDBUserAuthentication)
-	}
-
-	return dbUser
 }
