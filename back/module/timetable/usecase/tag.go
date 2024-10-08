@@ -36,7 +36,7 @@ func (uc impl) CreateTag(ctx context.Context, name shareddomain.RequiredString) 
 	return tag, uc.r.CreateTags(ctx, tag)
 }
 
-func (uc impl) GetTags(ctx context.Context) ([]*timetabledomain.Tag, error) {
+func (uc impl) ListTags(ctx context.Context) ([]*timetabledomain.Tag, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err

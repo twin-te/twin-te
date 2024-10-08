@@ -18,13 +18,13 @@ type impl struct {
 	uc schoolcalendarmodule.UseCase
 }
 
-func (svc *impl) GetEventsByDate(ctx context.Context, req *connect.Request[schoolcalendarv1.GetEventsByDateRequest]) (res *connect.Response[schoolcalendarv1.GetEventsByDateResponse], err error) {
+func (svc *impl) ListEventsByDate(ctx context.Context, req *connect.Request[schoolcalendarv1.ListEventsByDateRequest]) (res *connect.Response[schoolcalendarv1.ListEventsByDateResponse], err error) {
 	date, err := sharedconv.FromPBRFC3339FullDate(req.Msg.Date)
 	if err != nil {
 		return
 	}
 
-	events, err := svc.uc.GetEventsByDate(ctx, date)
+	events, err := svc.uc.ListEventsByDate(ctx, date)
 	if err != nil {
 		return
 	}
@@ -34,7 +34,7 @@ func (svc *impl) GetEventsByDate(ctx context.Context, req *connect.Request[schoo
 		return
 	}
 
-	res = connect.NewResponse(&schoolcalendarv1.GetEventsByDateResponse{
+	res = connect.NewResponse(&schoolcalendarv1.ListEventsByDateResponse{
 		Events: pbEvents,
 	})
 

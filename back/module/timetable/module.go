@@ -18,11 +18,11 @@ import (
 //
 // If the registered course is returned, course association is loaded.
 type UseCase interface {
-	// GetCoursesByCodes returns the courses specified by the given year and codes.
+	// ListCoursesByCodes returns the courses specified by the given year and codes.
 	// Even if the target courses are not found, no error will be returned.
 	//
 	// [Authentication] not required
-	GetCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error)
+	ListCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error)
 
 	// SearchCourses returns the courses satisfied with the conditions.
 	//
@@ -51,10 +51,10 @@ type UseCase interface {
 	// [Authentication] required
 	CreateRegisteredCourseManually(ctx context.Context, in CreateRegisteredCourseManuallyIn) (*timetabledomain.RegisteredCourse, error)
 
-	// GetRegisteredCourses returns the registered courses.
+	// ListRegisteredCourses returns the registered courses.
 	//
 	// [Authentication] required
-	GetRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error)
+	ListRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error)
 
 	// UpdateRegisteredCourse updates registered course specified by the given id.
 	//
@@ -77,10 +77,10 @@ type UseCase interface {
 	// [Authentication] required
 	CreateTag(ctx context.Context, name shareddomain.RequiredString) (tag *timetabledomain.Tag, err error)
 
-	// GetTags returns the tags.
+	// ListTags returns the tags.
 	//
 	// [Authentication] required
-	GetTags(ctx context.Context) ([]*timetabledomain.Tag, error)
+	ListTags(ctx context.Context) ([]*timetabledomain.Tag, error)
 
 	// UpdateTag updates the tag specified by the given id.
 	//

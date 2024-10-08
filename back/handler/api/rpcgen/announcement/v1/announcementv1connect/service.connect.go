@@ -33,9 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// AnnouncementServiceGetAnnouncementsProcedure is the fully-qualified name of the
-	// AnnouncementService's GetAnnouncements RPC.
-	AnnouncementServiceGetAnnouncementsProcedure = "/announcement.v1.AnnouncementService/GetAnnouncements"
+	// AnnouncementServiceListAnnouncementsProcedure is the fully-qualified name of the
+	// AnnouncementService's ListAnnouncements RPC.
+	AnnouncementServiceListAnnouncementsProcedure = "/announcement.v1.AnnouncementService/ListAnnouncements"
 	// AnnouncementServiceReadAnnouncementsProcedure is the fully-qualified name of the
 	// AnnouncementService's ReadAnnouncements RPC.
 	AnnouncementServiceReadAnnouncementsProcedure = "/announcement.v1.AnnouncementService/ReadAnnouncements"
@@ -43,7 +43,7 @@ const (
 
 // AnnouncementServiceClient is a client for the announcement.v1.AnnouncementService service.
 type AnnouncementServiceClient interface {
-	GetAnnouncements(context.Context, *connect_go.Request[v1.GetAnnouncementsRequest]) (*connect_go.Response[v1.GetAnnouncementsResponse], error)
+	ListAnnouncements(context.Context, *connect_go.Request[v1.ListAnnouncementsRequest]) (*connect_go.Response[v1.ListAnnouncementsResponse], error)
 	ReadAnnouncements(context.Context, *connect_go.Request[v1.ReadAnnouncementsRequest]) (*connect_go.Response[v1.ReadAnnouncementsResponse], error)
 }
 
@@ -57,9 +57,9 @@ type AnnouncementServiceClient interface {
 func NewAnnouncementServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) AnnouncementServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &announcementServiceClient{
-		getAnnouncements: connect_go.NewClient[v1.GetAnnouncementsRequest, v1.GetAnnouncementsResponse](
+		listAnnouncements: connect_go.NewClient[v1.ListAnnouncementsRequest, v1.ListAnnouncementsResponse](
 			httpClient,
-			baseURL+AnnouncementServiceGetAnnouncementsProcedure,
+			baseURL+AnnouncementServiceListAnnouncementsProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
@@ -73,13 +73,13 @@ func NewAnnouncementServiceClient(httpClient connect_go.HTTPClient, baseURL stri
 
 // announcementServiceClient implements AnnouncementServiceClient.
 type announcementServiceClient struct {
-	getAnnouncements  *connect_go.Client[v1.GetAnnouncementsRequest, v1.GetAnnouncementsResponse]
+	listAnnouncements *connect_go.Client[v1.ListAnnouncementsRequest, v1.ListAnnouncementsResponse]
 	readAnnouncements *connect_go.Client[v1.ReadAnnouncementsRequest, v1.ReadAnnouncementsResponse]
 }
 
-// GetAnnouncements calls announcement.v1.AnnouncementService.GetAnnouncements.
-func (c *announcementServiceClient) GetAnnouncements(ctx context.Context, req *connect_go.Request[v1.GetAnnouncementsRequest]) (*connect_go.Response[v1.GetAnnouncementsResponse], error) {
-	return c.getAnnouncements.CallUnary(ctx, req)
+// ListAnnouncements calls announcement.v1.AnnouncementService.ListAnnouncements.
+func (c *announcementServiceClient) ListAnnouncements(ctx context.Context, req *connect_go.Request[v1.ListAnnouncementsRequest]) (*connect_go.Response[v1.ListAnnouncementsResponse], error) {
+	return c.listAnnouncements.CallUnary(ctx, req)
 }
 
 // ReadAnnouncements calls announcement.v1.AnnouncementService.ReadAnnouncements.
@@ -90,7 +90,7 @@ func (c *announcementServiceClient) ReadAnnouncements(ctx context.Context, req *
 // AnnouncementServiceHandler is an implementation of the announcement.v1.AnnouncementService
 // service.
 type AnnouncementServiceHandler interface {
-	GetAnnouncements(context.Context, *connect_go.Request[v1.GetAnnouncementsRequest]) (*connect_go.Response[v1.GetAnnouncementsResponse], error)
+	ListAnnouncements(context.Context, *connect_go.Request[v1.ListAnnouncementsRequest]) (*connect_go.Response[v1.ListAnnouncementsResponse], error)
 	ReadAnnouncements(context.Context, *connect_go.Request[v1.ReadAnnouncementsRequest]) (*connect_go.Response[v1.ReadAnnouncementsResponse], error)
 }
 
@@ -100,9 +100,9 @@ type AnnouncementServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewAnnouncementServiceHandler(svc AnnouncementServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	announcementServiceGetAnnouncementsHandler := connect_go.NewUnaryHandler(
-		AnnouncementServiceGetAnnouncementsProcedure,
-		svc.GetAnnouncements,
+	announcementServiceListAnnouncementsHandler := connect_go.NewUnaryHandler(
+		AnnouncementServiceListAnnouncementsProcedure,
+		svc.ListAnnouncements,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
@@ -113,8 +113,8 @@ func NewAnnouncementServiceHandler(svc AnnouncementServiceHandler, opts ...conne
 	)
 	return "/announcement.v1.AnnouncementService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case AnnouncementServiceGetAnnouncementsProcedure:
-			announcementServiceGetAnnouncementsHandler.ServeHTTP(w, r)
+		case AnnouncementServiceListAnnouncementsProcedure:
+			announcementServiceListAnnouncementsHandler.ServeHTTP(w, r)
 		case AnnouncementServiceReadAnnouncementsProcedure:
 			announcementServiceReadAnnouncementsHandler.ServeHTTP(w, r)
 		default:
@@ -126,8 +126,8 @@ func NewAnnouncementServiceHandler(svc AnnouncementServiceHandler, opts ...conne
 // UnimplementedAnnouncementServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedAnnouncementServiceHandler struct{}
 
-func (UnimplementedAnnouncementServiceHandler) GetAnnouncements(context.Context, *connect_go.Request[v1.GetAnnouncementsRequest]) (*connect_go.Response[v1.GetAnnouncementsResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("announcement.v1.AnnouncementService.GetAnnouncements is not implemented"))
+func (UnimplementedAnnouncementServiceHandler) ListAnnouncements(context.Context, *connect_go.Request[v1.ListAnnouncementsRequest]) (*connect_go.Response[v1.ListAnnouncementsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("announcement.v1.AnnouncementService.ListAnnouncements is not implemented"))
 }
 
 func (UnimplementedAnnouncementServiceHandler) ReadAnnouncements(context.Context, *connect_go.Request[v1.ReadAnnouncementsRequest]) (*connect_go.Response[v1.ReadAnnouncementsResponse], error) {

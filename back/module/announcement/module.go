@@ -14,11 +14,11 @@ import (
 //   - shared.Unauthenticated
 //   - shared.Unauthorized
 type UseCase interface {
-	// GetAnnouncements returns all published announcements.
+	// ListAnnouncements returns all published announcements.
 	// If authenticated, idToReadFlag is also be returned.
 	//
 	// [Authentication] optional
-	GetAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error)
+	ListAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error)
 
 	// ReadAnnouncements means that the user read the announcements specified by the given ids.
 	//

@@ -32,7 +32,7 @@ func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoo
 		return
 	}
 
-	events, err = uc.schoolCalendarUseCase.GetEventsByDate(ctx, date)
+	events, err = uc.schoolCalendarUseCase.ListEventsByDate(ctx, date)
 	if err != nil {
 		return
 	}
@@ -78,7 +78,7 @@ func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoo
 		return
 	}
 
-	registeredCourses, err = uc.timetableUseCase.GetRegisteredCourses(ctx, mo.Some(academicYear))
+	registeredCourses, err = uc.timetableUseCase.ListRegisteredCourses(ctx, mo.Some(academicYear))
 	if err != nil {
 		return
 	}

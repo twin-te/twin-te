@@ -20,8 +20,8 @@ type impl struct {
 	uc announcementmodule.UseCase
 }
 
-func (svc *impl) GetAnnouncements(ctx context.Context, req *connect.Request[announcementv1.GetAnnouncementsRequest]) (res *connect.Response[announcementv1.GetAnnouncementsResponse], err error) {
-	announcements, idToReadFlag, err := svc.uc.GetAnnouncements(ctx)
+func (svc *impl) ListAnnouncements(ctx context.Context, req *connect.Request[announcementv1.ListAnnouncementsRequest]) (res *connect.Response[announcementv1.ListAnnouncementsResponse], err error) {
+	announcements, idToReadFlag, err := svc.uc.ListAnnouncements(ctx)
 	if err != nil {
 		return
 	}
@@ -31,7 +31,7 @@ func (svc *impl) GetAnnouncements(ctx context.Context, req *connect.Request[anno
 		return
 	}
 
-	res = connect.NewResponse(&announcementv1.GetAnnouncementsResponse{
+	res = connect.NewResponse(&announcementv1.ListAnnouncementsResponse{
 		Announcements: pbAnnouncements,
 	})
 

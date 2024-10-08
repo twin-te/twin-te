@@ -33,9 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// TimetableServiceGetCoursesByCodesProcedure is the fully-qualified name of the TimetableService's
-	// GetCoursesByCodes RPC.
-	TimetableServiceGetCoursesByCodesProcedure = "/timetable.v1.TimetableService/GetCoursesByCodes"
+	// TimetableServiceListCoursesByCodesProcedure is the fully-qualified name of the TimetableService's
+	// ListCoursesByCodes RPC.
+	TimetableServiceListCoursesByCodesProcedure = "/timetable.v1.TimetableService/ListCoursesByCodes"
 	// TimetableServiceSearchCoursesProcedure is the fully-qualified name of the TimetableService's
 	// SearchCourses RPC.
 	TimetableServiceSearchCoursesProcedure = "/timetable.v1.TimetableService/SearchCourses"
@@ -45,9 +45,9 @@ const (
 	// TimetableServiceCreateRegisteredCourseManuallyProcedure is the fully-qualified name of the
 	// TimetableService's CreateRegisteredCourseManually RPC.
 	TimetableServiceCreateRegisteredCourseManuallyProcedure = "/timetable.v1.TimetableService/CreateRegisteredCourseManually"
-	// TimetableServiceGetRegisteredCoursesProcedure is the fully-qualified name of the
-	// TimetableService's GetRegisteredCourses RPC.
-	TimetableServiceGetRegisteredCoursesProcedure = "/timetable.v1.TimetableService/GetRegisteredCourses"
+	// TimetableServiceListRegisteredCoursesProcedure is the fully-qualified name of the
+	// TimetableService's ListRegisteredCourses RPC.
+	TimetableServiceListRegisteredCoursesProcedure = "/timetable.v1.TimetableService/ListRegisteredCourses"
 	// TimetableServiceUpdateRegisteredCourseProcedure is the fully-qualified name of the
 	// TimetableService's UpdateRegisteredCourse RPC.
 	TimetableServiceUpdateRegisteredCourseProcedure = "/timetable.v1.TimetableService/UpdateRegisteredCourse"
@@ -57,9 +57,9 @@ const (
 	// TimetableServiceCreateTagProcedure is the fully-qualified name of the TimetableService's
 	// CreateTag RPC.
 	TimetableServiceCreateTagProcedure = "/timetable.v1.TimetableService/CreateTag"
-	// TimetableServiceGetTagsProcedure is the fully-qualified name of the TimetableService's GetTags
+	// TimetableServiceListTagsProcedure is the fully-qualified name of the TimetableService's ListTags
 	// RPC.
-	TimetableServiceGetTagsProcedure = "/timetable.v1.TimetableService/GetTags"
+	TimetableServiceListTagsProcedure = "/timetable.v1.TimetableService/ListTags"
 	// TimetableServiceUpdateTagProcedure is the fully-qualified name of the TimetableService's
 	// UpdateTag RPC.
 	TimetableServiceUpdateTagProcedure = "/timetable.v1.TimetableService/UpdateTag"
@@ -73,15 +73,15 @@ const (
 
 // TimetableServiceClient is a client for the timetable.v1.TimetableService service.
 type TimetableServiceClient interface {
-	GetCoursesByCodes(context.Context, *connect_go.Request[v1.GetCoursesByCodesRequest]) (*connect_go.Response[v1.GetCoursesByCodesResponse], error)
+	ListCoursesByCodes(context.Context, *connect_go.Request[v1.ListCoursesByCodesRequest]) (*connect_go.Response[v1.ListCoursesByCodesResponse], error)
 	SearchCourses(context.Context, *connect_go.Request[v1.SearchCoursesRequest]) (*connect_go.Response[v1.SearchCoursesResponse], error)
 	CreateRegisteredCoursesByCodes(context.Context, *connect_go.Request[v1.CreateRegisteredCoursesByCodesRequest]) (*connect_go.Response[v1.CreateRegisteredCoursesByCodesResponse], error)
 	CreateRegisteredCourseManually(context.Context, *connect_go.Request[v1.CreateRegisteredCourseManuallyRequest]) (*connect_go.Response[v1.CreateRegisteredCourseManuallyResponse], error)
-	GetRegisteredCourses(context.Context, *connect_go.Request[v1.GetRegisteredCoursesRequest]) (*connect_go.Response[v1.GetRegisteredCoursesResponse], error)
+	ListRegisteredCourses(context.Context, *connect_go.Request[v1.ListRegisteredCoursesRequest]) (*connect_go.Response[v1.ListRegisteredCoursesResponse], error)
 	UpdateRegisteredCourse(context.Context, *connect_go.Request[v1.UpdateRegisteredCourseRequest]) (*connect_go.Response[v1.UpdateRegisteredCourseResponse], error)
 	DeleteRegisteredCourse(context.Context, *connect_go.Request[v1.DeleteRegisteredCourseRequest]) (*connect_go.Response[v1.DeleteRegisteredCourseResponse], error)
 	CreateTag(context.Context, *connect_go.Request[v1.CreateTagRequest]) (*connect_go.Response[v1.CreateTagResponse], error)
-	GetTags(context.Context, *connect_go.Request[v1.GetTagsRequest]) (*connect_go.Response[v1.GetTagsResponse], error)
+	ListTags(context.Context, *connect_go.Request[v1.ListTagsRequest]) (*connect_go.Response[v1.ListTagsResponse], error)
 	UpdateTag(context.Context, *connect_go.Request[v1.UpdateTagRequest]) (*connect_go.Response[v1.UpdateTagResponse], error)
 	DeleteTag(context.Context, *connect_go.Request[v1.DeleteTagRequest]) (*connect_go.Response[v1.DeleteTagResponse], error)
 	RearrangeTags(context.Context, *connect_go.Request[v1.RearrangeTagsRequest]) (*connect_go.Response[v1.RearrangeTagsResponse], error)
@@ -97,9 +97,9 @@ type TimetableServiceClient interface {
 func NewTimetableServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) TimetableServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &timetableServiceClient{
-		getCoursesByCodes: connect_go.NewClient[v1.GetCoursesByCodesRequest, v1.GetCoursesByCodesResponse](
+		listCoursesByCodes: connect_go.NewClient[v1.ListCoursesByCodesRequest, v1.ListCoursesByCodesResponse](
 			httpClient,
-			baseURL+TimetableServiceGetCoursesByCodesProcedure,
+			baseURL+TimetableServiceListCoursesByCodesProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
@@ -119,9 +119,9 @@ func NewTimetableServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+TimetableServiceCreateRegisteredCourseManuallyProcedure,
 			opts...,
 		),
-		getRegisteredCourses: connect_go.NewClient[v1.GetRegisteredCoursesRequest, v1.GetRegisteredCoursesResponse](
+		listRegisteredCourses: connect_go.NewClient[v1.ListRegisteredCoursesRequest, v1.ListRegisteredCoursesResponse](
 			httpClient,
-			baseURL+TimetableServiceGetRegisteredCoursesProcedure,
+			baseURL+TimetableServiceListRegisteredCoursesProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
@@ -140,9 +140,9 @@ func NewTimetableServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+TimetableServiceCreateTagProcedure,
 			opts...,
 		),
-		getTags: connect_go.NewClient[v1.GetTagsRequest, v1.GetTagsResponse](
+		listTags: connect_go.NewClient[v1.ListTagsRequest, v1.ListTagsResponse](
 			httpClient,
-			baseURL+TimetableServiceGetTagsProcedure,
+			baseURL+TimetableServiceListTagsProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
@@ -166,23 +166,23 @@ func NewTimetableServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 
 // timetableServiceClient implements TimetableServiceClient.
 type timetableServiceClient struct {
-	getCoursesByCodes              *connect_go.Client[v1.GetCoursesByCodesRequest, v1.GetCoursesByCodesResponse]
+	listCoursesByCodes             *connect_go.Client[v1.ListCoursesByCodesRequest, v1.ListCoursesByCodesResponse]
 	searchCourses                  *connect_go.Client[v1.SearchCoursesRequest, v1.SearchCoursesResponse]
 	createRegisteredCoursesByCodes *connect_go.Client[v1.CreateRegisteredCoursesByCodesRequest, v1.CreateRegisteredCoursesByCodesResponse]
 	createRegisteredCourseManually *connect_go.Client[v1.CreateRegisteredCourseManuallyRequest, v1.CreateRegisteredCourseManuallyResponse]
-	getRegisteredCourses           *connect_go.Client[v1.GetRegisteredCoursesRequest, v1.GetRegisteredCoursesResponse]
+	listRegisteredCourses          *connect_go.Client[v1.ListRegisteredCoursesRequest, v1.ListRegisteredCoursesResponse]
 	updateRegisteredCourse         *connect_go.Client[v1.UpdateRegisteredCourseRequest, v1.UpdateRegisteredCourseResponse]
 	deleteRegisteredCourse         *connect_go.Client[v1.DeleteRegisteredCourseRequest, v1.DeleteRegisteredCourseResponse]
 	createTag                      *connect_go.Client[v1.CreateTagRequest, v1.CreateTagResponse]
-	getTags                        *connect_go.Client[v1.GetTagsRequest, v1.GetTagsResponse]
+	listTags                       *connect_go.Client[v1.ListTagsRequest, v1.ListTagsResponse]
 	updateTag                      *connect_go.Client[v1.UpdateTagRequest, v1.UpdateTagResponse]
 	deleteTag                      *connect_go.Client[v1.DeleteTagRequest, v1.DeleteTagResponse]
 	rearrangeTags                  *connect_go.Client[v1.RearrangeTagsRequest, v1.RearrangeTagsResponse]
 }
 
-// GetCoursesByCodes calls timetable.v1.TimetableService.GetCoursesByCodes.
-func (c *timetableServiceClient) GetCoursesByCodes(ctx context.Context, req *connect_go.Request[v1.GetCoursesByCodesRequest]) (*connect_go.Response[v1.GetCoursesByCodesResponse], error) {
-	return c.getCoursesByCodes.CallUnary(ctx, req)
+// ListCoursesByCodes calls timetable.v1.TimetableService.ListCoursesByCodes.
+func (c *timetableServiceClient) ListCoursesByCodes(ctx context.Context, req *connect_go.Request[v1.ListCoursesByCodesRequest]) (*connect_go.Response[v1.ListCoursesByCodesResponse], error) {
+	return c.listCoursesByCodes.CallUnary(ctx, req)
 }
 
 // SearchCourses calls timetable.v1.TimetableService.SearchCourses.
@@ -202,9 +202,9 @@ func (c *timetableServiceClient) CreateRegisteredCourseManually(ctx context.Cont
 	return c.createRegisteredCourseManually.CallUnary(ctx, req)
 }
 
-// GetRegisteredCourses calls timetable.v1.TimetableService.GetRegisteredCourses.
-func (c *timetableServiceClient) GetRegisteredCourses(ctx context.Context, req *connect_go.Request[v1.GetRegisteredCoursesRequest]) (*connect_go.Response[v1.GetRegisteredCoursesResponse], error) {
-	return c.getRegisteredCourses.CallUnary(ctx, req)
+// ListRegisteredCourses calls timetable.v1.TimetableService.ListRegisteredCourses.
+func (c *timetableServiceClient) ListRegisteredCourses(ctx context.Context, req *connect_go.Request[v1.ListRegisteredCoursesRequest]) (*connect_go.Response[v1.ListRegisteredCoursesResponse], error) {
+	return c.listRegisteredCourses.CallUnary(ctx, req)
 }
 
 // UpdateRegisteredCourse calls timetable.v1.TimetableService.UpdateRegisteredCourse.
@@ -222,9 +222,9 @@ func (c *timetableServiceClient) CreateTag(ctx context.Context, req *connect_go.
 	return c.createTag.CallUnary(ctx, req)
 }
 
-// GetTags calls timetable.v1.TimetableService.GetTags.
-func (c *timetableServiceClient) GetTags(ctx context.Context, req *connect_go.Request[v1.GetTagsRequest]) (*connect_go.Response[v1.GetTagsResponse], error) {
-	return c.getTags.CallUnary(ctx, req)
+// ListTags calls timetable.v1.TimetableService.ListTags.
+func (c *timetableServiceClient) ListTags(ctx context.Context, req *connect_go.Request[v1.ListTagsRequest]) (*connect_go.Response[v1.ListTagsResponse], error) {
+	return c.listTags.CallUnary(ctx, req)
 }
 
 // UpdateTag calls timetable.v1.TimetableService.UpdateTag.
@@ -244,15 +244,15 @@ func (c *timetableServiceClient) RearrangeTags(ctx context.Context, req *connect
 
 // TimetableServiceHandler is an implementation of the timetable.v1.TimetableService service.
 type TimetableServiceHandler interface {
-	GetCoursesByCodes(context.Context, *connect_go.Request[v1.GetCoursesByCodesRequest]) (*connect_go.Response[v1.GetCoursesByCodesResponse], error)
+	ListCoursesByCodes(context.Context, *connect_go.Request[v1.ListCoursesByCodesRequest]) (*connect_go.Response[v1.ListCoursesByCodesResponse], error)
 	SearchCourses(context.Context, *connect_go.Request[v1.SearchCoursesRequest]) (*connect_go.Response[v1.SearchCoursesResponse], error)
 	CreateRegisteredCoursesByCodes(context.Context, *connect_go.Request[v1.CreateRegisteredCoursesByCodesRequest]) (*connect_go.Response[v1.CreateRegisteredCoursesByCodesResponse], error)
 	CreateRegisteredCourseManually(context.Context, *connect_go.Request[v1.CreateRegisteredCourseManuallyRequest]) (*connect_go.Response[v1.CreateRegisteredCourseManuallyResponse], error)
-	GetRegisteredCourses(context.Context, *connect_go.Request[v1.GetRegisteredCoursesRequest]) (*connect_go.Response[v1.GetRegisteredCoursesResponse], error)
+	ListRegisteredCourses(context.Context, *connect_go.Request[v1.ListRegisteredCoursesRequest]) (*connect_go.Response[v1.ListRegisteredCoursesResponse], error)
 	UpdateRegisteredCourse(context.Context, *connect_go.Request[v1.UpdateRegisteredCourseRequest]) (*connect_go.Response[v1.UpdateRegisteredCourseResponse], error)
 	DeleteRegisteredCourse(context.Context, *connect_go.Request[v1.DeleteRegisteredCourseRequest]) (*connect_go.Response[v1.DeleteRegisteredCourseResponse], error)
 	CreateTag(context.Context, *connect_go.Request[v1.CreateTagRequest]) (*connect_go.Response[v1.CreateTagResponse], error)
-	GetTags(context.Context, *connect_go.Request[v1.GetTagsRequest]) (*connect_go.Response[v1.GetTagsResponse], error)
+	ListTags(context.Context, *connect_go.Request[v1.ListTagsRequest]) (*connect_go.Response[v1.ListTagsResponse], error)
 	UpdateTag(context.Context, *connect_go.Request[v1.UpdateTagRequest]) (*connect_go.Response[v1.UpdateTagResponse], error)
 	DeleteTag(context.Context, *connect_go.Request[v1.DeleteTagRequest]) (*connect_go.Response[v1.DeleteTagResponse], error)
 	RearrangeTags(context.Context, *connect_go.Request[v1.RearrangeTagsRequest]) (*connect_go.Response[v1.RearrangeTagsResponse], error)
@@ -264,9 +264,9 @@ type TimetableServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewTimetableServiceHandler(svc TimetableServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	timetableServiceGetCoursesByCodesHandler := connect_go.NewUnaryHandler(
-		TimetableServiceGetCoursesByCodesProcedure,
-		svc.GetCoursesByCodes,
+	timetableServiceListCoursesByCodesHandler := connect_go.NewUnaryHandler(
+		TimetableServiceListCoursesByCodesProcedure,
+		svc.ListCoursesByCodes,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
@@ -286,9 +286,9 @@ func NewTimetableServiceHandler(svc TimetableServiceHandler, opts ...connect_go.
 		svc.CreateRegisteredCourseManually,
 		opts...,
 	)
-	timetableServiceGetRegisteredCoursesHandler := connect_go.NewUnaryHandler(
-		TimetableServiceGetRegisteredCoursesProcedure,
-		svc.GetRegisteredCourses,
+	timetableServiceListRegisteredCoursesHandler := connect_go.NewUnaryHandler(
+		TimetableServiceListRegisteredCoursesProcedure,
+		svc.ListRegisteredCourses,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
@@ -307,9 +307,9 @@ func NewTimetableServiceHandler(svc TimetableServiceHandler, opts ...connect_go.
 		svc.CreateTag,
 		opts...,
 	)
-	timetableServiceGetTagsHandler := connect_go.NewUnaryHandler(
-		TimetableServiceGetTagsProcedure,
-		svc.GetTags,
+	timetableServiceListTagsHandler := connect_go.NewUnaryHandler(
+		TimetableServiceListTagsProcedure,
+		svc.ListTags,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
@@ -330,24 +330,24 @@ func NewTimetableServiceHandler(svc TimetableServiceHandler, opts ...connect_go.
 	)
 	return "/timetable.v1.TimetableService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case TimetableServiceGetCoursesByCodesProcedure:
-			timetableServiceGetCoursesByCodesHandler.ServeHTTP(w, r)
+		case TimetableServiceListCoursesByCodesProcedure:
+			timetableServiceListCoursesByCodesHandler.ServeHTTP(w, r)
 		case TimetableServiceSearchCoursesProcedure:
 			timetableServiceSearchCoursesHandler.ServeHTTP(w, r)
 		case TimetableServiceCreateRegisteredCoursesByCodesProcedure:
 			timetableServiceCreateRegisteredCoursesByCodesHandler.ServeHTTP(w, r)
 		case TimetableServiceCreateRegisteredCourseManuallyProcedure:
 			timetableServiceCreateRegisteredCourseManuallyHandler.ServeHTTP(w, r)
-		case TimetableServiceGetRegisteredCoursesProcedure:
-			timetableServiceGetRegisteredCoursesHandler.ServeHTTP(w, r)
+		case TimetableServiceListRegisteredCoursesProcedure:
+			timetableServiceListRegisteredCoursesHandler.ServeHTTP(w, r)
 		case TimetableServiceUpdateRegisteredCourseProcedure:
 			timetableServiceUpdateRegisteredCourseHandler.ServeHTTP(w, r)
 		case TimetableServiceDeleteRegisteredCourseProcedure:
 			timetableServiceDeleteRegisteredCourseHandler.ServeHTTP(w, r)
 		case TimetableServiceCreateTagProcedure:
 			timetableServiceCreateTagHandler.ServeHTTP(w, r)
-		case TimetableServiceGetTagsProcedure:
-			timetableServiceGetTagsHandler.ServeHTTP(w, r)
+		case TimetableServiceListTagsProcedure:
+			timetableServiceListTagsHandler.ServeHTTP(w, r)
 		case TimetableServiceUpdateTagProcedure:
 			timetableServiceUpdateTagHandler.ServeHTTP(w, r)
 		case TimetableServiceDeleteTagProcedure:
@@ -363,8 +363,8 @@ func NewTimetableServiceHandler(svc TimetableServiceHandler, opts ...connect_go.
 // UnimplementedTimetableServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedTimetableServiceHandler struct{}
 
-func (UnimplementedTimetableServiceHandler) GetCoursesByCodes(context.Context, *connect_go.Request[v1.GetCoursesByCodesRequest]) (*connect_go.Response[v1.GetCoursesByCodesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.GetCoursesByCodes is not implemented"))
+func (UnimplementedTimetableServiceHandler) ListCoursesByCodes(context.Context, *connect_go.Request[v1.ListCoursesByCodesRequest]) (*connect_go.Response[v1.ListCoursesByCodesResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.ListCoursesByCodes is not implemented"))
 }
 
 func (UnimplementedTimetableServiceHandler) SearchCourses(context.Context, *connect_go.Request[v1.SearchCoursesRequest]) (*connect_go.Response[v1.SearchCoursesResponse], error) {
@@ -379,8 +379,8 @@ func (UnimplementedTimetableServiceHandler) CreateRegisteredCourseManually(conte
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.CreateRegisteredCourseManually is not implemented"))
 }
 
-func (UnimplementedTimetableServiceHandler) GetRegisteredCourses(context.Context, *connect_go.Request[v1.GetRegisteredCoursesRequest]) (*connect_go.Response[v1.GetRegisteredCoursesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.GetRegisteredCourses is not implemented"))
+func (UnimplementedTimetableServiceHandler) ListRegisteredCourses(context.Context, *connect_go.Request[v1.ListRegisteredCoursesRequest]) (*connect_go.Response[v1.ListRegisteredCoursesResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.ListRegisteredCourses is not implemented"))
 }
 
 func (UnimplementedTimetableServiceHandler) UpdateRegisteredCourse(context.Context, *connect_go.Request[v1.UpdateRegisteredCourseRequest]) (*connect_go.Response[v1.UpdateRegisteredCourseResponse], error) {
@@ -395,8 +395,8 @@ func (UnimplementedTimetableServiceHandler) CreateTag(context.Context, *connect_
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.CreateTag is not implemented"))
 }
 
-func (UnimplementedTimetableServiceHandler) GetTags(context.Context, *connect_go.Request[v1.GetTagsRequest]) (*connect_go.Response[v1.GetTagsResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.GetTags is not implemented"))
+func (UnimplementedTimetableServiceHandler) ListTags(context.Context, *connect_go.Request[v1.ListTagsRequest]) (*connect_go.Response[v1.ListTagsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("timetable.v1.TimetableService.ListTags is not implemented"))
 }
 
 func (UnimplementedTimetableServiceHandler) UpdateTag(context.Context, *connect_go.Request[v1.UpdateTagRequest]) (*connect_go.Response[v1.UpdateTagResponse], error) {

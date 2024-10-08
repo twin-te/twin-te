@@ -93,26 +93,26 @@ func (svc *impl) UpdatePaymentUser(ctx context.Context, req *connect.Request[don
 	return
 }
 
-func (svc *impl) GetPaymentHistories(ctx context.Context, req *connect.Request[donationv1.GetPaymentHistoriesRequest]) (res *connect.Response[donationv1.GetPaymentHistoriesResponse], err error) {
-	paymentHistories, err := svc.uc.GetPaymentHistories(ctx)
+func (svc *impl) ListPaymentHistories(ctx context.Context, req *connect.Request[donationv1.ListPaymentHistoriesRequest]) (res *connect.Response[donationv1.ListPaymentHistoriesResponse], err error) {
+	paymentHistories, err := svc.uc.ListPaymentHistories(ctx)
 	if err != nil {
 		return
 	}
 
-	res = connect.NewResponse(&donationv1.GetPaymentHistoriesResponse{
+	res = connect.NewResponse(&donationv1.ListPaymentHistoriesResponse{
 		PaymentHistories: base.Map(paymentHistories, donationv1conv.ToPBPaymentHistory),
 	})
 
 	return
 }
 
-func (svc *impl) GetSubscriptionPlans(ctx context.Context, req *connect.Request[donationv1.GetSubscriptionPlansRequest]) (res *connect.Response[donationv1.GetSubscriptionPlansResponse], err error) {
-	subscriptionPlans, err := svc.uc.GetSubscriptionPlans(ctx)
+func (svc *impl) ListSubscriptionPlans(ctx context.Context, req *connect.Request[donationv1.ListSubscriptionPlansRequest]) (res *connect.Response[donationv1.ListSubscriptionPlansResponse], err error) {
+	subscriptionPlans, err := svc.uc.ListSubscriptionPlans(ctx)
 	if err != nil {
 		return
 	}
 
-	res = connect.NewResponse(&donationv1.GetSubscriptionPlansResponse{
+	res = connect.NewResponse(&donationv1.ListSubscriptionPlansResponse{
 		SubscriptionPlans: base.Map(subscriptionPlans, donationv1conv.ToPBSubscriptionPlan),
 	})
 
@@ -161,13 +161,13 @@ func (svc *impl) GetTotalAmount(ctx context.Context, req *connect.Request[donati
 	return
 }
 
-func (svc *impl) GetContributors(ctx context.Context, req *connect.Request[donationv1.GetContributorsRequest]) (res *connect.Response[donationv1.GetContributorsResponse], err error) {
-	contributors, err := svc.uc.GetContributors(ctx)
+func (svc *impl) ListContributors(ctx context.Context, req *connect.Request[donationv1.ListContributorsRequest]) (res *connect.Response[donationv1.ListContributorsResponse], err error) {
+	contributors, err := svc.uc.ListContributors(ctx)
 	if err != nil {
 		return
 	}
 
-	res = connect.NewResponse(&donationv1.GetContributorsResponse{
+	res = connect.NewResponse(&donationv1.ListContributorsResponse{
 		Contributors: base.Map(contributors, donationv1conv.ToPBContributor),
 	})
 

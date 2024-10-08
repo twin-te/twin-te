@@ -14,7 +14,7 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (uc *impl) GetModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error) {
+func (uc *impl) ListModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error) {
 	return uc.r.ListModuleDetails(ctx, schoolcalendarport.ListModuleDetailsConds{
 		Year: mo.Some(year),
 	}, sharedport.LockNone)

@@ -9,7 +9,7 @@ import (
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-func (uc *impl) GetPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error) {
+func (uc *impl) ListPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error) {
 	_, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err

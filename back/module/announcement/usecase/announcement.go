@@ -17,7 +17,7 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (uc *impl) GetAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error) {
+func (uc *impl) ListAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error) {
 	announcements, err = uc.r.ListAnnouncements(ctx, announcementport.ListAnnouncementsConds{
 		PublishedAtBefore: mo.Some(time.Now()),
 	}, sharedport.LockNone)
