@@ -12,7 +12,7 @@ option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolca
 //   - shared.Unauthenticated
 //   - shared.Unauthorized
 service SchoolCalendarService {
-  rpc GetEventsByDate(GetEventsByDateRequest) returns (GetEventsByDateResponse) {
+  rpc ListEventsByDate(ListEventsByDateRequest) returns (ListEventsByDateResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: NOT_REQURED
@@ -29,11 +29,11 @@ service SchoolCalendarService {
   }
 }
 
-message GetEventsByDateRequest {
+message ListEventsByDateRequest {
   shared.RFC3339FullDate date = 1;
 }
 
-message GetEventsByDateResponse {
+message ListEventsByDateResponse {
   repeated Event events = 1;
 }
 

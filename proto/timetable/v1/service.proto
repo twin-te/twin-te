@@ -12,7 +12,7 @@ option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetabl
 //   - shared.Unauthenticated
 //   - shared.Unauthorized
 service TimetableService {
-  rpc GetCoursesByCodes(GetCoursesByCodesRequest) returns (GetCoursesByCodesResponse) {
+  rpc ListCoursesByCodes(ListCoursesByCodesRequest) returns (ListCoursesByCodesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: NOT_REQURED
@@ -45,7 +45,7 @@ service TimetableService {
     };
   }
 
-  rpc GetRegisteredCourses(GetRegisteredCoursesRequest) returns (GetRegisteredCoursesResponse) {
+  rpc ListRegisteredCourses(ListRegisteredCoursesRequest) returns (ListRegisteredCoursesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: REQURED
@@ -74,7 +74,7 @@ service TimetableService {
     };
   }
 
-  rpc GetTags(GetTagsRequest) returns (GetTagsResponse) {
+  rpc ListTags(ListTagsRequest) returns (ListTagsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: REQURED
@@ -104,12 +104,12 @@ service TimetableService {
   }
 }
 
-message GetCoursesByCodesRequest {
+message ListCoursesByCodesRequest {
   shared.AcademicYear year = 1;
   repeated string codes = 2;
 }
 
-message GetCoursesByCodesResponse {
+message ListCoursesByCodesResponse {
   repeated Course courses = 1;
 }
 
@@ -150,11 +150,11 @@ message CreateRegisteredCourseManuallyResponse {
   RegisteredCourse registered_course = 1;
 }
 
-message GetRegisteredCoursesRequest {
+message ListRegisteredCoursesRequest {
   optional shared.AcademicYear year = 1;
 }
 
-message GetRegisteredCoursesResponse {
+message ListRegisteredCoursesResponse {
   repeated RegisteredCourse registered_courses = 1;
 }
 
@@ -190,9 +190,9 @@ message CreateTagResponse {
   Tag tag = 1;
 }
 
-message GetTagsRequest {}
+message ListTagsRequest {}
 
-message GetTagsResponse {
+message ListTagsResponse {
   repeated Tag tags = 1;
 }
 

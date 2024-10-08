@@ -12,7 +12,7 @@ option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/announce
 //   - shared.Unauthenticated
 //   - shared.Unauthorized
 service AnnouncementService {
-  rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsResponse) {
+  rpc ListAnnouncements(ListAnnouncementsRequest) returns (ListAnnouncementsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: OPTIONAL
@@ -28,9 +28,9 @@ service AnnouncementService {
   }
 }
 
-message GetAnnouncementsRequest {}
+message ListAnnouncementsRequest {}
 
-message GetAnnouncementsResponse {
+message ListAnnouncementsResponse {
   repeated Announcement announcements = 1;
 }
 

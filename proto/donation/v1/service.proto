@@ -44,7 +44,7 @@ service DonationService {
     };
   }
 
-  rpc GetPaymentHistories(GetPaymentHistoriesRequest) returns (GetPaymentHistoriesResponse) {
+  rpc ListPaymentHistories(ListPaymentHistoriesRequest) returns (ListPaymentHistoriesResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: REQURED
@@ -52,7 +52,7 @@ service DonationService {
     };
   }
 
-  rpc GetSubscriptionPlans(GetSubscriptionPlansRequest) returns (GetSubscriptionPlansResponse) {
+  rpc ListSubscriptionPlans(ListSubscriptionPlansRequest) returns (ListSubscriptionPlansResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: NOT_REQURED
@@ -83,7 +83,7 @@ service DonationService {
     };
   }
 
-  rpc GetContributors(GetContributorsRequest) returns (GetContributorsResponse) {
+  rpc ListContributors(ListContributorsRequest) returns (ListContributorsResponse) {
     option idempotency_level = NO_SIDE_EFFECTS;
     option (shared.twinte) = {
       authentication: NOT_REQURED
@@ -123,15 +123,15 @@ message UpdatePaymentUserResponse {
   PaymentUser payment_user = 1;
 }
 
-message GetPaymentHistoriesRequest {}
+message ListPaymentHistoriesRequest {}
 
-message GetPaymentHistoriesResponse {
+message ListPaymentHistoriesResponse {
   repeated PaymentHistory payment_histories = 1;
 }
 
-message GetSubscriptionPlansRequest {}
+message ListSubscriptionPlansRequest {}
 
-message GetSubscriptionPlansResponse {
+message ListSubscriptionPlansResponse {
   repeated SubscriptionPlan subscription_plans = 1;
 }
 
@@ -153,8 +153,8 @@ message GetTotalAmountResponse {
   int32 total_amount = 1;
 }
 
-message GetContributorsRequest {}
+message ListContributorsRequest {}
 
-message GetContributorsResponse {
+message ListContributorsResponse {
   repeated Contributor contributors = 1;
 }
