@@ -225,12 +225,15 @@ const totalCredits = ref<string>("0.0");
 const updateDisplayCreditTags = async () => {
   const [registeredCourses, tags] = await Promise.all([
     timetableUseCase
-      .getRegisteredCourses(year.value == 0 ? undefined : year.value, undefined)
+      .listRegisteredCourses(
+        year.value == 0 ? undefined : year.value,
+        undefined
+      )
       .then((result) => {
         if (isResultError(result)) throw result;
         return result;
       }),
-    timetableUseCase.getTags().then((result) => {
+    timetableUseCase.listTags().then((result) => {
       if (isResultError(result)) throw result;
       return result;
     }),
@@ -319,7 +322,7 @@ watchEffect(() => {
   }
 
   timetableUseCase
-    .getRegisteredCourses(undefined, tagToBeDeleted.value.id)
+    .listRegisteredCourses(undefined, tagToBeDeleted.value.id)
     .then((result) => {
       if (isResultError(result)) throw result;
       numCoursesAssociatedWithTagToBeDeleted.value = result.length;

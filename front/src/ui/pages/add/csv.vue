@@ -216,7 +216,7 @@ const loadCourses = async (file: File) => {
     return;
   }
 
-  const result = await timetableUseCase.getCoursesByCodes({
+  const result = await timetableUseCase.listCoursesByCodes({
     year: year.value,
     codes,
   });

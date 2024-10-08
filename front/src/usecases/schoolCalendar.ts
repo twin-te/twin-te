@@ -36,7 +36,7 @@ export class SchoolCalendarUseCase implements ISchoolCalendarUseCase {
     date: Dayjs
   ): Promise<Event | null | NetworkError | InternalServerError> {
     return this.#client
-      .getEventsByDate({ date: toPBRFC3339FullDate(date) })
+      .listEventsByDate({ date: toPBRFC3339FullDate(date) })
       .then((res) => {
         const events = res.events.map((pbEvent) => fromPBEvent(pbEvent));
         if (events.length === 0) return null;

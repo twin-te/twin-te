@@ -9,9 +9,9 @@ import { AcademicYear, UUID, UUIDList } from "../../shared/type_pb.js";
 import { Course, CourseMethod, CourseMethodList, RegisteredCourse, Schedule, ScheduleList, Tag } from "./type_pb.js";
 
 /**
- * @generated from message timetable.v1.GetCoursesByCodesRequest
+ * @generated from message timetable.v1.ListCoursesByCodesRequest
  */
-export class GetCoursesByCodesRequest extends Message<GetCoursesByCodesRequest> {
+export class ListCoursesByCodesRequest extends Message<ListCoursesByCodesRequest> {
   /**
    * @generated from field: shared.AcademicYear year = 1;
    */
@@ -22,69 +22,69 @@ export class GetCoursesByCodesRequest extends Message<GetCoursesByCodesRequest> 
    */
   codes: string[] = [];
 
-  constructor(data?: PartialMessage<GetCoursesByCodesRequest>) {
+  constructor(data?: PartialMessage<ListCoursesByCodesRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "timetable.v1.GetCoursesByCodesRequest";
+  static readonly typeName = "timetable.v1.ListCoursesByCodesRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "year", kind: "message", T: AcademicYear },
     { no: 2, name: "codes", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCoursesByCodesRequest {
-    return new GetCoursesByCodesRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListCoursesByCodesRequest {
+    return new ListCoursesByCodesRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetCoursesByCodesRequest {
-    return new GetCoursesByCodesRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListCoursesByCodesRequest {
+    return new ListCoursesByCodesRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetCoursesByCodesRequest {
-    return new GetCoursesByCodesRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListCoursesByCodesRequest {
+    return new ListCoursesByCodesRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetCoursesByCodesRequest | PlainMessage<GetCoursesByCodesRequest> | undefined, b: GetCoursesByCodesRequest | PlainMessage<GetCoursesByCodesRequest> | undefined): boolean {
-    return proto3.util.equals(GetCoursesByCodesRequest, a, b);
+  static equals(a: ListCoursesByCodesRequest | PlainMessage<ListCoursesByCodesRequest> | undefined, b: ListCoursesByCodesRequest | PlainMessage<ListCoursesByCodesRequest> | undefined): boolean {
+    return proto3.util.equals(ListCoursesByCodesRequest, a, b);
   }
 }
 
 /**
- * @generated from message timetable.v1.GetCoursesByCodesResponse
+ * @generated from message timetable.v1.ListCoursesByCodesResponse
  */
-export class GetCoursesByCodesResponse extends Message<GetCoursesByCodesResponse> {
+export class ListCoursesByCodesResponse extends Message<ListCoursesByCodesResponse> {
   /**
    * @generated from field: repeated timetable.v1.Course courses = 1;
    */
   courses: Course[] = [];
 
-  constructor(data?: PartialMessage<GetCoursesByCodesResponse>) {
+  constructor(data?: PartialMessage<ListCoursesByCodesResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "timetable.v1.GetCoursesByCodesResponse";
+  static readonly typeName = "timetable.v1.ListCoursesByCodesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "courses", kind: "message", T: Course, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCoursesByCodesResponse {
-    return new GetCoursesByCodesResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListCoursesByCodesResponse {
+    return new ListCoursesByCodesResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetCoursesByCodesResponse {
-    return new GetCoursesByCodesResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListCoursesByCodesResponse {
+    return new ListCoursesByCodesResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetCoursesByCodesResponse {
-    return new GetCoursesByCodesResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListCoursesByCodesResponse {
+    return new ListCoursesByCodesResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetCoursesByCodesResponse | PlainMessage<GetCoursesByCodesResponse> | undefined, b: GetCoursesByCodesResponse | PlainMessage<GetCoursesByCodesResponse> | undefined): boolean {
-    return proto3.util.equals(GetCoursesByCodesResponse, a, b);
+  static equals(a: ListCoursesByCodesResponse | PlainMessage<ListCoursesByCodesResponse> | undefined, b: ListCoursesByCodesResponse | PlainMessage<ListCoursesByCodesResponse> | undefined): boolean {
+    return proto3.util.equals(ListCoursesByCodesResponse, a, b);
   }
 }
 
@@ -389,76 +389,76 @@ export class CreateRegisteredCourseManuallyResponse extends Message<CreateRegist
 }
 
 /**
- * @generated from message timetable.v1.GetRegisteredCoursesRequest
+ * @generated from message timetable.v1.ListRegisteredCoursesRequest
  */
-export class GetRegisteredCoursesRequest extends Message<GetRegisteredCoursesRequest> {
+export class ListRegisteredCoursesRequest extends Message<ListRegisteredCoursesRequest> {
   /**
    * @generated from field: optional shared.AcademicYear year = 1;
    */
   year?: AcademicYear;
 
-  constructor(data?: PartialMessage<GetRegisteredCoursesRequest>) {
+  constructor(data?: PartialMessage<ListRegisteredCoursesRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "timetable.v1.GetRegisteredCoursesRequest";
+  static readonly typeName = "timetable.v1.ListRegisteredCoursesRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "year", kind: "message", T: AcademicYear, opt: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetRegisteredCoursesRequest {
-    return new GetRegisteredCoursesRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListRegisteredCoursesRequest {
+    return new ListRegisteredCoursesRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetRegisteredCoursesRequest {
-    return new GetRegisteredCoursesRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListRegisteredCoursesRequest {
+    return new ListRegisteredCoursesRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetRegisteredCoursesRequest {
-    return new GetRegisteredCoursesRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListRegisteredCoursesRequest {
+    return new ListRegisteredCoursesRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetRegisteredCoursesRequest | PlainMessage<GetRegisteredCoursesRequest> | undefined, b: GetRegisteredCoursesRequest | PlainMessage<GetRegisteredCoursesRequest> | undefined): boolean {
-    return proto3.util.equals(GetRegisteredCoursesRequest, a, b);
+  static equals(a: ListRegisteredCoursesRequest | PlainMessage<ListRegisteredCoursesRequest> | undefined, b: ListRegisteredCoursesRequest | PlainMessage<ListRegisteredCoursesRequest> | undefined): boolean {
+    return proto3.util.equals(ListRegisteredCoursesRequest, a, b);
   }
 }
 
 /**
- * @generated from message timetable.v1.GetRegisteredCoursesResponse
+ * @generated from message timetable.v1.ListRegisteredCoursesResponse
  */
-export class GetRegisteredCoursesResponse extends Message<GetRegisteredCoursesResponse> {
+export class ListRegisteredCoursesResponse extends Message<ListRegisteredCoursesResponse> {
   /**
    * @generated from field: repeated timetable.v1.RegisteredCourse registered_courses = 1;
    */
   registeredCourses: RegisteredCourse[] = [];
 
-  constructor(data?: PartialMessage<GetRegisteredCoursesResponse>) {
+  constructor(data?: PartialMessage<ListRegisteredCoursesResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "timetable.v1.GetRegisteredCoursesResponse";
+  static readonly typeName = "timetable.v1.ListRegisteredCoursesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "registered_courses", kind: "message", T: RegisteredCourse, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetRegisteredCoursesResponse {
-    return new GetRegisteredCoursesResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListRegisteredCoursesResponse {
+    return new ListRegisteredCoursesResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetRegisteredCoursesResponse {
-    return new GetRegisteredCoursesResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListRegisteredCoursesResponse {
+    return new ListRegisteredCoursesResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetRegisteredCoursesResponse {
-    return new GetRegisteredCoursesResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListRegisteredCoursesResponse {
+    return new ListRegisteredCoursesResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetRegisteredCoursesResponse | PlainMessage<GetRegisteredCoursesResponse> | undefined, b: GetRegisteredCoursesResponse | PlainMessage<GetRegisteredCoursesResponse> | undefined): boolean {
-    return proto3.util.equals(GetRegisteredCoursesResponse, a, b);
+  static equals(a: ListRegisteredCoursesResponse | PlainMessage<ListRegisteredCoursesResponse> | undefined, b: ListRegisteredCoursesResponse | PlainMessage<ListRegisteredCoursesResponse> | undefined): boolean {
+    return proto3.util.equals(ListRegisteredCoursesResponse, a, b);
   }
 }
 
@@ -739,70 +739,70 @@ export class CreateTagResponse extends Message<CreateTagResponse> {
 }
 
 /**
- * @generated from message timetable.v1.GetTagsRequest
+ * @generated from message timetable.v1.ListTagsRequest
  */
-export class GetTagsRequest extends Message<GetTagsRequest> {
-  constructor(data?: PartialMessage<GetTagsRequest>) {
+export class ListTagsRequest extends Message<ListTagsRequest> {
+  constructor(data?: PartialMessage<ListTagsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "timetable.v1.GetTagsRequest";
+  static readonly typeName = "timetable.v1.ListTagsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTagsRequest {
-    return new GetTagsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListTagsRequest {
+    return new ListTagsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTagsRequest {
-    return new GetTagsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListTagsRequest {
+    return new ListTagsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTagsRequest {
-    return new GetTagsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListTagsRequest {
+    return new ListTagsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetTagsRequest | PlainMessage<GetTagsRequest> | undefined, b: GetTagsRequest | PlainMessage<GetTagsRequest> | undefined): boolean {
-    return proto3.util.equals(GetTagsRequest, a, b);
+  static equals(a: ListTagsRequest | PlainMessage<ListTagsRequest> | undefined, b: ListTagsRequest | PlainMessage<ListTagsRequest> | undefined): boolean {
+    return proto3.util.equals(ListTagsRequest, a, b);
   }
 }
 
 /**
- * @generated from message timetable.v1.GetTagsResponse
+ * @generated from message timetable.v1.ListTagsResponse
  */
-export class GetTagsResponse extends Message<GetTagsResponse> {
+export class ListTagsResponse extends Message<ListTagsResponse> {
   /**
    * @generated from field: repeated timetable.v1.Tag tags = 1;
    */
   tags: Tag[] = [];
 
-  constructor(data?: PartialMessage<GetTagsResponse>) {
+  constructor(data?: PartialMessage<ListTagsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "timetable.v1.GetTagsResponse";
+  static readonly typeName = "timetable.v1.ListTagsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "tags", kind: "message", T: Tag, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTagsResponse {
-    return new GetTagsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListTagsResponse {
+    return new ListTagsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTagsResponse {
-    return new GetTagsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListTagsResponse {
+    return new ListTagsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTagsResponse {
-    return new GetTagsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListTagsResponse {
+    return new ListTagsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetTagsResponse | PlainMessage<GetTagsResponse> | undefined, b: GetTagsResponse | PlainMessage<GetTagsResponse> | undefined): boolean {
-    return proto3.util.equals(GetTagsResponse, a, b);
+  static equals(a: ListTagsResponse | PlainMessage<ListTagsResponse> | undefined, b: ListTagsResponse | PlainMessage<ListTagsResponse> | undefined): boolean {
+    return proto3.util.equals(ListTagsResponse, a, b);
   }
 }
 

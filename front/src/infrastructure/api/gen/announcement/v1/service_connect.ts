@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GetAnnouncementsRequest, GetAnnouncementsResponse, ReadAnnouncementsRequest, ReadAnnouncementsResponse } from "./service_pb.js";
+import { ListAnnouncementsRequest, ListAnnouncementsResponse, ReadAnnouncementsRequest, ReadAnnouncementsResponse } from "./service_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -18,12 +18,12 @@ export const AnnouncementService = {
   typeName: "announcement.v1.AnnouncementService",
   methods: {
     /**
-     * @generated from rpc announcement.v1.AnnouncementService.GetAnnouncements
+     * @generated from rpc announcement.v1.AnnouncementService.ListAnnouncements
      */
-    getAnnouncements: {
-      name: "GetAnnouncements",
-      I: GetAnnouncementsRequest,
-      O: GetAnnouncementsResponse,
+    listAnnouncements: {
+      name: "ListAnnouncements",
+      I: ListAnnouncementsRequest,
+      O: ListAnnouncementsResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

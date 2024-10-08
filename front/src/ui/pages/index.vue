@@ -316,15 +316,15 @@ const [, , unreadAnnouncements, registeredCourses, tags] = await Promise.all([
   initializeEvent(),
   initializeModule(),
   announcementUseCase
-    .getAnnouncements()
+    .listAnnouncements()
     .then(throwResultError)
     .then((announcements) => announcements.filter(({ isRead }) => !isRead)),
-  timetableUseCase.getRegisteredCourses(year.value).then((result) => {
+  timetableUseCase.listRegisteredCourses(year.value).then((result) => {
     if (result instanceof UnauthenticatedError) return [];
     if (isResultError(result)) throw result;
     return result;
   }),
-  timetableUseCase.getTags().then((result) => {
+  timetableUseCase.listTags().then((result) => {
     if (result instanceof UnauthenticatedError) return [];
     if (isResultError(result)) throw result;
     return result;

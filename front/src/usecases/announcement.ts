@@ -17,7 +17,7 @@ import { AnnouncementService } from "~/infrastructure/api/gen/announcement/v1/se
 import { handleError } from "~/infrastructure/api/utils";
 
 export interface IAnnouncementUseCase {
-  getAnnouncements(): Promise<
+  listAnnouncements(): Promise<
     Announcement[] | NetworkError | InternalServerError
   >;
 
@@ -33,11 +33,11 @@ export class AnnouncementUseCase implements IAnnouncementUseCase {
     this.#client = createPromiseClient(AnnouncementService, transport);
   }
 
-  async getAnnouncements(): Promise<
+  async listAnnouncements(): Promise<
     Announcement[] | NetworkError | InternalServerError
   > {
     return this.#client
-      .getAnnouncements({})
+      .listAnnouncements({})
       .then((res) => res.announcements.map(fromPBAnnouncement))
       .catch((error) => handleError(error));
   }

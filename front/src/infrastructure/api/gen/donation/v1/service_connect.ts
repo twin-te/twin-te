@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateOneTimeCheckoutSessionRequest, CreateOneTimeCheckoutSessionResponse, CreateSubscriptionCheckoutSessionRequest, CreateSubscriptionCheckoutSessionResponse, GetActiveSubscriptionRequest, GetActiveSubscriptionResponse, GetContributorsRequest, GetContributorsResponse, GetPaymentHistoriesRequest, GetPaymentHistoriesResponse, GetPaymentUserRequest, GetPaymentUserResponse, GetSubscriptionPlansRequest, GetSubscriptionPlansResponse, GetTotalAmountRequest, GetTotalAmountResponse, UnsubscribeRequest, UnsubscribeResponse, UpdatePaymentUserRequest, UpdatePaymentUserResponse } from "./service_pb.js";
+import { CreateOneTimeCheckoutSessionRequest, CreateOneTimeCheckoutSessionResponse, CreateSubscriptionCheckoutSessionRequest, CreateSubscriptionCheckoutSessionResponse, GetActiveSubscriptionRequest, GetActiveSubscriptionResponse, GetPaymentUserRequest, GetPaymentUserResponse, GetTotalAmountRequest, GetTotalAmountResponse, ListContributorsRequest, ListContributorsResponse, ListPaymentHistoriesRequest, ListPaymentHistoriesResponse, ListSubscriptionPlansRequest, ListSubscriptionPlansResponse, UnsubscribeRequest, UnsubscribeResponse, UpdatePaymentUserRequest, UpdatePaymentUserResponse } from "./service_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -55,22 +55,22 @@ export const DonationService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc donation.v1.DonationService.GetPaymentHistories
+     * @generated from rpc donation.v1.DonationService.ListPaymentHistories
      */
-    getPaymentHistories: {
-      name: "GetPaymentHistories",
-      I: GetPaymentHistoriesRequest,
-      O: GetPaymentHistoriesResponse,
+    listPaymentHistories: {
+      name: "ListPaymentHistories",
+      I: ListPaymentHistoriesRequest,
+      O: ListPaymentHistoriesResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
     /**
-     * @generated from rpc donation.v1.DonationService.GetSubscriptionPlans
+     * @generated from rpc donation.v1.DonationService.ListSubscriptionPlans
      */
-    getSubscriptionPlans: {
-      name: "GetSubscriptionPlans",
-      I: GetSubscriptionPlansRequest,
-      O: GetSubscriptionPlansResponse,
+    listSubscriptionPlans: {
+      name: "ListSubscriptionPlans",
+      I: ListSubscriptionPlansRequest,
+      O: ListSubscriptionPlansResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
@@ -104,12 +104,12 @@ export const DonationService = {
       idempotency: MethodIdempotency.NoSideEffects,
     },
     /**
-     * @generated from rpc donation.v1.DonationService.GetContributors
+     * @generated from rpc donation.v1.DonationService.ListContributors
      */
-    getContributors: {
-      name: "GetContributors",
-      I: GetContributorsRequest,
-      O: GetContributorsResponse,
+    listContributors: {
+      name: "ListContributors",
+      I: ListContributorsRequest,
+      O: ListContributorsResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

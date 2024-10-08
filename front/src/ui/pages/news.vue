@@ -46,7 +46,7 @@ useHead({
 });
 
 const announcements = await announcementUseCase
-  .getAnnouncements()
+  .listAnnouncements()
   .then(throwResultError);
 </script>
 
