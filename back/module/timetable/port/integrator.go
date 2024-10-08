@@ -8,6 +8,6 @@ import (
 )
 
 type Integrator interface {
-	// GetCourseWithoutIDsFromKdB returns the latest course data retrieved from KdB.
-	GetCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error)
+	// ListCourseWithoutIDsFromKdB returns the latest course data retrieved from KdB.
+	ListCourseWithoutIDsFromKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetableappdto.CourseWithoutID, error)
 }
