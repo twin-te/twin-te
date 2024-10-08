@@ -43,15 +43,15 @@ type UseCase interface {
 	// [Authentication] required
 	UpdateOrCreatePaymentUser(ctx context.Context, in UpdateOrCreatePaymentUserIn) (*donationdomain.PaymentUser, error)
 
-	// GetPaymentHistories returns the payment histories.
+	// ListPaymentHistories returns the payment histories.
 	//
 	// [Authentication] required
-	GetPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error)
+	ListPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error)
 
-	// GetSubscriptionPlans returns the subscription plans.
+	// ListSubscriptionPlans returns the subscription plans.
 	//
 	// [Authentication] not required
-	GetSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error)
+	ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error)
 
 	// GetActiveSubscription returns the subscription which is active and has plan association loaded.
 	//
@@ -74,11 +74,11 @@ type UseCase interface {
 	// [Authentication] not required
 	GetTotalAmount(ctx context.Context) (int, error)
 
-	// GetContributors returns contributors.
+	// ListContributors returns contributors.
 	// Contributor is payment user who has made at least one donation and has registered name for display.
 	//
 	// [Authentication] not required
-	GetContributors(ctx context.Context) ([]donationappdto.Contributor, error)
+	ListContributors(ctx context.Context) ([]donationappdto.Contributor, error)
 }
 
 type UpdateOrCreatePaymentUserIn struct {

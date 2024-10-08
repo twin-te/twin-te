@@ -12,7 +12,7 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (uc *impl) GetEvents(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.Event, error) {
+func (uc *impl) ListEvents(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.Event, error) {
 	return uc.r.ListEvents(ctx, schoolcalendarport.ListEventsConds{
 		DateAfterOrEqual: mo.Some(civil.Date{
 			Year:  year.Int(),
@@ -27,7 +27,7 @@ func (uc *impl) GetEvents(ctx context.Context, year shareddomain.AcademicYear) (
 	}, sharedport.LockNone)
 }
 
-func (uc *impl) GetEventsByDate(ctx context.Context, date civil.Date) ([]*schoolcalendardomain.Event, error) {
+func (uc *impl) ListEventsByDate(ctx context.Context, date civil.Date) ([]*schoolcalendardomain.Event, error) {
 	return uc.r.ListEvents(ctx, schoolcalendarport.ListEventsConds{
 		DateAfterOrEqual:  mo.Some(date),
 		DateBeforeOrEqual: mo.Some(date),

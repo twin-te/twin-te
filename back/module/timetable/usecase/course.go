@@ -20,7 +20,7 @@ import (
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
 
-func (uc *impl) GetCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error) {
+func (uc *impl) ListCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error) {
 	return uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
 		Year:  mo.Some(year),
 		Codes: mo.Some(codes),

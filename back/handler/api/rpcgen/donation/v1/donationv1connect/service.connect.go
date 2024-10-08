@@ -45,12 +45,12 @@ const (
 	// DonationServiceUpdatePaymentUserProcedure is the fully-qualified name of the DonationService's
 	// UpdatePaymentUser RPC.
 	DonationServiceUpdatePaymentUserProcedure = "/donation.v1.DonationService/UpdatePaymentUser"
-	// DonationServiceGetPaymentHistoriesProcedure is the fully-qualified name of the DonationService's
-	// GetPaymentHistories RPC.
-	DonationServiceGetPaymentHistoriesProcedure = "/donation.v1.DonationService/GetPaymentHistories"
-	// DonationServiceGetSubscriptionPlansProcedure is the fully-qualified name of the DonationService's
-	// GetSubscriptionPlans RPC.
-	DonationServiceGetSubscriptionPlansProcedure = "/donation.v1.DonationService/GetSubscriptionPlans"
+	// DonationServiceListPaymentHistoriesProcedure is the fully-qualified name of the DonationService's
+	// ListPaymentHistories RPC.
+	DonationServiceListPaymentHistoriesProcedure = "/donation.v1.DonationService/ListPaymentHistories"
+	// DonationServiceListSubscriptionPlansProcedure is the fully-qualified name of the
+	// DonationService's ListSubscriptionPlans RPC.
+	DonationServiceListSubscriptionPlansProcedure = "/donation.v1.DonationService/ListSubscriptionPlans"
 	// DonationServiceGetActiveSubscriptionProcedure is the fully-qualified name of the
 	// DonationService's GetActiveSubscription RPC.
 	DonationServiceGetActiveSubscriptionProcedure = "/donation.v1.DonationService/GetActiveSubscription"
@@ -60,9 +60,9 @@ const (
 	// DonationServiceGetTotalAmountProcedure is the fully-qualified name of the DonationService's
 	// GetTotalAmount RPC.
 	DonationServiceGetTotalAmountProcedure = "/donation.v1.DonationService/GetTotalAmount"
-	// DonationServiceGetContributorsProcedure is the fully-qualified name of the DonationService's
-	// GetContributors RPC.
-	DonationServiceGetContributorsProcedure = "/donation.v1.DonationService/GetContributors"
+	// DonationServiceListContributorsProcedure is the fully-qualified name of the DonationService's
+	// ListContributors RPC.
+	DonationServiceListContributorsProcedure = "/donation.v1.DonationService/ListContributors"
 )
 
 // DonationServiceClient is a client for the donation.v1.DonationService service.
@@ -71,12 +71,12 @@ type DonationServiceClient interface {
 	CreateSubscriptionCheckoutSession(context.Context, *connect_go.Request[v1.CreateSubscriptionCheckoutSessionRequest]) (*connect_go.Response[v1.CreateSubscriptionCheckoutSessionResponse], error)
 	GetPaymentUser(context.Context, *connect_go.Request[v1.GetPaymentUserRequest]) (*connect_go.Response[v1.GetPaymentUserResponse], error)
 	UpdatePaymentUser(context.Context, *connect_go.Request[v1.UpdatePaymentUserRequest]) (*connect_go.Response[v1.UpdatePaymentUserResponse], error)
-	GetPaymentHistories(context.Context, *connect_go.Request[v1.GetPaymentHistoriesRequest]) (*connect_go.Response[v1.GetPaymentHistoriesResponse], error)
-	GetSubscriptionPlans(context.Context, *connect_go.Request[v1.GetSubscriptionPlansRequest]) (*connect_go.Response[v1.GetSubscriptionPlansResponse], error)
+	ListPaymentHistories(context.Context, *connect_go.Request[v1.ListPaymentHistoriesRequest]) (*connect_go.Response[v1.ListPaymentHistoriesResponse], error)
+	ListSubscriptionPlans(context.Context, *connect_go.Request[v1.ListSubscriptionPlansRequest]) (*connect_go.Response[v1.ListSubscriptionPlansResponse], error)
 	GetActiveSubscription(context.Context, *connect_go.Request[v1.GetActiveSubscriptionRequest]) (*connect_go.Response[v1.GetActiveSubscriptionResponse], error)
 	Unsubscribe(context.Context, *connect_go.Request[v1.UnsubscribeRequest]) (*connect_go.Response[v1.UnsubscribeResponse], error)
 	GetTotalAmount(context.Context, *connect_go.Request[v1.GetTotalAmountRequest]) (*connect_go.Response[v1.GetTotalAmountResponse], error)
-	GetContributors(context.Context, *connect_go.Request[v1.GetContributorsRequest]) (*connect_go.Response[v1.GetContributorsResponse], error)
+	ListContributors(context.Context, *connect_go.Request[v1.ListContributorsRequest]) (*connect_go.Response[v1.ListContributorsResponse], error)
 }
 
 // NewDonationServiceClient constructs a client for the donation.v1.DonationService service. By
@@ -110,15 +110,15 @@ func NewDonationServiceClient(httpClient connect_go.HTTPClient, baseURL string, 
 			baseURL+DonationServiceUpdatePaymentUserProcedure,
 			opts...,
 		),
-		getPaymentHistories: connect_go.NewClient[v1.GetPaymentHistoriesRequest, v1.GetPaymentHistoriesResponse](
+		listPaymentHistories: connect_go.NewClient[v1.ListPaymentHistoriesRequest, v1.ListPaymentHistoriesResponse](
 			httpClient,
-			baseURL+DonationServiceGetPaymentHistoriesProcedure,
+			baseURL+DonationServiceListPaymentHistoriesProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
-		getSubscriptionPlans: connect_go.NewClient[v1.GetSubscriptionPlansRequest, v1.GetSubscriptionPlansResponse](
+		listSubscriptionPlans: connect_go.NewClient[v1.ListSubscriptionPlansRequest, v1.ListSubscriptionPlansResponse](
 			httpClient,
-			baseURL+DonationServiceGetSubscriptionPlansProcedure,
+			baseURL+DonationServiceListSubscriptionPlansProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
@@ -139,9 +139,9 @@ func NewDonationServiceClient(httpClient connect_go.HTTPClient, baseURL string, 
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
-		getContributors: connect_go.NewClient[v1.GetContributorsRequest, v1.GetContributorsResponse](
+		listContributors: connect_go.NewClient[v1.ListContributorsRequest, v1.ListContributorsResponse](
 			httpClient,
-			baseURL+DonationServiceGetContributorsProcedure,
+			baseURL+DonationServiceListContributorsProcedure,
 			connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 			connect_go.WithClientOptions(opts...),
 		),
@@ -154,12 +154,12 @@ type donationServiceClient struct {
 	createSubscriptionCheckoutSession *connect_go.Client[v1.CreateSubscriptionCheckoutSessionRequest, v1.CreateSubscriptionCheckoutSessionResponse]
 	getPaymentUser                    *connect_go.Client[v1.GetPaymentUserRequest, v1.GetPaymentUserResponse]
 	updatePaymentUser                 *connect_go.Client[v1.UpdatePaymentUserRequest, v1.UpdatePaymentUserResponse]
-	getPaymentHistories               *connect_go.Client[v1.GetPaymentHistoriesRequest, v1.GetPaymentHistoriesResponse]
-	getSubscriptionPlans              *connect_go.Client[v1.GetSubscriptionPlansRequest, v1.GetSubscriptionPlansResponse]
+	listPaymentHistories              *connect_go.Client[v1.ListPaymentHistoriesRequest, v1.ListPaymentHistoriesResponse]
+	listSubscriptionPlans             *connect_go.Client[v1.ListSubscriptionPlansRequest, v1.ListSubscriptionPlansResponse]
 	getActiveSubscription             *connect_go.Client[v1.GetActiveSubscriptionRequest, v1.GetActiveSubscriptionResponse]
 	unsubscribe                       *connect_go.Client[v1.UnsubscribeRequest, v1.UnsubscribeResponse]
 	getTotalAmount                    *connect_go.Client[v1.GetTotalAmountRequest, v1.GetTotalAmountResponse]
-	getContributors                   *connect_go.Client[v1.GetContributorsRequest, v1.GetContributorsResponse]
+	listContributors                  *connect_go.Client[v1.ListContributorsRequest, v1.ListContributorsResponse]
 }
 
 // CreateOneTimeCheckoutSession calls donation.v1.DonationService.CreateOneTimeCheckoutSession.
@@ -183,14 +183,14 @@ func (c *donationServiceClient) UpdatePaymentUser(ctx context.Context, req *conn
 	return c.updatePaymentUser.CallUnary(ctx, req)
 }
 
-// GetPaymentHistories calls donation.v1.DonationService.GetPaymentHistories.
-func (c *donationServiceClient) GetPaymentHistories(ctx context.Context, req *connect_go.Request[v1.GetPaymentHistoriesRequest]) (*connect_go.Response[v1.GetPaymentHistoriesResponse], error) {
-	return c.getPaymentHistories.CallUnary(ctx, req)
+// ListPaymentHistories calls donation.v1.DonationService.ListPaymentHistories.
+func (c *donationServiceClient) ListPaymentHistories(ctx context.Context, req *connect_go.Request[v1.ListPaymentHistoriesRequest]) (*connect_go.Response[v1.ListPaymentHistoriesResponse], error) {
+	return c.listPaymentHistories.CallUnary(ctx, req)
 }
 
-// GetSubscriptionPlans calls donation.v1.DonationService.GetSubscriptionPlans.
-func (c *donationServiceClient) GetSubscriptionPlans(ctx context.Context, req *connect_go.Request[v1.GetSubscriptionPlansRequest]) (*connect_go.Response[v1.GetSubscriptionPlansResponse], error) {
-	return c.getSubscriptionPlans.CallUnary(ctx, req)
+// ListSubscriptionPlans calls donation.v1.DonationService.ListSubscriptionPlans.
+func (c *donationServiceClient) ListSubscriptionPlans(ctx context.Context, req *connect_go.Request[v1.ListSubscriptionPlansRequest]) (*connect_go.Response[v1.ListSubscriptionPlansResponse], error) {
+	return c.listSubscriptionPlans.CallUnary(ctx, req)
 }
 
 // GetActiveSubscription calls donation.v1.DonationService.GetActiveSubscription.
@@ -208,9 +208,9 @@ func (c *donationServiceClient) GetTotalAmount(ctx context.Context, req *connect
 	return c.getTotalAmount.CallUnary(ctx, req)
 }
 
-// GetContributors calls donation.v1.DonationService.GetContributors.
-func (c *donationServiceClient) GetContributors(ctx context.Context, req *connect_go.Request[v1.GetContributorsRequest]) (*connect_go.Response[v1.GetContributorsResponse], error) {
-	return c.getContributors.CallUnary(ctx, req)
+// ListContributors calls donation.v1.DonationService.ListContributors.
+func (c *donationServiceClient) ListContributors(ctx context.Context, req *connect_go.Request[v1.ListContributorsRequest]) (*connect_go.Response[v1.ListContributorsResponse], error) {
+	return c.listContributors.CallUnary(ctx, req)
 }
 
 // DonationServiceHandler is an implementation of the donation.v1.DonationService service.
@@ -219,12 +219,12 @@ type DonationServiceHandler interface {
 	CreateSubscriptionCheckoutSession(context.Context, *connect_go.Request[v1.CreateSubscriptionCheckoutSessionRequest]) (*connect_go.Response[v1.CreateSubscriptionCheckoutSessionResponse], error)
 	GetPaymentUser(context.Context, *connect_go.Request[v1.GetPaymentUserRequest]) (*connect_go.Response[v1.GetPaymentUserResponse], error)
 	UpdatePaymentUser(context.Context, *connect_go.Request[v1.UpdatePaymentUserRequest]) (*connect_go.Response[v1.UpdatePaymentUserResponse], error)
-	GetPaymentHistories(context.Context, *connect_go.Request[v1.GetPaymentHistoriesRequest]) (*connect_go.Response[v1.GetPaymentHistoriesResponse], error)
-	GetSubscriptionPlans(context.Context, *connect_go.Request[v1.GetSubscriptionPlansRequest]) (*connect_go.Response[v1.GetSubscriptionPlansResponse], error)
+	ListPaymentHistories(context.Context, *connect_go.Request[v1.ListPaymentHistoriesRequest]) (*connect_go.Response[v1.ListPaymentHistoriesResponse], error)
+	ListSubscriptionPlans(context.Context, *connect_go.Request[v1.ListSubscriptionPlansRequest]) (*connect_go.Response[v1.ListSubscriptionPlansResponse], error)
 	GetActiveSubscription(context.Context, *connect_go.Request[v1.GetActiveSubscriptionRequest]) (*connect_go.Response[v1.GetActiveSubscriptionResponse], error)
 	Unsubscribe(context.Context, *connect_go.Request[v1.UnsubscribeRequest]) (*connect_go.Response[v1.UnsubscribeResponse], error)
 	GetTotalAmount(context.Context, *connect_go.Request[v1.GetTotalAmountRequest]) (*connect_go.Response[v1.GetTotalAmountResponse], error)
-	GetContributors(context.Context, *connect_go.Request[v1.GetContributorsRequest]) (*connect_go.Response[v1.GetContributorsResponse], error)
+	ListContributors(context.Context, *connect_go.Request[v1.ListContributorsRequest]) (*connect_go.Response[v1.ListContributorsResponse], error)
 }
 
 // NewDonationServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -254,15 +254,15 @@ func NewDonationServiceHandler(svc DonationServiceHandler, opts ...connect_go.Ha
 		svc.UpdatePaymentUser,
 		opts...,
 	)
-	donationServiceGetPaymentHistoriesHandler := connect_go.NewUnaryHandler(
-		DonationServiceGetPaymentHistoriesProcedure,
-		svc.GetPaymentHistories,
+	donationServiceListPaymentHistoriesHandler := connect_go.NewUnaryHandler(
+		DonationServiceListPaymentHistoriesProcedure,
+		svc.ListPaymentHistories,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
-	donationServiceGetSubscriptionPlansHandler := connect_go.NewUnaryHandler(
-		DonationServiceGetSubscriptionPlansProcedure,
-		svc.GetSubscriptionPlans,
+	donationServiceListSubscriptionPlansHandler := connect_go.NewUnaryHandler(
+		DonationServiceListSubscriptionPlansProcedure,
+		svc.ListSubscriptionPlans,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
@@ -283,9 +283,9 @@ func NewDonationServiceHandler(svc DonationServiceHandler, opts ...connect_go.Ha
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
-	donationServiceGetContributorsHandler := connect_go.NewUnaryHandler(
-		DonationServiceGetContributorsProcedure,
-		svc.GetContributors,
+	donationServiceListContributorsHandler := connect_go.NewUnaryHandler(
+		DonationServiceListContributorsProcedure,
+		svc.ListContributors,
 		connect_go.WithIdempotency(connect_go.IdempotencyNoSideEffects),
 		connect_go.WithHandlerOptions(opts...),
 	)
@@ -299,18 +299,18 @@ func NewDonationServiceHandler(svc DonationServiceHandler, opts ...connect_go.Ha
 			donationServiceGetPaymentUserHandler.ServeHTTP(w, r)
 		case DonationServiceUpdatePaymentUserProcedure:
 			donationServiceUpdatePaymentUserHandler.ServeHTTP(w, r)
-		case DonationServiceGetPaymentHistoriesProcedure:
-			donationServiceGetPaymentHistoriesHandler.ServeHTTP(w, r)
-		case DonationServiceGetSubscriptionPlansProcedure:
-			donationServiceGetSubscriptionPlansHandler.ServeHTTP(w, r)
+		case DonationServiceListPaymentHistoriesProcedure:
+			donationServiceListPaymentHistoriesHandler.ServeHTTP(w, r)
+		case DonationServiceListSubscriptionPlansProcedure:
+			donationServiceListSubscriptionPlansHandler.ServeHTTP(w, r)
 		case DonationServiceGetActiveSubscriptionProcedure:
 			donationServiceGetActiveSubscriptionHandler.ServeHTTP(w, r)
 		case DonationServiceUnsubscribeProcedure:
 			donationServiceUnsubscribeHandler.ServeHTTP(w, r)
 		case DonationServiceGetTotalAmountProcedure:
 			donationServiceGetTotalAmountHandler.ServeHTTP(w, r)
-		case DonationServiceGetContributorsProcedure:
-			donationServiceGetContributorsHandler.ServeHTTP(w, r)
+		case DonationServiceListContributorsProcedure:
+			donationServiceListContributorsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -336,12 +336,12 @@ func (UnimplementedDonationServiceHandler) UpdatePaymentUser(context.Context, *c
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.UpdatePaymentUser is not implemented"))
 }
 
-func (UnimplementedDonationServiceHandler) GetPaymentHistories(context.Context, *connect_go.Request[v1.GetPaymentHistoriesRequest]) (*connect_go.Response[v1.GetPaymentHistoriesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.GetPaymentHistories is not implemented"))
+func (UnimplementedDonationServiceHandler) ListPaymentHistories(context.Context, *connect_go.Request[v1.ListPaymentHistoriesRequest]) (*connect_go.Response[v1.ListPaymentHistoriesResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.ListPaymentHistories is not implemented"))
 }
 
-func (UnimplementedDonationServiceHandler) GetSubscriptionPlans(context.Context, *connect_go.Request[v1.GetSubscriptionPlansRequest]) (*connect_go.Response[v1.GetSubscriptionPlansResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.GetSubscriptionPlans is not implemented"))
+func (UnimplementedDonationServiceHandler) ListSubscriptionPlans(context.Context, *connect_go.Request[v1.ListSubscriptionPlansRequest]) (*connect_go.Response[v1.ListSubscriptionPlansResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.ListSubscriptionPlans is not implemented"))
 }
 
 func (UnimplementedDonationServiceHandler) GetActiveSubscription(context.Context, *connect_go.Request[v1.GetActiveSubscriptionRequest]) (*connect_go.Response[v1.GetActiveSubscriptionResponse], error) {
@@ -356,6 +356,6 @@ func (UnimplementedDonationServiceHandler) GetTotalAmount(context.Context, *conn
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.GetTotalAmount is not implemented"))
 }
 
-func (UnimplementedDonationServiceHandler) GetContributors(context.Context, *connect_go.Request[v1.GetContributorsRequest]) (*connect_go.Response[v1.GetContributorsResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.GetContributors is not implemented"))
+func (UnimplementedDonationServiceHandler) ListContributors(context.Context, *connect_go.Request[v1.ListContributorsRequest]) (*connect_go.Response[v1.ListContributorsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("donation.v1.DonationService.ListContributors is not implemented"))
 }

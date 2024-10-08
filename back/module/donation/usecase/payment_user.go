@@ -85,7 +85,7 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 	return paymentUser, uc.r.CreatePaymentUsers(ctx, paymentUser)
 }
 
-func (uc *impl) GetContributors(ctx context.Context) ([]donationappdto.Contributor, error) {
+func (uc *impl) ListContributors(ctx context.Context) ([]donationappdto.Contributor, error) {
 	uc.contributorsCacheMutex.RLock()
 	defer uc.contributorsCacheMutex.RUnlock()
 

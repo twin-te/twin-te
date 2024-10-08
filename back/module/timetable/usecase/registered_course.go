@@ -110,7 +110,7 @@ func (uc *impl) CreateRegisteredCourseManually(ctx context.Context, in timetable
 	return registeredCourse, uc.r.CreateRegisteredCourses(ctx, registeredCourse)
 }
 
-func (uc *impl) GetRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error) {
+func (uc *impl) ListRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err

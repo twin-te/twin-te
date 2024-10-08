@@ -15,20 +15,20 @@ import (
 //   - shared.Unauthenticated
 //   - shared.Unauthorized
 type UseCase interface {
-	// GetEvents returns the events specified by the given year.
+	// ListEvents returns the events specified by the given year.
 	//
 	// [Authentication] not required
-	GetEvents(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.Event, error)
+	ListEvents(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.Event, error)
 
-	// GetEventsByDate returns the events specified by the given date.
+	// ListEventsByDate returns the events specified by the given date.
 	//
 	// [Authentication] not required
-	GetEventsByDate(ctx context.Context, date civil.Date) ([]*schoolcalendardomain.Event, error)
+	ListEventsByDate(ctx context.Context, date civil.Date) ([]*schoolcalendardomain.Event, error)
 
-	// GetModuleDetails returns the module details specified by the given year.
+	// ListModuleDetails returns the module details specified by the given year.
 	//
 	// [Authentication] not required
-	GetModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error)
+	ListModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error)
 
 	// GetModuleByDate returns the module corresponding to the given date.
 	//

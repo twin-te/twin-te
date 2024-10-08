@@ -22,7 +22,7 @@ type impl struct {
 	uc timetablemodule.UseCase
 }
 
-func (svc *impl) GetCoursesByCodes(ctx context.Context, req *connect.Request[timetablev1.GetCoursesByCodesRequest]) (res *connect.Response[timetablev1.GetCoursesByCodesResponse], err error) {
+func (svc *impl) ListCoursesByCodes(ctx context.Context, req *connect.Request[timetablev1.ListCoursesByCodesRequest]) (res *connect.Response[timetablev1.ListCoursesByCodesResponse], err error) {
 	year, err := sharedconv.FromPBAcadimicYear(req.Msg.Year)
 	if err != nil {
 		return
@@ -33,7 +33,7 @@ func (svc *impl) GetCoursesByCodes(ctx context.Context, req *connect.Request[tim
 		return
 	}
 
-	courses, err := svc.uc.GetCoursesByCodes(ctx, year, codes)
+	courses, err := svc.uc.ListCoursesByCodes(ctx, year, codes)
 	if err != nil {
 		return
 	}
@@ -43,7 +43,7 @@ func (svc *impl) GetCoursesByCodes(ctx context.Context, req *connect.Request[tim
 		return
 	}
 
-	res = connect.NewResponse(&timetablev1.GetCoursesByCodesResponse{
+	res = connect.NewResponse(&timetablev1.ListCoursesByCodesResponse{
 		Courses: pbCourses,
 	})
 
@@ -177,7 +177,7 @@ func (svc *impl) CreateRegisteredCourseManually(ctx context.Context, req *connec
 	return
 }
 
-func (svc *impl) GetRegisteredCourses(ctx context.Context, req *connect.Request[timetablev1.GetRegisteredCoursesRequest]) (res *connect.Response[timetablev1.GetRegisteredCoursesResponse], err error) {
+func (svc *impl) ListRegisteredCourses(ctx context.Context, req *connect.Request[timetablev1.ListRegisteredCoursesRequest]) (res *connect.Response[timetablev1.ListRegisteredCoursesResponse], err error) {
 	var year mo.Option[shareddomain.AcademicYear]
 	if req.Msg.Year != nil {
 		year, err = base.OptionMapWithErr(mo.Some(req.Msg.Year), sharedconv.FromPBAcadimicYear)
@@ -186,7 +186,7 @@ func (svc *impl) GetRegisteredCourses(ctx context.Context, req *connect.Request[
 		}
 	}
 
-	registeredCourses, err := svc.uc.GetRegisteredCourses(ctx, year)
+	registeredCourses, err := svc.uc.ListRegisteredCourses(ctx, year)
 	if err != nil {
 		return
 	}
@@ -196,7 +196,7 @@ func (svc *impl) GetRegisteredCourses(ctx context.Context, req *connect.Request[
 		return
 	}
 
-	res = connect.NewResponse(&timetablev1.GetRegisteredCoursesResponse{
+	res = connect.NewResponse(&timetablev1.ListRegisteredCoursesResponse{
 		RegisteredCourses: pbRegisteredCourses,
 	})
 
@@ -322,15 +322,15 @@ func (svc *impl) CreateTag(ctx context.Context, req *connect.Request[timetablev1
 	return
 }
 
-func (svc *impl) GetTags(ctx context.Context, req *connect.Request[timetablev1.GetTagsRequest]) (res *connect.Response[timetablev1.GetTagsResponse], err error) {
-	tags, err := svc.uc.GetTags(ctx)
+func (svc *impl) ListTags(ctx context.Context, req *connect.Request[timetablev1.ListTagsRequest]) (res *connect.Response[timetablev1.ListTagsResponse], err error) {
+	tags, err := svc.uc.ListTags(ctx)
 	if err != nil {
 		return
 	}
 
 	pbTags := base.Map(tags, timetablev1conv.ToPBTag)
 
-	res = connect.NewResponse(&timetablev1.GetTagsResponse{
+	res = connect.NewResponse(&timetablev1.ListTagsResponse{
 		Tags: pbTags,
 	})
 
