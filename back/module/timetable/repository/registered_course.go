@@ -2,17 +2,15 @@ package timetablerepository
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"strings"
+	"slices"
 
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
-	"github.com/twin-te/twin-te/back/db/gen/model"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
-	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 	"gorm.io/gorm"
@@ -31,7 +29,7 @@ func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.Fin
 		Table:    clause.Table{Name: clause.CurrentTable},
 	})
 
-	dbRegisteredCourse := new(model.RegisteredCourse)
+	dbRegisteredCourse := new(timetabledbmodel.RegisteredCourse)
 
 	err := db.Transaction(func(tx *gorm.DB) error {
 		err := tx.Preload("Tags").Take(dbRegisteredCourse).Error
@@ -41,7 +39,7 @@ func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.Fin
 		return nil, err
 	}
 
-	return fromDBRegisteredCourse(dbRegisteredCourse)
+	return timetabledbmodel.FromDBRegisteredCourse(dbRegisteredCourse)
 }
 
 func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error) {
@@ -64,7 +62,7 @@ func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 		Table:    clause.Table{Name: clause.CurrentTable},
 	})
 
-	var dbRegisteredCourses []*model.RegisteredCourse
+	var dbRegisteredCourses []*timetabledbmodel.RegisteredCourse
 
 	err := db.Transaction(func(tx *gorm.DB) error {
 		return tx.Preload("Tags").Find(&dbRegisteredCourses).Error
@@ -73,11 +71,11 @@ func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 		return nil, err
 	}
 
-	return base.MapWithErr(dbRegisteredCourses, fromDBRegisteredCourse)
+	return base.MapWithErr(dbRegisteredCourses, timetabledbmodel.FromDBRegisteredCourse)
 }
 
 func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ...*timetabledomain.RegisteredCourse) error {
-	dbRegisteredCourses, err := base.MapWithArgAndErr(registeredCourses, true, toDBRegisteredCourse)
+	dbRegisteredCourses, err := base.MapWithArgAndErr(registeredCourses, true, timetabledbmodel.ToDBRegisteredCourse)
 	if err != nil {
 		return err
 	}
@@ -98,27 +96,27 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 		columns = append(columns, "year")
 	}
 
-	if !base.EqualPtr(registeredCourse.CourseID, before.CourseID) {
+	if registeredCourse.CourseID != before.CourseID {
 		columns = append(columns, "course_id")
 	}
 
-	if !base.EqualPtr(registeredCourse.Name, before.Name) {
+	if registeredCourse.Name != before.Name {
 		columns = append(columns, "name")
 	}
 
-	if !base.EqualPtr(registeredCourse.Instructors, before.Instructors) {
-		columns = append(columns, "instractor")
+	if registeredCourse.Instructors != before.Instructors {
+		columns = append(columns, "instructors")
 	}
 
-	if !base.EqualPtr(registeredCourse.Credit, before.Credit) {
+	if registeredCourse.Credit != before.Credit {
 		columns = append(columns, "credit")
 	}
 
-	if !base.EqualSlicePtr(registeredCourse.Methods, before.Methods) {
+	if !base.OptionEqualBy(registeredCourse.Methods, before.Methods, slices.Equal) {
 		columns = append(columns, "methods")
 	}
 
-	if !base.EqualSlicePtr(registeredCourse.Schedules, before.Schedules) {
+	if !base.OptionEqualBy(registeredCourse.Schedules, before.Schedules, slices.Equal) {
 		columns = append(columns, "schedules")
 	}
 
@@ -138,7 +136,7 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 		columns = append(columns, "late")
 	}
 
-	dbRegisteredCourse, err := toDBRegisteredCourse(registeredCourse, false)
+	dbRegisteredCourse, err := timetabledbmodel.ToDBRegisteredCourse(registeredCourse, false)
 	if err != nil {
 		return err
 	}
@@ -164,14 +162,14 @@ func (r *impl) DeleteRegisteredCourses(ctx context.Context, conds timetableport.
 		db = db.Where("user_id = ?", conds.UserID.String())
 	}
 
-	return int(db.Delete(&model.RegisteredCourse{}).RowsAffected), db.Error
+	return int(db.Delete(&timetabledbmodel.RegisteredCourse{}).RowsAffected), db.Error
 }
 
 func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, registeredCourses []*timetabledomain.RegisteredCourse, lock sharedport.Lock) error {
 	courseIDToRegisteredCourse := make(map[idtype.CourseID]*timetabledomain.RegisteredCourse, len(registeredCourses))
 	for _, registeredCourse := range registeredCourses {
 		if registeredCourse.HasBasedCourse() && registeredCourse.CourseAssociation.IsAbsent() {
-			courseIDToRegisteredCourse[*registeredCourse.CourseID] = registeredCourse
+			courseIDToRegisteredCourse[registeredCourse.CourseID.MustGet()] = registeredCourse
 		}
 	}
 
@@ -193,180 +191,4 @@ func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, regi
 	}
 
 	return nil
-}
-
-func fromDBRegisteredCourse(dbRegisteredCourse *model.RegisteredCourse) (*timetabledomain.RegisteredCourse, error) {
-	return timetabledomain.ConstructRegisteredCourse(func(registeredCourse *timetabledomain.RegisteredCourse) (err error) {
-		registeredCourse.ID, err = idtype.ParseRegisteredCourseID(dbRegisteredCourse.ID)
-		if err != nil {
-			return err
-		}
-
-		registeredCourse.UserID, err = idtype.ParseUserID(dbRegisteredCourse.UserID)
-		if err != nil {
-			return err
-		}
-
-		registeredCourse.Year, err = shareddomain.ParseAcademicYear(int(dbRegisteredCourse.Year))
-		if err != nil {
-			return err
-		}
-
-		if dbRegisteredCourse.CourseID != nil {
-			courseID, err := idtype.ParseCourseID(*dbRegisteredCourse.CourseID)
-			if err != nil {
-				return err
-			}
-			registeredCourse.CourseID = &courseID
-		}
-
-		if dbRegisteredCourse.Name != nil {
-			name, err := timetabledomain.ParseName(*dbRegisteredCourse.Name)
-			if err != nil {
-				return err
-			}
-			registeredCourse.Name = &name
-		}
-
-		registeredCourse.Instructors = dbRegisteredCourse.Instructors
-
-		if dbRegisteredCourse.Credit != nil {
-			credit, err := timetabledomain.ParseCredit(fmt.Sprintf("%.1f", *dbRegisteredCourse.Credit))
-			if err != nil {
-				return err
-			}
-			registeredCourse.Credit = &credit
-		}
-
-		if dbRegisteredCourse.Methods != nil {
-			methods, err := fromDBRegisteredCourseMethods(*dbRegisteredCourse.Methods)
-			if err != nil {
-				return err
-			}
-			registeredCourse.Methods = &methods
-		}
-
-		if dbRegisteredCourse.Schedules != nil {
-			schedules, err := fromDBRegisteredCourseSchedules(*dbRegisteredCourse.Schedules)
-			if err != nil {
-				return err
-			}
-			registeredCourse.Schedules = &schedules
-		}
-
-		registeredCourse.Memo = dbRegisteredCourse.Memo
-
-		registeredCourse.Attendance, err = timetabledomain.ParseAttendance(int(dbRegisteredCourse.Attendance))
-		if err != nil {
-			return
-		}
-
-		registeredCourse.Absence, err = timetabledomain.ParseAbsence(int(dbRegisteredCourse.Absence))
-		if err != nil {
-			return
-		}
-
-		registeredCourse.Late, err = timetabledomain.ParseLate(int(dbRegisteredCourse.Late))
-		if err != nil {
-			return
-		}
-
-		registeredCourse.TagIDs, err = base.MapWithErr(dbRegisteredCourse.Tags, fromDBRegisteredCourseTag)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-}
-
-func toDBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse, withAssociations bool) (*model.RegisteredCourse, error) {
-	dbRegisteredCourse := &model.RegisteredCourse{
-		ID:          registeredCourse.ID.String(),
-		UserID:      registeredCourse.UserID.String(),
-		Year:        int16(registeredCourse.Year),
-		CourseID:    registeredCourse.CourseID.StringPtr(),
-		Name:        registeredCourse.Name.StringPtr(),
-		Instructors: registeredCourse.Instructors,
-		Credit:      registeredCourse.Credit.FloatPtr(),
-		Memo:        registeredCourse.Memo,
-		Attendance:  int16(registeredCourse.Attendance.Int()),
-		Absence:     int16(registeredCourse.Absence.Int()),
-		Late:        int16(registeredCourse.Late.Int()),
-	}
-
-	if registeredCourse.Methods != nil {
-		dbRegisteredCourse.Methods = lo.ToPtr(toDBRegisteredCourseMethods(*registeredCourse.Methods))
-	}
-
-	if registeredCourse.Schedules != nil {
-		dbRegisteredCourseSchedules, err := toDBRegisteredCourseSchedulesJSON(*registeredCourse.Schedules)
-		if err != nil {
-			return nil, err
-		}
-		dbRegisteredCourse.Schedules = &dbRegisteredCourseSchedules
-	}
-
-	if withAssociations {
-		dbRegisteredCourse.Tags = base.MapWithArg(registeredCourse.TagIDs, registeredCourse.ID, toDBRegisteredCourseTag)
-	}
-
-	return dbRegisteredCourse, nil
-}
-
-type dbRegisteredCourseSchedule struct {
-	Module    string `json:"module"`
-	Day       string `json:"day"`
-	Period    int    `json:"period"`
-	Locations string `json:"locations"`
-}
-
-func fromDBRegisteredCourseMethods(dbMethods string) ([]timetabledomain.CourseMethod, error) {
-	if dbMethods == "{}" {
-		return nil, nil
-	}
-
-	dbMethods = strings.TrimPrefix(dbMethods, "{")
-	dbMethods = strings.TrimSuffix(dbMethods, "}")
-
-	return base.MapWithErr(strings.Split(dbMethods, ","), timetabledomain.ParseCourseMethod)
-}
-
-func toDBRegisteredCourseMethods(methods []timetabledomain.CourseMethod) string {
-	return fmt.Sprintf("{%s}", strings.Join(base.MapByString(methods), ","))
-}
-
-func fromDBRegisteredCourseSchedules(data string) ([]timetabledomain.Schedule, error) {
-	var dbRegisteredCourseSchedules []dbRegisteredCourseSchedule
-
-	if err := json.Unmarshal([]byte(data), &dbRegisteredCourseSchedules); err != nil {
-		return nil, err
-	}
-
-	return base.MapWithErr(dbRegisteredCourseSchedules, func(dbRegisteredCourseSchedule dbRegisteredCourseSchedule) (timetabledomain.Schedule, error) {
-		return timetabledomain.ParseSchedule(
-			dbRegisteredCourseSchedule.Module,
-			dbRegisteredCourseSchedule.Day,
-			dbRegisteredCourseSchedule.Period,
-			dbRegisteredCourseSchedule.Locations,
-		)
-	})
-}
-
-func toDBRegisteredCourseSchedulesJSON(schedules []timetabledomain.Schedule) (string, error) {
-	dbRegisteredCourseSchedules := base.Map(schedules, func(schedule timetabledomain.Schedule) *dbRegisteredCourseSchedule {
-		return &dbRegisteredCourseSchedule{
-			Module:    schedule.Module.String(),
-			Day:       schedule.Day.String(),
-			Period:    schedule.Period.Int(),
-			Locations: schedule.Locations,
-		}
-	})
-
-	data, err := json.Marshal(dbRegisteredCourseSchedules)
-	if err != nil {
-		return "", err
-	}
-
-	return string(data), nil
 }

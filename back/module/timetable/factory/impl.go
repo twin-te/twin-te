@@ -3,6 +3,7 @@ package timetablefactory
 import (
 	"database/sql"
 
+	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
@@ -41,7 +42,7 @@ func (f *impl) NewRegisteredCourseFromCourse(userID idtype.UserID, course *timet
 	return timetabledomain.ConstructRegisteredCourse(func(rc *timetabledomain.RegisteredCourse) error {
 		rc.ID = idtype.NewRegisteredCourseID()
 		rc.UserID = userID
-		rc.CourseID = &course.ID
+		rc.CourseID = mo.Some(course.ID)
 		rc.Year = course.Year
 		rc.CourseAssociation.Set(course)
 		return nil
@@ -61,11 +62,11 @@ func (f *impl) NewRegisteredCourseMannualy(
 		rc.ID = idtype.NewRegisteredCourseID()
 		rc.UserID = userID
 		rc.Year = year
-		rc.Name = &name
-		rc.Instructors = &instructors
-		rc.Credit = &credit
-		rc.Methods = &methods
-		rc.Schedules = &schedules
+		rc.Name = mo.Some(name)
+		rc.Instructors = mo.Some(instructors)
+		rc.Credit = mo.Some(credit)
+		rc.Methods = mo.Some(methods)
+		rc.Schedules = mo.Some(schedules)
 		return nil
 	})
 }
