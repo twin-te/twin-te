@@ -488,7 +488,7 @@ const buttonState = computed(() =>
 const duplicatedScheduleCourses = ref<DisplayCourse[]>([]);
 
 const addCourses = async (warning = true) => {
-  const registeredCourse = await timetableUseCase.getRegisteredCourses(
+  const registeredCourse = await timetableUseCase.listRegisteredCourses(
     year.value
   );
 

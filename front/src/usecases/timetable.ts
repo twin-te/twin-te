@@ -49,7 +49,7 @@ import {
 } from "~/utils";
 
 export interface ITimetableUseCase {
-  getCoursesByCodes(data: {
+  listCoursesByCodes(data: {
     year: number;
     codes: string[];
   }): Promise<
@@ -106,7 +106,7 @@ export interface ITimetableUseCase {
     RegisteredCourse | UnauthenticatedError | NetworkError | InternalServerError
   >;
 
-  getRegisteredCourses(
+  listRegisteredCourses(
     year?: number,
     tagID?: string
   ): Promise<
@@ -161,7 +161,7 @@ export interface ITimetableUseCase {
     name: string
   ): Promise<Tag | UnauthenticatedError | NetworkError | InternalServerError>;
 
-  getTags(): Promise<
+  listTags(): Promise<
     Tag[] | UnauthenticatedError | NetworkError | InternalServerError
   >;
 
@@ -224,7 +224,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     };
   }
 
-  async #getRegisteredCourses(): Promise<
+  async #listRegisteredCourses(): Promise<
     | RegisteredCourse[]
     | UnauthenticatedError
     | NetworkError
@@ -236,7 +236,7 @@ export class TimetableUseCase implements ITimetableUseCase {
       }
 
       return this.#client
-        .getRegisteredCourses({})
+        .listRegisteredCourses({})
         .then((res) => res.registeredCourses.map(fromPBRegisteredCourse))
         .then((registeredCourses) => {
           return (this.#registeredCourses = registeredCourses);
@@ -253,7 +253,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     });
   }
 
-  async #getTags(): Promise<
+  async #listTags(): Promise<
     Tag[] | UnauthenticatedError | NetworkError | InternalServerError
   > {
     return this.#mutex.tags.runExclusive(() => {
@@ -262,7 +262,7 @@ export class TimetableUseCase implements ITimetableUseCase {
       }
 
       return this.#client
-        .getTags({})
+        .listTags({})
         .then((res) => res.tags.map(fromPBTag))
         .then((tags) => {
           return (this.#tags = tags);
@@ -279,7 +279,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     });
   }
 
-  async getCoursesByCodes(data: {
+  async listCoursesByCodes(data: {
     year: number;
     codes: string[];
   }): Promise<
@@ -287,7 +287,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   > {
     const pbAcademicYear = toPBAcademicYear(data.year);
     return this.#client
-      .getCoursesByCodes({ year: pbAcademicYear, codes: data.codes })
+      .listCoursesByCodes({ year: pbAcademicYear, codes: data.codes })
       .then((res) => res.courses.map(fromPBCourse))
       .catch((error) => handleError(error));
   }
@@ -335,7 +335,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   }): Promise<
     Course[] | UnauthenticatedError | NetworkError | InternalServerError
   > {
-    const result = await this.getRegisteredCourses(conds.year);
+    const result = await this.listRegisteredCourses(conds.year);
     if (isResultError(result)) {
       return result;
     }
@@ -458,7 +458,7 @@ export class TimetableUseCase implements ITimetableUseCase {
       );
   }
 
-  async getRegisteredCourses(
+  async listRegisteredCourses(
     year?: number,
     tagID?: string
   ): Promise<
@@ -467,7 +467,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    const result = await this.#getRegisteredCourses();
+    const result = await this.#listRegisteredCourses();
 
     if (isResultError(result)) {
       return result;
@@ -499,7 +499,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    const result = await this.#getRegisteredCourses();
+    const result = await this.#listRegisteredCourses();
 
     if (isResultError(result)) {
       return result;
@@ -619,7 +619,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   ): Promise<
     boolean | UnauthenticatedError | NetworkError | InternalServerError
   > {
-    const result = await this.getRegisteredCourses(year);
+    const result = await this.listRegisteredCourses(year);
     if (isResultError(result)) return result;
 
     const registeredNormalSchedules: NormalSchedule[] = result
@@ -665,10 +665,10 @@ export class TimetableUseCase implements ITimetableUseCase {
       });
   }
 
-  async getTags(): Promise<
+  async listTags(): Promise<
     Tag[] | UnauthenticatedError | NetworkError | InternalServerError
   > {
-    const result = await this.#getTags();
+    const result = await this.#listTags();
 
     if (isResultError(result)) {
       return result;
@@ -686,7 +686,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    const result = await this.#getTags();
+    const result = await this.#listTags();
 
     if (isResultError(result)) {
       return result;

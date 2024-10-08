@@ -101,7 +101,7 @@ const toggleState = (id: string) => {
 const updateView = async (init = false) => {
   const [registeredCourses, tags] = await Promise.all([
     timetableUseCase
-      .getRegisteredCourses(
+      .listRegisteredCourses(
         year.value === 0 ? undefined : year.value,
         selectedTag?.id
       )
@@ -110,7 +110,7 @@ const updateView = async (init = false) => {
         return result;
       }),
     timetableUseCase
-      .getTags()
+      .listTags()
       .then((result) => {
         if (isResultError(result)) throw result;
         return result;
@@ -146,7 +146,7 @@ const updateView = async (init = false) => {
 
   if (init) {
     noCourseMessage.value = await timetableUseCase
-      .getRegisteredCourses()
+      .listRegisteredCourses()
       .then((result) => {
         if (isResultError(result)) throw result;
         return result;

@@ -222,7 +222,7 @@ const updateView = async () => {
       if (isResultError(result)) throw result;
       return result;
     }),
-    timetableUseCase.getTags().then((result) => {
+    timetableUseCase.listTags().then((result) => {
       if (isResultError(result)) throw result;
       return result;
     }),

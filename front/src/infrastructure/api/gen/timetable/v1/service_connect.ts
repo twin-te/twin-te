@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateRegisteredCourseManuallyRequest, CreateRegisteredCourseManuallyResponse, CreateRegisteredCoursesByCodesRequest, CreateRegisteredCoursesByCodesResponse, CreateTagRequest, CreateTagResponse, DeleteRegisteredCourseRequest, DeleteRegisteredCourseResponse, DeleteTagRequest, DeleteTagResponse, GetCoursesByCodesRequest, GetCoursesByCodesResponse, GetRegisteredCoursesRequest, GetRegisteredCoursesResponse, GetTagsRequest, GetTagsResponse, RearrangeTagsRequest, RearrangeTagsResponse, SearchCoursesRequest, SearchCoursesResponse, UpdateRegisteredCourseRequest, UpdateRegisteredCourseResponse, UpdateTagRequest, UpdateTagResponse } from "./service_pb.js";
+import { CreateRegisteredCourseManuallyRequest, CreateRegisteredCourseManuallyResponse, CreateRegisteredCoursesByCodesRequest, CreateRegisteredCoursesByCodesResponse, CreateTagRequest, CreateTagResponse, DeleteRegisteredCourseRequest, DeleteRegisteredCourseResponse, DeleteTagRequest, DeleteTagResponse, ListCoursesByCodesRequest, ListCoursesByCodesResponse, ListRegisteredCoursesRequest, ListRegisteredCoursesResponse, ListTagsRequest, ListTagsResponse, RearrangeTagsRequest, RearrangeTagsResponse, SearchCoursesRequest, SearchCoursesResponse, UpdateRegisteredCourseRequest, UpdateRegisteredCourseResponse, UpdateTagRequest, UpdateTagResponse } from "./service_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -18,12 +18,12 @@ export const TimetableService = {
   typeName: "timetable.v1.TimetableService",
   methods: {
     /**
-     * @generated from rpc timetable.v1.TimetableService.GetCoursesByCodes
+     * @generated from rpc timetable.v1.TimetableService.ListCoursesByCodes
      */
-    getCoursesByCodes: {
-      name: "GetCoursesByCodes",
-      I: GetCoursesByCodesRequest,
-      O: GetCoursesByCodesResponse,
+    listCoursesByCodes: {
+      name: "ListCoursesByCodes",
+      I: ListCoursesByCodesRequest,
+      O: ListCoursesByCodesResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
@@ -56,12 +56,12 @@ export const TimetableService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc timetable.v1.TimetableService.GetRegisteredCourses
+     * @generated from rpc timetable.v1.TimetableService.ListRegisteredCourses
      */
-    getRegisteredCourses: {
-      name: "GetRegisteredCourses",
-      I: GetRegisteredCoursesRequest,
-      O: GetRegisteredCoursesResponse,
+    listRegisteredCourses: {
+      name: "ListRegisteredCourses",
+      I: ListRegisteredCoursesRequest,
+      O: ListRegisteredCoursesResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
@@ -93,12 +93,12 @@ export const TimetableService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc timetable.v1.TimetableService.GetTags
+     * @generated from rpc timetable.v1.TimetableService.ListTags
      */
-    getTags: {
-      name: "GetTags",
-      I: GetTagsRequest,
-      O: GetTagsResponse,
+    listTags: {
+      name: "ListTags",
+      I: ListTagsRequest,
+      O: ListTagsResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

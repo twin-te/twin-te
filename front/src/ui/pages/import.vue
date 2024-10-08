@@ -123,13 +123,13 @@ if (typeof route.query.codes !== "string") {
 const codes: string[] = (route.query.codes as string).split(",");
 
 /** result */
-const result = await timetableUseCase.getCoursesByCodes({
+const result = await timetableUseCase.listCoursesByCodes({
   year: appliedYear.value,
   codes,
 });
 if (isResultError(result)) throw result;
 
-const registered = await timetableUseCase.getRegisteredCourses(
+const registered = await timetableUseCase.listRegisteredCourses(
   appliedYear.value
 );
 if (isResultError(registered)) throw registered;
