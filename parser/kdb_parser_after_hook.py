@@ -29,7 +29,7 @@ class Day(str):
     NT = "NT"  # NT
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(eq=True, frozen=True)
 class Schedule:
     module: Module
     day: Day
@@ -207,6 +207,18 @@ def convert(row: dict) -> Course:
             except ValueError:
                 has_parse_error = True
 
+    recommended_grade_set = set(recommended_grades)
+    if len(recommended_grades) != len(recommended_grade_set):
+        has_parse_error = True
+
+    method_set = set(methods)
+    if len(methods) != len(method_set):
+        has_parse_error = True
+
+    schedule_set = set(schedules)
+    if len(schedules) != len(schedule_set):
+        has_parse_error = True
+
     return Course(
         code=row["code"],
         name=row["name"],
@@ -217,9 +229,9 @@ def convert(row: dict) -> Course:
         last_updated_at=row["lastUpdate"],
         has_parse_error=has_parse_error,
         is_annual=is_annual,
-        recommended_grades=recommended_grades,
-        methods=methods,
-        schedules=schedules,
+        recommended_grades=list(recommended_grade_set),
+        methods=list(method_set),
+        schedules=list(schedule_set),
     )
 
 
