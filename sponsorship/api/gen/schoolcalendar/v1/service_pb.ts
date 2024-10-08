@@ -9,76 +9,76 @@ import { RFC3339FullDate } from "../../shared/type_pb";
 import { Event, Module } from "./type_pb";
 
 /**
- * @generated from message schoolcalendar.v1.GetEventsByDateRequest
+ * @generated from message schoolcalendar.v1.ListEventsByDateRequest
  */
-export class GetEventsByDateRequest extends Message<GetEventsByDateRequest> {
+export class ListEventsByDateRequest extends Message<ListEventsByDateRequest> {
   /**
    * @generated from field: shared.RFC3339FullDate date = 1;
    */
   date?: RFC3339FullDate;
 
-  constructor(data?: PartialMessage<GetEventsByDateRequest>) {
+  constructor(data?: PartialMessage<ListEventsByDateRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "schoolcalendar.v1.GetEventsByDateRequest";
+  static readonly typeName = "schoolcalendar.v1.ListEventsByDateRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "date", kind: "message", T: RFC3339FullDate },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEventsByDateRequest {
-    return new GetEventsByDateRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEventsByDateRequest {
+    return new ListEventsByDateRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEventsByDateRequest {
-    return new GetEventsByDateRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEventsByDateRequest {
+    return new ListEventsByDateRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEventsByDateRequest {
-    return new GetEventsByDateRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEventsByDateRequest {
+    return new ListEventsByDateRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetEventsByDateRequest | PlainMessage<GetEventsByDateRequest> | undefined, b: GetEventsByDateRequest | PlainMessage<GetEventsByDateRequest> | undefined): boolean {
-    return proto3.util.equals(GetEventsByDateRequest, a, b);
+  static equals(a: ListEventsByDateRequest | PlainMessage<ListEventsByDateRequest> | undefined, b: ListEventsByDateRequest | PlainMessage<ListEventsByDateRequest> | undefined): boolean {
+    return proto3.util.equals(ListEventsByDateRequest, a, b);
   }
 }
 
 /**
- * @generated from message schoolcalendar.v1.GetEventsByDateResponse
+ * @generated from message schoolcalendar.v1.ListEventsByDateResponse
  */
-export class GetEventsByDateResponse extends Message<GetEventsByDateResponse> {
+export class ListEventsByDateResponse extends Message<ListEventsByDateResponse> {
   /**
    * @generated from field: repeated schoolcalendar.v1.Event events = 1;
    */
   events: Event[] = [];
 
-  constructor(data?: PartialMessage<GetEventsByDateResponse>) {
+  constructor(data?: PartialMessage<ListEventsByDateResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "schoolcalendar.v1.GetEventsByDateResponse";
+  static readonly typeName = "schoolcalendar.v1.ListEventsByDateResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "events", kind: "message", T: Event, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetEventsByDateResponse {
-    return new GetEventsByDateResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListEventsByDateResponse {
+    return new ListEventsByDateResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetEventsByDateResponse {
-    return new GetEventsByDateResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListEventsByDateResponse {
+    return new ListEventsByDateResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetEventsByDateResponse {
-    return new GetEventsByDateResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListEventsByDateResponse {
+    return new ListEventsByDateResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetEventsByDateResponse | PlainMessage<GetEventsByDateResponse> | undefined, b: GetEventsByDateResponse | PlainMessage<GetEventsByDateResponse> | undefined): boolean {
-    return proto3.util.equals(GetEventsByDateResponse, a, b);
+  static equals(a: ListEventsByDateResponse | PlainMessage<ListEventsByDateResponse> | undefined, b: ListEventsByDateResponse | PlainMessage<ListEventsByDateResponse> | undefined): boolean {
+    return proto3.util.equals(ListEventsByDateResponse, a, b);
   }
 }
 

@@ -46,9 +46,9 @@ class UseCase {
 			.catch(ConvertAPIError);
 	}
 
-	async getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
+	async listSubscriptionPlans(): Promise<SubscriptionPlan[]> {
 		return this.#donationClient
-			.getSubscriptionPlans({})
+			.listSubscriptionPlans({})
 			.then((res) => res.subscriptionPlans.map(fromPBPlan))
 			.catch(ConvertAPIError);
 	}
@@ -69,9 +69,9 @@ class UseCase {
 			.catch(ConvertAPIError);
 	}
 
-	async getPaymentHistories(): Promise<PaymentHistory[]> {
+	async listPaymentHistories(): Promise<PaymentHistory[]> {
 		return this.#donationClient
-			.getPaymentHistories({})
+			.listPaymentHistories({})
 			.then((res) => res.paymentHistories.map(fromPBPaymentHistory))
 			.catch(ConvertAPIError);
 	}

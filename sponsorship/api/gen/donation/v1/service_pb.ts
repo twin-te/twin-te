@@ -305,138 +305,138 @@ export class UpdatePaymentUserResponse extends Message<UpdatePaymentUserResponse
 }
 
 /**
- * @generated from message donation.v1.GetPaymentHistoriesRequest
+ * @generated from message donation.v1.ListPaymentHistoriesRequest
  */
-export class GetPaymentHistoriesRequest extends Message<GetPaymentHistoriesRequest> {
-  constructor(data?: PartialMessage<GetPaymentHistoriesRequest>) {
+export class ListPaymentHistoriesRequest extends Message<ListPaymentHistoriesRequest> {
+  constructor(data?: PartialMessage<ListPaymentHistoriesRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "donation.v1.GetPaymentHistoriesRequest";
+  static readonly typeName = "donation.v1.ListPaymentHistoriesRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetPaymentHistoriesRequest {
-    return new GetPaymentHistoriesRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListPaymentHistoriesRequest {
+    return new ListPaymentHistoriesRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetPaymentHistoriesRequest {
-    return new GetPaymentHistoriesRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListPaymentHistoriesRequest {
+    return new ListPaymentHistoriesRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetPaymentHistoriesRequest {
-    return new GetPaymentHistoriesRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListPaymentHistoriesRequest {
+    return new ListPaymentHistoriesRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetPaymentHistoriesRequest | PlainMessage<GetPaymentHistoriesRequest> | undefined, b: GetPaymentHistoriesRequest | PlainMessage<GetPaymentHistoriesRequest> | undefined): boolean {
-    return proto3.util.equals(GetPaymentHistoriesRequest, a, b);
+  static equals(a: ListPaymentHistoriesRequest | PlainMessage<ListPaymentHistoriesRequest> | undefined, b: ListPaymentHistoriesRequest | PlainMessage<ListPaymentHistoriesRequest> | undefined): boolean {
+    return proto3.util.equals(ListPaymentHistoriesRequest, a, b);
   }
 }
 
 /**
- * @generated from message donation.v1.GetPaymentHistoriesResponse
+ * @generated from message donation.v1.ListPaymentHistoriesResponse
  */
-export class GetPaymentHistoriesResponse extends Message<GetPaymentHistoriesResponse> {
+export class ListPaymentHistoriesResponse extends Message<ListPaymentHistoriesResponse> {
   /**
    * @generated from field: repeated donation.v1.PaymentHistory payment_histories = 1;
    */
   paymentHistories: PaymentHistory[] = [];
 
-  constructor(data?: PartialMessage<GetPaymentHistoriesResponse>) {
+  constructor(data?: PartialMessage<ListPaymentHistoriesResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "donation.v1.GetPaymentHistoriesResponse";
+  static readonly typeName = "donation.v1.ListPaymentHistoriesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "payment_histories", kind: "message", T: PaymentHistory, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetPaymentHistoriesResponse {
-    return new GetPaymentHistoriesResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListPaymentHistoriesResponse {
+    return new ListPaymentHistoriesResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetPaymentHistoriesResponse {
-    return new GetPaymentHistoriesResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListPaymentHistoriesResponse {
+    return new ListPaymentHistoriesResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetPaymentHistoriesResponse {
-    return new GetPaymentHistoriesResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListPaymentHistoriesResponse {
+    return new ListPaymentHistoriesResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetPaymentHistoriesResponse | PlainMessage<GetPaymentHistoriesResponse> | undefined, b: GetPaymentHistoriesResponse | PlainMessage<GetPaymentHistoriesResponse> | undefined): boolean {
-    return proto3.util.equals(GetPaymentHistoriesResponse, a, b);
+  static equals(a: ListPaymentHistoriesResponse | PlainMessage<ListPaymentHistoriesResponse> | undefined, b: ListPaymentHistoriesResponse | PlainMessage<ListPaymentHistoriesResponse> | undefined): boolean {
+    return proto3.util.equals(ListPaymentHistoriesResponse, a, b);
   }
 }
 
 /**
- * @generated from message donation.v1.GetSubscriptionPlansRequest
+ * @generated from message donation.v1.ListSubscriptionPlansRequest
  */
-export class GetSubscriptionPlansRequest extends Message<GetSubscriptionPlansRequest> {
-  constructor(data?: PartialMessage<GetSubscriptionPlansRequest>) {
+export class ListSubscriptionPlansRequest extends Message<ListSubscriptionPlansRequest> {
+  constructor(data?: PartialMessage<ListSubscriptionPlansRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "donation.v1.GetSubscriptionPlansRequest";
+  static readonly typeName = "donation.v1.ListSubscriptionPlansRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSubscriptionPlansRequest {
-    return new GetSubscriptionPlansRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSubscriptionPlansRequest {
+    return new ListSubscriptionPlansRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSubscriptionPlansRequest {
-    return new GetSubscriptionPlansRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSubscriptionPlansRequest {
+    return new ListSubscriptionPlansRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSubscriptionPlansRequest {
-    return new GetSubscriptionPlansRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSubscriptionPlansRequest {
+    return new ListSubscriptionPlansRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetSubscriptionPlansRequest | PlainMessage<GetSubscriptionPlansRequest> | undefined, b: GetSubscriptionPlansRequest | PlainMessage<GetSubscriptionPlansRequest> | undefined): boolean {
-    return proto3.util.equals(GetSubscriptionPlansRequest, a, b);
+  static equals(a: ListSubscriptionPlansRequest | PlainMessage<ListSubscriptionPlansRequest> | undefined, b: ListSubscriptionPlansRequest | PlainMessage<ListSubscriptionPlansRequest> | undefined): boolean {
+    return proto3.util.equals(ListSubscriptionPlansRequest, a, b);
   }
 }
 
 /**
- * @generated from message donation.v1.GetSubscriptionPlansResponse
+ * @generated from message donation.v1.ListSubscriptionPlansResponse
  */
-export class GetSubscriptionPlansResponse extends Message<GetSubscriptionPlansResponse> {
+export class ListSubscriptionPlansResponse extends Message<ListSubscriptionPlansResponse> {
   /**
    * @generated from field: repeated donation.v1.SubscriptionPlan subscription_plans = 1;
    */
   subscriptionPlans: SubscriptionPlan[] = [];
 
-  constructor(data?: PartialMessage<GetSubscriptionPlansResponse>) {
+  constructor(data?: PartialMessage<ListSubscriptionPlansResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "donation.v1.GetSubscriptionPlansResponse";
+  static readonly typeName = "donation.v1.ListSubscriptionPlansResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "subscription_plans", kind: "message", T: SubscriptionPlan, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSubscriptionPlansResponse {
-    return new GetSubscriptionPlansResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListSubscriptionPlansResponse {
+    return new ListSubscriptionPlansResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSubscriptionPlansResponse {
-    return new GetSubscriptionPlansResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListSubscriptionPlansResponse {
+    return new ListSubscriptionPlansResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSubscriptionPlansResponse {
-    return new GetSubscriptionPlansResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListSubscriptionPlansResponse {
+    return new ListSubscriptionPlansResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetSubscriptionPlansResponse | PlainMessage<GetSubscriptionPlansResponse> | undefined, b: GetSubscriptionPlansResponse | PlainMessage<GetSubscriptionPlansResponse> | undefined): boolean {
-    return proto3.util.equals(GetSubscriptionPlansResponse, a, b);
+  static equals(a: ListSubscriptionPlansResponse | PlainMessage<ListSubscriptionPlansResponse> | undefined, b: ListSubscriptionPlansResponse | PlainMessage<ListSubscriptionPlansResponse> | undefined): boolean {
+    return proto3.util.equals(ListSubscriptionPlansResponse, a, b);
   }
 }
 
@@ -645,70 +645,70 @@ export class GetTotalAmountResponse extends Message<GetTotalAmountResponse> {
 }
 
 /**
- * @generated from message donation.v1.GetContributorsRequest
+ * @generated from message donation.v1.ListContributorsRequest
  */
-export class GetContributorsRequest extends Message<GetContributorsRequest> {
-  constructor(data?: PartialMessage<GetContributorsRequest>) {
+export class ListContributorsRequest extends Message<ListContributorsRequest> {
+  constructor(data?: PartialMessage<ListContributorsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "donation.v1.GetContributorsRequest";
+  static readonly typeName = "donation.v1.ListContributorsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetContributorsRequest {
-    return new GetContributorsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListContributorsRequest {
+    return new ListContributorsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetContributorsRequest {
-    return new GetContributorsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListContributorsRequest {
+    return new ListContributorsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetContributorsRequest {
-    return new GetContributorsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListContributorsRequest {
+    return new ListContributorsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetContributorsRequest | PlainMessage<GetContributorsRequest> | undefined, b: GetContributorsRequest | PlainMessage<GetContributorsRequest> | undefined): boolean {
-    return proto3.util.equals(GetContributorsRequest, a, b);
+  static equals(a: ListContributorsRequest | PlainMessage<ListContributorsRequest> | undefined, b: ListContributorsRequest | PlainMessage<ListContributorsRequest> | undefined): boolean {
+    return proto3.util.equals(ListContributorsRequest, a, b);
   }
 }
 
 /**
- * @generated from message donation.v1.GetContributorsResponse
+ * @generated from message donation.v1.ListContributorsResponse
  */
-export class GetContributorsResponse extends Message<GetContributorsResponse> {
+export class ListContributorsResponse extends Message<ListContributorsResponse> {
   /**
    * @generated from field: repeated donation.v1.Contributor contributors = 1;
    */
   contributors: Contributor[] = [];
 
-  constructor(data?: PartialMessage<GetContributorsResponse>) {
+  constructor(data?: PartialMessage<ListContributorsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "donation.v1.GetContributorsResponse";
+  static readonly typeName = "donation.v1.ListContributorsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "contributors", kind: "message", T: Contributor, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetContributorsResponse {
-    return new GetContributorsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListContributorsResponse {
+    return new ListContributorsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetContributorsResponse {
-    return new GetContributorsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListContributorsResponse {
+    return new ListContributorsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetContributorsResponse {
-    return new GetContributorsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListContributorsResponse {
+    return new ListContributorsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetContributorsResponse | PlainMessage<GetContributorsResponse> | undefined, b: GetContributorsResponse | PlainMessage<GetContributorsResponse> | undefined): boolean {
-    return proto3.util.equals(GetContributorsResponse, a, b);
+  static equals(a: ListContributorsResponse | PlainMessage<ListContributorsResponse> | undefined, b: ListContributorsResponse | PlainMessage<ListContributorsResponse> | undefined): boolean {
+    return proto3.util.equals(ListContributorsResponse, a, b);
   }
 }
 

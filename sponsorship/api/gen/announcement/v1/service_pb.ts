@@ -9,70 +9,70 @@ import { Announcement } from "./type_pb";
 import { UUID } from "../../shared/type_pb";
 
 /**
- * @generated from message announcement.v1.GetAnnouncementsRequest
+ * @generated from message announcement.v1.ListAnnouncementsRequest
  */
-export class GetAnnouncementsRequest extends Message<GetAnnouncementsRequest> {
-  constructor(data?: PartialMessage<GetAnnouncementsRequest>) {
+export class ListAnnouncementsRequest extends Message<ListAnnouncementsRequest> {
+  constructor(data?: PartialMessage<ListAnnouncementsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "announcement.v1.GetAnnouncementsRequest";
+  static readonly typeName = "announcement.v1.ListAnnouncementsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAnnouncementsRequest {
-    return new GetAnnouncementsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAnnouncementsRequest {
+    return new ListAnnouncementsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAnnouncementsRequest {
-    return new GetAnnouncementsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAnnouncementsRequest {
+    return new ListAnnouncementsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAnnouncementsRequest {
-    return new GetAnnouncementsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAnnouncementsRequest {
+    return new ListAnnouncementsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetAnnouncementsRequest | PlainMessage<GetAnnouncementsRequest> | undefined, b: GetAnnouncementsRequest | PlainMessage<GetAnnouncementsRequest> | undefined): boolean {
-    return proto3.util.equals(GetAnnouncementsRequest, a, b);
+  static equals(a: ListAnnouncementsRequest | PlainMessage<ListAnnouncementsRequest> | undefined, b: ListAnnouncementsRequest | PlainMessage<ListAnnouncementsRequest> | undefined): boolean {
+    return proto3.util.equals(ListAnnouncementsRequest, a, b);
   }
 }
 
 /**
- * @generated from message announcement.v1.GetAnnouncementsResponse
+ * @generated from message announcement.v1.ListAnnouncementsResponse
  */
-export class GetAnnouncementsResponse extends Message<GetAnnouncementsResponse> {
+export class ListAnnouncementsResponse extends Message<ListAnnouncementsResponse> {
   /**
    * @generated from field: repeated announcement.v1.Announcement announcements = 1;
    */
   announcements: Announcement[] = [];
 
-  constructor(data?: PartialMessage<GetAnnouncementsResponse>) {
+  constructor(data?: PartialMessage<ListAnnouncementsResponse>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "announcement.v1.GetAnnouncementsResponse";
+  static readonly typeName = "announcement.v1.ListAnnouncementsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "announcements", kind: "message", T: Announcement, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAnnouncementsResponse {
-    return new GetAnnouncementsResponse().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListAnnouncementsResponse {
+    return new ListAnnouncementsResponse().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAnnouncementsResponse {
-    return new GetAnnouncementsResponse().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListAnnouncementsResponse {
+    return new ListAnnouncementsResponse().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAnnouncementsResponse {
-    return new GetAnnouncementsResponse().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListAnnouncementsResponse {
+    return new ListAnnouncementsResponse().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetAnnouncementsResponse | PlainMessage<GetAnnouncementsResponse> | undefined, b: GetAnnouncementsResponse | PlainMessage<GetAnnouncementsResponse> | undefined): boolean {
-    return proto3.util.equals(GetAnnouncementsResponse, a, b);
+  static equals(a: ListAnnouncementsResponse | PlainMessage<ListAnnouncementsResponse> | undefined, b: ListAnnouncementsResponse | PlainMessage<ListAnnouncementsResponse> | undefined): boolean {
+    return proto3.util.equals(ListAnnouncementsResponse, a, b);
   }
 }
 
