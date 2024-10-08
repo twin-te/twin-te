@@ -18,8 +18,8 @@ func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lo
 	db := r.db.WithContext(ctx).
 		Where("id = ?", conds.ID.String())
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
 	if lock != sharedport.LockNone {
@@ -40,12 +40,12 @@ func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lo
 func (r *impl) ListTags(ctx context.Context, conds timetableport.ListTagsConds, lock sharedport.Lock) ([]*timetabledomain.Tag, error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.IDs != nil {
-		db = db.Where("id IN ?", base.MapByString(*conds.IDs))
+	if ids, ok := conds.IDs.Get(); ok {
+		db = db.Where("id IN ?", base.MapByString(ids))
 	}
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
 	if lock != sharedport.LockNone {
@@ -98,12 +98,12 @@ func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 func (r *impl) DeleteTags(ctx context.Context, conds timetableport.DeleteTagsConds) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.ID != nil {
-		db = db.Where("id = ?", conds.ID.String())
+	if id, ok := conds.ID.Get(); ok {
+		db = db.Where("id = ?", id.String())
 	}
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
 	return int(db.Delete(&timetabledbmodel.Tag{}).RowsAffected), db.Error

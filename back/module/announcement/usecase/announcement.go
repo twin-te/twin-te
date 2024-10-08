@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	"github.com/twin-te/twin-te/back/base"
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
@@ -18,7 +19,7 @@ import (
 
 func (uc *impl) GetAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error) {
 	announcements, err = uc.r.ListAnnouncements(ctx, announcementport.ListAnnouncementsConds{
-		PublishedAtBefore: lo.ToPtr(time.Now()),
+		PublishedAtBefore: mo.Some(time.Now()),
 	}, sharedport.LockNone)
 	if err != nil {
 		return
@@ -34,8 +35,8 @@ func (uc *impl) GetAnnouncements(ctx context.Context) (announcements []*announce
 	})
 
 	alreadyReads, err := uc.r.ListAlreadyReads(ctx, announcementport.ListAlreadyReadsConds{
-		UserID:          &userID,
-		AnnouncementIDs: &ids,
+		UserID:          mo.Some(userID),
+		AnnouncementIDs: mo.Some(ids),
 	}, sharedport.LockNone)
 	if err != nil {
 		return
@@ -63,8 +64,8 @@ func (uc *impl) ReadAnnouncements(ctx context.Context, ids []idtype.Announcement
 	}
 
 	announcements, err := uc.r.ListAnnouncements(ctx, announcementport.ListAnnouncementsConds{
-		IDs:               &ids,
-		PublishedAtBefore: lo.ToPtr(time.Now()),
+		IDs:               mo.Some(ids),
+		PublishedAtBefore: mo.Some(time.Now()),
 	}, sharedport.LockShared)
 	if err != nil {
 		return err
@@ -78,8 +79,8 @@ func (uc *impl) ReadAnnouncements(ctx context.Context, ids []idtype.Announcement
 	}
 
 	savedAlreadyReads, err := uc.r.ListAlreadyReads(ctx, announcementport.ListAlreadyReadsConds{
-		UserID:          &userID,
-		AnnouncementIDs: &ids,
+		UserID:          mo.Some(userID),
+		AnnouncementIDs: mo.Some(ids),
 	}, sharedport.LockNone)
 	if err != nil {
 		return err

@@ -21,7 +21,7 @@ func (r *impl) FindAnnouncement(ctx context.Context, conds announcementport.Find
 		return nil, sharedport.ErrNotFound
 	}
 
-	if conds.PublishedAtBefore != nil && !announcement.PublishedAt.Before(*conds.PublishedAtBefore) {
+	if publishedAtBefore, ok := conds.PublishedAtBefore.Get(); ok && !announcement.PublishedAt.Before(publishedAtBefore) {
 		return nil, sharedport.ErrNotFound
 	}
 
@@ -31,15 +31,15 @@ func (r *impl) FindAnnouncement(ctx context.Context, conds announcementport.Find
 func (r *impl) ListAnnouncements(ctx context.Context, conds announcementport.ListAnnouncementsConds, lock sharedport.Lock) ([]*announcementdomain.Announcement, error) {
 	announcements := r.announcements
 
-	if conds.IDs != nil {
+	if ids, ok := conds.IDs.Get(); ok {
 		announcements = lo.Filter(announcements, func(announcement *announcementdomain.Announcement, _ int) bool {
-			return slices.Contains(*conds.IDs, announcement.ID)
+			return slices.Contains(ids, announcement.ID)
 		})
 	}
 
-	if conds.PublishedAtBefore != nil {
+	if publishedAtBefore, ok := conds.PublishedAtBefore.Get(); ok {
 		announcements = lo.Filter(announcements, func(announcement *announcementdomain.Announcement, _ int) bool {
-			return announcement.PublishedAt.Before(*conds.PublishedAtBefore)
+			return announcement.PublishedAt.Before(publishedAtBefore)
 		})
 	}
 

@@ -3,6 +3,7 @@ package donationport
 import (
 	"context"
 
+	"github.com/samber/mo"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -10,9 +11,9 @@ import (
 type Integrator interface {
 	// Stripe
 
-	CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error)
+	CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID mo.Option[idtype.PaymentUserID], amount int) (idtype.CheckoutSessionID, error)
 	CreateSubscriptionCheckoutSession(ctx context.Context, paymentUserID idtype.PaymentUserID, subscriptionPlanID idtype.SubscriptionPlanID) (idtype.CheckoutSessionID, error)
-	ListPaymentHistories(ctx context.Context, paymentUserID *idtype.PaymentUserID) ([]*donationdomain.PaymentHistory, error)
+	ListPaymentHistories(ctx context.Context, paymentUserID mo.Option[idtype.PaymentUserID]) ([]*donationdomain.PaymentHistory, error)
 
 	FindSubscriptionPlan(ctx context.Context, id idtype.SubscriptionPlanID) (*donationdomain.SubscriptionPlan, error)
 	ListSubscriptionPlans(ctx context.Context) ([]*donationdomain.SubscriptionPlan, error)

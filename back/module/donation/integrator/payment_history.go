@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/paymentintent"
 	"github.com/twin-te/twin-te/back/base"
@@ -12,13 +13,8 @@ import (
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-func (i *impl) ListPaymentHistories(ctx context.Context, paymentUserID *idtype.PaymentUserID) ([]*donationdomain.PaymentHistory, error) {
+func (i *impl) ListPaymentHistories(ctx context.Context, paymentUserID mo.Option[idtype.PaymentUserID]) ([]*donationdomain.PaymentHistory, error) {
 	var startingAfter *string
-
-	var customer *string
-	if paymentUserID != nil {
-		customer = stripe.String(paymentUserID.String())
-	}
 
 	paymentIntents := make([]*stripe.PaymentIntent, 0)
 
@@ -29,7 +25,7 @@ func (i *impl) ListPaymentHistories(ctx context.Context, paymentUserID *idtype.P
 				Limit:         stripe.Int64(100),
 				StartingAfter: startingAfter,
 			},
-			Customer: customer,
+			Customer: base.OptionMapByString(paymentUserID).ToPointer(),
 			Expand:   stripe.StringSlice([]string{"data.invoice"}),
 		})
 
@@ -61,7 +57,7 @@ func fromStripePaymentIntent(paymentIntent *stripe.PaymentIntent) (*donationdoma
 		}
 
 		if paymentIntent.Customer != nil {
-			ph.PaymentUserID, err = base.ToPtrWithErr(idtype.ParsePaymentUserID(paymentIntent.Customer.ID))
+			ph.PaymentUserID, err = base.SomeWithErr(idtype.ParsePaymentUserID(paymentIntent.Customer.ID))
 			if err != nil {
 				return
 			}

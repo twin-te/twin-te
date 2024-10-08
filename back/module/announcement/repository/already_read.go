@@ -37,12 +37,12 @@ func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindA
 func (r *impl) ListAlreadyReads(ctx context.Context, conds announcementport.ListAlreadyReadsConds, lock sharedport.Lock) ([]*announcementdomain.AlreadyRead, error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
-	if conds.AnnouncementIDs != nil {
-		db = db.Where("announcement_id IN ?", base.MapByString(*conds.AnnouncementIDs))
+	if announcementIDs, ok := conds.AnnouncementIDs.Get(); ok {
+		db = db.Where("announcement_id IN ?", base.MapByString(announcementIDs))
 	}
 
 	if lock != sharedport.LockNone {
@@ -68,12 +68,12 @@ func (r *impl) CreateAlreadyReads(ctx context.Context, alreadyReads ...*announce
 func (r *impl) DeleteAlreadyReads(ctx context.Context, conds announcementport.DeleteAlreadyReadsConds) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
-	if conds.AnnouncementID != nil {
-		db = db.Where("announcement_id = ?", conds.AnnouncementID.String())
+	if announcementID, ok := conds.AnnouncementID.Get(); ok {
+		db = db.Where("announcement_id = ?", announcementID.String())
 	}
 
 	return int(db.Delete(&announcementdbmodel.AlreadyRead{}).RowsAffected), db.Error

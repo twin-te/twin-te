@@ -46,62 +46,62 @@ func (c *Course) BeforeUpdateHook() {
 }
 
 type CourseDataToUpdate struct {
-	Name              *shareddomain.RequiredString
-	Instructors       *string
-	Credit            *Credit
-	Overview          *string
-	Remarks           *string
-	LastUpdatedAt     *time.Time
-	HasParseError     *bool
-	IsAnnual          *bool
-	RecommendedGrades *[]RecommendedGrade
-	Methods           *[]CourseMethod
-	Schedules         *[]Schedule
+	Name              mo.Option[shareddomain.RequiredString]
+	Instructors       mo.Option[string]
+	Credit            mo.Option[Credit]
+	Overview          mo.Option[string]
+	Remarks           mo.Option[string]
+	LastUpdatedAt     mo.Option[time.Time]
+	HasParseError     mo.Option[bool]
+	IsAnnual          mo.Option[bool]
+	RecommendedGrades mo.Option[[]RecommendedGrade]
+	Methods           mo.Option[[]CourseMethod]
+	Schedules         mo.Option[[]Schedule]
 }
 
 func (c *Course) Update(data CourseDataToUpdate) {
-	if data.Name != nil {
-		c.Name = *data.Name
+	if name, ok := data.Name.Get(); ok {
+		c.Name = name
 	}
 
-	if data.Instructors != nil {
-		c.Instructors = *data.Instructors
+	if instructors, ok := data.Instructors.Get(); ok {
+		c.Instructors = instructors
 	}
 
-	if data.Credit != nil {
-		c.Credit = *data.Credit
+	if credit, ok := data.Credit.Get(); ok {
+		c.Credit = credit
 	}
 
-	if data.Overview != nil {
-		c.Overview = *data.Overview
+	if overview, ok := data.Overview.Get(); ok {
+		c.Overview = overview
 	}
 
-	if data.Remarks != nil {
-		c.Remarks = *data.Remarks
+	if remarks, ok := data.Remarks.Get(); ok {
+		c.Remarks = remarks
 	}
 
-	if data.LastUpdatedAt != nil {
-		c.LastUpdatedAt = *data.LastUpdatedAt
+	if lastUpdatedAt, ok := data.LastUpdatedAt.Get(); ok {
+		c.LastUpdatedAt = lastUpdatedAt
 	}
 
-	if data.HasParseError != nil {
-		c.HasParseError = *data.HasParseError
+	if hasParseError, ok := data.HasParseError.Get(); ok {
+		c.HasParseError = hasParseError
 	}
 
-	if data.IsAnnual != nil {
-		c.IsAnnual = *data.IsAnnual
+	if isAnnual, ok := data.IsAnnual.Get(); ok {
+		c.IsAnnual = isAnnual
 	}
 
-	if data.RecommendedGrades != nil {
-		c.RecommendedGrades = *data.RecommendedGrades
+	if recommendedGrades, ok := data.RecommendedGrades.Get(); ok {
+		c.RecommendedGrades = recommendedGrades
 	}
 
-	if data.Methods != nil {
-		c.Methods = *data.Methods
+	if methods, ok := data.Methods.Get(); ok {
+		c.Methods = methods
 	}
 
-	if data.Schedules != nil {
-		c.Schedules = *data.Schedules
+	if schedules, ok := data.Schedules.Get(); ok {
+		c.Schedules = schedules
 	}
 }
 

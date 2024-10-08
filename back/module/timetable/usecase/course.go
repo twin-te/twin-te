@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/appenv"
 	"github.com/twin-te/twin-te/back/base"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
@@ -21,8 +22,8 @@ import (
 
 func (uc *impl) GetCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error) {
 	return uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
-		Year:  &year,
-		Codes: &codes,
+		Year:  mo.Some(year),
+		Codes: mo.Some(codes),
 	}, sharedport.LockNone)
 }
 
@@ -125,17 +126,17 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 			if courseWithoutID.LastUpdatedAt.After(savedCourse.LastUpdatedAt) {
 				savedCourse.BeforeUpdateHook()
 				savedCourse.Update(timetabledomain.CourseDataToUpdate{
-					Name:              &courseWithoutID.Name,
-					Instructors:       &courseWithoutID.Instructors,
-					Credit:            &courseWithoutID.Credit,
-					Overview:          &courseWithoutID.Overview,
-					Remarks:           &courseWithoutID.Remarks,
-					LastUpdatedAt:     &courseWithoutID.LastUpdatedAt,
-					HasParseError:     &courseWithoutID.HasParseError,
-					IsAnnual:          &courseWithoutID.IsAnnual,
-					RecommendedGrades: &courseWithoutID.RecommendedGrades,
-					Methods:           &courseWithoutID.Methods,
-					Schedules:         &courseWithoutID.Schedules,
+					Name:              mo.Some(courseWithoutID.Name),
+					Instructors:       mo.Some(courseWithoutID.Instructors),
+					Credit:            mo.Some(courseWithoutID.Credit),
+					Overview:          mo.Some(courseWithoutID.Overview),
+					Remarks:           mo.Some(courseWithoutID.Remarks),
+					LastUpdatedAt:     mo.Some(courseWithoutID.LastUpdatedAt),
+					HasParseError:     mo.Some(courseWithoutID.HasParseError),
+					IsAnnual:          mo.Some(courseWithoutID.IsAnnual),
+					RecommendedGrades: mo.Some(courseWithoutID.RecommendedGrades),
+					Methods:           mo.Some(courseWithoutID.Methods),
+					Schedules:         mo.Some(courseWithoutID.Schedules),
 				})
 				return rtx.UpdateCourse(ctx, savedCourse)
 			}
@@ -167,7 +168,7 @@ func (uc *impl) getCoursesWithCache(ctx context.Context, year shareddomain.Acade
 	}
 
 	courses, err = uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
-		Year: &year,
+		Year: mo.Some(year),
 	}, sharedport.LockNone)
 	if err != nil {
 		return

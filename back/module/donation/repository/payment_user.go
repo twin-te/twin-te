@@ -63,11 +63,11 @@ func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomai
 	before := paymentUser.BeforeUpdated.MustGet()
 	columns := make([]string, 0)
 
-	if !base.EqualPtr(paymentUser.DisplayName, before.DisplayName) {
+	if paymentUser.DisplayName != before.DisplayName {
 		columns = append(columns, "display_name")
 	}
 
-	if !base.EqualPtr(paymentUser.Link, before.Link) {
+	if paymentUser.Link != before.Link {
 		columns = append(columns, "link")
 	}
 
@@ -76,7 +76,8 @@ func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomai
 	}
 
 	dbPaymentUser := donationdbmodel.ToDBPaymentUser(paymentUser)
-	return r.db.WithContext(ctx).
+	return r.db.
+		WithContext(ctx).
 		Select(columns).
 		Updates(dbPaymentUser).
 		Error

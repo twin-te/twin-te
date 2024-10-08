@@ -3,6 +3,7 @@ package timetablemodule
 import (
 	"context"
 
+	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
@@ -53,7 +54,7 @@ type UseCase interface {
 	// GetRegisteredCourses returns the registered courses.
 	//
 	// [Authentication] required
-	GetRegisteredCourses(ctx context.Context, year *shareddomain.AcademicYear) ([]*timetabledomain.RegisteredCourse, error)
+	GetRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error)
 
 	// UpdateRegisteredCourse updates registered course specified by the given id.
 	//
@@ -130,19 +131,19 @@ type CreateRegisteredCourseManuallyIn struct {
 
 type UpdateRegisteredCourseIn struct {
 	ID          idtype.RegisteredCourseID
-	Name        *shareddomain.RequiredString
-	Instructors *string
-	Credit      *timetabledomain.Credit
-	Methods     *[]timetabledomain.CourseMethod
-	Schedules   *[]timetabledomain.Schedule
-	Memo        *string
-	Attendance  *shareddomain.NonNegativeInt
-	Absence     *shareddomain.NonNegativeInt
-	Late        *shareddomain.NonNegativeInt
-	TagIDs      *[]idtype.TagID
+	Name        mo.Option[shareddomain.RequiredString]
+	Instructors mo.Option[string]
+	Credit      mo.Option[timetabledomain.Credit]
+	Methods     mo.Option[[]timetabledomain.CourseMethod]
+	Schedules   mo.Option[[]timetabledomain.Schedule]
+	Memo        mo.Option[string]
+	Attendance  mo.Option[shareddomain.NonNegativeInt]
+	Absence     mo.Option[shareddomain.NonNegativeInt]
+	Late        mo.Option[shareddomain.NonNegativeInt]
+	TagIDs      mo.Option[[]idtype.TagID]
 }
 
 type UpdateTagIn struct {
 	ID   idtype.TagID
-	Name *shareddomain.RequiredString
+	Name mo.Option[shareddomain.RequiredString]
 }

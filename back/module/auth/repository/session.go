@@ -16,8 +16,8 @@ import (
 func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds, lock sharedport.Lock) (*authdomain.Session, error) {
 	db := r.db.WithContext(ctx).Where("id = ?", conds.ID.String())
 
-	if conds.ExpiredAtAfter != nil {
-		db = db.Where("expired_at > ?", *conds.ExpiredAtAfter)
+	if expiredAtAfter, ok := conds.ExpiredAtAfter.Get(); ok {
+		db = db.Where("expired_at > ?", expiredAtAfter)
 	}
 
 	if lock != sharedport.LockNone {
@@ -54,8 +54,8 @@ func (r *impl) CreateSessions(ctx context.Context, sessions ...*authdomain.Sessi
 func (r *impl) DeleteSessions(ctx context.Context, conds authport.DeleteSessionsConds) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.UserID != nil {
-		db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db.Where("user_id = ?", userID.String())
 	}
 
 	return int(db.Delete(&authdbmodel.Session{}).RowsAffected), db.Error

@@ -44,3 +44,17 @@ func OptionEqualBy[T any](o1, o2 mo.Option[T], comparison func(T, T) bool) bool 
 		return false
 	}
 }
+
+func OptionCloneBy[T any](o mo.Option[T], clone func(T) T) mo.Option[T] {
+	if value, ok := o.Get(); ok {
+		return mo.Some(clone(value))
+	}
+	return mo.None[T]()
+}
+
+func SomeWithErr[T any](value T, err error) (mo.Option[T], error) {
+	if err != nil {
+		return mo.None[T](), err
+	}
+	return mo.Some(value), nil
+}

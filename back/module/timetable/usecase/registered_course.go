@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
@@ -26,8 +27,8 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 	}
 
 	courses, err := uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
-		Year:  &year,
-		Codes: &codes,
+		Year:  mo.Some(year),
+		Codes: mo.Some(codes),
 	}, sharedport.LockNone)
 	if err != nil {
 		return nil, err
@@ -55,9 +56,9 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 	}
 
 	savedRegisteredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.ListRegisteredCoursesConds{
-		UserID:    &userID,
-		Year:      &year,
-		CourseIDs: &courseIDs,
+		UserID:    mo.Some(userID),
+		Year:      mo.Some(year),
+		CourseIDs: mo.Some(courseIDs),
 	}, sharedport.LockNone)
 	if err != nil {
 		return nil, err
@@ -65,7 +66,7 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 
 	if len(savedRegisteredCourses) != 0 {
 		alreadyRegisteredCodes := base.Map(savedRegisteredCourses, func(rc *timetabledomain.RegisteredCourse) timetabledomain.Code {
-			return courseIDToCode[*rc.CourseID]
+			return courseIDToCode[rc.CourseID.MustGet()]
 		})
 
 		return nil, apperr.New(
@@ -109,14 +110,14 @@ func (uc *impl) CreateRegisteredCourseManually(ctx context.Context, in timetable
 	return registeredCourse, uc.r.CreateRegisteredCourses(ctx, registeredCourse)
 }
 
-func (uc *impl) GetRegisteredCourses(ctx context.Context, year *shareddomain.AcademicYear) ([]*timetabledomain.RegisteredCourse, error) {
+func (uc *impl) GetRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	registeredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.ListRegisteredCoursesConds{
-		UserID: &userID,
+		UserID: mo.Some(userID),
 		Year:   year,
 	}, sharedport.LockNone)
 	if err != nil {
@@ -132,20 +133,20 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 		return nil, err
 	}
 
-	if in.Methods != nil {
-		if err := sharedhelper.ValidateDuplicates(*in.Methods); err != nil {
+	if methods, ok := in.Methods.Get(); ok {
+		if err := sharedhelper.ValidateDuplicates(methods); err != nil {
 			return nil, err
 		}
 	}
 
-	if in.Schedules != nil {
-		if err := sharedhelper.ValidateDuplicates(*in.Schedules); err != nil {
+	if schedules, ok := in.Schedules.Get(); ok {
+		if err := sharedhelper.ValidateDuplicates(schedules); err != nil {
 			return nil, err
 		}
 	}
 
-	if in.TagIDs != nil {
-		if err := sharedhelper.ValidateDuplicates(*in.TagIDs); err != nil {
+	if tagIDs, ok := in.TagIDs.Get(); ok {
+		if err := sharedhelper.ValidateDuplicates(tagIDs); err != nil {
 			return nil, err
 		}
 	}
@@ -153,7 +154,7 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) (err error) {
 		registeredCourse, err = rtx.FindRegisteredCourse(ctx, timetableport.FindRegisteredCourseConds{
 			ID:     in.ID,
-			UserID: &userID,
+			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			if errors.Is(err, sharedport.ErrNotFound) {
@@ -166,10 +167,10 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 			return err
 		}
 
-		if in.TagIDs != nil {
+		if tagIDs, ok := in.TagIDs.Get(); ok {
 			savedTags, err := rtx.ListTags(ctx, timetableport.ListTagsConds{
 				IDs:    in.TagIDs,
-				UserID: &userID,
+				UserID: mo.Some(userID),
 			}, sharedport.LockShared)
 			if err != nil {
 				return err
@@ -177,7 +178,7 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 
 			savedTagIDs := base.Map(savedTags, func(tag *timetabledomain.Tag) idtype.TagID { return tag.ID })
 
-			notFoundTagIDs, _ := lo.Difference(*in.TagIDs, savedTagIDs)
+			notFoundTagIDs, _ := lo.Difference(tagIDs, savedTagIDs)
 			if len(notFoundTagIDs) != 0 {
 				return apperr.New(sharederr.CodeInvalidArgument, fmt.Sprintf("invalid tag ids %+v", notFoundTagIDs))
 			}
@@ -211,8 +212,8 @@ func (uc *impl) DeleteRegisteredCourse(ctx context.Context, id idtype.Registered
 	}
 
 	rowsAffected, err := uc.r.DeleteRegisteredCourses(ctx, timetableport.DeleteRegisteredCoursesConds{
-		ID:     &id,
-		UserID: &userID,
+		ID:     mo.Some(id),
+		UserID: mo.Some(userID),
 	})
 	if err != nil {
 		return err

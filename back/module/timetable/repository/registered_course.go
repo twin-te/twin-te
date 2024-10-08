@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -20,8 +21,8 @@ import (
 func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.FindRegisteredCourseConds, lock sharedport.Lock) (*timetabledomain.RegisteredCourse, error) {
 	db := r.db.WithContext(ctx).Where("id = ?", conds.ID.String())
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if usreID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", usreID.String())
 	}
 
 	db = db.Clauses(clause.Locking{
@@ -45,16 +46,16 @@ func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.Fin
 func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
-	if conds.Year != nil {
-		db = db.Where("year = ?", conds.Year.Int())
+	if year, ok := conds.Year.Get(); ok {
+		db = db.Where("year = ?", year.Int())
 	}
 
-	if conds.CourseIDs != nil {
-		db = db.Where("course_id IN ?", base.MapByString(*conds.CourseIDs))
+	if courseIDs, ok := conds.CourseIDs.Get(); ok {
+		db = db.Where("course_id IN ?", base.MapByString(courseIDs))
 	}
 
 	db = db.Clauses(clause.Locking{
@@ -154,12 +155,12 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 func (r *impl) DeleteRegisteredCourses(ctx context.Context, conds timetableport.DeleteRegisteredCoursesConds) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.ID != nil {
-		db = db.Where("id = ?", conds.ID.String())
+	if id, ok := conds.ID.Get(); ok {
+		db = db.Where("id = ?", id.String())
 	}
 
-	if conds.UserID != nil {
-		db = db.Where("user_id = ?", conds.UserID.String())
+	if userID, ok := conds.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
 	}
 
 	return int(db.Delete(&timetabledbmodel.RegisteredCourse{}).RowsAffected), db.Error
@@ -174,7 +175,7 @@ func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, regi
 	}
 
 	courses, err := r.ListCourses(ctx, timetableport.ListCoursesConds{
-		IDs: lo.ToPtr(lo.Keys(courseIDToRegisteredCourse)),
+		IDs: mo.Some(lo.Keys(courseIDToRegisteredCourse)),
 	}, lock)
 	if err != nil {
 		return err

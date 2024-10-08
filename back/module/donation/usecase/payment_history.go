@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 func (uc *impl) GetPaymentHistories(ctx context.Context) ([]*donationdomain.PaymentHistory, error) {
@@ -18,7 +20,7 @@ func (uc *impl) GetPaymentHistories(ctx context.Context) ([]*donationdomain.Paym
 		return nil, err
 	}
 
-	return uc.i.ListPaymentHistories(ctx, &paymentUser.ID)
+	return uc.i.ListPaymentHistories(ctx, mo.Some(paymentUser.ID))
 }
 
 func (uc *impl) GetTotalAmount(ctx context.Context) (int, error) {
@@ -29,7 +31,7 @@ func (uc *impl) GetTotalAmount(ctx context.Context) (int, error) {
 }
 
 func (uc *impl) updateTotalAmountCache(ctx context.Context) error {
-	paymentHistories, err := uc.i.ListPaymentHistories(ctx, nil)
+	paymentHistories, err := uc.i.ListPaymentHistories(ctx, mo.None[idtype.PaymentUserID]())
 	if err != nil {
 		return err
 	}

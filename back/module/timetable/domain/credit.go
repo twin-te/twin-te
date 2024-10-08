@@ -3,9 +3,6 @@ package timetabledomain
 import (
 	"fmt"
 	"regexp"
-	"strconv"
-
-	"github.com/samber/lo"
 )
 
 // Credit represents course's credit.
@@ -14,17 +11,6 @@ type Credit string
 
 func (credit Credit) String() string {
 	return string(credit)
-}
-
-func (credit Credit) Float() float64 {
-	return lo.Must(strconv.ParseFloat(credit.String(), 32))
-}
-
-func (credit *Credit) FloatPtr() *float64 {
-	if credit == nil {
-		return nil
-	}
-	return lo.ToPtr(credit.Float())
 }
 
 func (credit Credit) IsZero() bool {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/samber/mo"
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
@@ -26,12 +27,12 @@ type Repository interface {
 
 type FindAnnouncementConds struct {
 	ID                idtype.AnnouncementID
-	PublishedAtBefore *time.Time
+	PublishedAtBefore mo.Option[time.Time]
 }
 
 type ListAnnouncementsConds struct {
-	IDs               *[]idtype.AnnouncementID
-	PublishedAtBefore *time.Time
+	IDs               mo.Option[[]idtype.AnnouncementID]
+	PublishedAtBefore mo.Option[time.Time]
 }
 
 // AlreadyRead
@@ -42,11 +43,11 @@ type FindAlreadyReadConds struct {
 }
 
 type ListAlreadyReadsConds struct {
-	UserID          *idtype.UserID
-	AnnouncementIDs *[]idtype.AnnouncementID
+	UserID          mo.Option[idtype.UserID]
+	AnnouncementIDs mo.Option[[]idtype.AnnouncementID]
 }
 
 type DeleteAlreadyReadsConds struct {
-	UserID         *idtype.UserID
-	AnnouncementID *idtype.AnnouncementID
+	UserID         mo.Option[idtype.UserID]
+	AnnouncementID mo.Option[idtype.AnnouncementID]
 }

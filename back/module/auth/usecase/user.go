@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	autherr "github.com/twin-te/twin-te/back/module/auth/err"
@@ -14,7 +15,7 @@ import (
 
 func (uc *impl) SignUpOrLogin(ctx context.Context, userAuthentication authdomain.UserAuthentication) (*authdomain.Session, error) {
 	user, err := uc.r.FindUser(ctx, authport.FindUserConds{
-		UserAuthentication: &userAuthentication,
+		UserAuthentication: mo.Some(userAuthentication),
 	}, sharedport.LockNone)
 
 	if errors.Is(err, sharedport.ErrNotFound) {
@@ -43,7 +44,7 @@ func (uc *impl) GetMe(ctx context.Context) (*authdomain.User, error) {
 	}
 
 	return uc.r.FindUser(ctx, authport.FindUserConds{
-		ID: &userID,
+		ID: mo.Some(userID),
 	}, sharedport.LockNone)
 }
 
@@ -54,7 +55,7 @@ func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication au
 	}
 
 	_, err = uc.r.FindUser(ctx, authport.FindUserConds{
-		UserAuthentication: &userAuthentication,
+		UserAuthentication: mo.Some(userAuthentication),
 	}, sharedport.LockNone)
 	if !errors.Is(err, sharedport.ErrNotFound) {
 		if err != nil {
@@ -65,7 +66,7 @@ func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication au
 
 	return uc.r.Transaction(ctx, func(rtx authport.Repository) error {
 		user, err := rtx.FindUser(ctx, authport.FindUserConds{
-			ID: &userID,
+			ID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			return err
@@ -87,7 +88,7 @@ func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomai
 
 	return uc.r.Transaction(ctx, func(rtx authport.Repository) error {
 		user, err := rtx.FindUser(ctx, authport.FindUserConds{
-			ID: &userID,
+			ID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			return err
@@ -108,7 +109,7 @@ func (uc *impl) Logout(ctx context.Context) error {
 	}
 
 	_, err = uc.r.DeleteSessions(ctx, authport.DeleteSessionsConds{
-		UserID: &userID,
+		UserID: mo.Some(userID),
 	})
 	return err
 }
@@ -119,13 +120,13 @@ func (uc *impl) DeleteAccount(ctx context.Context) error {
 		return err
 	}
 
-	_, err = uc.r.DeleteUsers(ctx, authport.DeleteUserConds{ID: &userID})
+	_, err = uc.r.DeleteUsers(ctx, authport.DeleteUserConds{ID: mo.Some(userID)})
 	if err != nil {
 		return err
 	}
 
 	_, err = uc.r.DeleteSessions(ctx, authport.DeleteSessionsConds{
-		UserID: &userID,
+		UserID: mo.Some(userID),
 	})
 	return err
 }

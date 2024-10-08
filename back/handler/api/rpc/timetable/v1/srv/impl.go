@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/bufbuild/connect-go"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
 	timetablev1conv "github.com/twin-te/twin-te/back/handler/api/rpc/timetable/v1/conv"
@@ -177,10 +178,9 @@ func (svc *impl) CreateRegisteredCourseManually(ctx context.Context, req *connec
 }
 
 func (svc *impl) GetRegisteredCourses(ctx context.Context, req *connect.Request[timetablev1.GetRegisteredCoursesRequest]) (res *connect.Response[timetablev1.GetRegisteredCoursesResponse], err error) {
-	var year *shareddomain.AcademicYear
-
+	var year mo.Option[shareddomain.AcademicYear]
 	if req.Msg.Year != nil {
-		year, err = base.ToPtrWithErr(sharedconv.FromPBAcadimicYear(req.Msg.Year))
+		year, err = base.OptionMapWithErr(mo.Some(req.Msg.Year), sharedconv.FromPBAcadimicYear)
 		if err != nil {
 			return
 		}
@@ -205,8 +205,8 @@ func (svc *impl) GetRegisteredCourses(ctx context.Context, req *connect.Request[
 
 func (svc *impl) UpdateRegisteredCourse(ctx context.Context, req *connect.Request[timetablev1.UpdateRegisteredCourseRequest]) (res *connect.Response[timetablev1.UpdateRegisteredCourseResponse], err error) {
 	in := timetablemodule.UpdateRegisteredCourseIn{
-		Instructors: req.Msg.Instructors,
-		Memo:        req.Msg.Memo,
+		Instructors: mo.PointerToOption(req.Msg.Instructors),
+		Memo:        mo.PointerToOption(req.Msg.Memo),
 	}
 
 	in.ID, err = sharedconv.FromPBUUID(req.Msg.Id, idtype.ParseRegisteredCourseID)
@@ -215,56 +215,56 @@ func (svc *impl) UpdateRegisteredCourse(ctx context.Context, req *connect.Reques
 	}
 
 	if req.Msg.Name != nil {
-		in.Name, err = base.ToPtrWithErr(timetabledomain.ParseName(*req.Msg.Name))
+		in.Name, err = base.SomeWithErr(timetabledomain.ParseName(*req.Msg.Name))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.Credit != nil {
-		in.Credit, err = base.ToPtrWithErr(timetabledomain.ParseCredit(*req.Msg.Credit))
+		in.Credit, err = base.SomeWithErr(timetabledomain.ParseCredit(*req.Msg.Credit))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.Methods != nil {
-		in.Methods, err = base.ToPtrWithErr(base.MapWithErr(req.Msg.Methods.Values, timetablev1conv.FromPBCourseMethod))
+		in.Methods, err = base.SomeWithErr(base.MapWithErr(req.Msg.Methods.Values, timetablev1conv.FromPBCourseMethod))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.Schedules != nil {
-		in.Schedules, err = base.ToPtrWithErr(base.MapWithErr(req.Msg.Schedules.Values, timetablev1conv.FromPBSchedule))
+		in.Schedules, err = base.SomeWithErr(base.MapWithErr(req.Msg.Schedules.Values, timetablev1conv.FromPBSchedule))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.Attendance != nil {
-		in.Attendance, err = base.ToPtrWithErr(timetabledomain.ParseAttendance(int(*req.Msg.Attendance)))
+		in.Attendance, err = base.SomeWithErr(timetabledomain.ParseAttendance(int(*req.Msg.Attendance)))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.Late != nil {
-		in.Late, err = base.ToPtrWithErr(timetabledomain.ParseLate(int(*req.Msg.Late)))
+		in.Late, err = base.SomeWithErr(timetabledomain.ParseLate(int(*req.Msg.Late)))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.Absence != nil {
-		in.Absence, err = base.ToPtrWithErr(timetabledomain.ParseAbsence(int(*req.Msg.Absence)))
+		in.Absence, err = base.SomeWithErr(timetabledomain.ParseAbsence(int(*req.Msg.Absence)))
 		if err != nil {
 			return
 		}
 	}
 
 	if req.Msg.TagIds != nil {
-		in.TagIDs, err = base.ToPtrWithErr(base.MapWithArgAndErr(req.Msg.TagIds.Values, idtype.ParseTagID, sharedconv.FromPBUUID[idtype.TagID]))
+		in.TagIDs, err = base.SomeWithErr(base.MapWithArgAndErr(req.Msg.TagIds.Values, idtype.ParseTagID, sharedconv.FromPBUUID[idtype.TagID]))
 		if err != nil {
 			return
 		}
@@ -346,7 +346,7 @@ func (svc *impl) UpdateTag(ctx context.Context, req *connect.Request[timetablev1
 	}
 
 	if req.Msg.Name != nil {
-		in.Name, err = base.ToPtrWithErr(timetabledomain.ParseName(*req.Msg.Name))
+		in.Name, err = base.SomeWithErr(timetabledomain.ParseName(*req.Msg.Name))
 		if err != nil {
 			return
 		}

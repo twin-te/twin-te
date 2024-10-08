@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	donationerr "github.com/twin-te/twin-te/back/module/donation/err"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -17,7 +18,7 @@ func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (i
 		return "", sharederr.NewInvalidArgument("amount must be greater than 0, but got %d", amount)
 	}
 
-	var paymentUserID *idtype.PaymentUserID
+	var paymentUserID mo.Option[idtype.PaymentUserID]
 
 	_, err := uc.a.Authenticate(ctx)
 	if err == nil {
@@ -25,7 +26,7 @@ func (uc *impl) CreateOneTimeCheckoutSession(ctx context.Context, amount int) (i
 		if err != nil {
 			return "", err
 		}
-		paymentUserID = &paymentUser.ID
+		paymentUserID = mo.Some(paymentUser.ID)
 	}
 
 	return uc.i.CreateOneTimeCheckoutSession(ctx, paymentUserID, amount)

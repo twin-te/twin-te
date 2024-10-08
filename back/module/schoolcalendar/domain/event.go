@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -53,8 +54,8 @@ type Event struct {
 	Date        civil.Date
 	Description string
 
-	// It is not nil, only if Type is EventTypeSubstituteDay.
-	ChangeTo *time.Weekday
+	// It is none, only if Type is EventTypeSubstituteDay.
+	ChangeTo mo.Option[time.Weekday]
 }
 
 func (e *Event) IsSpringAExam() bool {
@@ -91,11 +92,6 @@ func (e *Event) IsFallCExam() bool {
 
 func (e *Event) Clone() *Event {
 	ret := lo.ToPtr(*e)
-
-	if e.ChangeTo != nil {
-		ret.ChangeTo = lo.ToPtr(*e.ChangeTo)
-	}
-
 	return ret
 }
 
@@ -105,7 +101,7 @@ func ConstructEvent(fn func(e *Event) (err error)) (*Event, error) {
 		return nil, err
 	}
 
-	if e.Type.IsSubstituteDay() && e.ChangeTo == nil {
+	if e.Type.IsSubstituteDay() && e.ChangeTo.IsAbsent() {
 		return nil, errors.New("field 'ChangeTo' must not be nil for substitute event")
 	}
 
@@ -116,7 +112,7 @@ func ConstructEvent(fn func(e *Event) (err error)) (*Event, error) {
 	return e, nil
 }
 
-func ParseEvent(id int, eventType string, date string, description string, changeTo *string) (event *Event, err error) {
+func ParseEvent(id int, eventType string, date string, description string, changeTo mo.Option[string]) (event *Event, err error) {
 	return ConstructEvent(func(e *Event) (err error) {
 		e.ID, err = idtype.ParseEventID(id)
 		if err != nil {
@@ -136,11 +132,11 @@ func ParseEvent(id int, eventType string, date string, description string, chang
 		e.Description = description
 
 		if e.Type.IsSubstituteDay() {
-			if changeTo == nil {
+			if changeTo.IsAbsent() {
 				return errors.New("field 'ChangeTo' must not be nil for substitute event")
 			}
 
-			e.ChangeTo, err = base.ToPtrWithErr(shareddomain.ParseWeekday(*changeTo))
+			e.ChangeTo, err = base.OptionMapWithErr(changeTo, shareddomain.ParseWeekday)
 			if err != nil {
 				return
 			}
