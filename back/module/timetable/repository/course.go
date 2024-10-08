@@ -78,8 +78,35 @@ func (r *impl) ListCourses(ctx context.Context, conds timetableport.ListCoursesC
 
 func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Course) error {
 	dbCourses := base.MapWithArg(courses, true, timetabledbmodel.ToDBCourse)
+	dbRecommendedGrades := lo.Flatten(base.Map(dbCourses, func(dbCourse *timetabledbmodel.Course) []timetabledbmodel.CourseRecommendedGrade {
+		return dbCourse.RecommendedGrades
+	}))
+	dbMethods := lo.Flatten(base.Map(dbCourses, func(dbCourse *timetabledbmodel.Course) []timetabledbmodel.CourseMethod {
+		return dbCourse.Methods
+	}))
+	dbSchedules := lo.Flatten(base.Map(dbCourses, func(dbCourse *timetabledbmodel.Course) []timetabledbmodel.CourseSchedule {
+		return dbCourse.Schedules
+	}))
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return tx.Create(dbCourses).Error
+		if err := tx.Omit(clause.Associations).Create(dbCourses).Error; err != nil {
+			return err
+		}
+		if len(dbRecommendedGrades) > 0 {
+			if err := tx.Create(dbRecommendedGrades).Error; err != nil {
+				return err
+			}
+		}
+		if len(dbMethods) > 0 {
+			if err := tx.Create(dbMethods).Error; err != nil {
+				return err
+			}
+		}
+		if len(dbSchedules) > 0 {
+			if err := tx.Create(dbSchedules).Error; err != nil {
+				return err
+			}
+		}
+		return nil
 	}, nil)
 }
 

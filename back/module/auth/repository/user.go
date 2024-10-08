@@ -76,8 +76,19 @@ func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, loc
 
 func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error {
 	dbUsers := base.MapWithArg(users, true, authdbmodel.ToDBUser)
-	return r.db.WithContext(ctx).Transaction(func(db *gorm.DB) error {
-		return db.Create(dbUsers).Error
+	dbUserAuthentications := lo.Flatten(base.Map(dbUsers, func(dbUser *authdbmodel.User) []authdbmodel.UserAuthentication {
+		return dbUser.UserAuthentications
+	}))
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Omit(clause.Associations).Create(dbUsers).Error; err != nil {
+			return err
+		}
+		if len(dbUserAuthentications) > 0 {
+			if err := tx.Create(dbUserAuthentications).Error; err != nil {
+				return err
+			}
+		}
+		return nil
 	}, nil)
 }
 

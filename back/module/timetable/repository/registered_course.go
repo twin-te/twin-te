@@ -80,8 +80,19 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 	if err != nil {
 		return err
 	}
+	dbRegisteredCourseTags := lo.Flatten(base.Map(dbRegisteredCourses, func(dbRegisteredCourse *timetabledbmodel.RegisteredCourse) []timetabledbmodel.RegisteredCourseTag {
+		return dbRegisteredCourse.Tags
+	}))
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return tx.Create(dbRegisteredCourses).Error
+		if err := tx.Omit(clause.Associations).Create(dbRegisteredCourses).Error; err != nil {
+			return err
+		}
+		if len(dbRegisteredCourseTags) > 0 {
+			if err := tx.Create(dbRegisteredCourseTags).Error; err != nil {
+				return err
+			}
+		}
+		return nil
 	}, nil)
 }
 
