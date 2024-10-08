@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/appctx"
 	"github.com/twin-te/twin-te/back/apperr"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
@@ -30,7 +30,7 @@ func (a *impl) WithActor(ctx context.Context, id *idtype.SessionID) (context.Con
 
 	session, err := a.r.FindSession(ctx, authport.FindSessionConds{
 		ID:             *id,
-		ExpiredAtAfter: lo.ToPtr(time.Now()),
+		ExpiredAtAfter: mo.Some(time.Now()),
 	}, sharedport.LockNone)
 	if err != nil {
 		if errors.Is(err, sharedport.ErrNotFound) {
@@ -40,7 +40,7 @@ func (a *impl) WithActor(ctx context.Context, id *idtype.SessionID) (context.Con
 	}
 
 	user, err := a.r.FindUser(ctx, authport.FindUserConds{
-		ID: &session.UserID,
+		ID: mo.Some(session.UserID),
 	}, sharedport.LockNone)
 	if err != nil {
 		if errors.Is(err, sharedport.ErrNotFound) {

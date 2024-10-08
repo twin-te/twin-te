@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/bufbuild/connect-go"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	donationv1conv "github.com/twin-te/twin-te/back/handler/api/rpc/donation/v1/conv"
 	donationv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1"
 	"github.com/twin-te/twin-te/back/handler/api/rpcgen/donation/v1/donationv1connect"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
-	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
@@ -67,25 +67,17 @@ func (svc *impl) GetPaymentUser(ctx context.Context, req *connect.Request[donati
 func (svc *impl) UpdatePaymentUser(ctx context.Context, req *connect.Request[donationv1.UpdatePaymentUserRequest]) (res *connect.Response[donationv1.UpdatePaymentUserResponse], err error) {
 	in := donationmodule.UpdateOrCreatePaymentUserIn{}
 
-	if req.Msg.DisplayName != nil {
-		if req.Msg.DisplayName.Value == nil {
-			in.DisplayName = new(*shareddomain.RequiredString)
-		} else {
-			in.DisplayName, err = base.ToDoublePtrWithErr(donationdomain.ParseDisplayName(req.Msg.DisplayName.GetValue()))
-			if err != nil {
-				return
-			}
+	if req.Msg.DisplayName != nil && req.Msg.DisplayName.Value != nil {
+		in.DisplayName, err = base.SomeWithErr(base.OptionMapWithErr(mo.PointerToOption(req.Msg.DisplayName.Value), donationdomain.ParseDisplayName))
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	if req.Msg.Link != nil {
-		if req.Msg.Link.Value == nil {
-			in.Link = new(*donationdomain.Link)
-		} else {
-			in.Link, err = base.ToDoublePtrWithErr(donationdomain.ParseLink(req.Msg.Link.GetValue()))
-			if err != nil {
-				return
-			}
+	if req.Msg.Link != nil && req.Msg.Link.Value != nil {
+		in.Link, err = base.SomeWithErr(base.OptionMapWithErr(mo.PointerToOption(req.Msg.Link.Value), donationdomain.ParseLink))
+		if err != nil {
+			return nil, err
 		}
 	}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
@@ -42,7 +43,7 @@ func (uc impl) GetTags(ctx context.Context) ([]*timetabledomain.Tag, error) {
 	}
 
 	return uc.r.ListTags(ctx, timetableport.ListTagsConds{
-		UserID: &userID,
+		UserID: mo.Some(userID),
 	}, sharedport.LockNone)
 }
 
@@ -55,7 +56,7 @@ func (uc impl) UpdateTag(ctx context.Context, in timetablemodule.UpdateTagIn) (t
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
 		tag, err = rtx.FindTag(ctx, timetableport.FindTagConds{
 			ID:     in.ID,
-			UserID: &userID,
+			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			if errors.Is(err, sharedport.ErrNotFound) {
@@ -79,8 +80,8 @@ func (uc impl) DeleteTag(ctx context.Context, id idtype.TagID) error {
 	}
 
 	rowsAffected, err := uc.r.DeleteTags(ctx, timetableport.DeleteTagsConds{
-		ID:     &id,
-		UserID: &userID,
+		ID:     mo.Some(id),
+		UserID: mo.Some(userID),
 	})
 	if err != nil {
 		return err
@@ -105,7 +106,7 @@ func (uc impl) RearrangeTags(ctx context.Context, ids []idtype.TagID) (tags []*t
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
 		tags, err = rtx.ListTags(ctx, timetableport.ListTagsConds{
-			UserID: &userID,
+			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
 			return err

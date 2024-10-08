@@ -33,12 +33,12 @@ func (t *Tag) BeforeUpdateHook() {
 }
 
 type TagDataToUpdate struct {
-	Name *shareddomain.RequiredString
+	Name mo.Option[shareddomain.RequiredString]
 }
 
 func (t *Tag) Update(data TagDataToUpdate) {
-	if data.Name != nil {
-		t.Name = *data.Name
+	if name, ok := data.Name.Get(); ok {
+		t.Name = name
 	}
 }
 

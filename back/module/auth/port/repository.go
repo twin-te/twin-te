@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/samber/mo"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
@@ -28,12 +29,12 @@ type Repository interface {
 // User
 
 type FindUserConds struct {
-	ID                 *idtype.UserID
-	UserAuthentication *authdomain.UserAuthentication
+	ID                 mo.Option[idtype.UserID]
+	UserAuthentication mo.Option[authdomain.UserAuthentication]
 }
 
 func (conds FindUserConds) Validate() error {
-	if conds.ID == nil && conds.UserAuthentication == nil {
+	if conds.ID.IsAbsent() && conds.UserAuthentication.IsAbsent() {
 		return fmt.Errorf("invalid %v", conds)
 	}
 	return nil
@@ -42,18 +43,18 @@ func (conds FindUserConds) Validate() error {
 type ListUsersConds struct{}
 
 type DeleteUserConds struct {
-	ID *idtype.UserID
+	ID mo.Option[idtype.UserID]
 }
 
 // Session
 
 type FindSessionConds struct {
 	ID             idtype.SessionID
-	ExpiredAtAfter *time.Time
+	ExpiredAtAfter mo.Option[time.Time]
 }
 
 type ListSessionsConds struct{}
 
 type DeleteSessionsConds struct {
-	UserID *idtype.UserID
+	UserID mo.Option[idtype.UserID]
 }

@@ -43,16 +43,16 @@ func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseCon
 func (r *impl) ListCourses(ctx context.Context, conds timetableport.ListCoursesConds, lock sharedport.Lock) ([]*timetabledomain.Course, error) {
 	db := r.db.WithContext(ctx)
 
-	if conds.IDs != nil {
-		db = db.Where("id IN ?", base.MapByString(*conds.IDs))
+	if ids, ok := conds.IDs.Get(); ok {
+		db = db.Where("id IN ?", base.MapByString(ids))
 	}
 
-	if conds.Year != nil {
-		db = db.Where("year = ?", conds.Year.Int())
+	if year, ok := conds.Year.Get(); ok {
+		db = db.Where("year = ?", year.Int())
 	}
 
-	if conds.Codes != nil {
-		db = db.Where("code IN ?", base.MapByString(*conds.Codes))
+	if codes, ok := conds.Codes.Get(); ok {
+		db = db.Where("code IN ?", base.MapByString(codes))
 	}
 
 	var dbCourses []*timetabledbmodel.Course

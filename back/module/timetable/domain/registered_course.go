@@ -62,73 +62,49 @@ type RegisteredCourse struct {
 }
 
 func (rc *RegisteredCourse) HasBasedCourse() bool {
-	return rc.CourseID != nil
+	return rc.CourseID.IsPresent()
 }
 
 func (rc *RegisteredCourse) GetName() shareddomain.RequiredString {
 	if rc.HasBasedCourse() {
-		return lo.FromPtrOr(rc.Name, rc.CourseAssociation.MustGet().Name)
+		return rc.Name.OrElse(rc.CourseAssociation.MustGet().Name)
 	}
-	return *rc.Name
+	return rc.Name.MustGet()
 }
 
 func (rc *RegisteredCourse) GetInstructors() string {
 	if rc.HasBasedCourse() {
-		return lo.FromPtrOr(rc.Instructors, rc.CourseAssociation.MustGet().Instructors)
+		return rc.Instructors.OrElse(rc.CourseAssociation.MustGet().Instructors)
 	}
-	return *rc.Instructors
+	return rc.Instructors.MustGet()
 }
 
 func (rc *RegisteredCourse) GetCredit() Credit {
 	if rc.HasBasedCourse() {
-		return lo.FromPtrOr(rc.Credit, rc.CourseAssociation.MustGet().Credit)
+		return rc.Credit.OrElse(rc.CourseAssociation.MustGet().Credit)
 	}
-	return *rc.Credit
+	return rc.Credit.MustGet()
 }
 
 func (rc *RegisteredCourse) GetMethods() []CourseMethod {
 	if rc.HasBasedCourse() {
-		return lo.FromPtrOr(rc.Methods, rc.CourseAssociation.MustGet().Methods)
+		return rc.Methods.OrElse(rc.CourseAssociation.MustGet().Methods)
 	}
-	return *rc.Methods
+	return rc.Methods.MustGet()
 }
 
 func (rc *RegisteredCourse) GetSchedules() []Schedule {
 	if rc.HasBasedCourse() {
-		return lo.FromPtrOr(rc.Schedules, rc.CourseAssociation.MustGet().Schedules)
+		return rc.Schedules.OrElse(rc.CourseAssociation.MustGet().Schedules)
 	}
-	return *rc.Schedules
+	return rc.Schedules.MustGet()
 }
 
 func (rc *RegisteredCourse) Clone() *RegisteredCourse {
 	ret := lo.ToPtr(*rc)
-
-	if rc.CourseID != nil {
-		ret.CourseID = lo.ToPtr(*rc.CourseID)
-	}
-
-	if rc.Name != nil {
-		ret.Name = lo.ToPtr(*rc.Name)
-	}
-
-	if rc.Instructors != nil {
-		ret.Instructors = lo.ToPtr(*rc.Instructors)
-	}
-
-	if rc.Credit != nil {
-		ret.Credit = lo.ToPtr(*rc.Credit)
-	}
-
-	if rc.Methods != nil {
-		*ret.Methods = base.CopySlice(*rc.Methods)
-	}
-
-	if rc.Schedules != nil {
-		*ret.Schedules = base.CopySlice(*rc.Schedules)
-	}
-
+	ret.Methods = base.OptionCloneBy(rc.Methods, base.CopySlice)
+	ret.Schedules = base.OptionCloneBy(rc.Schedules, base.CopySlice)
 	ret.TagIDs = base.CopySlice(rc.TagIDs)
-
 	return ret
 }
 
@@ -137,92 +113,92 @@ func (rc *RegisteredCourse) BeforeUpdateHook() {
 }
 
 type RegisteredCourseDataToUpdate struct {
-	Name        *shareddomain.RequiredString
-	Instructors *string
-	Credit      *Credit
-	Methods     *[]CourseMethod
-	Schedules   *[]Schedule
-	Memo        *string
-	Attendance  *shareddomain.NonNegativeInt
-	Absence     *shareddomain.NonNegativeInt
-	Late        *shareddomain.NonNegativeInt
-	TagIDs      *[]idtype.TagID
+	Name        mo.Option[shareddomain.RequiredString]
+	Instructors mo.Option[string]
+	Credit      mo.Option[Credit]
+	Methods     mo.Option[[]CourseMethod]
+	Schedules   mo.Option[[]Schedule]
+	Memo        mo.Option[string]
+	Attendance  mo.Option[shareddomain.NonNegativeInt]
+	Absence     mo.Option[shareddomain.NonNegativeInt]
+	Late        mo.Option[shareddomain.NonNegativeInt]
+	TagIDs      mo.Option[[]idtype.TagID]
 }
 
 func (rc *RegisteredCourse) updateName(name shareddomain.RequiredString) {
-	if rc.HasBasedCourse() && rc.Name == nil && rc.CourseAssociation.MustGet().Name == name {
+	if rc.HasBasedCourse() && rc.Name.IsAbsent() && rc.CourseAssociation.MustGet().Name == name {
 		return
 	}
-	rc.Name = &name
+	rc.Name = mo.Some(name)
 }
 
 func (rc *RegisteredCourse) updateInstructors(instructors string) {
-	if rc.HasBasedCourse() && rc.Instructors == nil && rc.CourseAssociation.MustGet().Instructors == instructors {
+	if rc.HasBasedCourse() && rc.Instructors.IsAbsent() && rc.CourseAssociation.MustGet().Instructors == instructors {
 		return
 	}
-	rc.Instructors = &instructors
+	rc.Instructors = mo.Some(instructors)
 }
 
 func (rc *RegisteredCourse) updateCredit(credit Credit) {
-	if rc.HasBasedCourse() && rc.Credit == nil && rc.CourseAssociation.MustGet().Credit == credit {
+	if rc.HasBasedCourse() && rc.Credit.IsAbsent() && rc.CourseAssociation.MustGet().Credit == credit {
 		return
 	}
-	rc.Credit = &credit
+	rc.Credit = mo.Some(credit)
 }
 
 func (rc *RegisteredCourse) updateMethods(methods []CourseMethod) {
-	if rc.HasBasedCourse() && rc.Methods == nil && base.HaveSameElements(rc.CourseAssociation.MustGet().Methods, methods) {
+	if rc.HasBasedCourse() && rc.Methods.IsAbsent() && base.HaveSameElements(rc.CourseAssociation.MustGet().Methods, methods) {
 		return
 	}
-	rc.Methods = &methods
+	rc.Methods = mo.Some(methods)
 }
 
 func (rc *RegisteredCourse) updateSchedules(schedules []Schedule) {
-	if rc.HasBasedCourse() && rc.Schedules == nil && base.HaveSameElements(rc.CourseAssociation.MustGet().Schedules, schedules) {
+	if rc.HasBasedCourse() && rc.Schedules.IsAbsent() && base.HaveSameElements(rc.CourseAssociation.MustGet().Schedules, schedules) {
 		return
 	}
-	rc.Schedules = &schedules
+	rc.Schedules = mo.Some(schedules)
 }
 
 func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate) error {
-	if data.Name != nil {
-		rc.updateName(*data.Name)
+	if name, ok := data.Name.Get(); ok {
+		rc.updateName(name)
 	}
 
-	if data.Instructors != nil {
-		rc.updateInstructors(*data.Instructors)
+	if instructors, ok := data.Instructors.Get(); ok {
+		rc.updateInstructors(instructors)
 	}
 
-	if data.Credit != nil {
-		rc.updateCredit(*data.Credit)
+	if credit, ok := data.Credit.Get(); ok {
+		rc.updateCredit(credit)
 	}
 
-	if data.Methods != nil {
-		rc.updateMethods(*data.Methods)
+	if methods, ok := data.Methods.Get(); ok {
+		rc.updateMethods(methods)
 	}
 
-	if data.Schedules != nil {
-		rc.updateSchedules(*data.Schedules)
+	if schedules, ok := data.Schedules.Get(); ok {
+		rc.updateSchedules(schedules)
 	}
 
-	if data.Memo != nil {
-		rc.Memo = *data.Memo
+	if memo, ok := data.Memo.Get(); ok {
+		rc.Memo = memo
 	}
 
-	if data.Attendance != nil {
-		rc.Attendance = *data.Attendance
+	if attendance, ok := data.Attendance.Get(); ok {
+		rc.Attendance = attendance
 	}
 
-	if data.Absence != nil {
-		rc.Absence = *data.Absence
+	if absence, ok := data.Absence.Get(); ok {
+		rc.Absence = absence
 	}
 
-	if data.Late != nil {
-		rc.Late = *data.Late
+	if late, ok := data.Late.Get(); ok {
+		rc.Late = late
 	}
 
-	if data.TagIDs != nil {
-		rc.TagIDs = *data.TagIDs
+	if tagIDs, ok := data.TagIDs.Get(); ok {
+		rc.TagIDs = tagIDs
 	}
 
 	return nil
@@ -234,7 +210,7 @@ func ConstructRegisteredCourse(fn func(rc *RegisteredCourse) (err error)) (*Regi
 		return nil, err
 	}
 
-	if rc.CourseID == nil && (rc.Name == nil || rc.Instructors == nil || rc.Credit == nil || rc.Methods == nil || rc.Schedules == nil) {
+	if rc.CourseID.IsAbsent() && (rc.Name.IsAbsent() || rc.Instructors.IsAbsent() || rc.Credit.IsAbsent() || rc.Methods.IsAbsent() || rc.Schedules.IsAbsent()) {
 		return nil, fmt.Errorf("the registered course, which does not have the based course, must have name, instructors, credit, methods, and schedules. %+v", rc)
 	}
 

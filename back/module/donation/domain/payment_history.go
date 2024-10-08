@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
@@ -34,7 +35,7 @@ const (
 //   - ID
 type PaymentHistory struct {
 	ID            idtype.PaymentHistoryID
-	PaymentUserID *idtype.PaymentUserID
+	PaymentUserID mo.Option[idtype.PaymentUserID]
 	Type          PaymentType
 	Status        PaymentStatus
 	Amount        int

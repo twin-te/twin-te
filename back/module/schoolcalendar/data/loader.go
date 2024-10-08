@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 )
@@ -15,11 +16,11 @@ var rawEvents []byte
 var rawModuleDetails []byte
 
 type jsonEvent struct {
-	ID          int     `json:"id"`
-	Type        string  `json:"type"`
-	Date        string  `json:"date"`
-	Description string  `json:"description"`
-	ChangeTo    *string `json:"changeTo,omitempty"`
+	ID          int               `json:"id"`
+	Type        string            `json:"type"`
+	Date        string            `json:"date"`
+	Description string            `json:"description"`
+	ChangeTo    mo.Option[string] `json:"changeTo,omitempty"`
 }
 
 type jsonModuleDetail struct {

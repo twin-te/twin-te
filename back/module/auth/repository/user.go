@@ -22,16 +22,16 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 
 	dbUser := new(authdbmodel.User)
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if conds.ID != nil {
-			tx = tx.Where("id = ?", conds.ID.String())
+		if id, ok := conds.ID.Get(); ok {
+			tx = tx.Where("id = ?", id.String())
 		}
 
-		if conds.UserAuthentication != nil {
+		if userAuthentication, ok := conds.UserAuthentication.Get(); ok {
 			tx = tx.Where(
 				"id = ( ? )",
 				tx.Select("user_id").Where("provider = ? AND social_id = ?",
-					conds.UserAuthentication.Provider.String(),
-					conds.UserAuthentication.SocialID.String(),
+					userAuthentication.Provider.String(),
+					userAuthentication.SocialID.String(),
 				).Table("user_authentications"),
 			)
 		}
@@ -106,8 +106,8 @@ func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) 
 		var dbUsers []*authdbmodel.User
 		tx = tx.Model(&dbUsers)
 
-		if conds.ID != nil {
-			tx.Where("id = ?", conds.ID.String())
+		if id, ok := conds.ID.Get(); ok {
+			tx.Where("id = ?", id.String())
 		}
 
 		if err := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).

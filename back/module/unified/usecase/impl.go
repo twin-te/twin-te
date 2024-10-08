@@ -6,6 +6,7 @@ import (
 
 	"cloud.google.com/go/civil"
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
 	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
@@ -68,7 +69,7 @@ func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoo
 
 	for _, event := range events {
 		if event.Type == schoolcalendardomain.EventTypeSubstituteDay {
-			weekday = *event.ChangeTo
+			weekday = event.ChangeTo.MustGet()
 		}
 	}
 
@@ -77,7 +78,7 @@ func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoo
 		return
 	}
 
-	registeredCourses, err = uc.timetableUseCase.GetRegisteredCourses(ctx, &academicYear)
+	registeredCourses, err = uc.timetableUseCase.GetRegisteredCourses(ctx, mo.Some(academicYear))
 	if err != nil {
 		return
 	}

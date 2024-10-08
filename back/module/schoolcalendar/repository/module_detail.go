@@ -15,21 +15,21 @@ import (
 func (r *impl) ListModuleDetails(ctx context.Context, conds schoolcalendarport.ListModuleDetailsConds, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error) {
 	moduleDetails := r.moduleDetails
 
-	if conds.Year != nil {
+	if year, ok := conds.Year.Get(); ok {
 		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
-			return moduleDetail.Year == *conds.Year
+			return moduleDetail.Year == year
 		})
 	}
 
-	if conds.StartBeforeOrEqual != nil {
+	if startBeforeOrEqual, ok := conds.StartBeforeOrEqual.Get(); ok {
 		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
-			return moduleDetail.Start.Before(*conds.StartBeforeOrEqual) || moduleDetail.Start == *conds.StartBeforeOrEqual
+			return moduleDetail.Start.Before(startBeforeOrEqual) || moduleDetail.Start == startBeforeOrEqual
 		})
 	}
 
-	if conds.EndAfterOrEqual != nil {
+	if endAfterOrEqual, ok := conds.EndAfterOrEqual.Get(); ok {
 		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
-			return moduleDetail.End.After(*conds.EndAfterOrEqual) || moduleDetail.End == *conds.EndAfterOrEqual
+			return moduleDetail.End.After(endAfterOrEqual) || moduleDetail.End == endAfterOrEqual
 		})
 	}
 

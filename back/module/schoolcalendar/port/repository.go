@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/civil"
+	"github.com/samber/mo"
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
@@ -24,14 +25,14 @@ type Repository interface {
 // Event
 
 type ListEventsConds struct {
-	DateAfterOrEqual  *civil.Date
-	DateBeforeOrEqual *civil.Date
+	DateAfterOrEqual  mo.Option[civil.Date]
+	DateBeforeOrEqual mo.Option[civil.Date]
 }
 
 // ModuleDetail
 
 type ListModuleDetailsConds struct {
-	Year               *shareddomain.AcademicYear
-	StartBeforeOrEqual *civil.Date
-	EndAfterOrEqual    *civil.Date
+	Year               mo.Option[shareddomain.AcademicYear]
+	StartBeforeOrEqual mo.Option[civil.Date]
+	EndAfterOrEqual    mo.Option[civil.Date]
 }

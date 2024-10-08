@@ -26,18 +26,14 @@ func FromDBPaymentUser(dbPaymentUser *PaymentUser) (*donationdomain.PaymentUser,
 			return
 		}
 
-		if displayName, ok := dbPaymentUser.DisplayName.Get(); ok {
-			pu.DisplayName, err = base.ToPtrWithErr(donationdomain.ParseDisplayName(displayName))
-			if err != nil {
-				return
-			}
+		pu.DisplayName, err = base.OptionMapWithErr(dbPaymentUser.DisplayName, donationdomain.ParseDisplayName)
+		if err != nil {
+			return
 		}
 
-		if link, ok := dbPaymentUser.Link.Get(); ok {
-			pu.Link, err = base.ToPtrWithErr(donationdomain.ParseLink(link))
-			if err != nil {
-				return
-			}
+		pu.Link, err = base.OptionMapWithErr(dbPaymentUser.Link, donationdomain.ParseLink)
+		if err != nil {
+			return
 		}
 
 		return
@@ -48,7 +44,7 @@ func ToDBPaymentUser(paymentUser *donationdomain.PaymentUser) *PaymentUser {
 	return &PaymentUser{
 		ID:          paymentUser.ID.String(),
 		UserID:      paymentUser.UserID.String(),
-		DisplayName: mo.PointerToOption(paymentUser.DisplayName.StringPtr()),
-		Link:        mo.PointerToOption(paymentUser.Link.StringPtr()),
+		DisplayName: base.OptionMapByString(paymentUser.DisplayName),
+		Link:        base.OptionMapByString(paymentUser.Link),
 	}
 }

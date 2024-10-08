@@ -18,13 +18,6 @@ func (l Link) String() string {
 	return string(l)
 }
 
-func (l *Link) StringPtr() *string {
-	if l == nil {
-		return nil
-	}
-	return lo.ToPtr(l.String())
-}
-
 func ParseLink(s string) (Link, error) {
 	uri, err := url.ParseRequestURI(s)
 	if err != nil || !uri.IsAbs() {
@@ -39,23 +32,14 @@ func ParseLink(s string) (Link, error) {
 type PaymentUser struct {
 	ID          idtype.PaymentUserID
 	UserID      idtype.UserID
-	DisplayName *shareddomain.RequiredString
-	Link        *Link
+	DisplayName mo.Option[shareddomain.RequiredString]
+	Link        mo.Option[Link]
 
 	BeforeUpdated mo.Option[*PaymentUser]
 }
 
 func (pu *PaymentUser) Clone() *PaymentUser {
 	ret := lo.ToPtr(*pu)
-
-	if pu.DisplayName != nil {
-		ret.DisplayName = lo.ToPtr(*pu.DisplayName)
-	}
-
-	if pu.Link != nil {
-		ret.Link = lo.ToPtr(*pu.Link)
-	}
-
 	return ret
 }
 
@@ -64,17 +48,17 @@ func (pu *PaymentUser) BeforeUpdateHook() {
 }
 
 type PaymentUserDataToUpdate struct {
-	DisplayName **shareddomain.RequiredString
-	Link        **Link
+	DisplayName mo.Option[mo.Option[shareddomain.RequiredString]]
+	Link        mo.Option[mo.Option[Link]]
 }
 
 func (pu *PaymentUser) Update(data PaymentUserDataToUpdate) {
-	if data.DisplayName != nil {
-		pu.DisplayName = *data.DisplayName
+	if displayName, ok := data.DisplayName.Get(); ok {
+		pu.DisplayName = displayName
 	}
 
-	if data.Link != nil {
-		pu.Link = *data.Link
+	if link, ok := data.Link.Get(); ok {
+		pu.Link = link
 	}
 }
 

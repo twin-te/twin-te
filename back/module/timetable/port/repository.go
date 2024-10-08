@@ -3,6 +3,7 @@ package timetableport
 import (
 	"context"
 
+	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
@@ -46,42 +47,42 @@ type FindCourseConds struct {
 }
 
 type ListCoursesConds struct {
-	IDs   *[]idtype.CourseID
-	Year  *shareddomain.AcademicYear
-	Codes *[]timetabledomain.Code
+	IDs   mo.Option[[]idtype.CourseID]
+	Year  mo.Option[shareddomain.AcademicYear]
+	Codes mo.Option[[]timetabledomain.Code]
 }
 
 // RegisteredCourse
 
 type FindRegisteredCourseConds struct {
 	ID     idtype.RegisteredCourseID
-	UserID *idtype.UserID
+	UserID mo.Option[idtype.UserID]
 }
 
 type ListRegisteredCoursesConds struct {
-	UserID    *idtype.UserID
-	Year      *shareddomain.AcademicYear
-	CourseIDs *[]idtype.CourseID
+	UserID    mo.Option[idtype.UserID]
+	Year      mo.Option[shareddomain.AcademicYear]
+	CourseIDs mo.Option[[]idtype.CourseID]
 }
 
 type DeleteRegisteredCoursesConds struct {
-	ID     *idtype.RegisteredCourseID
-	UserID *idtype.UserID
+	ID     mo.Option[idtype.RegisteredCourseID]
+	UserID mo.Option[idtype.UserID]
 }
 
 // Tag
 
 type FindTagConds struct {
 	ID     idtype.TagID
-	UserID *idtype.UserID
+	UserID mo.Option[idtype.UserID]
 }
 
 type ListTagsConds struct {
-	IDs    *[]idtype.TagID
-	UserID *idtype.UserID
+	IDs    mo.Option[[]idtype.TagID]
+	UserID mo.Option[idtype.UserID]
 }
 
 type DeleteTagsConds struct {
-	ID     *idtype.TagID
-	UserID *idtype.UserID
+	ID     mo.Option[idtype.TagID]
+	UserID mo.Option[idtype.UserID]
 }

@@ -6,11 +6,13 @@ import (
 	"sync"
 
 	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	donationappdto "github.com/twin-te/twin-te/back/module/donation/appdto"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
+	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"golang.org/x/sync/errgroup"
@@ -34,7 +36,7 @@ func (uc *impl) GetOrCreatePaymentUser(ctx context.Context) (*donationdomain.Pay
 		return paymentUser, nil
 	}
 
-	paymentUser, err = uc.f.NewPaymentUser(userID, nil, nil)
+	paymentUser, err = uc.f.NewPaymentUser(userID, mo.None[shareddomain.RequiredString](), mo.None[donationdomain.Link]())
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +73,11 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 		return
 	}
 
-	paymentUser, err = uc.f.NewPaymentUser(userID, *in.DisplayName, *in.Link)
+	paymentUser, err = uc.f.NewPaymentUser(
+		userID,
+		in.DisplayName.OrElse(mo.None[shareddomain.RequiredString]()),
+		in.Link.OrElse(mo.None[donationdomain.Link]()),
+	)
 	if err != nil {
 		return
 	}
@@ -105,7 +111,7 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 			case <-ctx.Done():
 				return nil
 			default:
-				paymentHistories, err := uc.i.ListPaymentHistories(ctx, &paymentUser.ID)
+				paymentHistories, err := uc.i.ListPaymentHistories(ctx, mo.Some(paymentUser.ID))
 				if err != nil {
 					return err
 				}
@@ -130,7 +136,7 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 
 	contributors := base.Map(paymentUsers, func(paymentUser *donationdomain.PaymentUser) donationappdto.Contributor {
 		return donationappdto.Contributor{
-			DisplayName: *paymentUser.DisplayName,
+			DisplayName: paymentUser.DisplayName.MustGet(),
 			Link:        paymentUser.Link,
 		}
 	})

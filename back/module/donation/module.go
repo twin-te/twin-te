@@ -3,6 +3,7 @@ package donationmodule
 import (
 	"context"
 
+	"github.com/samber/mo"
 	donationappdto "github.com/twin-te/twin-te/back/module/donation/appdto"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
@@ -81,6 +82,6 @@ type UseCase interface {
 }
 
 type UpdateOrCreatePaymentUserIn struct {
-	DisplayName **shareddomain.RequiredString
-	Link        **donationdomain.Link
+	DisplayName mo.Option[mo.Option[shareddomain.RequiredString]]
+	Link        mo.Option[mo.Option[donationdomain.Link]]
 }

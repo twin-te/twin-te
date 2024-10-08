@@ -1,6 +1,7 @@
 package schoolcalendarv1conv
 
 import (
+	"github.com/twin-te/twin-te/back/base"
 	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
 	schoolcalendarv1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolcalendar/v1"
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
@@ -19,13 +20,11 @@ func ToPBEvent(event *schoolcalendardomain.Event) (*schoolcalendarv1.Event, erro
 		Description: event.Description,
 	}
 
-	if event.ChangeTo != nil {
-		pbWeekday, err := sharedconv.ToPBWeekday(*event.ChangeTo)
-		if err != nil {
-			return nil, err
-		}
-		pbEvent.ChangeTo = &pbWeekday
+	pbWeekday, err := base.OptionMapWithErr(event.ChangeTo, sharedconv.ToPBWeekday)
+	if err != nil {
+		return nil, err
 	}
+	pbEvent.ChangeTo = pbWeekday.ToPointer()
 
 	return pbEvent, nil
 }

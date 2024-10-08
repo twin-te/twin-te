@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/civil"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 	schoolcalendarerr "github.com/twin-te/twin-te/back/module/schoolcalendar/err"
@@ -15,14 +16,14 @@ import (
 
 func (uc *impl) GetModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error) {
 	return uc.r.ListModuleDetails(ctx, schoolcalendarport.ListModuleDetailsConds{
-		Year: &year,
+		Year: mo.Some(year),
 	}, sharedport.LockNone)
 }
 
 func (uc *impl) GetModuleByDate(ctx context.Context, date civil.Date) (schoolcalendardomain.Module, error) {
 	moduleDetails, err := uc.r.ListModuleDetails(ctx, schoolcalendarport.ListModuleDetailsConds{
-		StartBeforeOrEqual: &date,
-		EndAfterOrEqual:    &date,
+		StartBeforeOrEqual: mo.Some(date),
+		EndAfterOrEqual:    mo.Some(date),
 	}, sharedport.LockNone)
 	if err != nil {
 		return 0, err

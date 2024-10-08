@@ -15,15 +15,15 @@ import (
 func (r *impl) ListEvents(ctx context.Context, conds schoolcalendarport.ListEventsConds, lock sharedport.Lock) ([]*schoolcalendardomain.Event, error) {
 	events := r.events
 
-	if conds.DateAfterOrEqual != nil {
+	if dateAfterOrEqual, ok := conds.DateAfterOrEqual.Get(); ok {
 		events = lo.Filter(events, func(event *schoolcalendardomain.Event, _ int) bool {
-			return event.Date.After(*conds.DateAfterOrEqual) || event.Date == *conds.DateAfterOrEqual
+			return event.Date.After(dateAfterOrEqual) || event.Date == dateAfterOrEqual
 		})
 	}
 
-	if conds.DateBeforeOrEqual != nil {
+	if dateBeforeOrEqual, ok := conds.DateBeforeOrEqual.Get(); ok {
 		events = lo.Filter(events, func(event *schoolcalendardomain.Event, _ int) bool {
-			return event.Date.Before(*conds.DateBeforeOrEqual) || event.Date == *conds.DateBeforeOrEqual
+			return event.Date.Before(dateBeforeOrEqual) || event.Date == dateBeforeOrEqual
 		})
 	}
 

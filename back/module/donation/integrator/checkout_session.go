@@ -11,25 +11,22 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/samber/mo"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/checkout/session"
 	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/base"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-func (i *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID *idtype.PaymentUserID, amount int) (idtype.CheckoutSessionID, error) {
-	var customer *string
-	if paymentUserID != nil {
-		customer = stripe.String(paymentUserID.String())
-	}
-
+func (i *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID mo.Option[idtype.PaymentUserID], amount int) (idtype.CheckoutSessionID, error) {
 	params := &stripe.CheckoutSessionParams{
 		Params: stripe.Params{
 			Context: ctx,
 		},
 		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
 		SubmitType:         stripe.String("donate"),
-		Customer:           customer,
+		Customer:           base.OptionMapByString(paymentUserID).ToPointer(),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
 				Quantity: stripe.Int64(1),
