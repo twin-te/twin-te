@@ -2,13 +2,13 @@ package timetablerepository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"slices"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
@@ -19,57 +19,46 @@ import (
 )
 
 func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.FindRegisteredCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error) {
-	db := r.db.WithContext(ctx).Where("id = ?", conds.ID.String())
-
-	if usreID, ok := conds.UserID.Get(); ok {
-		db = db.Where("user_id = ?", usreID.String())
-	}
-
-	db = db.Clauses(clause.Locking{
-		Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-		Table:    clause.Table{Name: clause.CurrentTable},
-	})
-
 	dbRegisteredCourse := new(timetabledbmodel.RegisteredCourse)
 
-	err := db.Transaction(func(tx *gorm.DB) error {
-		return tx.Preload("Tags").Take(dbRegisteredCourse).Error
-	})
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return mo.None[*timetabledomain.RegisteredCourse](), nil
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = tx.Where("id = ?", conds.ID.String())
+
+		if usreID, ok := conds.UserID.Get(); ok {
+			tx = tx.Where("user_id = ?", usreID.String())
 		}
-		return mo.None[*timetabledomain.RegisteredCourse](), err
+
+		tx = dbhelper.ApplyLock(tx, lock)
+
+		return tx.Preload("Tags").Take(dbRegisteredCourse).Error
+	}, true)
+	if err != nil {
+		return dbhelper.ConvertErrRecordNotFound[*timetabledomain.RegisteredCourse](err)
 	}
 
 	return base.SomeWithErr(timetabledbmodel.FromDBRegisteredCourse(dbRegisteredCourse))
 }
 
 func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error) {
-	db := r.db.WithContext(ctx)
-
-	if userID, ok := conds.UserID.Get(); ok {
-		db = db.Where("user_id = ?", userID.String())
-	}
-
-	if year, ok := conds.Year.Get(); ok {
-		db = db.Where("year = ?", year.Int())
-	}
-
-	if courseIDs, ok := conds.CourseIDs.Get(); ok {
-		db = db.Where("course_id IN ?", base.MapByString(courseIDs))
-	}
-
-	db = db.Clauses(clause.Locking{
-		Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-		Table:    clause.Table{Name: clause.CurrentTable},
-	})
-
 	var dbRegisteredCourses []*timetabledbmodel.RegisteredCourse
 
-	err := db.Transaction(func(tx *gorm.DB) error {
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		if userID, ok := conds.UserID.Get(); ok {
+			tx = tx.Where("user_id = ?", userID.String())
+		}
+
+		if year, ok := conds.Year.Get(); ok {
+			tx = tx.Where("year = ?", year.Int())
+		}
+
+		if courseIDs, ok := conds.CourseIDs.Get(); ok {
+			tx = tx.Where("course_id IN ?", base.MapByString(courseIDs))
+		}
+
+		tx = dbhelper.ApplyLock(tx, lock)
+
 		return tx.Preload("Tags").Find(&dbRegisteredCourses).Error
-	})
+	}, true)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +74,7 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 	dbRegisteredCourseTags := lo.Flatten(base.Map(dbRegisteredCourses, func(dbRegisteredCourse *timetabledbmodel.RegisteredCourse) []timetabledbmodel.RegisteredCourseTag {
 		return dbRegisteredCourse.Tags
 	}))
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if err := tx.Omit(clause.Associations).Create(dbRegisteredCourses).Error; err != nil {
 			return err
 		}
@@ -95,7 +84,7 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 			}
 		}
 		return nil
-	}, nil)
+	}, false)
 }
 
 func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error {
@@ -155,28 +144,32 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 		return err
 	}
 
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if len(columns) > 0 {
 			if err := tx.Select(columns).Updates(dbRegisteredCourse).Error; err != nil {
 				return err
 			}
 		}
 		return r.updateRegisteredCourseTagIDs(tx, registeredCourse)
-	}, nil)
+	}, false)
 }
 
 func (r *impl) DeleteRegisteredCourses(ctx context.Context, conds timetableport.DeleteRegisteredCoursesConds) (rowsAffected int, err error) {
-	db := r.db.WithContext(ctx)
+	err = r.transaction(ctx, func(tx *gorm.DB) error {
+		if id, ok := conds.ID.Get(); ok {
+			tx = tx.Where("id = ?", id.String())
+		}
 
-	if id, ok := conds.ID.Get(); ok {
-		db = db.Where("id = ?", id.String())
-	}
+		if userID, ok := conds.UserID.Get(); ok {
+			tx = tx.Where("user_id = ?", userID.String())
+		}
 
-	if userID, ok := conds.UserID.Get(); ok {
-		db = db.Where("user_id = ?", userID.String())
-	}
+		rowsAffected = int(tx.Delete(&timetabledbmodel.RegisteredCourse{}).RowsAffected)
 
-	return int(db.Delete(&timetabledbmodel.RegisteredCourse{}).RowsAffected), db.Error
+		return tx.Error
+
+	}, false)
+	return
 }
 
 func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, registeredCourses []*timetabledomain.RegisteredCourse, lock sharedport.Lock) error {

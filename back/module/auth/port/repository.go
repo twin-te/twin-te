@@ -12,7 +12,7 @@ import (
 )
 
 type Repository interface {
-	Transaction(ctx context.Context, fn func(rtx Repository) error) error
+	Transaction(ctx context.Context, fn func(rtx Repository) error, readOnly bool) error
 
 	FindUser(ctx context.Context, conds FindUserConds, lock sharedport.Lock) (mo.Option[*authdomain.User], error)
 	ListUsers(ctx context.Context, conds ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error)

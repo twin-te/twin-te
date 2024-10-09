@@ -2,17 +2,14 @@ package announcementrepository
 
 import (
 	"context"
-	"errors"
 
-	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	announcementdbmodel "github.com/twin-te/twin-te/back/module/announcement/dbmodel"
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindAlreadyReadConds, lock sharedport.Lock) (mo.Option[*announcementdomain.AlreadyRead], error) {
@@ -21,19 +18,11 @@ func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindA
 		Where("user_id = ?", conds.UserID.String()).
 		Where("announcement_id = ?", conds.AnnouncementID.String())
 
-	if lock != sharedport.LockNone {
-		db = db.Clauses(clause.Locking{
-			Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-			Table:    clause.Table{Name: clause.CurrentTable},
-		})
-	}
+	db = dbhelper.ApplyLock(db, lock)
 
 	dbAlreadyRead := new(announcementdbmodel.AlreadyRead)
 	if err := db.Take(dbAlreadyRead).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return mo.None[*announcementdomain.AlreadyRead](), nil
-		}
-		return mo.None[*announcementdomain.AlreadyRead](), err
+		return dbhelper.ConvertErrRecordNotFound[*announcementdomain.AlreadyRead](err)
 	}
 
 	return base.SomeWithErr(announcementdbmodel.FromDBAlreadyRead(dbAlreadyRead))
@@ -50,12 +39,7 @@ func (r *impl) ListAlreadyReads(ctx context.Context, conds announcementport.List
 		db = db.Where("announcement_id IN ?", base.MapByString(announcementIDs))
 	}
 
-	if lock != sharedport.LockNone {
-		db = db.Clauses(clause.Locking{
-			Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-			Table:    clause.Table{Name: clause.CurrentTable},
-		})
-	}
+	db = dbhelper.ApplyLock(db, lock)
 
 	var dbAlreadyReads []*announcementdbmodel.AlreadyRead
 	if err := db.Find(&dbAlreadyReads).Error; err != nil {

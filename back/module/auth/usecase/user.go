@@ -85,7 +85,7 @@ func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication au
 			return err
 		}
 		return rtx.UpdateUser(ctx, user)
-	})
+	}, false)
 }
 
 func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomain.Provider) error {
@@ -108,7 +108,7 @@ func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomai
 			return err
 		}
 		return rtx.UpdateUser(ctx, user)
-	})
+	}, true)
 }
 
 func (uc *impl) Logout(ctx context.Context) error {

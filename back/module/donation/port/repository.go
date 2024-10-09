@@ -10,7 +10,7 @@ import (
 )
 
 type Repository interface {
-	Transaction(ctx context.Context, fn func(rtx Repository) error) error
+	Transaction(ctx context.Context, fn func(rtx Repository) error, readOnly bool) error
 
 	// PaymentUser
 

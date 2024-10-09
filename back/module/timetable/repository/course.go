@@ -2,11 +2,11 @@ package timetablerepository
 
 import (
 	"context"
-	"errors"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
@@ -18,60 +18,49 @@ import (
 func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error) {
 	dbCourse := new(timetabledbmodel.Course)
 
-	err := r.db.Transaction(func(tx *gorm.DB) error {
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
-			WithContext(ctx).
 			Where("year = ?", conds.Year.Int()).
 			Where("code = ?", conds.Code.String()).
-			Clauses(clause.Locking{
-				Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-				Table:    clause.Table{Name: clause.CurrentTable},
-			}).
 			Preload("RecommendedGrades").
 			Preload("Methods").
 			Preload("Schedules").
 			Take(dbCourse).
 			Error
-	}, nil)
+	}, true)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return mo.None[*timetabledomain.Course](), nil
-		}
-		return mo.None[*timetabledomain.Course](), err
+		return dbhelper.ConvertErrRecordNotFound[*timetabledomain.Course](err)
 	}
 
 	return base.SomeWithErr(timetabledbmodel.FromDBCourse(dbCourse))
 }
 
 func (r *impl) ListCourses(ctx context.Context, conds timetableport.ListCoursesConds, lock sharedport.Lock) ([]*timetabledomain.Course, error) {
-	db := r.db.WithContext(ctx)
-
-	if ids, ok := conds.IDs.Get(); ok {
-		db = db.Where("id IN ?", base.MapByString(ids))
-	}
-
-	if year, ok := conds.Year.Get(); ok {
-		db = db.Where("year = ?", year.Int())
-	}
-
-	if codes, ok := conds.Codes.Get(); ok {
-		db = db.Where("code IN ?", base.MapByString(codes))
-	}
-
 	var dbCourses []*timetabledbmodel.Course
 
-	err := db.Transaction(func(tx *gorm.DB) error {
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		if ids, ok := conds.IDs.Get(); ok {
+			tx = tx.Where("id IN ?", base.MapByString(ids))
+		}
+
+		if year, ok := conds.Year.Get(); ok {
+			tx = tx.Where("year = ?", year.Int())
+		}
+
+		if codes, ok := conds.Codes.Get(); ok {
+			tx = tx.Where("code IN ?", base.MapByString(codes))
+		}
+
+		tx = dbhelper.ApplyLock(tx, lock)
+
 		return tx.
-			Clauses(clause.Locking{
-				Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-				Table:    clause.Table{Name: clause.CurrentTable},
-			}).
 			Preload("RecommendedGrades").
 			Preload("Methods").
 			Preload("Schedules").
 			Find(&dbCourses).
 			Error
-	}, nil)
+	}, true)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +79,7 @@ func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Co
 	dbSchedules := lo.Flatten(base.Map(dbCourses, func(dbCourse *timetabledbmodel.Course) []timetabledbmodel.CourseSchedule {
 		return dbCourse.Schedules
 	}))
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if err := tx.Omit(clause.Associations).Create(dbCourses).Error; err != nil {
 			return err
 		}
@@ -110,7 +99,7 @@ func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Co
 			}
 		}
 		return nil
-	}, nil)
+	}, false)
 }
 
 func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course) error {
@@ -159,7 +148,7 @@ func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course)
 
 	dbCourse := timetabledbmodel.ToDBCourse(course, false)
 
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if len(columns) > 0 {
 			if err := tx.Select(columns).Updates(dbCourse).Error; err != nil {
 				return err
@@ -179,5 +168,5 @@ func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course)
 		}
 
 		return nil
-	}, nil)
+	}, false)
 }

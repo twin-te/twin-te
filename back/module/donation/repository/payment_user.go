@@ -2,36 +2,25 @@ package donationrepository
 
 import (
 	"context"
-	"errors"
 
-	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	donationdbmodel "github.com/twin-te/twin-te/back/module/donation/dbmodel"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPaymentUserConds, lock sharedport.Lock) (mo.Option[*donationdomain.PaymentUser], error) {
 	db := r.db.WithContext(ctx).
 		Where("user_id = ?", conds.UserID.String())
 
-	if lock != sharedport.LockNone {
-		db = db.Clauses(clause.Locking{
-			Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-			Table:    clause.Table{Name: clause.CurrentTable},
-		})
-	}
+	db = dbhelper.ApplyLock(db, lock)
 
 	dbPaymentUser := new(donationdbmodel.PaymentUser)
 	if err := db.Take(&dbPaymentUser).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return mo.None[*donationdomain.PaymentUser](), nil
-		}
-		return mo.None[*donationdomain.PaymentUser](), err
+		return dbhelper.ConvertErrRecordNotFound[*donationdomain.PaymentUser](err)
 	}
 
 	return base.SomeWithErr(donationdbmodel.FromDBPaymentUser(dbPaymentUser))
@@ -44,12 +33,7 @@ func (r *impl) ListPaymentUsers(ctx context.Context, conds donationport.ListPaym
 		db = db.Where("display_name IS NOT NULL")
 	}
 
-	if lock != sharedport.LockNone {
-		db = db.Clauses(clause.Locking{
-			Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-			Table:    clause.Table{Name: clause.CurrentTable},
-		})
-	}
+	db = dbhelper.ApplyLock(db, lock)
 
 	var dbPaymentUsers []*donationdbmodel.PaymentUser
 	if err := db.Find(&dbPaymentUsers).Error; err != nil {

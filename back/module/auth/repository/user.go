@@ -2,12 +2,12 @@ package authrepository
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
+	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	authdbmodel "github.com/twin-te/twin-te/back/module/auth/dbmodel"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
@@ -22,7 +22,7 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 	}
 
 	dbUser := new(authdbmodel.User)
-	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
 		if id, ok := conds.ID.Get(); ok {
 			tx = tx.Where("id = ?", id.String())
 		}
@@ -37,21 +37,16 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 			)
 		}
 
+		tx = dbhelper.ApplyLock(tx, lock)
+
 		return tx.
 			Where("deleted_at IS NULL").
-			Clauses(clause.Locking{
-				Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-				Table:    clause.Table{Name: clause.CurrentTable},
-			}).
 			Preload("UserAuthentications").
 			Take(dbUser).
 			Error
-	}, nil)
+	}, true)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return mo.None[*authdomain.User](), nil
-		}
-		return mo.None[*authdomain.User](), err
+		return dbhelper.ConvertErrRecordNotFound[*authdomain.User](err)
 	}
 
 	return base.SomeWithErr(authdbmodel.FromDBUser(dbUser))
@@ -60,17 +55,14 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error) {
 	var dbUsers []*authdbmodel.User
 
-	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
 			Where("deleted_at IS NULL").
-			Clauses(clause.Locking{
-				Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
-				Table:    clause.Table{Name: clause.CurrentTable},
-			}).
 			Preload("UserAuthentications").
 			Find(&dbUsers).
 			Error
-	})
+	}, true)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +75,7 @@ func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error
 	dbUserAuthentications := lo.Flatten(base.Map(dbUsers, func(dbUser *authdbmodel.User) []authdbmodel.UserAuthentication {
 		return dbUser.UserAuthentications
 	}))
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if err := tx.Omit(clause.Associations).Create(dbUsers).Error; err != nil {
 			return err
 		}
@@ -93,7 +85,7 @@ func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error
 			}
 		}
 		return nil
-	}, nil)
+	}, false)
 }
 
 func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
@@ -106,18 +98,18 @@ func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 
 	dbUser := authdbmodel.ToDBUser(user, false)
 
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if len(columns) > 0 {
 			if err := tx.Select(columns).Updates(dbUser).Error; err != nil {
 				return err
 			}
 		}
 		return r.updateUserAuthentications(tx, user)
-	}, nil)
+	}, false)
 }
 
 func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) (rowsAffected int, err error) {
-	err = r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err = r.transaction(ctx, func(tx *gorm.DB) error {
 		var dbUsers []*authdbmodel.User
 		tx = tx.Model(&dbUsers)
 
@@ -141,6 +133,6 @@ func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) 
 			})).
 			Delete(&authdbmodel.UserAuthentication{}).
 			Error
-	}, nil)
+	}, false)
 	return
 }

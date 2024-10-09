@@ -70,7 +70,7 @@ func (uc impl) UpdateTag(ctx context.Context, in timetablemodule.UpdateTagIn) (t
 		tag.BeforeUpdateHook()
 		tag.Update(timetabledomain.TagDataToUpdate{Name: in.Name})
 		return rtx.UpdateTag(ctx, tag)
-	})
+	}, false)
 
 	return
 }
@@ -135,7 +135,7 @@ func (uc impl) RearrangeTags(ctx context.Context, ids []idtype.TagID) (tags []*t
 		}
 
 		return nil
-	})
+	}, false)
 
 	return
 }
