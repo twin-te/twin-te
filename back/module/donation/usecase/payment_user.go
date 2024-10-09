@@ -71,7 +71,7 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 			}
 			return uc.r.CreatePaymentUsers(ctx, paymentUser)
 		}
-	})
+	}, false)
 	return paymentUser, err
 }
 

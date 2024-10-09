@@ -139,7 +139,7 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 			}
 
 			return nil
-		})
+		}, false)
 		if err != nil {
 			return err
 		}

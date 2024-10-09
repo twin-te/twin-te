@@ -83,7 +83,7 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
 		return rtx.CreateRegisteredCourses(ctx, registeredCourses...)
-	})
+	}, false)
 	return registeredCourses, err
 }
 
@@ -165,7 +165,7 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 			return apperr.New(timetableerr.CodeRegisteredCourseNotFound, fmt.Sprintf("not found registered course whose id is %s", in.ID))
 		}
 
-		if err := uc.r.LoadCourseAssociationToRegisteredCourse(ctx, []*timetabledomain.RegisteredCourse{registeredCourse}, sharedport.LockNone); err != nil {
+		if err := uc.r.LoadCourseAssociationToRegisteredCourse(ctx, []*timetabledomain.RegisteredCourse{registeredCourse}, sharedport.LockShared); err != nil {
 			return err
 		}
 
@@ -202,7 +202,7 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 		})
 
 		return rtx.UpdateRegisteredCourse(ctx, registeredCourse)
-	})
+	}, false)
 
 	return
 }

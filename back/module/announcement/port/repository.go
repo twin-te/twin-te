@@ -11,7 +11,7 @@ import (
 )
 
 type Repository interface {
-	Transaction(ctx context.Context, fn func(rtx Repository) error) error
+	Transaction(ctx context.Context, fn func(rtx Repository) error, readOnly bool) error
 
 	FindAnnouncement(ctx context.Context, conds FindAnnouncementConds, lock sharedport.Lock) (mo.Option[*announcementdomain.Announcement], error)
 	ListAnnouncements(ctx context.Context, conds ListAnnouncementsConds, lock sharedport.Lock) ([]*announcementdomain.Announcement, error)
