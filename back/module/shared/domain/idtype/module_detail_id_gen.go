@@ -16,7 +16,7 @@ func (id ModuleDetailID) IsZero() bool {
 
 func ParseModuleDetailID(i int) (ModuleDetailID, error) {
 	if i == 0 {
-		return 0, fmt.Errorf("failed to parse ModuleDetailID %v", i)
+		return 0, fmt.Errorf("failed to parse ModuleDetailID %#v", i)
 	}
 	return ModuleDetailID(i), nil
 }

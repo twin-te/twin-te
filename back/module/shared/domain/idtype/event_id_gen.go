@@ -16,7 +16,7 @@ func (id EventID) IsZero() bool {
 
 func ParseEventID(i int) (EventID, error) {
 	if i == 0 {
-		return 0, fmt.Errorf("failed to parse EventID %v", i)
+		return 0, fmt.Errorf("failed to parse EventID %#v", i)
 	}
 	return EventID(i), nil
 }

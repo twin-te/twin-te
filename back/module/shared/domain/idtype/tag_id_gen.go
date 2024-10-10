@@ -3,10 +3,10 @@
 package idtype
 
 import (
+	"database/sql/driver"	
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/samber/lo"
 )
 
 type TagID uuid.UUID
@@ -29,11 +29,17 @@ func (id TagID) Less(other TagID) bool {
 	return false
 }
 
-func (id *TagID) StringPtr() *string {
-	if id == nil {
-		return nil
+func (id *TagID) Scan(src interface{}) error {
+	uuid := new(uuid.UUID)
+	if err := uuid.Scan(src); err != nil {
+		return err
 	}
-	return lo.ToPtr(id.String())
+	*id = TagID(*uuid)
+	return nil
+}
+
+func (id TagID) Value() (driver.Value, error) {
+	return id.String(), nil
 }
 
 func NewTagID() TagID {
