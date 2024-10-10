@@ -9,16 +9,16 @@ import (
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
-var ParsePosition = shareddomain.NewNonNegativeIntParser("position")
+var ParseOrder = shareddomain.NewNonNegativeIntParser("order")
 
 // Tag is identified by one of the following fields.
 //   - ID
-//   - UserID and Position
+//   - UserID and Order
 type Tag struct {
-	ID       idtype.TagID
-	UserID   idtype.UserID
-	Name     shareddomain.RequiredString
-	Position shareddomain.NonNegativeInt
+	ID     idtype.TagID
+	UserID idtype.UserID
+	Name   shareddomain.RequiredString
+	Order  shareddomain.NonNegativeInt
 
 	BeforeUpdated mo.Option[*Tag]
 }
@@ -56,12 +56,12 @@ func ConstructTag(fn func(t *Tag) (err error)) (*Tag, error) {
 }
 
 func RearrangeTags(tags []*Tag, ids []idtype.TagID) {
-	idToNewPosition := make(map[idtype.TagID]shareddomain.NonNegativeInt, len(ids))
+	idToNewOrder := make(map[idtype.TagID]shareddomain.NonNegativeInt, len(ids))
 	for i, id := range ids {
-		idToNewPosition[id] = shareddomain.NonNegativeInt(i)
+		idToNewOrder[id] = shareddomain.NonNegativeInt(i)
 	}
 
 	for _, tag := range tags {
-		tag.Position = idToNewPosition[tag.ID]
+		tag.Order = idToNewOrder[tag.ID]
 	}
 }

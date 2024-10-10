@@ -82,20 +82,20 @@ func (f *impl) NewTag(
 		return nil, err
 	}
 
-	var position shareddomain.NonNegativeInt
+	var order shareddomain.NonNegativeInt
 	if result.Valid {
-		maxPosition, err := timetabledomain.ParsePosition(int(result.Int16))
+		maxOrder, err := timetabledomain.ParseOrder(int(result.Int16))
 		if err != nil {
 			return nil, err
 		}
-		position = maxPosition + 1
+		order = maxOrder + 1
 	}
 
 	return timetabledomain.ConstructTag(func(t *timetabledomain.Tag) error {
 		t.ID = idtype.NewTagID()
 		t.UserID = userID
 		t.Name = name
-		t.Position = position
+		t.Order = order
 		return nil
 	})
 }

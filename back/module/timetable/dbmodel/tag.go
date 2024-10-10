@@ -34,7 +34,7 @@ func FromDBTag(dbTag *Tag) (*timetabledomain.Tag, error) {
 			return err
 		}
 
-		t.Position, err = timetabledomain.ParsePosition(int(dbTag.Order))
+		t.Order, err = timetabledomain.ParseOrder(int(dbTag.Order))
 		if err != nil {
 			return err
 		}
@@ -48,6 +48,6 @@ func ToDBTag(tag *timetabledomain.Tag) *Tag {
 		ID:     tag.ID.String(),
 		UserID: tag.UserID.String(),
 		Name:   tag.Name.String(),
-		Order:  tag.Position.Int(),
+		Order:  tag.Order.Int(),
 	}
 }

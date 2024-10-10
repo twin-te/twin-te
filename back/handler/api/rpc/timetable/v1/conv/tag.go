@@ -8,10 +8,10 @@ import (
 
 func ToPBTag(tag *timetabledomain.Tag) *timetablev1.Tag {
 	pbTag := &timetablev1.Tag{
-		Id:       sharedconv.ToPBUUID(tag.ID),
-		UserId:   sharedconv.ToPBUUID(tag.UserID),
-		Name:     tag.Name.String(),
-		Position: int32(tag.Position),
+		Id:     sharedconv.ToPBUUID(tag.ID),
+		UserId: sharedconv.ToPBUUID(tag.UserID),
+		Name:   tag.Name.String(),
+		Order:  int32(tag.Order),
 	}
 	return pbTag
 }
