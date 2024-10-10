@@ -14,9 +14,21 @@ func (id PaymentHistoryID) IsZero() bool {
 	return id == ""
 }
 
+func (id *PaymentHistoryID) Scan(src interface{}) error {
+	switch src := src.(type) {
+	case nil:
+		return nil
+	case string:
+		*id = PaymentHistoryID(src)
+		return nil
+	default:
+		return fmt.Errorf("Scan: unable to scan type %T into PaymentHistoryID", src)
+	}
+}
+
 func ParsePaymentHistoryID(s string) (PaymentHistoryID, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse PaymentHistoryID %v", s)
+		return "", fmt.Errorf("failed to parse PaymentHistoryID %#v", s)
 	}
 	return PaymentHistoryID(s), nil
 }

@@ -14,9 +14,21 @@ func (id SubscriptionPlanID) IsZero() bool {
 	return id == ""
 }
 
+func (id *SubscriptionPlanID) Scan(src interface{}) error {
+	switch src := src.(type) {
+	case nil:
+		return nil
+	case string:
+		*id = SubscriptionPlanID(src)
+		return nil
+	default:
+		return fmt.Errorf("Scan: unable to scan type %T into SubscriptionPlanID", src)
+	}
+}
+
 func ParseSubscriptionPlanID(s string) (SubscriptionPlanID, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse SubscriptionPlanID %v", s)
+		return "", fmt.Errorf("failed to parse SubscriptionPlanID %#v", s)
 	}
 	return SubscriptionPlanID(s), nil
 }

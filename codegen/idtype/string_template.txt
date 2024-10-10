@@ -14,6 +14,18 @@ func (id ${id_name}) IsZero() bool {
 	return id == ""
 }
 
+func (id *${id_name}) Scan(src interface{}) error {
+	switch src := src.(type) {
+	case nil:
+		return nil
+	case string:
+		*id = ${id_name}(src)
+		return nil
+	default:
+		return fmt.Errorf("Scan: unable to scan type %T into ${id_name}", src)
+	}
+}
+
 func Parse${id_name}(s string) (${id_name}, error) {
 	if s == "" {
 		return "", fmt.Errorf("failed to parse ${id_name} %#v", s)
