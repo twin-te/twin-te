@@ -24,7 +24,6 @@ INSERT INTO auth_providers VALUES
 CREATE TABLE users (
     id uuid NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone,
     updated_at timestamp without time zone NOT NULL,
     PRIMARY KEY (id)
 );

@@ -3,7 +3,6 @@ package authrepository
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
@@ -27,7 +26,6 @@ func (r *impl) FindUser(ctx context.Context, filter authport.UserFilter, lock sh
 		tx = applyUserFilter(tx, filter)
 		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
-			Where("deleted_at IS NULL").
 			Preload("UserAuthentications").
 			Take(dbUser).
 			Error
@@ -46,7 +44,6 @@ func (r *impl) ListUsers(ctx context.Context, filter authport.UserFilter, limitO
 		tx = dbhelper.ApplyLimitOffset(tx, limitOffset)
 		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
-			Where("deleted_at IS NULL").
 			Preload("UserAuthentications").
 			Find(&dbUsers).
 			Error
@@ -76,17 +73,9 @@ func (r *impl) CreateUsers(ctx context.Context, users ...*authdomain.User) error
 }
 
 func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
-	before := user.BeforeUpdated.MustGet()
-	columns := make([]string, 0)
-
-	if !user.CreatedAt.Equal(before.CreatedAt) {
-		columns = append(columns, "created_at")
-	}
-
 	dbUser := authdbmodel.ToDBUser(user, false)
-
 	return r.transaction(ctx, func(tx *gorm.DB) error {
-		if err := tx.Select(columns).Updates(dbUser).Error; err != nil {
+		if err := tx.Updates(dbUser).Error; err != nil {
 			return err
 		}
 		return r.updateUserAuthentications(tx, user)
@@ -95,27 +84,9 @@ func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 
 func (r *impl) DeleteUsers(ctx context.Context, filter authport.UserFilter) (rowsAffected int, err error) {
 	err = r.transaction(ctx, func(tx *gorm.DB) error {
-		var dbUsers []*authdbmodel.User
-		tx = tx.Model(&dbUsers)
-
 		tx = applyUserFilter(tx, filter)
-
-		if err := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
-			Update("deleted_at", time.Now()).
-			Error; err != nil {
-			return err
-		}
-
-		if rowsAffected = int(tx.RowsAffected); rowsAffected == 0 {
-			return nil
-		}
-
-		return r.db.
-			Where("user_id IN ?", base.Map(dbUsers, func(dbUser *authdbmodel.User) string {
-				return dbUser.ID
-			})).
-			Delete(&authdbmodel.UserAuthentication{}).
-			Error
+		rowsAffected = int(tx.Delete(&authdbmodel.User{}).RowsAffected)
+		return tx.Error
 	}, false)
 	return
 }

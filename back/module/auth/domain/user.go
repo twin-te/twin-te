@@ -3,7 +3,6 @@ package authdomain
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
@@ -20,7 +19,6 @@ import (
 type User struct {
 	ID              idtype.UserID
 	Authentications []UserAuthentication
-	CreatedAt       time.Time
 
 	BeforeUpdated mo.Option[*User]
 }
@@ -84,7 +82,7 @@ func ConstructUser(fn func(u *User) (err error)) (*User, error) {
 		return nil, errors.New("user must have one or more authentications")
 	}
 
-	if u.ID.IsZero() || u.CreatedAt.IsZero() {
+	if u.ID.IsZero() {
 		return nil, fmt.Errorf("failed to construct %+v", u)
 	}
 
