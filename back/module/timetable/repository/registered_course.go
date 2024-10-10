@@ -9,7 +9,6 @@ import (
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
@@ -150,34 +149,6 @@ func (r *impl) DeleteRegisteredCourses(ctx context.Context, filter timetableport
 
 	}, false)
 	return
-}
-
-func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, registeredCourses []*timetabledomain.RegisteredCourse, lock sharedport.Lock) error {
-	courseIDToRegisteredCourse := make(map[idtype.CourseID]*timetabledomain.RegisteredCourse, len(registeredCourses))
-	for _, registeredCourse := range registeredCourses {
-		if registeredCourse.HasBasedCourse() && registeredCourse.CourseAssociation.IsAbsent() {
-			courseIDToRegisteredCourse[registeredCourse.CourseID.MustGet()] = registeredCourse
-		}
-	}
-
-	courses, err := r.ListCourses(ctx, timetableport.CourseFilter{
-		IDs: mo.Some(lo.Keys(courseIDToRegisteredCourse)),
-	}, sharedport.LimitOffset{}, lock)
-	if err != nil {
-		return err
-	}
-
-	for _, course := range courses {
-		courseIDToRegisteredCourse[course.ID].CourseAssociation.Set(course)
-	}
-
-	for courseID, registeredCourse := range courseIDToRegisteredCourse {
-		if registeredCourse.CourseAssociation.IsAbsent() {
-			return fmt.Errorf("can't load course (%s) to registered course (%s)", courseID, registeredCourse.ID)
-		}
-	}
-
-	return nil
 }
 
 func applyRegisteredCourseFilter(db *gorm.DB, filter timetableport.RegisteredCourseFilter) *gorm.DB {

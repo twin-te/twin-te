@@ -24,8 +24,6 @@ type Repository interface {
 	UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error
 	DeleteRegisteredCourses(ctx context.Context, filter RegisteredCourseFilter) (rowsAffected int, err error)
 
-	LoadCourseAssociationToRegisteredCourse(ctx context.Context, registeredCourses []*timetabledomain.RegisteredCourse, lock sharedport.Lock) error
-
 	FindTag(ctx context.Context, filter TagFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error)
 	ListTags(ctx context.Context, filter TagFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.Tag, error)
 	CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) error
@@ -34,6 +32,7 @@ type Repository interface {
 }
 
 type CourseFilter struct {
+	ID    mo.Option[idtype.CourseID]
 	IDs   mo.Option[[]idtype.CourseID]
 	Year  mo.Option[shareddomain.AcademicYear]
 	Code  mo.Option[timetabledomain.Code]
@@ -41,7 +40,7 @@ type CourseFilter struct {
 }
 
 func (f *CourseFilter) IsUniqueFilter() bool {
-	return f.Year.IsPresent() && f.Code.IsPresent()
+	return f.ID.IsPresent() || (f.Year.IsPresent() && f.Code.IsPresent())
 }
 
 type RegisteredCourseFilter struct {

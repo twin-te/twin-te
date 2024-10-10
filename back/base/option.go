@@ -65,3 +65,11 @@ func OptionOrElseByWithErr[T any](o mo.Option[T], fallback func() (T, error)) (T
 	}
 	return fallback()
 }
+
+func MustGetWithErr[T any](o mo.Option[T], err error) (T, error) {
+	if err != nil {
+		var zero T
+		return zero, err
+	}
+	return o.MustGet(), nil
+}

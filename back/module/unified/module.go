@@ -5,7 +5,7 @@ import (
 
 	"cloud.google.com/go/civil"
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
-	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 )
 
 // UseCase represents application specific business rules.
@@ -22,5 +22,5 @@ type UseCase interface {
 	//
 	// [Error Code]
 	//   - schoolcalendar.ModuleNotFound
-	GetByDate(ctx context.Context, date civil.Date) (events []*schoolcalendardomain.Event, module schoolcalendardomain.Module, registeredCourses []*timetabledomain.RegisteredCourse, err error)
+	GetByDate(ctx context.Context, date civil.Date) (events []*schoolcalendardomain.Event, module schoolcalendardomain.Module, registeredCourses []*timetableappdto.RegisteredCourse, err error)
 }

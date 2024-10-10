@@ -27,6 +27,7 @@ import (
 	schoolcalendarusecase "github.com/twin-te/twin-te/back/module/schoolcalendar/usecase"
 	timetablefactory "github.com/twin-te/twin-te/back/module/timetable/factory"
 	timetableintegrator "github.com/twin-te/twin-te/back/module/timetable/integrator"
+	timetablequery "github.com/twin-te/twin-te/back/module/timetable/query"
 	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/repository"
 	timetableusecase "github.com/twin-te/twin-te/back/module/timetable/usecase"
 )
@@ -62,8 +63,9 @@ var serveCmd = &cobra.Command{
 
 		timetableFactory := timetablefactory.New(db)
 		timetableIntegrator := timetableintegrator.New("")
+		timetableQuery := timetablequery.New(db)
 		timetableRepository := timetablerepository.New(db)
-		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableRepository)
+		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableQuery, timetableRepository)
 
 		announcements, err := announcementdata.LoadAnnouncements()
 		if err != nil {
