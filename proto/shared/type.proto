@@ -1,7 +1,7 @@
 syntax = "proto3";
 package shared;
 
-option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/sharedpb";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpb";
 
 message OptionalString {
   optional string value = 1;

@@ -10,7 +10,7 @@
 
 [認証情報](https://console.cloud.google.com/apis/credentials) から [認証情報の作成] > [OAuth クライアント ID] を選択します。  
 アプリケーションの種類は「ウェブアプリケーション」を選択し、名前を入力します。  
-「承認済みの JavaScript 生成元」には `http://localhost:4000/auth/v3/google/callback` を入力します。
+「承認済みの JavaScript 生成元」には `http://localhost:4000/auth/v4/google/callback` を入力します。
 
 [!image](./client-id.png)
 

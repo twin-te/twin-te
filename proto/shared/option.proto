@@ -3,7 +3,7 @@ package shared;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/sharedpb";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpb";
 
 extend google.protobuf.MethodOptions {
   TwinteMethodOptions twinte = 50000;

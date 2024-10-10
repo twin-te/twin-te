@@ -3,7 +3,7 @@ package schoolcalendar.v1;
 
 import "shared/type.proto";
 
-option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/schoolcalendar/v1;schoolcalendarv1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1;schoolcalendarv1";
 
 enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0;
