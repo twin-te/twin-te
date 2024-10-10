@@ -16,7 +16,6 @@ func ToPBUser(user *authdomain.User) (*authv1.User, error) {
 	pbUser := &authv1.User{
 		Id:              sharedconv.ToPBUUID(user.ID),
 		Authentications: pbAuthentications,
-		CreatedAt:       sharedconv.ToPBRFC3339DateTime(user.CreatedAt),
 	}
 
 	return pbUser, nil
