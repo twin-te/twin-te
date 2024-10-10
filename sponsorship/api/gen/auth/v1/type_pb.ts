@@ -5,7 +5,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
-import { RFC3339DateTime, UUID } from "../../shared/type_pb";
+import { UUID } from "../../shared/type_pb";
 
 /**
  * @generated from enum auth.v1.Provider
@@ -96,11 +96,6 @@ export class User extends Message<User> {
    */
   authentications: UserAuthentication[] = [];
 
-  /**
-   * @generated from field: shared.RFC3339DateTime created_at = 3;
-   */
-  createdAt?: RFC3339DateTime;
-
   constructor(data?: PartialMessage<User>) {
     super();
     proto3.util.initPartial(data, this);
@@ -111,7 +106,6 @@ export class User extends Message<User> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "message", T: UUID },
     { no: 2, name: "authentications", kind: "message", T: UserAuthentication, repeated: true },
-    { no: 3, name: "created_at", kind: "message", T: RFC3339DateTime },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {

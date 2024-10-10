@@ -20,5 +20,4 @@ message UserAuthentication {
 message User {
   shared.UUID id = 1;
   repeated UserAuthentication authentications = 2;
-  shared.RFC3339DateTime created_at = 3;
 }
