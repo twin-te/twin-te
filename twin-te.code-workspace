@@ -7,6 +7,9 @@
       "path": "codegen"
     },
     {
+      "path": "data-migration-v3-to-v4"
+    },
+    {
       "path": "db"
     },
     {
@@ -26,6 +29,6 @@
     },
     {
       "path": "sponsorship"
-    },
+    }
   ]
 }
