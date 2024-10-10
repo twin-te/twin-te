@@ -45,6 +45,7 @@ def migrate_user_authentications(active_user_ids: list[str]):
 def migrate_sessions(active_user_ids: list[str]):
     df = read_csv("data/raw/session_session.csv")
     df = df[df["user_id"].isin(active_user_ids)]
+    df["created_at"] = now
     df["updated_at"] = now
     to_csv(df, "data/processed/sessions.csv")
 
@@ -52,6 +53,7 @@ def migrate_sessions(active_user_ids: list[str]):
 def migrate_payment_users():
     df = read_csv("data/raw/donation_payment_users.csv")
     df.rename(columns={"twinte_user_id": "user_id"}, inplace=True)
+    df["created_at"] = now
     df["updated_at"] = now
     to_csv(df, "data/processed/payment_users.csv")
 
@@ -69,6 +71,7 @@ def migrate_registered_courses(active_user_ids: list[str]):
 
     df = df[df["user_id"].isin(active_user_ids)]
 
+    df["created_at"] = now
     df["updated_at"] = now
 
     to_csv(df, "data/processed/registered_courses.csv")
@@ -86,6 +89,7 @@ def migrate_registered_course_tags():
 def migrate_tags(active_user_ids: list[str]):
     df = read_csv("data/raw/timetables_tags.csv")
     df = df[df["user_id"].isin(active_user_ids)]
+    df["created_at"] = now
     df["updated_at"] = now
     to_csv(df, "data/processed/tags.csv")
 
@@ -191,6 +195,7 @@ def migrate_course_aggregate_found() -> set[str]:
         data=course_recommended_grades_data
     )
 
+    df_courses_found["created_at"] = now
     df_courses_found["updated_at"] = now
 
     to_csv(df_courses_found, "data/processed/courses_found.csv")
@@ -215,6 +220,7 @@ def migrate_course_not_found(course_ids_not_found: set[str]):
     )
     df = df[df["id"].isin(course_ids_not_found)]
     df["last_updated_at"] = df["last_updated_at"].str[:-3]
+    df["created_at"] = now
     df["updated_at"] = now
     to_csv(df, "data/processed/courses_not_found.csv")
 
