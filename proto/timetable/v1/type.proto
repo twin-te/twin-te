@@ -94,5 +94,5 @@ message Tag {
   shared.UUID id = 1;
   shared.UUID user_id = 2;
   string name = 3;
-  int32 position = 4;
+  int32 order = 4;
 }
