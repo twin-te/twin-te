@@ -8,3 +8,8 @@ const (
 	LockShared
 	LockExclusive
 )
+
+type LimitOffset struct {
+	Limit  int
+	Offset int
+}

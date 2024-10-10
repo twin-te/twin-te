@@ -2,6 +2,7 @@ package donationrepository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
@@ -10,12 +11,16 @@ import (
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	"gorm.io/gorm"
 )
 
-func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPaymentUserConds, lock sharedport.Lock) (mo.Option[*donationdomain.PaymentUser], error) {
-	db := r.db.WithContext(ctx).
-		Where("user_id = ?", conds.UserID.String())
+func (r *impl) FindPaymentUser(ctx context.Context, filter donationport.PaymentUserFilter, lock sharedport.Lock) (mo.Option[*donationdomain.PaymentUser], error) {
+	if !filter.IsUniqueFilter() {
+		return mo.None[*donationdomain.PaymentUser](), fmt.Errorf("%v is not unique", filter)
+	}
 
+	db := r.db.WithContext(ctx)
+	db = applyPaymentUserFilter(db, filter)
 	db = dbhelper.ApplyLock(db, lock)
 
 	dbPaymentUser := new(donationdbmodel.PaymentUser)
@@ -26,13 +31,10 @@ func (r *impl) FindPaymentUser(ctx context.Context, conds donationport.FindPayme
 	return base.SomeWithErr(donationdbmodel.FromDBPaymentUser(dbPaymentUser))
 }
 
-func (r *impl) ListPaymentUsers(ctx context.Context, conds donationport.ListPaymentUsersConds, lock sharedport.Lock) ([]*donationdomain.PaymentUser, error) {
+func (r *impl) ListPaymentUsers(ctx context.Context, filter donationport.PaymentUserFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*donationdomain.PaymentUser, error) {
 	db := r.db.WithContext(ctx)
-
-	if conds.RequireDisplayName {
-		db = db.Where("display_name IS NOT NULL")
-	}
-
+	db = applyPaymentUserFilter(db, filter)
+	db = dbhelper.ApplyLimitOffset(db, limitOffset)
 	db = dbhelper.ApplyLock(db, lock)
 
 	var dbPaymentUsers []*donationdbmodel.PaymentUser
@@ -70,4 +72,16 @@ func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomai
 		Select(columns).
 		Updates(dbPaymentUser).
 		Error
+}
+
+func applyPaymentUserFilter(db *gorm.DB, filter donationport.PaymentUserFilter) *gorm.DB {
+	if userID, ok := filter.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
+	}
+
+	if filter.RequireDisplayName {
+		db = db.Where("display_name IS NOT NULL")
+	}
+
+	return db
 }

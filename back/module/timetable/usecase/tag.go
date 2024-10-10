@@ -41,9 +41,9 @@ func (uc impl) ListTags(ctx context.Context) ([]*timetabledomain.Tag, error) {
 		return nil, err
 	}
 
-	return uc.r.ListTags(ctx, timetableport.ListTagsConds{
+	return uc.r.ListTags(ctx, timetableport.TagFilter{
 		UserID: mo.Some(userID),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 }
 
 func (uc impl) UpdateTag(ctx context.Context, in timetablemodule.UpdateTagIn) (tag *timetabledomain.Tag, err error) {
@@ -53,8 +53,8 @@ func (uc impl) UpdateTag(ctx context.Context, in timetablemodule.UpdateTagIn) (t
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
-		tagOption, err := rtx.FindTag(ctx, timetableport.FindTagConds{
-			ID:     in.ID,
+		tagOption, err := rtx.FindTag(ctx, timetableport.TagFilter{
+			ID:     mo.Some(in.ID),
 			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
@@ -81,7 +81,7 @@ func (uc impl) DeleteTag(ctx context.Context, id idtype.TagID) error {
 		return err
 	}
 
-	rowsAffected, err := uc.r.DeleteTags(ctx, timetableport.DeleteTagsConds{
+	rowsAffected, err := uc.r.DeleteTags(ctx, timetableport.TagFilter{
 		ID:     mo.Some(id),
 		UserID: mo.Some(userID),
 	})
@@ -107,9 +107,9 @@ func (uc impl) RearrangeTags(ctx context.Context, ids []idtype.TagID) (tags []*t
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
-		tags, err = rtx.ListTags(ctx, timetableport.ListTagsConds{
+		tags, err = rtx.ListTags(ctx, timetableport.TagFilter{
 			UserID: mo.Some(userID),
-		}, sharedport.LockExclusive)
+		}, sharedport.LimitOffset{}, sharedport.LockExclusive)
 		if err != nil {
 			return err
 		}

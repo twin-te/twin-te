@@ -3,13 +3,14 @@ package authmodule
 import (
 	"context"
 
+	"github.com/samber/mo"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 type AccessController interface {
 	// WithActor returns the context that contains Actor.
-	WithActor(ctx context.Context, id *idtype.SessionID) (context.Context, error)
+	WithActor(ctx context.Context, id mo.Option[idtype.SessionID]) (context.Context, error)
 
 	// Authenticate returns user id if the actor is authenticated.
 	//

@@ -12,21 +12,9 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (r *impl) ListEvents(ctx context.Context, conds schoolcalendarport.ListEventsConds, lock sharedport.Lock) ([]*schoolcalendardomain.Event, error) {
-	events := r.events
-
-	if dateAfterOrEqual, ok := conds.DateAfterOrEqual.Get(); ok {
-		events = lo.Filter(events, func(event *schoolcalendardomain.Event, _ int) bool {
-			return event.Date.After(dateAfterOrEqual) || event.Date == dateAfterOrEqual
-		})
-	}
-
-	if dateBeforeOrEqual, ok := conds.DateBeforeOrEqual.Get(); ok {
-		events = lo.Filter(events, func(event *schoolcalendardomain.Event, _ int) bool {
-			return event.Date.Before(dateBeforeOrEqual) || event.Date == dateBeforeOrEqual
-		})
-	}
-
+func (r *impl) ListEvents(ctx context.Context, filter schoolcalendarport.EventFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*schoolcalendardomain.Event, error) {
+	events := applyEventFilter(r.events, filter)
+	events = lo.Subset(events, limitOffset.Offset, uint(limitOffset.Limit))
 	return base.MapByClone(events), nil
 }
 
@@ -47,4 +35,20 @@ func (r *impl) CreateEvents(ctx context.Context, events ...*schoolcalendardomain
 	r.events = append(r.events, events...)
 
 	return nil
+}
+
+func applyEventFilter(events []*schoolcalendardomain.Event, filter schoolcalendarport.EventFilter) []*schoolcalendardomain.Event {
+	if dateAfterOrEqual, ok := filter.DateAfterOrEqual.Get(); ok {
+		events = lo.Filter(events, func(event *schoolcalendardomain.Event, _ int) bool {
+			return event.Date.After(dateAfterOrEqual) || event.Date == dateAfterOrEqual
+		})
+	}
+
+	if dateBeforeOrEqual, ok := filter.DateBeforeOrEqual.Get(); ok {
+		events = lo.Filter(events, func(event *schoolcalendardomain.Event, _ int) bool {
+			return event.Date.Before(dateBeforeOrEqual) || event.Date == dateBeforeOrEqual
+		})
+	}
+
+	return events
 }

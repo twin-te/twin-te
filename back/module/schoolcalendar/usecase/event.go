@@ -13,7 +13,7 @@ import (
 )
 
 func (uc *impl) ListEvents(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.Event, error) {
-	return uc.r.ListEvents(ctx, schoolcalendarport.ListEventsConds{
+	return uc.r.ListEvents(ctx, schoolcalendarport.EventFilter{
 		DateAfterOrEqual: mo.Some(civil.Date{
 			Year:  year.Int(),
 			Month: time.April,
@@ -24,12 +24,12 @@ func (uc *impl) ListEvents(ctx context.Context, year shareddomain.AcademicYear) 
 			Month: time.March,
 			Day:   31,
 		}),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 }
 
 func (uc *impl) ListEventsByDate(ctx context.Context, date civil.Date) ([]*schoolcalendardomain.Event, error) {
-	return uc.r.ListEvents(ctx, schoolcalendarport.ListEventsConds{
+	return uc.r.ListEvents(ctx, schoolcalendarport.EventFilter{
 		DateAfterOrEqual:  mo.Some(date),
 		DateBeforeOrEqual: mo.Some(date),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 }

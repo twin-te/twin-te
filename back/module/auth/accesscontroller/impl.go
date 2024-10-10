@@ -23,13 +23,13 @@ type impl struct {
 	r authport.Repository
 }
 
-func (a *impl) WithActor(ctx context.Context, id *idtype.SessionID) (context.Context, error) {
-	if id == nil {
+func (a *impl) WithActor(ctx context.Context, id mo.Option[idtype.SessionID]) (context.Context, error) {
+	if id.IsAbsent() {
 		return appctx.SetActor(ctx, authdomain.NewUnknown()), nil
 	}
 
-	sessionOption, err := a.r.FindSession(ctx, authport.FindSessionConds{
-		ID:             *id,
+	sessionOption, err := a.r.FindSession(ctx, authport.SessionFilter{
+		ID:             id,
 		ExpiredAtAfter: mo.Some(time.Now()),
 	}, sharedport.LockNone)
 	if err != nil {
@@ -41,7 +41,7 @@ func (a *impl) WithActor(ctx context.Context, id *idtype.SessionID) (context.Con
 		return appctx.SetActor(ctx, authdomain.NewUnknown()), nil
 	}
 
-	userOption, err := a.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := a.r.FindUser(ctx, authport.UserFilter{
 		ID: mo.Some(session.UserID),
 	}, sharedport.LockNone)
 	if err != nil {

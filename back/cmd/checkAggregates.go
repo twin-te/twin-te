@@ -35,61 +35,61 @@ var checkAggregatesCmd = &cobra.Command{
 		schoolcalendarRepository := schoolcalendarrepository.New()
 		timetableRepository := timetablerepository.New(db)
 
-		alreadyReads, err := announcementRepository.ListAlreadyReads(context.Background(), announcementport.ListAlreadyReadsConds{}, sharedport.LockNone)
+		alreadyReads, err := announcementRepository.ListAlreadyReads(context.Background(), announcementport.AlreadyReadFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d already reads are correctly reconstructed from repository", len(alreadyReads))
 
-		announcements, err := announcementRepository.ListAnnouncements(context.Background(), announcementport.ListAnnouncementsConds{}, sharedport.LockNone)
+		announcements, err := announcementRepository.ListAnnouncements(context.Background(), announcementport.AnnouncementFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d announcements are correctly reconstructed from repository", len(announcements))
 
-		sessions, err := authRepository.ListSessions(context.Background(), authport.ListSessionsConds{}, sharedport.LockNone)
+		sessions, err := authRepository.ListSessions(context.Background(), authport.SessionFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d sessions are correctly reconstructed from repository", len(sessions))
 
-		users, err := authRepository.ListUsers(context.Background(), authport.ListUsersConds{}, sharedport.LockNone)
+		users, err := authRepository.ListUsers(context.Background(), authport.UserFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d users are correctly reconstructed from repository", len(users))
 
-		paymentUsers, err := donationRepository.ListPaymentUsers(context.Background(), donationport.ListPaymentUsersConds{}, sharedport.LockNone)
+		paymentUsers, err := donationRepository.ListPaymentUsers(context.Background(), donationport.PaymentUserFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d payment users are correctly reconstructed from repository", len(paymentUsers))
 
-		events, err := schoolcalendarRepository.ListEvents(context.Background(), schoolcalendarport.ListEventsConds{}, sharedport.LockNone)
+		events, err := schoolcalendarRepository.ListEvents(context.Background(), schoolcalendarport.EventFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d events are correctly reconstructed from repository", len(events))
 
-		moduleDetails, err := schoolcalendarRepository.ListModuleDetails(context.Background(), schoolcalendarport.ListModuleDetailsConds{}, sharedport.LockNone)
+		moduleDetails, err := schoolcalendarRepository.ListModuleDetails(context.Background(), schoolcalendarport.ModuleDetailsFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d module details are correctly reconstructed from repository", len(moduleDetails))
 
-		courses, err := timetableRepository.ListCourses(context.Background(), timetableport.ListCoursesConds{}, sharedport.LockNone)
+		courses, err := timetableRepository.ListCourses(context.Background(), timetableport.CourseFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d courses are correctly reconstructed from repository", len(courses))
 
-		registeredCourses, err := timetableRepository.ListRegisteredCourses(context.Background(), timetableport.ListRegisteredCoursesConds{}, sharedport.LockNone)
+		registeredCourses, err := timetableRepository.ListRegisteredCourses(context.Background(), timetableport.RegisteredCourseFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Printf("%d registered courses are correctly reconstructed from repository", len(registeredCourses))
 
-		tags, err := timetableRepository.ListTags(context.Background(), timetableport.ListTagsConds{}, sharedport.LockNone)
+		tags, err := timetableRepository.ListTags(context.Background(), timetableport.TagFilter{}, sharedport.LimitOffset{}, sharedport.LockNone)
 		if err != nil {
 			log.Fatalln(err)
 		}

@@ -14,7 +14,7 @@ import (
 )
 
 func (uc *impl) SignUpOrLogin(ctx context.Context, userAuthentication authdomain.UserAuthentication) (*authdomain.Session, error) {
-	userOption, err := uc.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := uc.r.FindUser(ctx, authport.UserFilter{
 		UserAuthentication: mo.Some(userAuthentication),
 	}, sharedport.LockNone)
 	if err != nil {
@@ -45,7 +45,7 @@ func (uc *impl) GetMe(ctx context.Context) (*authdomain.User, error) {
 		return nil, err
 	}
 
-	userOption, err := uc.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := uc.r.FindUser(ctx, authport.UserFilter{
 		ID: mo.Some(userID),
 	}, sharedport.LockNone)
 	if err != nil {
@@ -61,7 +61,7 @@ func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication au
 		return err
 	}
 
-	userOption, err := uc.r.FindUser(ctx, authport.FindUserConds{
+	userOption, err := uc.r.FindUser(ctx, authport.UserFilter{
 		UserAuthentication: mo.Some(userAuthentication),
 	}, sharedport.LockNone)
 	if err != nil {
@@ -72,7 +72,7 @@ func (uc *impl) AddUserAuthentication(ctx context.Context, userAuthentication au
 	}
 
 	return uc.r.Transaction(ctx, func(rtx authport.Repository) error {
-		userOption, err := rtx.FindUser(ctx, authport.FindUserConds{
+		userOption, err := rtx.FindUser(ctx, authport.UserFilter{
 			ID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
@@ -95,7 +95,7 @@ func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomai
 	}
 
 	return uc.r.Transaction(ctx, func(rtx authport.Repository) error {
-		userOption, err := rtx.FindUser(ctx, authport.FindUserConds{
+		userOption, err := rtx.FindUser(ctx, authport.UserFilter{
 			ID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
@@ -117,7 +117,7 @@ func (uc *impl) Logout(ctx context.Context) error {
 		return err
 	}
 
-	_, err = uc.r.DeleteSessions(ctx, authport.DeleteSessionsConds{
+	_, err = uc.r.DeleteSessions(ctx, authport.SessionFilter{
 		UserID: mo.Some(userID),
 	})
 	return err
@@ -129,12 +129,12 @@ func (uc *impl) DeleteAccount(ctx context.Context) error {
 		return err
 	}
 
-	_, err = uc.r.DeleteUsers(ctx, authport.DeleteUserConds{ID: mo.Some(userID)})
+	_, err = uc.r.DeleteUsers(ctx, authport.UserFilter{ID: mo.Some(userID)})
 	if err != nil {
 		return err
 	}
 
-	_, err = uc.r.DeleteSessions(ctx, authport.DeleteSessionsConds{
+	_, err = uc.r.DeleteSessions(ctx, authport.SessionFilter{
 		UserID: mo.Some(userID),
 	})
 	return err

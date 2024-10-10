@@ -18,18 +18,16 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.FindRegisteredCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error) {
+func (r *impl) FindRegisteredCourse(ctx context.Context, filter timetableport.RegisteredCourseFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error) {
+	if !filter.IsUniqueFilter() {
+		return mo.None[*timetabledomain.RegisteredCourse](), fmt.Errorf("%v is not unique", filter)
+	}
+
 	dbRegisteredCourse := new(timetabledbmodel.RegisteredCourse)
 
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
-		tx = tx.Where("id = ?", conds.ID.String())
-
-		if usreID, ok := conds.UserID.Get(); ok {
-			tx = tx.Where("user_id = ?", usreID.String())
-		}
-
+		tx = applyRegisteredCourseFilter(tx, filter)
 		tx = dbhelper.ApplyLock(tx, lock)
-
 		return tx.Preload("Tags").Take(dbRegisteredCourse).Error
 	}, true)
 	if err != nil {
@@ -39,25 +37,17 @@ func (r *impl) FindRegisteredCourse(ctx context.Context, conds timetableport.Fin
 	return base.SomeWithErr(timetabledbmodel.FromDBRegisteredCourse(dbRegisteredCourse))
 }
 
-func (r *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error) {
+func (r *impl) ListRegisteredCourses(ctx context.Context, filter timetableport.RegisteredCourseFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error) {
 	var dbRegisteredCourses []*timetabledbmodel.RegisteredCourse
 
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
-		if userID, ok := conds.UserID.Get(); ok {
-			tx = tx.Where("user_id = ?", userID.String())
-		}
-
-		if year, ok := conds.Year.Get(); ok {
-			tx = tx.Where("year = ?", year.Int())
-		}
-
-		if courseIDs, ok := conds.CourseIDs.Get(); ok {
-			tx = tx.Where("course_id IN ?", base.MapByString(courseIDs))
-		}
-
+		tx = applyRegisteredCourseFilter(tx, filter)
+		tx = dbhelper.ApplyLimitOffset(tx, limitOffset)
 		tx = dbhelper.ApplyLock(tx, lock)
-
-		return tx.Preload("Tags").Find(&dbRegisteredCourses).Error
+		return tx.
+			Preload("Tags").
+			Find(&dbRegisteredCourses).
+			Error
 	}, true)
 	if err != nil {
 		return nil, err
@@ -154,18 +144,10 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 	}, false)
 }
 
-func (r *impl) DeleteRegisteredCourses(ctx context.Context, conds timetableport.DeleteRegisteredCoursesConds) (rowsAffected int, err error) {
+func (r *impl) DeleteRegisteredCourses(ctx context.Context, filter timetableport.RegisteredCourseFilter) (rowsAffected int, err error) {
 	err = r.transaction(ctx, func(tx *gorm.DB) error {
-		if id, ok := conds.ID.Get(); ok {
-			tx = tx.Where("id = ?", id.String())
-		}
-
-		if userID, ok := conds.UserID.Get(); ok {
-			tx = tx.Where("user_id = ?", userID.String())
-		}
-
+		tx = applyRegisteredCourseFilter(tx, filter)
 		rowsAffected = int(tx.Delete(&timetabledbmodel.RegisteredCourse{}).RowsAffected)
-
 		return tx.Error
 
 	}, false)
@@ -180,9 +162,9 @@ func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, regi
 		}
 	}
 
-	courses, err := r.ListCourses(ctx, timetableport.ListCoursesConds{
+	courses, err := r.ListCourses(ctx, timetableport.CourseFilter{
 		IDs: mo.Some(lo.Keys(courseIDToRegisteredCourse)),
-	}, lock)
+	}, sharedport.LimitOffset{}, lock)
 	if err != nil {
 		return err
 	}
@@ -198,4 +180,24 @@ func (r *impl) LoadCourseAssociationToRegisteredCourse(ctx context.Context, regi
 	}
 
 	return nil
+}
+
+func applyRegisteredCourseFilter(db *gorm.DB, filter timetableport.RegisteredCourseFilter) *gorm.DB {
+	if id, ok := filter.ID.Get(); ok {
+		db = db.Where("id = ?", id.String())
+	}
+
+	if userID, ok := filter.UserID.Get(); ok {
+		db = db.Where("user_id = ?", userID.String())
+	}
+
+	if year, ok := filter.Year.Get(); ok {
+		db = db.Where("year = ?", year.Int())
+	}
+
+	if courseIDs, ok := filter.CourseIDs.Get(); ok {
+		db = db.Where("course_id IN ?", base.MapByString(courseIDs))
+	}
+
+	return db
 }

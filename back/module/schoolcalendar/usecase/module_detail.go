@@ -15,16 +15,16 @@ import (
 )
 
 func (uc *impl) ListModuleDetails(ctx context.Context, year shareddomain.AcademicYear) ([]*schoolcalendardomain.ModuleDetail, error) {
-	return uc.r.ListModuleDetails(ctx, schoolcalendarport.ListModuleDetailsConds{
+	return uc.r.ListModuleDetails(ctx, schoolcalendarport.ModuleDetailsFilter{
 		Year: mo.Some(year),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 }
 
 func (uc *impl) GetModuleByDate(ctx context.Context, date civil.Date) (schoolcalendardomain.Module, error) {
-	moduleDetails, err := uc.r.ListModuleDetails(ctx, schoolcalendarport.ListModuleDetailsConds{
+	moduleDetails, err := uc.r.ListModuleDetails(ctx, schoolcalendarport.ModuleDetailsFilter{
 		StartBeforeOrEqual: mo.Some(date),
 		EndAfterOrEqual:    mo.Some(date),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return 0, err
 	}

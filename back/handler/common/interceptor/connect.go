@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/bufbuild/connect-go"
-	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/appenv"
 	"github.com/twin-te/twin-te/back/apperr"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
@@ -37,7 +37,7 @@ func NewAuthInterceptor(accessController authmodule.AccessController) connect.Un
 			req connect.AnyRequest,
 		) (connect.AnyResponse, error) {
 			sessionID, ok := getSessionIDFromHeader(req.Header())
-			ctx, err := accessController.WithActor(ctx, lo.Ternary(ok, &sessionID, nil))
+			ctx, err := accessController.WithActor(ctx, mo.TupleToOption(sessionID, ok))
 			if err != nil {
 				return nil, err
 			}

@@ -12,27 +12,9 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (r *impl) ListModuleDetails(ctx context.Context, conds schoolcalendarport.ListModuleDetailsConds, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error) {
-	moduleDetails := r.moduleDetails
-
-	if year, ok := conds.Year.Get(); ok {
-		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
-			return moduleDetail.Year == year
-		})
-	}
-
-	if startBeforeOrEqual, ok := conds.StartBeforeOrEqual.Get(); ok {
-		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
-			return moduleDetail.Start.Before(startBeforeOrEqual) || moduleDetail.Start == startBeforeOrEqual
-		})
-	}
-
-	if endAfterOrEqual, ok := conds.EndAfterOrEqual.Get(); ok {
-		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
-			return moduleDetail.End.After(endAfterOrEqual) || moduleDetail.End == endAfterOrEqual
-		})
-	}
-
+func (r *impl) ListModuleDetails(ctx context.Context, filter schoolcalendarport.ModuleDetailsFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error) {
+	moduleDetails := applyModuleDetailFilter(r.moduleDetails, filter)
+	moduleDetails = lo.Subset(moduleDetails, limitOffset.Offset, uint(limitOffset.Limit))
 	return base.MapByClone(moduleDetails), nil
 }
 
@@ -53,4 +35,26 @@ func (r *impl) CreateModuleDetails(ctx context.Context, moduleDetails ...*school
 	r.moduleDetails = append(r.moduleDetails, moduleDetails...)
 
 	return nil
+}
+
+func applyModuleDetailFilter(moduleDetails []*schoolcalendardomain.ModuleDetail, filter schoolcalendarport.ModuleDetailsFilter) []*schoolcalendardomain.ModuleDetail {
+	if year, ok := filter.Year.Get(); ok {
+		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
+			return moduleDetail.Year == year
+		})
+	}
+
+	if startBeforeOrEqual, ok := filter.StartBeforeOrEqual.Get(); ok {
+		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
+			return moduleDetail.Start.Before(startBeforeOrEqual) || moduleDetail.Start == startBeforeOrEqual
+		})
+	}
+
+	if endAfterOrEqual, ok := filter.EndAfterOrEqual.Get(); ok {
+		moduleDetails = lo.Filter(moduleDetails, func(moduleDetail *schoolcalendardomain.ModuleDetail, _ int) bool {
+			return moduleDetail.End.After(endAfterOrEqual) || moduleDetail.End == endAfterOrEqual
+		})
+	}
+
+	return moduleDetails
 }

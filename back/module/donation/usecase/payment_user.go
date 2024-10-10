@@ -23,8 +23,8 @@ func (uc *impl) GetOrCreatePaymentUser(ctx context.Context) (*donationdomain.Pay
 		return nil, err
 	}
 
-	paymentUserOption, err := uc.r.FindPaymentUser(ctx, donationport.FindPaymentUserConds{
-		UserID: userID,
+	paymentUserOption, err := uc.r.FindPaymentUser(ctx, donationport.PaymentUserFilter{
+		UserID: mo.Some(userID),
 	}, sharedport.LockNone)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (uc *impl) UpdateOrCreatePaymentUser(ctx context.Context, in donationmodule
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx donationport.Repository) (err error) {
-		paymentUserOption, err := rtx.FindPaymentUser(ctx, donationport.FindPaymentUserConds{UserID: userID}, sharedport.LockExclusive)
+		paymentUserOption, err := rtx.FindPaymentUser(ctx, donationport.PaymentUserFilter{UserID: mo.Some(userID)}, sharedport.LockExclusive)
 		if err != nil {
 			return err
 		}
@@ -83,9 +83,9 @@ func (uc *impl) ListContributors(ctx context.Context) ([]donationappdto.Contribu
 }
 
 func (uc *impl) updateContributorsCache(ctx context.Context) error {
-	paymentUsers, err := uc.r.ListPaymentUsers(ctx, donationport.ListPaymentUsersConds{
+	paymentUsers, err := uc.r.ListPaymentUsers(ctx, donationport.PaymentUserFilter{
 		RequireDisplayName: true,
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return err
 	}
