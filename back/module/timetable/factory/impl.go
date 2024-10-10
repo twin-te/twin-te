@@ -76,7 +76,7 @@ func (f *impl) NewTag(
 	name shareddomain.RequiredString,
 ) (*timetabledomain.Tag, error) {
 	var result sql.NullInt16
-	if err := f.db.Raw("SELECT max(position) FROM tags WHERE user_id = ?", userID.String()).
+	if err := f.db.Raw("SELECT max(\"order\") FROM tags WHERE user_id = ?", userID.String()).
 		Scan(&result).
 		Error; err != nil {
 		return nil, err

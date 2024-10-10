@@ -1,6 +1,8 @@
 package timetabledbmodel
 
 import (
+	"time"
+
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
@@ -10,6 +12,9 @@ type Tag struct {
 	UserID string
 	Name   string
 	Order  int
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func FromDBTag(dbTag *Tag) (*timetabledomain.Tag, error) {

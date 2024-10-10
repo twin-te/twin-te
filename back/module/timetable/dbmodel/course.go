@@ -24,6 +24,9 @@ type Course struct {
 	RecommendedGrades []CourseRecommendedGrade
 	Methods           []CourseMethod
 	Schedules         []CourseSchedule
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type CourseMethod struct {
