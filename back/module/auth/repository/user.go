@@ -86,10 +86,8 @@ func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 	dbUser := authdbmodel.ToDBUser(user, false)
 
 	return r.transaction(ctx, func(tx *gorm.DB) error {
-		if len(columns) > 0 {
-			if err := tx.Select(columns).Updates(dbUser).Error; err != nil {
-				return err
-			}
+		if err := tx.Select(columns).Updates(dbUser).Error; err != nil {
+			return err
 		}
 		return r.updateUserAuthentications(tx, user)
 	}, false)

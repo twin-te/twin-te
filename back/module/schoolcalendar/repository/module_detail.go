@@ -14,7 +14,6 @@ import (
 
 func (r *impl) ListModuleDetails(ctx context.Context, filter schoolcalendarport.ModuleDetailsFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error) {
 	moduleDetails := applyModuleDetailFilter(r.moduleDetails, filter)
-	moduleDetails = lo.Subset(moduleDetails, limitOffset.Offset, uint(limitOffset.Limit))
 	return base.MapByClone(moduleDetails), nil
 }
 

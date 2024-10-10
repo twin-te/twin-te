@@ -3,6 +3,7 @@ package dbhelper
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
@@ -21,6 +22,7 @@ func NewDB() (*gorm.DB, error) {
 	}), &gorm.Config{
 		SkipDefaultTransaction: true,
 		Logger:                 logger.Default.LogMode((logger.Info)),
+		NowFunc:                func() time.Time { return time.Now().Truncate(time.Microsecond) },
 	})
 }
 

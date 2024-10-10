@@ -1,6 +1,8 @@
 package donationdbmodel
 
 import (
+	"time"
+
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	donationdomain "github.com/twin-te/twin-te/back/module/donation/domain"
@@ -12,6 +14,9 @@ type PaymentUser struct {
 	UserID      string
 	DisplayName mo.Option[string]
 	Link        mo.Option[string]
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func FromDBPaymentUser(dbPaymentUser *PaymentUser) (*donationdomain.PaymentUser, error) {

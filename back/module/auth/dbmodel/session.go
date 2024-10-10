@@ -11,6 +11,9 @@ type Session struct {
 	ID        string
 	UserID    string
 	ExpiredAt time.Time
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func FromDBSession(dbSession *Session) (*authdomain.Session, error) {

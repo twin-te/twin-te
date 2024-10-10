@@ -14,7 +14,6 @@ import (
 
 func (r *impl) ListEvents(ctx context.Context, filter schoolcalendarport.EventFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*schoolcalendardomain.Event, error) {
 	events := applyEventFilter(r.events, filter)
-	events = lo.Subset(events, limitOffset.Offset, uint(limitOffset.Limit))
 	return base.MapByClone(events), nil
 }
 

@@ -61,10 +61,6 @@ func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 		columns = append(columns, "order")
 	}
 
-	if len(columns) == 0 {
-		return nil
-	}
-
 	dbTag := timetabledbmodel.ToDBTag(tag)
 	return r.db.WithContext(ctx).
 		Select(columns).

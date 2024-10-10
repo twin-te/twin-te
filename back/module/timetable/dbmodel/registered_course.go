@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
@@ -29,6 +30,9 @@ type RegisteredCourse struct {
 	Absence     int
 	Late        int
 	Tags        []RegisteredCourseTag
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type RegisteredCourseTag struct {

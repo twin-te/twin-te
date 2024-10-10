@@ -14,6 +14,8 @@ type User struct {
 	CreatedAt           time.Time
 	DeletedAt           mo.Option[time.Time]
 	UserAuthentications []UserAuthentication
+
+	UpdatedAt time.Time
 }
 
 type UserAuthentication struct {

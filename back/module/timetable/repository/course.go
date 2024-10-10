@@ -142,10 +142,8 @@ func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course)
 	dbCourse := timetabledbmodel.ToDBCourse(course, false)
 
 	return r.transaction(ctx, func(tx *gorm.DB) error {
-		if len(columns) > 0 {
-			if err := tx.Select(columns).Updates(dbCourse).Error; err != nil {
-				return err
-			}
+		if err := tx.Select(columns).Updates(dbCourse).Error; err != nil {
+			return err
 		}
 
 		if err := r.updateCourseRecommendedGrades(tx, course); err != nil {

@@ -62,10 +62,6 @@ func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomai
 		columns = append(columns, "link")
 	}
 
-	if len(columns) == 0 {
-		return nil
-	}
-
 	dbPaymentUser := donationdbmodel.ToDBPaymentUser(paymentUser)
 	return r.db.
 		WithContext(ctx).

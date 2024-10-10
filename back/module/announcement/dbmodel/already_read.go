@@ -12,6 +12,9 @@ type AlreadyRead struct {
 	UserID         string
 	AnnouncementID string
 	ReadAt         time.Time
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func FromDBAlreadyRead(dbAlreadyRead *AlreadyRead) (*announcementdomain.AlreadyRead, error) {

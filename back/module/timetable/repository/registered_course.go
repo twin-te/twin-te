@@ -135,10 +135,8 @@ func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *tim
 	}
 
 	return r.transaction(ctx, func(tx *gorm.DB) error {
-		if len(columns) > 0 {
-			if err := tx.Select(columns).Updates(dbRegisteredCourse).Error; err != nil {
-				return err
-			}
+		if err := tx.Select(columns).Updates(dbRegisteredCourse).Error; err != nil {
+			return err
 		}
 		return r.updateRegisteredCourseTagIDs(tx, registeredCourse)
 	}, false)
