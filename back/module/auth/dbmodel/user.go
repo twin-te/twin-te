@@ -3,7 +3,6 @@ package authdbmodel
 import (
 	"time"
 
-	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -11,8 +10,6 @@ import (
 
 type User struct {
 	ID                  string
-	CreatedAt           time.Time
-	DeletedAt           mo.Option[time.Time]
 	UserAuthentications []UserAuthentication
 
 	UpdatedAt time.Time
@@ -31,8 +28,6 @@ func FromDBUser(dbUser *User) (*authdomain.User, error) {
 			return err
 		}
 
-		u.CreatedAt = dbUser.CreatedAt
-
 		u.Authentications, err = base.MapWithErr(dbUser.UserAuthentications, FromDBUserAuthentication)
 		if err != nil {
 			return err
@@ -44,8 +39,7 @@ func FromDBUser(dbUser *User) (*authdomain.User, error) {
 
 func ToDBUser(user *authdomain.User, withAssociations bool) *User {
 	dbUser := &User{
-		ID:        user.ID.String(),
-		CreatedAt: user.CreatedAt,
+		ID: user.ID.String(),
 	}
 
 	if withAssociations {

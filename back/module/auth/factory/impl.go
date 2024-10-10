@@ -18,7 +18,6 @@ func (f *impl) NewUser(authentication authdomain.UserAuthentication) (*authdomai
 	return authdomain.ConstructUser(func(u *authdomain.User) (err error) {
 		u.ID = idtype.NewUserID()
 		u.Authentications = []authdomain.UserAuthentication{authentication}
-		u.CreatedAt = f.nowFunc()
 		return nil
 	})
 }
