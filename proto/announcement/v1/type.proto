@@ -3,7 +3,7 @@ package announcement.v1;
 
 import "shared/type.proto";
 
-option go_package = "github.com/twin-te/twin-te/back/handler/api/rpcgen/announcement/v1;announcementv1";
+option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1;announcementv1";
 
 enum AnnouncementTag {
   ANNOUNCEMENT_TAG_UNSPECIFIED = 0;
