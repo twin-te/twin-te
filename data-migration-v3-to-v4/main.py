@@ -81,18 +81,194 @@ def migrate_tags(active_user_ids: list[str]):
     to_csv(df, "data/processed/tags.csv")
 
 
-def prepare_existing_courses():
+def load_all_kdb_courses():
+    years = [2019, 2020, 2021, 2022, 2023, 2024]
+    all_kdb_courses = []
+    for year in years:
+        with open(f"../parser/data/parsed/{year}.json") as f:
+            kdb_courses = json.load(f)
+            for kdb_course in kdb_courses:
+                kdb_course["year"] = year
+            all_kdb_courses += kdb_courses
+    return all_kdb_courses
+
+
+def migrate_course_aggregate_found() -> set[str]:
+    # 既存のDBに保存してある講義のうち現在のKdBに存在する講義はKdBのデータを使用する
+    # 存在しない講義は既存のDBに保存してある講義データを修正して使用する
+
+    all_kdb_courses = load_all_kdb_courses()
+    df_existing_courses = read_csv("data/raw/course_courses.csv")
+
+    year_and_code_to_course_id: dict[tuple[int, str], str] = {}
+    for _, row in df_existing_courses.iterrows():
+        year_and_code_to_course_id[(row["year"], row["code"])] = row["id"]
+
+    courses_data = {
+        "id": [],
+        "year": [],
+        "code": [],
+        "name": [],
+        "instructors": [],
+        "credit": [],
+        "overview": [],
+        "remarks": [],
+        "last_updated_at": [],
+        "has_parse_error": [],
+        "is_annual": [],
+    }
+
+    course_methods_data = {
+        "course_id": [],
+        "method": [],
+    }
+
+    course_recommended_grades_data = {
+        "course_id": [],
+        "recommended_grade": [],
+    }
+
+    course_schedules_data = {
+        "course_id": [],
+        "module": [],
+        "day": [],
+        "period": [],
+        "locations": [],
+    }
+
+    course_ids_found: list[str] = []
+
+    for kdb_course in all_kdb_courses:
+        year_and_code = (kdb_course["year"], kdb_course["code"])
+        if year_and_code not in year_and_code_to_course_id:
+            continue
+
+        course_id = year_and_code_to_course_id[year_and_code]
+        course_ids_found.append(course_id)
+
+        courses_data["id"].append(course_id)
+        courses_data["year"].append(kdb_course["year"])
+        courses_data["code"].append(kdb_course["code"])
+        courses_data["name"].append(kdb_course["name"])
+        courses_data["instructors"].append(kdb_course["instructors"])
+        courses_data["credit"].append(kdb_course["credit"])
+        courses_data["overview"].append(kdb_course["overview"])
+        courses_data["remarks"].append(kdb_course["remarks"])
+        courses_data["last_updated_at"].append(kdb_course["lastUpdatedAt"])
+        courses_data["has_parse_error"].append(kdb_course["hasParseError"])
+        courses_data["is_annual"].append(kdb_course["isAnnual"])
+
+        for method in kdb_course["methods"]:
+            course_methods_data["course_id"].append(course_id)
+            course_methods_data["method"].append(method)
+
+        for recommended_grade in kdb_course["recommendedGrades"]:
+            course_recommended_grades_data["course_id"].append(course_id)
+            course_recommended_grades_data["recommended_grade"].append(
+                recommended_grade
+            )
+
+        for schedule in kdb_course["schedules"]:
+            course_schedules_data["course_id"].append(course_id)
+            course_schedules_data["module"].append(schedule["module"])
+            course_schedules_data["day"].append(schedule["day"])
+            course_schedules_data["period"].append(schedule["period"])
+            course_schedules_data["locations"].append(schedule["locations"])
+
+    df_courses_found = pd.DataFrame(data=courses_data)
+    df_course_schedules_found = pd.DataFrame(data=course_schedules_data)
+    df_course_methods_found = pd.DataFrame(data=course_methods_data)
+    df_course_recommended_grades_found = pd.DataFrame(
+        data=course_recommended_grades_data
+    )
+
+    to_csv(df_courses_found, "data/processed/courses_found.csv")
+    to_csv(df_course_schedules_found, "data/processed/course_schedules_found.csv")
+    to_csv(df_course_methods_found, "data/processed/course_methods_found.csv")
+    to_csv(
+        df_course_recommended_grades_found,
+        "data/processed/course_recommended_grades_found.csv",
+    )
+
+    course_id_set_not_found = set(df_existing_courses["id"].tolist()).difference(
+        course_ids_found
+    )
+    return course_id_set_not_found
+
+
+def migrate_course_not_found(course_ids_not_found: set[str]):
     df = read_csv("data/raw/course_courses.csv")
-    existing_courses = [
-        {
-            "id": row["id"],
-            "year": row["year"],
-            "code": row["code"],
+    df.rename(
+        columns={"instructor": "instructors", "last_update": "last_updated_at"},
+        inplace=True,
+    )
+    df = df[df["id"].isin(course_ids_not_found)]
+    df["last_updated_at"] = df["last_updated_at"].str[:-3]
+    to_csv(df, "data/processed/courses_not_found.csv")
+
+
+def migrate_course_schedules_not_found(course_ids_not_found: set[str]):
+    df = read_csv("data/raw/course_course_schedules.csv")
+    df = df[df["course_id"] != "null"]
+    df = df[df["course_id"].isin(course_ids_not_found)]
+    df.drop(columns=["id"], inplace=True)
+
+    df_annual = df[df["module"] == "Annual"]
+
+    modules: list[str] = []
+    days: list[str] = []
+    periods: list[str] = []
+    rooms: list[str] = []
+    course_ids: list[str] = []
+
+    for _, row in df_annual.iterrows():
+        for module in [
+            "SpringA",
+            "SpringB",
+            "SpringC",
+            "FallA",
+            "FallB",
+            "FallC",
+        ]:
+            modules.append(module)
+            days.append(row["day"])
+            periods.append(row["period"])
+            rooms.append(row["room"])
+            course_ids.append(row["course_id"])
+
+    df_to_add = pd.DataFrame(
+        data={
+            "module": modules,
+            "day": days,
+            "period": periods,
+            "room": rooms,
+            "course_id": course_ids,
         }
-        for _, row in df.iterrows()
-    ]
-    with open("data/processed/existing_courses.json", "w") as f:
-        json.dump(existing_courses, f)
+    )
+
+    df = df[df["module"] != "Annual"]
+    df = pd.concat([df, df_to_add], axis=0)
+
+    df.rename(columns={"room": "locations"}, inplace=True)
+
+    to_csv(df, "data/processed/course_schedules_not_found.csv")
+
+
+def migrate_course_recommended_grades_not_found(course_ids_not_found: set[str]):
+    df = read_csv("data/raw/course_course_recommended_grades.csv")
+    df = df[df["course_id"] != "null"]
+    df = df[df["course_id"].isin(course_ids_not_found)]
+    df.drop(columns=["id"], inplace=True)
+    df.rename(columns={"grade": "recommended_grade"}, inplace=True)
+    to_csv(df, "data/processed/course_recommended_grades_not_found.csv")
+
+
+def migrate_course_methods_not_found(course_ids_not_found: set[str]):
+    df = read_csv("data/raw/course_course_methods.csv")
+    df = df[df["course_id"] != "null"]
+    df = df[df["course_id"].isin(course_ids_not_found)]
+    df.drop(columns=["id"], inplace=True)
+    to_csv(df, "data/processed/course_methods_not_found.csv")
 
 
 def main():
@@ -110,7 +286,12 @@ def main():
 
     migrate_payment_users()
 
-    prepare_existing_courses()
+    course_id_set_not_found = migrate_course_aggregate_found()
+
+    migrate_course_not_found(course_id_set_not_found)
+    migrate_course_schedules_not_found(course_id_set_not_found)
+    migrate_course_methods_not_found(course_id_set_not_found)
+    migrate_course_recommended_grades_not_found(course_id_set_not_found)
 
 
 if __name__ == "__main__":
