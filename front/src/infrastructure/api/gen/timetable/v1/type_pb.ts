@@ -568,9 +568,9 @@ export class Tag extends Message<Tag> {
   name = "";
 
   /**
-   * @generated from field: int32 position = 4;
+   * @generated from field: int32 order = 4;
    */
-  position = 0;
+  order = 0;
 
   constructor(data?: PartialMessage<Tag>) {
     super();
@@ -583,7 +583,7 @@ export class Tag extends Message<Tag> {
     { no: 1, name: "id", kind: "message", T: UUID },
     { no: 2, name: "user_id", kind: "message", T: UUID },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "position", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "order", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tag {

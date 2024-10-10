@@ -280,6 +280,6 @@ export const fromPBTag = (pbTag: TimetableV1PB.Tag): Tag => {
   return {
     id: fromPBUUID(assurePresence(pbTag.id)),
     name: pbTag.name,
-    order: pbTag.position,
+    order: pbTag.order,
   };
 };
