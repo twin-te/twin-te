@@ -5,6 +5,8 @@ CREATE TABLE already_reads (
     user_id uuid NOT NULL,    
     announcement_id uuid NOT NULL,
     read_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (user_id, announcement_id)
 );
@@ -23,6 +25,7 @@ CREATE TABLE users (
     id uuid NOT NULL,
     created_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
+    updated_at timestamp without time zone NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -40,6 +43,8 @@ CREATE TABLE sessions (
     id uuid NOT NULL,
     user_id uuid NOT NULL,
     expired_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -48,6 +53,8 @@ CREATE TABLE payment_users (
     user_id uuid NOT NULL,
     display_name text,
     link text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,    
     PRIMARY KEY (id)
 );
 
@@ -109,6 +116,8 @@ CREATE TABLE courses (
     last_updated_at timestamp without time zone NOT NULL,
     has_parse_error boolean NOT NULL,
     is_annual boolean NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,    
     PRIMARY KEY (id),
     UNIQUE (year, code)
 );
@@ -155,6 +164,8 @@ CREATE TABLE registered_courses (
     absence smallint NOT NULL,
     late smallint NOT NULL,
     UNIQUE (user_id, course_id),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,    
     PRIMARY KEY (id),
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
@@ -173,6 +184,8 @@ CREATE TABLE tags (
     user_id uuid NOT NULL,
     name text NOT NULL,
     "order" smallint NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,    
     UNIQUE (user_id, "order") DEFERRABLE INITIALLY DEFERRED,
     PRIMARY KEY (id)
 );
