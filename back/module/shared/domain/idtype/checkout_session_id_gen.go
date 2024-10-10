@@ -2,7 +2,10 @@
 
 package idtype
 
-import "fmt"
+import (
+	"database/sql/driver"
+	"fmt"
+)
 
 type CheckoutSessionID string
 
@@ -24,6 +27,10 @@ func (id *CheckoutSessionID) Scan(src interface{}) error {
 	default:
 		return fmt.Errorf("Scan: unable to scan type %T into CheckoutSessionID", src)
 	}
+}
+
+func (id CheckoutSessionID) Value() (driver.Value, error) {
+	return id.String(), nil
 }
 
 func ParseCheckoutSessionID(s string) (CheckoutSessionID, error) {

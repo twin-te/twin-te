@@ -2,7 +2,10 @@
 
 package idtype
 
-import "fmt"
+import (
+	"database/sql/driver"
+	"fmt"
+)
 
 type PaymentHistoryID string
 
@@ -24,6 +27,10 @@ func (id *PaymentHistoryID) Scan(src interface{}) error {
 	default:
 		return fmt.Errorf("Scan: unable to scan type %T into PaymentHistoryID", src)
 	}
+}
+
+func (id PaymentHistoryID) Value() (driver.Value, error) {
+	return id.String(), nil
 }
 
 func ParsePaymentHistoryID(s string) (PaymentHistoryID, error) {
