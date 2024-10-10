@@ -2,6 +2,7 @@ package authrepository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/samber/lo"
@@ -16,29 +17,15 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock sharedport.Lock) (mo.Option[*authdomain.User], error) {
-	if err := conds.Validate(); err != nil {
-		return mo.None[*authdomain.User](), err
+func (r *impl) FindUser(ctx context.Context, filter authport.UserFilter, lock sharedport.Lock) (mo.Option[*authdomain.User], error) {
+	if !filter.IsUniqueFilter() {
+		return mo.None[*authdomain.User](), fmt.Errorf("%v is not unique", filter)
 	}
 
 	dbUser := new(authdbmodel.User)
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
-		if id, ok := conds.ID.Get(); ok {
-			tx = tx.Where("id = ?", id.String())
-		}
-
-		if userAuthentication, ok := conds.UserAuthentication.Get(); ok {
-			tx = tx.Where(
-				"id = ( ? )",
-				tx.Select("user_id").Where("provider = ? AND social_id = ?",
-					userAuthentication.Provider.String(),
-					userAuthentication.SocialID.String(),
-				).Table("user_authentications"),
-			)
-		}
-
+		tx = applyUserFilter(tx, filter)
 		tx = dbhelper.ApplyLock(tx, lock)
-
 		return tx.
 			Where("deleted_at IS NULL").
 			Preload("UserAuthentications").
@@ -52,10 +39,11 @@ func (r *impl) FindUser(ctx context.Context, conds authport.FindUserConds, lock 
 	return base.SomeWithErr(authdbmodel.FromDBUser(dbUser))
 }
 
-func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error) {
+func (r *impl) ListUsers(ctx context.Context, filter authport.UserFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*authdomain.User, error) {
 	var dbUsers []*authdbmodel.User
-
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = applyUserFilter(tx, filter)
+		tx = dbhelper.ApplyLimitOffset(tx, limitOffset)
 		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
 			Where("deleted_at IS NULL").
@@ -66,7 +54,6 @@ func (r *impl) ListUsers(ctx context.Context, conds authport.ListUsersConds, loc
 	if err != nil {
 		return nil, err
 	}
-
 	return base.MapWithErr(dbUsers, authdbmodel.FromDBUser)
 }
 
@@ -108,14 +95,12 @@ func (r *impl) UpdateUser(ctx context.Context, user *authdomain.User) error {
 	}, false)
 }
 
-func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) (rowsAffected int, err error) {
+func (r *impl) DeleteUsers(ctx context.Context, filter authport.UserFilter) (rowsAffected int, err error) {
 	err = r.transaction(ctx, func(tx *gorm.DB) error {
 		var dbUsers []*authdbmodel.User
 		tx = tx.Model(&dbUsers)
 
-		if id, ok := conds.ID.Get(); ok {
-			tx.Where("id = ?", id.String())
-		}
+		tx = applyUserFilter(tx, filter)
 
 		if err := tx.Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
 			Update("deleted_at", time.Now()).
@@ -135,4 +120,22 @@ func (r *impl) DeleteUsers(ctx context.Context, conds authport.DeleteUserConds) 
 			Error
 	}, false)
 	return
+}
+
+func applyUserFilter(db *gorm.DB, filter authport.UserFilter) *gorm.DB {
+	if id, ok := filter.ID.Get(); ok {
+		db.Where("id = ?", id.String())
+	}
+
+	if userAuthentication, ok := filter.UserAuthentication.Get(); ok {
+		db = db.Where(
+			"id = ( ? )",
+			db.Select("user_id").Where("provider = ? AND social_id = ?",
+				userAuthentication.Provider.String(),
+				userAuthentication.SocialID.String(),
+			).Table("user_authentications"),
+		)
+	}
+
+	return db
 }

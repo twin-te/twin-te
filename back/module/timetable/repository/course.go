@@ -2,6 +2,7 @@ package timetablerepository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/samber/lo"
 	"github.com/samber/mo"
@@ -15,14 +16,17 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error) {
+func (r *impl) FindCourse(ctx context.Context, filter timetableport.CourseFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error) {
+	if !filter.IsUniqueFilter() {
+		return mo.None[*timetabledomain.Course](), fmt.Errorf("%v is not unique", filter)
+	}
+
 	dbCourse := new(timetabledbmodel.Course)
 
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = applyCourseFilter(tx, filter)
 		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
-			Where("year = ?", conds.Year.Int()).
-			Where("code = ?", conds.Code.String()).
 			Preload("RecommendedGrades").
 			Preload("Methods").
 			Preload("Schedules").
@@ -36,24 +40,13 @@ func (r *impl) FindCourse(ctx context.Context, conds timetableport.FindCourseCon
 	return base.SomeWithErr(timetabledbmodel.FromDBCourse(dbCourse))
 }
 
-func (r *impl) ListCourses(ctx context.Context, conds timetableport.ListCoursesConds, lock sharedport.Lock) ([]*timetabledomain.Course, error) {
+func (r *impl) ListCourses(ctx context.Context, filter timetableport.CourseFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.Course, error) {
 	var dbCourses []*timetabledbmodel.Course
 
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
-		if ids, ok := conds.IDs.Get(); ok {
-			tx = tx.Where("id IN ?", base.MapByString(ids))
-		}
-
-		if year, ok := conds.Year.Get(); ok {
-			tx = tx.Where("year = ?", year.Int())
-		}
-
-		if codes, ok := conds.Codes.Get(); ok {
-			tx = tx.Where("code IN ?", base.MapByString(codes))
-		}
-
+		tx = applyCourseFilter(tx, filter)
+		tx = dbhelper.ApplyLimitOffset(tx, limitOffset)
 		tx = dbhelper.ApplyLock(tx, lock)
-
 		return tx.
 			Preload("RecommendedGrades").
 			Preload("Methods").
@@ -169,4 +162,24 @@ func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course)
 
 		return nil
 	}, false)
+}
+
+func applyCourseFilter(db *gorm.DB, filter timetableport.CourseFilter) *gorm.DB {
+	if ids, ok := filter.IDs.Get(); ok {
+		db = db.Where("id IN ?", base.MapByString(ids))
+	}
+
+	if year, ok := filter.Year.Get(); ok {
+		db = db.Where("year = ?", year.Int())
+	}
+
+	if code, ok := filter.Code.Get(); ok {
+		db = db.Where("code = ?", code.String())
+	}
+
+	if codes, ok := filter.Codes.Get(); ok {
+		db = db.Where("code IN ?", base.MapByString(codes))
+	}
+
+	return db
 }

@@ -36,9 +36,20 @@ func ApplyLock(db *gorm.DB, lock sharedport.Lock) *gorm.DB {
 		db = db.Clauses(clause.Locking{
 			Strength: lo.Ternary(lock == sharedport.LockExclusive, "UPDATE", "SHARE"),
 			Table:    clause.Table{Name: clause.CurrentTable},
-			Options:  "NOWAIT",
 		})
 	}
+	return db
+}
+
+func ApplyLimitOffset(db *gorm.DB, limitOffset sharedport.LimitOffset) *gorm.DB {
+	if limitOffset.Limit > 0 {
+		db = db.Limit(limitOffset.Limit)
+	}
+
+	if limitOffset.Offset > 0 {
+		db = db.Offset(limitOffset.Offset)
+	}
+
 	return db
 }
 

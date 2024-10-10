@@ -25,10 +25,10 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 		return nil, err
 	}
 
-	courses, err := uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
+	courses, err := uc.r.ListCourses(ctx, timetableport.CourseFilter{
 		Year:  mo.Some(year),
 		Codes: mo.Some(codes),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +54,11 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 		)
 	}
 
-	savedRegisteredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.ListRegisteredCoursesConds{
+	savedRegisteredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
 		UserID:    mo.Some(userID),
 		Year:      mo.Some(year),
 		CourseIDs: mo.Some(courseIDs),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return nil, err
 	}
@@ -115,10 +115,10 @@ func (uc *impl) ListRegisteredCourses(ctx context.Context, year mo.Option[shared
 		return nil, err
 	}
 
-	registeredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.ListRegisteredCoursesConds{
+	registeredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
 		UserID: mo.Some(userID),
 		Year:   year,
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return nil, err
 	}
@@ -151,8 +151,8 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 	}
 
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) (err error) {
-		registeredCourseOption, err := rtx.FindRegisteredCourse(ctx, timetableport.FindRegisteredCourseConds{
-			ID:     in.ID,
+		registeredCourseOption, err := rtx.FindRegisteredCourse(ctx, timetableport.RegisteredCourseFilter{
+			ID:     mo.Some(in.ID),
 			UserID: mo.Some(userID),
 		}, sharedport.LockExclusive)
 		if err != nil {
@@ -170,10 +170,10 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 		}
 
 		if tagIDs, ok := in.TagIDs.Get(); ok {
-			savedTags, err := rtx.ListTags(ctx, timetableport.ListTagsConds{
+			savedTags, err := rtx.ListTags(ctx, timetableport.TagFilter{
 				IDs:    in.TagIDs,
 				UserID: mo.Some(userID),
-			}, sharedport.LockShared)
+			}, sharedport.LimitOffset{}, sharedport.LockShared)
 			if err != nil {
 				return err
 			}
@@ -213,7 +213,7 @@ func (uc *impl) DeleteRegisteredCourse(ctx context.Context, id idtype.Registered
 		return err
 	}
 
-	rowsAffected, err := uc.r.DeleteRegisteredCourses(ctx, timetableport.DeleteRegisteredCoursesConds{
+	rowsAffected, err := uc.r.DeleteRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
 		ID:     mo.Some(id),
 		UserID: mo.Some(userID),
 	})

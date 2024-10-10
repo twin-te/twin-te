@@ -2,6 +2,7 @@ package announcementrepository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
@@ -10,14 +11,16 @@ import (
 	announcementdomain "github.com/twin-te/twin-te/back/module/announcement/domain"
 	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	"gorm.io/gorm"
 )
 
-func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindAlreadyReadConds, lock sharedport.Lock) (mo.Option[*announcementdomain.AlreadyRead], error) {
-	db := r.db.
-		WithContext(ctx).
-		Where("user_id = ?", conds.UserID.String()).
-		Where("announcement_id = ?", conds.AnnouncementID.String())
+func (r *impl) FindAlreadyRead(ctx context.Context, filter announcementport.AlreadyReadFilter, lock sharedport.Lock) (mo.Option[*announcementdomain.AlreadyRead], error) {
+	if !filter.IsUniqueFilter() {
+		return mo.None[*announcementdomain.AlreadyRead](), fmt.Errorf("%v is not unique", filter)
+	}
 
+	db := r.db.WithContext(ctx)
+	db = applyAlreadyReadFilter(db, filter)
 	db = dbhelper.ApplyLock(db, lock)
 
 	dbAlreadyRead := new(announcementdbmodel.AlreadyRead)
@@ -28,17 +31,10 @@ func (r *impl) FindAlreadyRead(ctx context.Context, conds announcementport.FindA
 	return base.SomeWithErr(announcementdbmodel.FromDBAlreadyRead(dbAlreadyRead))
 }
 
-func (r *impl) ListAlreadyReads(ctx context.Context, conds announcementport.ListAlreadyReadsConds, lock sharedport.Lock) ([]*announcementdomain.AlreadyRead, error) {
+func (r *impl) ListAlreadyReads(ctx context.Context, filter announcementport.AlreadyReadFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*announcementdomain.AlreadyRead, error) {
 	db := r.db.WithContext(ctx)
-
-	if userID, ok := conds.UserID.Get(); ok {
-		db = db.Where("user_id = ?", userID.String())
-	}
-
-	if announcementIDs, ok := conds.AnnouncementIDs.Get(); ok {
-		db = db.Where("announcement_id IN ?", base.MapByString(announcementIDs))
-	}
-
+	db = applyAlreadyReadFilter(db, filter)
+	db = dbhelper.ApplyLimitOffset(db, limitOffset)
 	db = dbhelper.ApplyLock(db, lock)
 
 	var dbAlreadyReads []*announcementdbmodel.AlreadyRead
@@ -54,16 +50,24 @@ func (r *impl) CreateAlreadyReads(ctx context.Context, alreadyReads ...*announce
 	return r.db.WithContext(ctx).Create(dbAlreadyReads).Error
 }
 
-func (r *impl) DeleteAlreadyReads(ctx context.Context, conds announcementport.DeleteAlreadyReadsConds) (rowsAffected int, err error) {
+func (r *impl) DeleteAlreadyReads(ctx context.Context, filter announcementport.AlreadyReadFilter) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
+	db = applyAlreadyReadFilter(db, filter)
+	return int(db.Delete(&announcementdbmodel.AlreadyRead{}).RowsAffected), db.Error
+}
 
-	if userID, ok := conds.UserID.Get(); ok {
+func applyAlreadyReadFilter(db *gorm.DB, filter announcementport.AlreadyReadFilter) *gorm.DB {
+	if userID, ok := filter.UserID.Get(); ok {
 		db = db.Where("user_id = ?", userID.String())
 	}
 
-	if announcementID, ok := conds.AnnouncementID.Get(); ok {
+	if announcementID, ok := filter.AnnouncementID.Get(); ok {
 		db = db.Where("announcement_id = ?", announcementID.String())
 	}
 
-	return int(db.Delete(&announcementdbmodel.AlreadyRead{}).RowsAffected), db.Error
+	if announcementIDs, ok := filter.AnnouncementIDs.Get(); ok {
+		db = db.Where("announcement_id IN ?", base.MapByString(announcementIDs))
+	}
+
+	return db
 }

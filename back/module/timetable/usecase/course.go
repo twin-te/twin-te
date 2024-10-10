@@ -20,10 +20,10 @@ import (
 )
 
 func (uc *impl) ListCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.Course, error) {
-	return uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
+	return uc.r.ListCourses(ctx, timetableport.CourseFilter{
 		Year:  mo.Some(year),
 		Codes: mo.Some(codes),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 }
 
 func (uc *impl) SearchCourses(ctx context.Context, conds timetablemodule.SearchCoursesIn) ([]*timetabledomain.Course, error) {
@@ -103,9 +103,9 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 
 	for _, courseWithoutID := range courseWithoutIDs {
 		err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
-			courseOption, err := rtx.FindCourse(ctx, timetableport.FindCourseConds{
-				Year: year,
-				Code: courseWithoutID.Code,
+			courseOption, err := rtx.FindCourse(ctx, timetableport.CourseFilter{
+				Year: mo.Some(year),
+				Code: mo.Some(courseWithoutID.Code),
 			}, sharedport.LockExclusive)
 			if err != nil {
 				return err
@@ -164,9 +164,9 @@ func (uc *impl) getCoursesWithCache(ctx context.Context, year shareddomain.Acade
 		return
 	}
 
-	courses, err = uc.r.ListCourses(ctx, timetableport.ListCoursesConds{
+	courses, err = uc.r.ListCourses(ctx, timetableport.CourseFilter{
 		Year: mo.Some(year),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return
 	}

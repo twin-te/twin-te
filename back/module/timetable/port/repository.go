@@ -13,76 +13,54 @@ import (
 type Repository interface {
 	Transaction(ctx context.Context, fn func(rtx Repository) error, readOnly bool) error
 
-	// Course
-
-	FindCourse(ctx context.Context, conds FindCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error)
-	ListCourses(ctx context.Context, conds ListCoursesConds, lock sharedport.Lock) ([]*timetabledomain.Course, error)
+	FindCourse(ctx context.Context, filter CourseFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.Course], error)
+	ListCourses(ctx context.Context, filter CourseFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.Course, error)
 	CreateCourses(ctx context.Context, courses ...*timetabledomain.Course) error
 	UpdateCourse(ctx context.Context, course *timetabledomain.Course) error
 
-	// RegisteredCourse
-
-	FindRegisteredCourse(ctx context.Context, conds FindRegisteredCourseConds, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error)
-	ListRegisteredCourses(ctx context.Context, conds ListRegisteredCoursesConds, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error)
+	FindRegisteredCourse(ctx context.Context, filter RegisteredCourseFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error)
+	ListRegisteredCourses(ctx context.Context, filter RegisteredCourseFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error)
 	CreateRegisteredCourses(ctx context.Context, registeredCourses ...*timetabledomain.RegisteredCourse) error
 	UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error
-	DeleteRegisteredCourses(ctx context.Context, conds DeleteRegisteredCoursesConds) (rowsAffected int, err error)
+	DeleteRegisteredCourses(ctx context.Context, filter RegisteredCourseFilter) (rowsAffected int, err error)
 
 	LoadCourseAssociationToRegisteredCourse(ctx context.Context, registeredCourses []*timetabledomain.RegisteredCourse, lock sharedport.Lock) error
 
-	// Tag
-
-	FindTag(ctx context.Context, conds FindTagConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error)
-	ListTags(ctx context.Context, conds ListTagsConds, lock sharedport.Lock) ([]*timetabledomain.Tag, error)
+	FindTag(ctx context.Context, filter TagFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error)
+	ListTags(ctx context.Context, filter TagFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.Tag, error)
 	CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) error
 	UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error
-	DeleteTags(ctx context.Context, conds DeleteTagsConds) (rowsAffected int, err error)
+	DeleteTags(ctx context.Context, filter TagFilter) (rowsAffected int, err error)
 }
 
-// Course
-
-type FindCourseConds struct {
-	Year shareddomain.AcademicYear
-	Code timetabledomain.Code
-}
-
-type ListCoursesConds struct {
+type CourseFilter struct {
 	IDs   mo.Option[[]idtype.CourseID]
 	Year  mo.Option[shareddomain.AcademicYear]
+	Code  mo.Option[timetabledomain.Code]
 	Codes mo.Option[[]timetabledomain.Code]
 }
 
-// RegisteredCourse
-
-type FindRegisteredCourseConds struct {
-	ID     idtype.RegisteredCourseID
-	UserID mo.Option[idtype.UserID]
+func (f *CourseFilter) IsUniqueFilter() bool {
+	return f.Year.IsPresent() && f.Code.IsPresent()
 }
 
-type ListRegisteredCoursesConds struct {
+type RegisteredCourseFilter struct {
+	ID        mo.Option[idtype.RegisteredCourseID]
 	UserID    mo.Option[idtype.UserID]
 	Year      mo.Option[shareddomain.AcademicYear]
 	CourseIDs mo.Option[[]idtype.CourseID]
 }
 
-type DeleteRegisteredCoursesConds struct {
-	ID     mo.Option[idtype.RegisteredCourseID]
-	UserID mo.Option[idtype.UserID]
+func (f *RegisteredCourseFilter) IsUniqueFilter() bool {
+	return f.ID.IsPresent()
 }
 
-// Tag
-
-type FindTagConds struct {
-	ID     idtype.TagID
-	UserID mo.Option[idtype.UserID]
-}
-
-type ListTagsConds struct {
+type TagFilter struct {
+	ID     mo.Option[idtype.TagID]
 	IDs    mo.Option[[]idtype.TagID]
 	UserID mo.Option[idtype.UserID]
 }
 
-type DeleteTagsConds struct {
-	ID     mo.Option[idtype.TagID]
-	UserID mo.Option[idtype.UserID]
+func (f *TagFilter) IsUniqueFilter() bool {
+	return f.ID.IsPresent()
 }

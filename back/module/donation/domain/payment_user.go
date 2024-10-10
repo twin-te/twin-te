@@ -28,7 +28,6 @@ func ParseLink(s string) (Link, error) {
 
 // PaymentUser is identified by one of the following fields.
 //   - ID
-//   - UserID
 type PaymentUser struct {
 	ID          idtype.PaymentUserID
 	UserID      idtype.UserID

@@ -2,7 +2,6 @@ package authport
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/samber/mo"
@@ -14,47 +13,33 @@ import (
 type Repository interface {
 	Transaction(ctx context.Context, fn func(rtx Repository) error, readOnly bool) error
 
-	FindUser(ctx context.Context, conds FindUserConds, lock sharedport.Lock) (mo.Option[*authdomain.User], error)
-	ListUsers(ctx context.Context, conds ListUsersConds, lock sharedport.Lock) ([]*authdomain.User, error)
+	FindUser(ctx context.Context, filter UserFilter, lock sharedport.Lock) (mo.Option[*authdomain.User], error)
+	ListUsers(ctx context.Context, filter UserFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*authdomain.User, error)
 	CreateUsers(ctx context.Context, users ...*authdomain.User) error
 	UpdateUser(ctx context.Context, user *authdomain.User) error
-	DeleteUsers(ctx context.Context, conds DeleteUserConds) (rowsAffected int, err error)
+	DeleteUsers(ctx context.Context, filter UserFilter) (rowsAffected int, err error)
 
-	FindSession(ctx context.Context, conds FindSessionConds, lock sharedport.Lock) (mo.Option[*authdomain.Session], error)
-	ListSessions(ctx context.Context, conds ListSessionsConds, lock sharedport.Lock) ([]*authdomain.Session, error)
+	FindSession(ctx context.Context, filter SessionFilter, lock sharedport.Lock) (mo.Option[*authdomain.Session], error)
+	ListSessions(ctx context.Context, filter SessionFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*authdomain.Session, error)
 	CreateSessions(ctx context.Context, sessions ...*authdomain.Session) error
-	DeleteSessions(ctx context.Context, conds DeleteSessionsConds) (rowsAffected int, err error)
+	DeleteSessions(ctx context.Context, filter SessionFilter) (rowsAffected int, err error)
 }
 
-// User
-
-type FindUserConds struct {
+type UserFilter struct {
 	ID                 mo.Option[idtype.UserID]
 	UserAuthentication mo.Option[authdomain.UserAuthentication]
 }
 
-func (conds FindUserConds) Validate() error {
-	if conds.ID.IsAbsent() && conds.UserAuthentication.IsAbsent() {
-		return fmt.Errorf("invalid %v", conds)
-	}
-	return nil
+func (f *UserFilter) IsUniqueFilter() bool {
+	return f.ID.IsPresent() || f.UserAuthentication.IsPresent()
 }
 
-type ListUsersConds struct{}
-
-type DeleteUserConds struct {
-	ID mo.Option[idtype.UserID]
-}
-
-// Session
-
-type FindSessionConds struct {
-	ID             idtype.SessionID
+type SessionFilter struct {
+	ID             mo.Option[idtype.SessionID]
+	UserID         mo.Option[idtype.UserID]
 	ExpiredAtAfter mo.Option[time.Time]
 }
 
-type ListSessionsConds struct{}
-
-type DeleteSessionsConds struct {
-	UserID mo.Option[idtype.UserID]
+func (f *SessionFilter) IsUniqueFilter() bool {
+	return f.ID.IsPresent()
 }

@@ -11,27 +11,19 @@ import (
 )
 
 type Repository interface {
-	// Event
-
-	ListEvents(ctx context.Context, conds ListEventsConds, lock sharedport.Lock) ([]*schoolcalendardomain.Event, error)
+	ListEvents(ctx context.Context, filter EventFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*schoolcalendardomain.Event, error)
 	CreateEvents(ctx context.Context, events ...*schoolcalendardomain.Event) error
 
-	// ModuleDetail
-
-	ListModuleDetails(ctx context.Context, conds ListModuleDetailsConds, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error)
+	ListModuleDetails(ctx context.Context, filter ModuleDetailsFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*schoolcalendardomain.ModuleDetail, error)
 	CreateModuleDetails(ctx context.Context, moduleDetails ...*schoolcalendardomain.ModuleDetail) error
 }
 
-// Event
-
-type ListEventsConds struct {
+type EventFilter struct {
 	DateAfterOrEqual  mo.Option[civil.Date]
 	DateBeforeOrEqual mo.Option[civil.Date]
 }
 
-// ModuleDetail
-
-type ListModuleDetailsConds struct {
+type ModuleDetailsFilter struct {
 	Year               mo.Option[shareddomain.AcademicYear]
 	StartBeforeOrEqual mo.Option[civil.Date]
 	EndAfterOrEqual    mo.Option[civil.Date]

@@ -10,16 +10,12 @@ import (
 	timetabledbmodel "github.com/twin-te/twin-te/back/module/timetable/dbmodel"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
+	"gorm.io/gorm"
 )
 
-func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error) {
-	db := r.db.WithContext(ctx).
-		Where("id = ?", conds.ID.String())
-
-	if userID, ok := conds.UserID.Get(); ok {
-		db = db.Where("user_id = ?", userID.String())
-	}
-
+func (r *impl) FindTag(ctx context.Context, filter timetableport.TagFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.Tag], error) {
+	db := r.db.WithContext(ctx)
+	db = applyTagFilter(db, filter)
 	db = dbhelper.ApplyLock(db, lock)
 
 	dbTag := new(timetabledbmodel.Tag)
@@ -30,17 +26,10 @@ func (r *impl) FindTag(ctx context.Context, conds timetableport.FindTagConds, lo
 	return base.SomeWithErr(timetabledbmodel.FromDBTag(dbTag))
 }
 
-func (r *impl) ListTags(ctx context.Context, conds timetableport.ListTagsConds, lock sharedport.Lock) ([]*timetabledomain.Tag, error) {
+func (r *impl) ListTags(ctx context.Context, filter timetableport.TagFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.Tag, error) {
 	db := r.db.WithContext(ctx)
-
-	if ids, ok := conds.IDs.Get(); ok {
-		db = db.Where("id IN ?", base.MapByString(ids))
-	}
-
-	if userID, ok := conds.UserID.Get(); ok {
-		db = db.Where("user_id = ?", userID.String())
-	}
-
+	db = applyTagFilter(db, filter)
+	db = dbhelper.ApplyLimitOffset(db, limitOffset)
 	db = dbhelper.ApplyLock(db, lock)
 
 	var dbTags []*timetabledbmodel.Tag
@@ -83,16 +72,24 @@ func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 		Error
 }
 
-func (r *impl) DeleteTags(ctx context.Context, conds timetableport.DeleteTagsConds) (rowsAffected int, err error) {
+func (r *impl) DeleteTags(ctx context.Context, filter timetableport.TagFilter) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
+	db = applyTagFilter(db, filter)
+	return int(db.Delete(&timetabledbmodel.Tag{}).RowsAffected), db.Error
+}
 
-	if id, ok := conds.ID.Get(); ok {
+func applyTagFilter(db *gorm.DB, filter timetableport.TagFilter) *gorm.DB {
+	if id, ok := filter.ID.Get(); ok {
 		db = db.Where("id = ?", id.String())
 	}
 
-	if userID, ok := conds.UserID.Get(); ok {
+	if ids, ok := filter.IDs.Get(); ok {
+		db = db.Where("id IN ?", base.MapByString(ids))
+	}
+
+	if userID, ok := filter.UserID.Get(); ok {
 		db = db.Where("user_id = ?", userID.String())
 	}
 
-	return int(db.Delete(&timetabledbmodel.Tag{}).RowsAffected), db.Error
+	return db
 }

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/samber/lo"
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/appenv"
 	"github.com/twin-te/twin-te/back/apperr"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
@@ -44,8 +44,8 @@ func NewEchoErrorHandler() func(echo.HandlerFunc) echo.HandlerFunc {
 func NewEchoWithActor(accessController authmodule.AccessController) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			sessionID, ok := getSessionIDFromEchoContext(c)
-			ctx, err := accessController.WithActor(c.Request().Context(), lo.Ternary(ok, &sessionID, nil))
+			sessionID, ok := extractSessionIDFromEchoContext(c)
+			ctx, err := accessController.WithActor(c.Request().Context(), mo.TupleToOption(sessionID, ok))
 			if err != nil {
 				return err
 			}
@@ -56,7 +56,7 @@ func NewEchoWithActor(accessController authmodule.AccessController) func(echo.Ha
 	}
 }
 
-func getSessionIDFromEchoContext(c echo.Context) (sessionID idtype.SessionID, ok bool) {
+func extractSessionIDFromEchoContext(c echo.Context) (sessionID idtype.SessionID, ok bool) {
 	cookie, err := c.Cookie(appenv.COOKIE_SESSION_NAME)
 	if err != nil {
 		return

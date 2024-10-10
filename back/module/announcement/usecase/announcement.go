@@ -18,9 +18,9 @@ import (
 )
 
 func (uc *impl) ListAnnouncements(ctx context.Context) (announcements []*announcementdomain.Announcement, idToReadFlag map[idtype.AnnouncementID]bool, err error) {
-	announcements, err = uc.r.ListAnnouncements(ctx, announcementport.ListAnnouncementsConds{
+	announcements, err = uc.r.ListAnnouncements(ctx, announcementport.AnnouncementFilter{
 		PublishedAtBefore: mo.Some(time.Now()),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return
 	}
@@ -34,10 +34,10 @@ func (uc *impl) ListAnnouncements(ctx context.Context) (announcements []*announc
 		return announcement.ID
 	})
 
-	alreadyReads, err := uc.r.ListAlreadyReads(ctx, announcementport.ListAlreadyReadsConds{
+	alreadyReads, err := uc.r.ListAlreadyReads(ctx, announcementport.AlreadyReadFilter{
 		UserID:          mo.Some(userID),
 		AnnouncementIDs: mo.Some(ids),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return
 	}
@@ -63,10 +63,10 @@ func (uc *impl) ReadAnnouncements(ctx context.Context, ids []idtype.Announcement
 		return err
 	}
 
-	announcements, err := uc.r.ListAnnouncements(ctx, announcementport.ListAnnouncementsConds{
+	announcements, err := uc.r.ListAnnouncements(ctx, announcementport.AnnouncementFilter{
 		IDs:               mo.Some(ids),
 		PublishedAtBefore: mo.Some(time.Now()),
-	}, sharedport.LockShared)
+	}, sharedport.LimitOffset{}, sharedport.LockShared)
 	if err != nil {
 		return err
 	}
@@ -78,10 +78,10 @@ func (uc *impl) ReadAnnouncements(ctx context.Context, ids []idtype.Announcement
 		return apperr.New(announcementerr.CodeAnnouncementNotFound, fmt.Sprintf("not found announcements whose id are, %+v", notFoundIDs))
 	}
 
-	savedAlreadyReads, err := uc.r.ListAlreadyReads(ctx, announcementport.ListAlreadyReadsConds{
+	savedAlreadyReads, err := uc.r.ListAlreadyReads(ctx, announcementport.AlreadyReadFilter{
 		UserID:          mo.Some(userID),
 		AnnouncementIDs: mo.Some(ids),
-	}, sharedport.LockNone)
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
 		return err
 	}

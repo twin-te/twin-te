@@ -2,6 +2,7 @@ package authrepository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
@@ -10,15 +11,16 @@ import (
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	"gorm.io/gorm"
 )
 
-func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds, lock sharedport.Lock) (mo.Option[*authdomain.Session], error) {
-	db := r.db.WithContext(ctx).Where("id = ?", conds.ID.String())
-
-	if expiredAtAfter, ok := conds.ExpiredAtAfter.Get(); ok {
-		db = db.Where("expired_at > ?", expiredAtAfter)
+func (r *impl) FindSession(ctx context.Context, filter authport.SessionFilter, lock sharedport.Lock) (mo.Option[*authdomain.Session], error) {
+	if !filter.IsUniqueFilter() {
+		return mo.None[*authdomain.Session](), fmt.Errorf("%v is not unique", filter)
 	}
 
+	db := r.db.WithContext(ctx)
+	db = applySessionFilter(db, filter)
 	db = dbhelper.ApplyLock(db, lock)
 
 	dbSession := new(authdbmodel.Session)
@@ -29,10 +31,14 @@ func (r *impl) FindSession(ctx context.Context, conds authport.FindSessionConds,
 	return base.SomeWithErr(authdbmodel.FromDBSession(dbSession))
 }
 
-func (r *impl) ListSessions(ctx context.Context, conds authport.ListSessionsConds, lock sharedport.Lock) ([]*authdomain.Session, error) {
-	var dbSessions []*authdbmodel.Session
+func (r *impl) ListSessions(ctx context.Context, filter authport.SessionFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*authdomain.Session, error) {
+	db := r.db.WithContext(ctx)
+	db = applySessionFilter(db, filter)
+	db = dbhelper.ApplyLimitOffset(db, limitOffset)
+	db = dbhelper.ApplyLock(db, lock)
 
-	err := r.db.WithContext(ctx).Find(&dbSessions).Error
+	var dbSessions []*authdbmodel.Session
+	err := db.Find(&dbSessions).Error
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +51,24 @@ func (r *impl) CreateSessions(ctx context.Context, sessions ...*authdomain.Sessi
 	return r.db.WithContext(ctx).Create(dbSessions).Error
 }
 
-func (r *impl) DeleteSessions(ctx context.Context, conds authport.DeleteSessionsConds) (rowsAffected int, err error) {
+func (r *impl) DeleteSessions(ctx context.Context, filter authport.SessionFilter) (rowsAffected int, err error) {
 	db := r.db.WithContext(ctx)
+	db = applySessionFilter(db, filter)
+	return int(db.Delete(&authdbmodel.Session{}).RowsAffected), db.Error
+}
 
-	if userID, ok := conds.UserID.Get(); ok {
+func applySessionFilter(db *gorm.DB, filter authport.SessionFilter) *gorm.DB {
+	if id, ok := filter.ID.Get(); ok {
+		db = db.Where("id = ?", id.String())
+	}
+
+	if userID, ok := filter.UserID.Get(); ok {
 		db.Where("user_id = ?", userID.String())
 	}
 
-	return int(db.Delete(&authdbmodel.Session{}).RowsAffected), db.Error
+	if expiredAtAfter, ok := filter.ExpiredAtAfter.Get(); ok {
+		db = db.Where("expired_at > ?", expiredAtAfter)
+	}
+
+	return db
 }
