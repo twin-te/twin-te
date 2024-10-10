@@ -13,6 +13,7 @@ import (
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	timetablefactory "github.com/twin-te/twin-te/back/module/timetable/factory"
 	timetableintegrator "github.com/twin-te/twin-te/back/module/timetable/integrator"
+	timetablequery "github.com/twin-te/twin-te/back/module/timetable/query"
 	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/repository"
 	timetableusecase "github.com/twin-te/twin-te/back/module/timetable/usecase"
 )
@@ -37,8 +38,9 @@ var UpdateCoursesBasedOnKdBCmd = &cobra.Command{
 
 		timetableFactory := timetablefactory.New(db)
 		timetableIntegrator := timetableintegrator.New(kdbJSONFilePath)
+		timetableQuery := timetablequery.New(db)
 		timetableRepository := timetablerepository.New(db)
-		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableRepository)
+		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableQuery, timetableRepository)
 
 		year, err := shareddomain.ParseAcademicYear(year)
 		if err != nil {

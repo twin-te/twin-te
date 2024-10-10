@@ -12,6 +12,7 @@ import (
 	schoolcalendardomain "github.com/twin-te/twin-te/back/module/schoolcalendar/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	unifiedmodule "github.com/twin-te/twin-te/back/module/unified"
 	unifieddomain "github.com/twin-te/twin-te/back/module/unified/domain"
@@ -26,7 +27,7 @@ type impl struct {
 	timetableUseCase      timetablemodule.UseCase
 }
 
-func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoolcalendardomain.Event, module schoolcalendardomain.Module, registeredCourses []*timetabledomain.RegisteredCourse, err error) {
+func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoolcalendardomain.Event, module schoolcalendardomain.Module, registeredCourses []*timetableappdto.RegisteredCourse, err error) {
 	_, err = uc.accessController.Authenticate(ctx)
 	if err != nil {
 		return
@@ -83,8 +84,8 @@ func (uc *impl) GetByDate(ctx context.Context, date civil.Date) (events []*schoo
 		return
 	}
 
-	registeredCourses = lo.Filter(registeredCourses, func(registeredCourse *timetabledomain.RegisteredCourse, index int) bool {
-		return lo.SomeBy(registeredCourse.GetSchedules(), func(schedule timetabledomain.Schedule) bool {
+	registeredCourses = lo.Filter(registeredCourses, func(registeredCourse *timetableappdto.RegisteredCourse, index int) bool {
+		return lo.SomeBy(registeredCourse.Schedules, func(schedule timetabledomain.Schedule) bool {
 			return schedule.IsNormal() && module == unifieddomain.TimetableModuleToSchoolCalendarModule[schedule.Module] && schedule.Day.Weekday() == weekday
 		})
 	})

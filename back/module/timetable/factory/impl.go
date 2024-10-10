@@ -44,7 +44,6 @@ func (f *impl) NewRegisteredCourseFromCourse(userID idtype.UserID, course *timet
 		rc.UserID = userID
 		rc.CourseID = mo.Some(course.ID)
 		rc.Year = course.Year
-		rc.CourseAssociation.Set(course)
 		return nil
 	})
 }

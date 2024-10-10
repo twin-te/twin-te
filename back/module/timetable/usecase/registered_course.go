@@ -14,12 +14,13 @@ import (
 	sharedhelper "github.com/twin-te/twin-te/back/module/shared/helper"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableerr "github.com/twin-te/twin-te/back/module/timetable/err"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
 
-func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.RegisteredCourse, error) {
+func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetableappdto.RegisteredCourse, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
@@ -56,7 +57,6 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 
 	savedRegisteredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
 		UserID:    mo.Some(userID),
-		Year:      mo.Some(year),
 		CourseIDs: mo.Some(courseIDs),
 	}, sharedport.LimitOffset{}, sharedport.LockNone)
 	if err != nil {
@@ -84,10 +84,20 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
 		return rtx.CreateRegisteredCourses(ctx, registeredCourses...)
 	}, false)
-	return registeredCourses, err
+	if err != nil {
+		return nil, err
+	}
+
+	registeredCoursesIDs := base.Map(registeredCourses, func(registeredCourse *timetabledomain.RegisteredCourse) idtype.RegisteredCourseID {
+		return registeredCourse.ID
+	})
+
+	return uc.q.ListRegisteredCourses(ctx, timetableport.ListRegisteredCoursesConds{
+		IDs: mo.Some(registeredCoursesIDs),
+	})
 }
 
-func (uc *impl) CreateRegisteredCourseManually(ctx context.Context, in timetablemodule.CreateRegisteredCourseManuallyIn) (*timetabledomain.RegisteredCourse, error) {
+func (uc *impl) CreateRegisteredCourseManually(ctx context.Context, in timetablemodule.CreateRegisteredCourseManuallyIn) (*timetableappdto.RegisteredCourse, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
@@ -106,27 +116,27 @@ func (uc *impl) CreateRegisteredCourseManually(ctx context.Context, in timetable
 		return nil, err
 	}
 
-	return registeredCourse, uc.r.CreateRegisteredCourses(ctx, registeredCourse)
+	err = uc.r.CreateRegisteredCourses(ctx, registeredCourse)
+	if err != nil {
+		return nil, err
+	}
+
+	return base.MustGetWithErr(uc.q.FindRegisteredCourses(ctx, registeredCourse.ID))
 }
 
-func (uc *impl) ListRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error) {
+func (uc *impl) ListRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetableappdto.RegisteredCourse, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	registeredCourses, err := uc.r.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
+	return uc.q.ListRegisteredCourses(ctx, timetableport.ListRegisteredCoursesConds{
 		UserID: mo.Some(userID),
 		Year:   year,
-	}, sharedport.LimitOffset{}, sharedport.LockNone)
-	if err != nil {
-		return nil, err
-	}
-
-	return registeredCourses, uc.r.LoadCourseAssociationToRegisteredCourse(ctx, registeredCourses, sharedport.LockNone)
+	})
 }
 
-func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.UpdateRegisteredCourseIn) (registeredCourse *timetabledomain.RegisteredCourse, err error) {
+func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.UpdateRegisteredCourseIn) (*timetableappdto.RegisteredCourse, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return nil, err
@@ -159,14 +169,17 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 			return err
 		}
 
-		var found bool
-		registeredCourse, found = registeredCourseOption.Get()
+		registeredCourse, found := registeredCourseOption.Get()
 		if !found {
 			return apperr.New(timetableerr.CodeRegisteredCourseNotFound, fmt.Sprintf("not found registered course whose id is %s", in.ID))
 		}
 
-		if err := uc.r.LoadCourseAssociationToRegisteredCourse(ctx, []*timetabledomain.RegisteredCourse{registeredCourse}, sharedport.LockShared); err != nil {
-			return err
+		var courseOption mo.Option[*timetabledomain.Course]
+		if courseID, ok := registeredCourse.CourseID.Get(); ok {
+			courseOption, err = rtx.FindCourse(ctx, timetableport.CourseFilter{ID: mo.Some(courseID)}, sharedport.LockShared)
+			if err != nil {
+				return nil
+			}
 		}
 
 		if tagIDs, ok := in.TagIDs.Get(); ok {
@@ -199,12 +212,15 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 			Absence:     in.Absence,
 			Late:        in.Late,
 			TagIDs:      in.TagIDs,
-		})
+		}, courseOption)
 
 		return rtx.UpdateRegisteredCourse(ctx, registeredCourse)
 	}, false)
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return base.MustGetWithErr(uc.q.FindRegisteredCourses(ctx, in.ID))
 }
 
 func (uc *impl) DeleteRegisteredCourse(ctx context.Context, id idtype.RegisteredCourseID) error {

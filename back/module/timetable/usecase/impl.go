@@ -12,9 +12,10 @@ type impl struct {
 	a authmodule.AccessController
 	f timetableport.Factory
 	i timetableport.Integrator
+	q timetableport.Query
 	r timetableport.Repository
 }
 
-func New(a authmodule.AccessController, f timetableport.Factory, i timetableport.Integrator, r timetableport.Repository) *impl {
-	return &impl{a, f, i, r}
+func New(a authmodule.AccessController, f timetableport.Factory, i timetableport.Integrator, q timetableport.Query, r timetableport.Repository) *impl {
+	return &impl{a, f, i, q, r}
 }

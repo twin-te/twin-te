@@ -1,22 +1,22 @@
 package timetablev1conv
 
 import (
-	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
 	sharedconv "github.com/twin-te/twin-te/back/handler/api/rpc/shared/conv"
 	timetablev1 "github.com/twin-te/twin-te/back/handler/api/rpcgen/timetable/v1"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
-	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 )
 
-func ToPBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse) (pbRegisteredCourse *timetablev1.RegisteredCourse, err error) {
+func ToPBRegisteredCourse(registeredCourse *timetableappdto.RegisteredCourse) (pbRegisteredCourse *timetablev1.RegisteredCourse, err error) {
 	pbRegisteredCourse = &timetablev1.RegisteredCourse{
 		Id:          sharedconv.ToPBUUID(registeredCourse.ID),
 		UserId:      sharedconv.ToPBUUID(registeredCourse.UserID),
 		Year:        sharedconv.ToPBAcademicYear(registeredCourse.Year),
-		Name:        registeredCourse.GetName().String(),
-		Instructors: registeredCourse.GetInstructors(),
-		Credit:      registeredCourse.GetCredit().String(),
+		Code:        base.OptionMapByString(registeredCourse.Code).ToPointer(),
+		Name:        registeredCourse.Name.String(),
+		Instructors: registeredCourse.Instructors,
+		Credit:      registeredCourse.Credit.String(),
 		Memo:        registeredCourse.Memo,
 		Attendance:  int32(registeredCourse.Attendance),
 		Absence:     int32(registeredCourse.Absence),
@@ -24,16 +24,12 @@ func ToPBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse) (p
 		TagIds:      base.Map(registeredCourse.TagIDs, sharedconv.ToPBUUID[idtype.TagID]),
 	}
 
-	if course, ok := registeredCourse.CourseAssociation.Get(); ok {
-		pbRegisteredCourse.Code = lo.ToPtr(course.Code.String())
-	}
-
-	pbRegisteredCourse.Methods, err = base.MapWithErr(registeredCourse.GetMethods(), ToPBCourseMethod)
+	pbRegisteredCourse.Methods, err = base.MapWithErr(registeredCourse.Methods, ToPBCourseMethod)
 	if err != nil {
 		return
 	}
 
-	pbRegisteredCourse.Schedules, err = base.MapWithErr(registeredCourse.GetSchedules(), ToPBSchedule)
+	pbRegisteredCourse.Schedules, err = base.MapWithErr(registeredCourse.Schedules, ToPBSchedule)
 	if err != nil {
 		return
 	}

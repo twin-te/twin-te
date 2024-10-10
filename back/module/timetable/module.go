@@ -6,6 +6,7 @@ import (
 	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 )
 
@@ -44,17 +45,17 @@ type UseCase interface {
 	// [Error Code]
 	//   - timetable.CourseNotFound
 	//   - timetable.RegisteredCourseAlreadyExists
-	CreateRegisteredCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetabledomain.RegisteredCourse, error)
+	CreateRegisteredCoursesByCodes(ctx context.Context, year shareddomain.AcademicYear, codes []timetabledomain.Code) ([]*timetableappdto.RegisteredCourse, error)
 
 	// CreateRegisteredCourseManually creates a new registered course mannually.
 	//
 	// [Authentication] required
-	CreateRegisteredCourseManually(ctx context.Context, in CreateRegisteredCourseManuallyIn) (*timetabledomain.RegisteredCourse, error)
+	CreateRegisteredCourseManually(ctx context.Context, in CreateRegisteredCourseManuallyIn) (*timetableappdto.RegisteredCourse, error)
 
 	// ListRegisteredCourses returns the registered courses.
 	//
 	// [Authentication] required
-	ListRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetabledomain.RegisteredCourse, error)
+	ListRegisteredCourses(ctx context.Context, year mo.Option[shareddomain.AcademicYear]) ([]*timetableappdto.RegisteredCourse, error)
 
 	// UpdateRegisteredCourse updates registered course specified by the given id.
 	//
@@ -62,7 +63,7 @@ type UseCase interface {
 	//
 	// [Error Code]
 	//   - timetable.RegisteredCourseNotFound
-	UpdateRegisteredCourse(ctx context.Context, in UpdateRegisteredCourseIn) (*timetabledomain.RegisteredCourse, error)
+	UpdateRegisteredCourse(ctx context.Context, in UpdateRegisteredCourseIn) (*timetableappdto.RegisteredCourse, error)
 
 	// DeleteRegisteredCourse deletes registered course specified by the given id.
 	//

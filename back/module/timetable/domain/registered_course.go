@@ -57,47 +57,10 @@ type RegisteredCourse struct {
 	TagIDs      []idtype.TagID
 
 	BeforeUpdated mo.Option[*RegisteredCourse]
-
-	CourseAssociation shareddomain.Association[*Course]
 }
 
 func (rc *RegisteredCourse) HasBasedCourse() bool {
 	return rc.CourseID.IsPresent()
-}
-
-func (rc *RegisteredCourse) GetName() shareddomain.RequiredString {
-	if rc.HasBasedCourse() {
-		return rc.Name.OrElse(rc.CourseAssociation.MustGet().Name)
-	}
-	return rc.Name.MustGet()
-}
-
-func (rc *RegisteredCourse) GetInstructors() string {
-	if rc.HasBasedCourse() {
-		return rc.Instructors.OrElse(rc.CourseAssociation.MustGet().Instructors)
-	}
-	return rc.Instructors.MustGet()
-}
-
-func (rc *RegisteredCourse) GetCredit() Credit {
-	if rc.HasBasedCourse() {
-		return rc.Credit.OrElse(rc.CourseAssociation.MustGet().Credit)
-	}
-	return rc.Credit.MustGet()
-}
-
-func (rc *RegisteredCourse) GetMethods() []CourseMethod {
-	if rc.HasBasedCourse() {
-		return rc.Methods.OrElse(rc.CourseAssociation.MustGet().Methods)
-	}
-	return rc.Methods.MustGet()
-}
-
-func (rc *RegisteredCourse) GetSchedules() []Schedule {
-	if rc.HasBasedCourse() {
-		return rc.Schedules.OrElse(rc.CourseAssociation.MustGet().Schedules)
-	}
-	return rc.Schedules.MustGet()
 }
 
 func (rc *RegisteredCourse) Clone() *RegisteredCourse {
@@ -125,60 +88,62 @@ type RegisteredCourseDataToUpdate struct {
 	TagIDs      mo.Option[[]idtype.TagID]
 }
 
-func (rc *RegisteredCourse) updateName(name shareddomain.RequiredString) {
-	if rc.HasBasedCourse() && rc.Name.IsAbsent() && rc.CourseAssociation.MustGet().Name == name {
+func (rc *RegisteredCourse) updateName(name shareddomain.RequiredString, courseOption mo.Option[*Course]) {
+	if rc.HasBasedCourse() && rc.Name.IsAbsent() && courseOption.MustGet().Name == name {
 		return
 	}
 	rc.Name = mo.Some(name)
 }
 
-func (rc *RegisteredCourse) updateInstructors(instructors string) {
-	if rc.HasBasedCourse() && rc.Instructors.IsAbsent() && rc.CourseAssociation.MustGet().Instructors == instructors {
+func (rc *RegisteredCourse) updateInstructors(instructors string, courseOption mo.Option[*Course]) {
+	if rc.HasBasedCourse() && rc.Instructors.IsAbsent() && courseOption.MustGet().Instructors == instructors {
 		return
 	}
 	rc.Instructors = mo.Some(instructors)
 }
 
-func (rc *RegisteredCourse) updateCredit(credit Credit) {
-	if rc.HasBasedCourse() && rc.Credit.IsAbsent() && rc.CourseAssociation.MustGet().Credit == credit {
+func (rc *RegisteredCourse) updateCredit(credit Credit, courseOption mo.Option[*Course]) {
+	if rc.HasBasedCourse() && rc.Credit.IsAbsent() && courseOption.MustGet().Credit == credit {
 		return
 	}
 	rc.Credit = mo.Some(credit)
 }
 
-func (rc *RegisteredCourse) updateMethods(methods []CourseMethod) {
-	if rc.HasBasedCourse() && rc.Methods.IsAbsent() && base.HaveSameElements(rc.CourseAssociation.MustGet().Methods, methods) {
+func (rc *RegisteredCourse) updateMethods(methods []CourseMethod, courseOption mo.Option[*Course]) {
+	if rc.HasBasedCourse() && rc.Methods.IsAbsent() && base.HaveSameElements(courseOption.MustGet().Methods, methods) {
 		return
 	}
 	rc.Methods = mo.Some(methods)
 }
 
-func (rc *RegisteredCourse) updateSchedules(schedules []Schedule) {
-	if rc.HasBasedCourse() && rc.Schedules.IsAbsent() && base.HaveSameElements(rc.CourseAssociation.MustGet().Schedules, schedules) {
+func (rc *RegisteredCourse) updateSchedules(schedules []Schedule, courseOption mo.Option[*Course]) {
+	if rc.HasBasedCourse() && rc.Schedules.IsAbsent() && base.HaveSameElements(courseOption.MustGet().Schedules, schedules) {
 		return
 	}
 	rc.Schedules = mo.Some(schedules)
 }
 
-func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate) error {
+// Update updates registered courses.
+// If it has based course, courseOption must be some.
+func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate, courseOption mo.Option[*Course]) error {
 	if name, ok := data.Name.Get(); ok {
-		rc.updateName(name)
+		rc.updateName(name, courseOption)
 	}
 
 	if instructors, ok := data.Instructors.Get(); ok {
-		rc.updateInstructors(instructors)
+		rc.updateInstructors(instructors, courseOption)
 	}
 
 	if credit, ok := data.Credit.Get(); ok {
-		rc.updateCredit(credit)
+		rc.updateCredit(credit, courseOption)
 	}
 
 	if methods, ok := data.Methods.Get(); ok {
-		rc.updateMethods(methods)
+		rc.updateMethods(methods, courseOption)
 	}
 
 	if schedules, ok := data.Schedules.Get(); ok {
-		rc.updateSchedules(schedules)
+		rc.updateSchedules(schedules, courseOption)
 	}
 
 	if memo, ok := data.Memo.Get(); ok {

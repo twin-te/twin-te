@@ -163,6 +163,10 @@ func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course)
 }
 
 func applyCourseFilter(db *gorm.DB, filter timetableport.CourseFilter) *gorm.DB {
+	if id, ok := filter.ID.Get(); ok {
+		db = db.Where("id = ?", id.String())
+	}
+
 	if ids, ok := filter.IDs.Get(); ok {
 		db = db.Where("id IN ?", base.MapByString(ids))
 	}
