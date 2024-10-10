@@ -1,6 +1,7 @@
 package shareddomain
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"time"
 
@@ -17,6 +18,22 @@ func (year AcademicYear) Int() int {
 
 func (year AcademicYear) IsZero() bool {
 	return year == 0
+}
+
+func (year *AcademicYear) Scan(src interface{}) error {
+	switch src := src.(type) {
+	case nil:
+		return nil
+	case int64:
+		*year = AcademicYear(src)
+		return nil
+	default:
+		return fmt.Errorf("Scan: unable to scan type %T into AcademicYear", src)
+	}
+}
+
+func (year AcademicYear) Value() (driver.Value, error) {
+	return int64(year), nil
 }
 
 func ParseAcademicYear(i int) (AcademicYear, error) {

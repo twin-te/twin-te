@@ -1,10 +1,9 @@
 package shareddomain
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"strings"
-
-	"github.com/samber/lo"
 )
 
 // RequiredString represents non-empty string.
@@ -15,15 +14,27 @@ func (rs RequiredString) String() string {
 	return string(rs)
 }
 
-func (rs *RequiredString) StringPtr() *string {
-	if rs == nil {
-		return nil
-	}
-	return lo.ToPtr(rs.String())
-}
-
 func (rs RequiredString) IsZero() bool {
 	return rs == ""
+}
+
+func (rs *RequiredString) Scan(src interface{}) error {
+	switch src := src.(type) {
+	case nil:
+		return nil
+	case string:
+		if src == "" {
+			return fmt.Errorf("expected non empty string to convert into RequiredString, but got %s", src)
+		}
+		*rs = RequiredString(src)
+		return nil
+	default:
+		return fmt.Errorf("Scan: unable to scan type %T into RequiredString", src)
+	}
+}
+
+func (rs RequiredString) Value() (driver.Value, error) {
+	return string(rs), nil
 }
 
 func NewRequiredStringParser(name string) func(string) (RequiredString, error) {
