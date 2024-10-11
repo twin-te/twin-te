@@ -169,6 +169,12 @@ func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate, courseOpti
 	return nil
 }
 
+func (rc *RegisteredCourse) DetachTag(toDetach idtype.TagID) {
+	rc.TagIDs = lo.Filter(rc.TagIDs, func(tagID idtype.TagID, _ int) bool {
+		return tagID != toDetach
+	})
+}
+
 func ConstructRegisteredCourse(fn func(rc *RegisteredCourse) (err error)) (*RegisteredCourse, error) {
 	rc := new(RegisteredCourse)
 	if err := fn(rc); err != nil {

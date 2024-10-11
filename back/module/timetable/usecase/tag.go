@@ -81,10 +81,30 @@ func (uc impl) DeleteTag(ctx context.Context, id idtype.TagID) error {
 		return err
 	}
 
-	rowsAffected, err := uc.r.DeleteTags(ctx, timetableport.TagFilter{
-		ID:     mo.Some(id),
-		UserID: mo.Some(userID),
-	})
+	var rowsAffected int
+	err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+		registeredCourses, err := rtx.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
+			UserID: mo.Some(userID),
+			TagID:  mo.Some(id),
+		}, sharedport.LimitOffset{}, sharedport.LockExclusive)
+		if err != nil {
+			return err
+		}
+
+		for _, registeredCourse := range registeredCourses {
+			registeredCourse.BeforeUpdateHook()
+			registeredCourse.DetachTag(id)
+			if err := rtx.UpdateRegisteredCourse(ctx, registeredCourse); err != nil {
+				return err
+			}
+		}
+
+		rowsAffected, err = rtx.DeleteTags(ctx, timetableport.TagFilter{
+			ID:     mo.Some(id),
+			UserID: mo.Some(userID),
+		})
+		return err
+	}, false)
 	if err != nil {
 		return err
 	}

@@ -97,7 +97,7 @@ func (r *impl) CreateCourses(ctx context.Context, courses ...*timetabledomain.Co
 
 func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course) error {
 	before := course.BeforeUpdated.MustGet()
-	columns := make([]string, 0)
+	columns := []string{"updated_at"}
 
 	if course.Year != before.Year {
 		columns = append(columns, "year")

@@ -92,6 +92,8 @@ func (r *impl) DeleteUsers(ctx context.Context, filter authport.UserFilter) (row
 }
 
 func applyUserFilter(db *gorm.DB, filter authport.UserFilter) *gorm.DB {
+	subdb := db
+
 	if id, ok := filter.ID.Get(); ok {
 		db.Where("id = ?", id.String())
 	}
@@ -99,7 +101,7 @@ func applyUserFilter(db *gorm.DB, filter authport.UserFilter) *gorm.DB {
 	if userAuthentication, ok := filter.UserAuthentication.Get(); ok {
 		db = db.Where(
 			"id = ( ? )",
-			db.Select("user_id").Where("provider = ? AND social_id = ?",
+			subdb.Select("user_id").Where("provider = ? AND social_id = ?",
 				userAuthentication.Provider.String(),
 				userAuthentication.SocialID.String(),
 			).Table("user_authentications"),

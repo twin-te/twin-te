@@ -78,7 +78,7 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 
 func (r *impl) UpdateRegisteredCourse(ctx context.Context, registeredCourse *timetabledomain.RegisteredCourse) error {
 	before := registeredCourse.BeforeUpdated.MustGet()
-	columns := make([]string, 0)
+	columns := []string{"updated_at"}
 
 	if registeredCourse.UserID != before.UserID {
 		columns = append(columns, "user_id")
@@ -152,6 +152,8 @@ func (r *impl) DeleteRegisteredCourses(ctx context.Context, filter timetableport
 }
 
 func applyRegisteredCourseFilter(db *gorm.DB, filter timetableport.RegisteredCourseFilter) *gorm.DB {
+	subdb := db
+
 	if id, ok := filter.ID.Get(); ok {
 		db = db.Where("id = ?", id.String())
 	}
@@ -166,6 +168,15 @@ func applyRegisteredCourseFilter(db *gorm.DB, filter timetableport.RegisteredCou
 
 	if courseIDs, ok := filter.CourseIDs.Get(); ok {
 		db = db.Where("course_id IN ?", base.MapByString(courseIDs))
+	}
+
+	if tagID, ok := filter.TagID.Get(); ok {
+		db = db.Where(
+			"id = ( ? )",
+			subdb.Select("registered_course_id").Where("tag_id = ?",
+				tagID.String(),
+			).Table("registered_course_tag_ids"),
+		)
 	}
 
 	return db

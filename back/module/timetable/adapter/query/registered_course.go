@@ -37,35 +37,35 @@ func (q *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 
 	err := q.gormTransaction(ctx, func(tx *gorm.DB) error {
 		{
-			tx := tx
+			subtx := tx
 
 			if ids, ok := conds.IDs.Get(); ok {
-				tx = tx.Where("id IN ?", base.MapByString(ids))
+				subtx = subtx.Where("id IN ?", base.MapByString(ids))
 			}
 
 			if userID, ok := conds.UserID.Get(); ok {
-				tx = tx.Where("user_id = ?", userID.String())
+				subtx = subtx.Where("user_id = ?", userID.String())
 			}
 
 			if year, ok := conds.Year.Get(); ok {
-				tx = tx.Where("year = ?", year.Int())
+				subtx = subtx.Where("year = ?", year.Int())
 			}
 
-			if err := tx.
-				Preload("Tags").
+			if err := subtx.
+				Preload("TagIDs").
 				Find(&dbRegisteredCourses).
 				Error; err != nil {
 				return err
 			}
 		}
 		{
-			tx := tx
+			subtx := tx
 
 			courseIDs := lo.FilterMap(dbRegisteredCourses, func(dbRegisteredCourse *timetabledbmodel.RegisteredCourse, _ int) (string, bool) {
 				return dbRegisteredCourse.CourseID.Get()
 			})
 
-			return tx.
+			return subtx.
 				Where("id IN ?", courseIDs).
 				Preload("RecommendedGrades").
 				Preload("Methods").
