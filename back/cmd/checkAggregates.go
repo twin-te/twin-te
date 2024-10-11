@@ -6,17 +6,17 @@ import (
 
 	"github.com/spf13/cobra"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
+	announcementrepository "github.com/twin-te/twin-te/back/module/announcement/adapter/repository"
 	announcementport "github.com/twin-te/twin-te/back/module/announcement/port"
-	announcementrepository "github.com/twin-te/twin-te/back/module/announcement/repository"
+	authrepository "github.com/twin-te/twin-te/back/module/auth/adapter/repository"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
-	authrepository "github.com/twin-te/twin-te/back/module/auth/repository"
+	donationrepository "github.com/twin-te/twin-te/back/module/donation/adapter/repository"
 	donationport "github.com/twin-te/twin-te/back/module/donation/port"
-	donationrepository "github.com/twin-te/twin-te/back/module/donation/repository"
+	schoolcalendarrepository "github.com/twin-te/twin-te/back/module/schoolcalendar/adapter/repository"
 	schoolcalendarport "github.com/twin-te/twin-te/back/module/schoolcalendar/port"
-	schoolcalendarrepository "github.com/twin-te/twin-te/back/module/schoolcalendar/repository"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
+	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/adapter/repository"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
-	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/repository"
 )
 
 // checkAggregatesCmd represents the check-aggregates command
