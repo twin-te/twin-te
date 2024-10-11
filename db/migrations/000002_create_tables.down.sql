@@ -2,7 +2,7 @@ BEGIN;
 
 DROP TABLE tags CASCADE;
 
-DROP TABLE registered_course_tags CASCADE;
+DROP TABLE registered_course_tag_ids CASCADE;
 DROP TABLE registered_courses CASCADE;
 
 DROP TABLE course_schedules CASCADE;

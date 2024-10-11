@@ -17,7 +17,7 @@ psql -d $POSTGRES_URL -c "\COPY course_schedules FROM '/tmp/data/course_schedule
 psql -d $POSTGRES_URL -c "\COPY tags FROM '/tmp/data/tags.csv' WITH (FORMAT csv, HEADER, QUOTE '\"', ESCAPE '\', NULL 'null')"
 
 psql -d $POSTGRES_URL -c "\COPY registered_courses FROM '/tmp/data/registered_courses.csv' WITH (FORMAT csv, HEADER, QUOTE '\"', ESCAPE '\', NULL 'null')"
-psql -d $POSTGRES_URL -c "\COPY registered_course_tags FROM '/tmp/data/registered_course_tags.csv' WITH (FORMAT csv, HEADER, QUOTE '\"', ESCAPE '\', NULL 'null')"
+psql -d $POSTGRES_URL -c "\COPY registered_course_tag_ids FROM '/tmp/data/registered_course_tag_ids.csv' WITH (FORMAT csv, HEADER, QUOTE '\"', ESCAPE '\', NULL 'null')"
 
 psql -d $POSTGRES_URL -c "\COPY payment_users FROM '/tmp/data/payment_users.csv' WITH (FORMAT csv, HEADER, QUOTE '\"', ESCAPE '\', NULL 'null')"
 

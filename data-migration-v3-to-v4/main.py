@@ -96,14 +96,14 @@ def migrate_registered_courses(active_user_ids: list[str]):
     to_csv(df, "data/processed/registered_courses.csv")
 
 
-def migrate_registered_course_tags():
-    df = read_csv("data/raw/timetables_registered_course_tags.csv")
+def migrate_registered_course_tag_ids():
+    df = read_csv("data/raw/timetables_registered_course_tag_ids.csv")
     df.rename(
         columns={"registered_course": "registered_course_id", "tag": "tag_id"},
         inplace=True,
     )
     df = df[["registered_course_id", "tag_id"]]
-    to_csv(df, "data/processed/registered_course_tags.csv")
+    to_csv(df, "data/processed/registered_course_tag_ids.csv")
 
 
 def migrate_tags(active_user_ids: list[str]):
@@ -388,7 +388,7 @@ def main():
     migrate_sessions(active_user_ids)
 
     migrate_registered_courses(active_user_ids)
-    migrate_registered_course_tags()
+    migrate_registered_course_tag_ids()
 
     migrate_tags(active_user_ids)
 
