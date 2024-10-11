@@ -171,7 +171,7 @@ CREATE TABLE registered_courses (
 
 CREATE INDEX ON registered_courses (user_id, year);
 
-CREATE TABLE registered_course_tags (
+CREATE TABLE registered_course_tag_ids (
     registered_course_id uuid NOT NULL,
     tag_id uuid NOT NULL,
     PRIMARY KEY (registered_course_id, tag_id),
