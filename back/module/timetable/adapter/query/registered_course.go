@@ -36,31 +36,42 @@ func (q *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 	)
 
 	err := q.gormTransaction(ctx, func(tx *gorm.DB) error {
-		if ids, ok := conds.IDs.Get(); ok {
-			tx = tx.Where("id IN ?", base.MapByString(ids))
-		}
+		{
+			tx := tx
 
-		if userID, ok := conds.UserID.Get(); ok {
-			tx = tx.Where("user_id = ?", userID.String())
-		}
+			if ids, ok := conds.IDs.Get(); ok {
+				tx = tx.Where("id IN ?", base.MapByString(ids))
+			}
 
-		if year, ok := conds.Year.Get(); ok {
-			tx = tx.Where("year = ?", year.Int())
-		}
+			if userID, ok := conds.UserID.Get(); ok {
+				tx = tx.Where("user_id = ?", userID.String())
+			}
 
-		if err := tx.
-			Preload("Tags").
-			Find(&dbRegisteredCourses).
-			Error; err != nil {
-			return err
-		}
+			if year, ok := conds.Year.Get(); ok {
+				tx = tx.Where("year = ?", year.Int())
+			}
 
-		return tx.
-			Preload("RecommendedGrades").
-			Preload("Methods").
-			Preload("Schedules").
-			Find(&dbCourses).
-			Error
+			if err := tx.
+				Preload("Tags").
+				Find(&dbRegisteredCourses).
+				Error; err != nil {
+				return err
+			}
+		}
+		{
+			tx := tx
+
+			courseIDs := lo.FilterMap(dbRegisteredCourses, func(dbRegisteredCourse *timetabledbmodel.RegisteredCourse, _ int) (string, bool) {
+				return dbRegisteredCourse.CourseID.Get()
+			})
+
+			return tx.Where("id IN ?", courseIDs).
+				Preload("RecommendedGrades").
+				Preload("Methods").
+				Preload("Schedules").
+				Find(&dbCourses).
+				Error
+		}
 	})
 	if err != nil {
 		return nil, err
