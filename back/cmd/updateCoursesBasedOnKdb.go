@@ -8,13 +8,13 @@ import (
 	"github.com/twin-te/twin-te/back/appctx"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	"github.com/twin-te/twin-te/back/module/auth/accesscontroller"
+	authrepository "github.com/twin-te/twin-te/back/module/auth/adapter/repository"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
-	authrepository "github.com/twin-te/twin-te/back/module/auth/repository"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
-	timetablefactory "github.com/twin-te/twin-te/back/module/timetable/factory"
-	timetableintegrator "github.com/twin-te/twin-te/back/module/timetable/integrator"
-	timetablequery "github.com/twin-te/twin-te/back/module/timetable/query"
-	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/repository"
+	timetablefactory "github.com/twin-te/twin-te/back/module/timetable/adapter/factory"
+	timetableintegrator "github.com/twin-te/twin-te/back/module/timetable/adapter/integrator"
+	timetablequery "github.com/twin-te/twin-te/back/module/timetable/adapter/query"
+	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/adapter/repository"
 	timetableusecase "github.com/twin-te/twin-te/back/module/timetable/usecase"
 )
 
