@@ -12,6 +12,7 @@ type User struct {
 	ID                  string
 	UserAuthentications []UserAuthentication
 
+	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
