@@ -3,10 +3,10 @@
 package idtype
 
 import (
-	"database/sql/driver"	
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 )
 
 type AlreadyReadID uuid.UUID
@@ -29,17 +29,11 @@ func (id AlreadyReadID) Less(other AlreadyReadID) bool {
 	return false
 }
 
-func (id *AlreadyReadID) Scan(src interface{}) error {
-	uuid := new(uuid.UUID)
-	if err := uuid.Scan(src); err != nil {
-		return err
+func (id *AlreadyReadID) StringPtr() *string {
+	if id == nil {
+		return nil
 	}
-	*id = AlreadyReadID(*uuid)
-	return nil
-}
-
-func (id AlreadyReadID) Value() (driver.Value, error) {
-	return id.String(), nil
+	return lo.ToPtr(id.String())
 }
 
 func NewAlreadyReadID() AlreadyReadID {
