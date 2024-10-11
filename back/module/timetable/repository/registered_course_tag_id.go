@@ -13,7 +13,7 @@ func (r *impl) updateRegisteredCourseTagIDs(db *gorm.DB, registeredCourse *timet
 	toCreate, toDelete := lo.Difference(registeredCourse.TagIDs, before.TagIDs)
 
 	if len(toCreate) != 0 {
-		dbTags := base.MapWithArg(toCreate, registeredCourse.ID, timetabledbmodel.ToDBRegisteredCourseTag)
+		dbTags := base.MapWithArg(toCreate, registeredCourse.ID, timetabledbmodel.ToDBRegisteredCourseTagID)
 		if err := db.Create(dbTags).Error; err != nil {
 			return err
 		}
@@ -23,7 +23,7 @@ func (r *impl) updateRegisteredCourseTagIDs(db *gorm.DB, registeredCourse *timet
 		return db.
 			Where("registered_course_id = ?", registeredCourse.ID.String()).
 			Where("tag_id IN ?", base.MapByString(toDelete)).
-			Delete(&timetabledbmodel.RegisteredCourseTag{}).
+			Delete(&timetabledbmodel.RegisteredCourseTagID{}).
 			Error
 	}
 
