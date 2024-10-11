@@ -48,6 +48,7 @@ type RegisteredCourseFilter struct {
 	UserID    mo.Option[idtype.UserID]
 	Year      mo.Option[shareddomain.AcademicYear]
 	CourseIDs mo.Option[[]idtype.CourseID]
+	TagID     mo.Option[idtype.TagID]
 }
 
 func (f *RegisteredCourseFilter) IsUniqueFilter() bool {

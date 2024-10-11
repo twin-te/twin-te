@@ -52,7 +52,7 @@ func (r *impl) CreatePaymentUsers(ctx context.Context, paymentUsers ...*donation
 
 func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomain.PaymentUser) error {
 	before := paymentUser.BeforeUpdated.MustGet()
-	columns := make([]string, 0)
+	columns := []string{"updated_at"}
 
 	if paymentUser.DisplayName != before.DisplayName {
 		columns = append(columns, "display_name")

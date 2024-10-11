@@ -175,7 +175,7 @@ func (uc *impl) UpdateRegisteredCourse(ctx context.Context, in timetablemodule.U
 		}
 
 		var courseOption mo.Option[*timetabledomain.Course]
-		if courseID, ok := registeredCourse.CourseID.Get(); ok {
+		if courseID, ok := registeredCourse.CourseID.Get(); ok && (in.Name.IsPresent() || in.Instructors.IsPresent() || in.Credit.IsPresent() || in.Methods.IsPresent() || in.Schedules.IsPresent()) {
 			courseOption, err = rtx.FindCourse(ctx, timetableport.CourseFilter{ID: mo.Some(courseID)}, sharedport.LockShared)
 			if err != nil {
 				return nil

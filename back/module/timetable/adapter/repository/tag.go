@@ -47,7 +47,7 @@ func (r *impl) CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) err
 
 func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 	before := tag.BeforeUpdated.MustGet()
-	columns := make([]string, 0)
+	columns := []string{"updated_at"}
 
 	if tag.UserID != before.UserID {
 		columns = append(columns, "user_id")
