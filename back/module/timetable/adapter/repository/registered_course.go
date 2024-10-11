@@ -27,7 +27,7 @@ func (r *impl) FindRegisteredCourse(ctx context.Context, filter timetableport.Re
 	err := r.transaction(ctx, func(tx *gorm.DB) error {
 		tx = applyRegisteredCourseFilter(tx, filter)
 		tx = dbhelper.ApplyLock(tx, lock)
-		return tx.Preload("TagIDs").Take(dbRegisteredCourse).Error
+		return tx.Preload("Tags").Take(dbRegisteredCourse).Error
 	}, true)
 	if err != nil {
 		return dbhelper.ConvertErrRecordNotFound[*timetabledomain.RegisteredCourse](err)
@@ -44,7 +44,7 @@ func (r *impl) ListRegisteredCourses(ctx context.Context, filter timetableport.R
 		tx = dbhelper.ApplyLimitOffset(tx, limitOffset)
 		tx = dbhelper.ApplyLock(tx, lock)
 		return tx.
-			Preload("TagIDs").
+			Preload("Tags").
 			Find(&dbRegisteredCourses).
 			Error
 	}, true)
@@ -60,15 +60,15 @@ func (r *impl) CreateRegisteredCourses(ctx context.Context, registeredCourses ..
 	if err != nil {
 		return err
 	}
-	dbRegisteredCourseTagIDs := lo.Flatten(base.Map(dbRegisteredCourses, func(dbRegisteredCourse *timetabledbmodel.RegisteredCourse) []timetabledbmodel.RegisteredCourseTagID {
-		return dbRegisteredCourse.TagIDs
+	dbRegisteredCourseTags := lo.Flatten(base.Map(dbRegisteredCourses, func(dbRegisteredCourse *timetabledbmodel.RegisteredCourse) []timetabledbmodel.RegisteredCourseTag {
+		return dbRegisteredCourse.Tags
 	}))
 	return r.transaction(ctx, func(tx *gorm.DB) error {
 		if err := tx.Omit(clause.Associations).Create(dbRegisteredCourses).Error; err != nil {
 			return err
 		}
-		if len(dbRegisteredCourseTagIDs) > 0 {
-			if err := tx.Create(dbRegisteredCourseTagIDs).Error; err != nil {
+		if len(dbRegisteredCourseTags) > 0 {
+			if err := tx.Create(dbRegisteredCourseTags).Error; err != nil {
 				return err
 			}
 		}

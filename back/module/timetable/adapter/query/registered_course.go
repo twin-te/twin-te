@@ -158,7 +158,7 @@ func (q *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 			return nil, err
 		}
 
-		registeredCourse.TagIDs, err = base.MapWithErr(dbRegisteredCourse.TagIDs, timetabledbmodel.FromDBRegisteredCourseTagID)
+		registeredCourse.TagIDs, err = base.MapWithErr(dbRegisteredCourse.Tags, timetabledbmodel.FromDBRegisteredCourseTag)
 		if err != nil {
 			return nil, err
 		}

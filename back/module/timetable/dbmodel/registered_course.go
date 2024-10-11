@@ -29,13 +29,13 @@ type RegisteredCourse struct {
 	Attendance  int
 	Absence     int
 	Late        int
-	TagIDs      []RegisteredCourseTagID
+	Tags        []RegisteredCourseTag
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-type RegisteredCourseTagID struct {
+type RegisteredCourseTag struct {
 	RegisteredCourseID string
 	TagID              string
 }
@@ -101,7 +101,7 @@ func FromDBRegisteredCourse(dbRegisteredCourse *RegisteredCourse) (*timetabledom
 			return
 		}
 
-		registeredCourse.TagIDs, err = base.MapWithErr(dbRegisteredCourse.TagIDs, FromDBRegisteredCourseTagID)
+		registeredCourse.TagIDs, err = base.MapWithErr(dbRegisteredCourse.Tags, FromDBRegisteredCourseTag)
 		if err != nil {
 			return err
 		}
@@ -134,7 +134,7 @@ func ToDBRegisteredCourse(registeredCourse *timetabledomain.RegisteredCourse, wi
 	dbRegisteredCourse.Schedules = dbhelper.OptionToNull(stringOption)
 
 	if withAssociations {
-		dbRegisteredCourse.TagIDs = base.MapWithArg(registeredCourse.TagIDs, registeredCourse.ID, ToDBRegisteredCourseTagID)
+		dbRegisteredCourse.Tags = base.MapWithArg(registeredCourse.TagIDs, registeredCourse.ID, ToDBRegisteredCourseTag)
 	}
 
 	return dbRegisteredCourse, nil
@@ -197,12 +197,12 @@ func ToDBRegisteredCourseSchedulesJSON(schedules []timetabledomain.Schedule) (st
 	return string(data), nil
 }
 
-func FromDBRegisteredCourseTagID(dbRegisteredCourseTagID RegisteredCourseTagID) (idtype.TagID, error) {
-	return idtype.ParseTagID(dbRegisteredCourseTagID.TagID)
+func FromDBRegisteredCourseTag(dbRegisteredCourseTag RegisteredCourseTag) (idtype.TagID, error) {
+	return idtype.ParseTagID(dbRegisteredCourseTag.TagID)
 }
 
-func ToDBRegisteredCourseTagID(tagID idtype.TagID, registeredCourseID idtype.RegisteredCourseID) RegisteredCourseTagID {
-	return RegisteredCourseTagID{
+func ToDBRegisteredCourseTag(tagID idtype.TagID, registeredCourseID idtype.RegisteredCourseID) RegisteredCourseTag {
+	return RegisteredCourseTag{
 		RegisteredCourseID: registeredCourseID.String(),
 		TagID:              tagID.String(),
 	}
