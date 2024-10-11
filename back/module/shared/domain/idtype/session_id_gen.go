@@ -3,10 +3,10 @@
 package idtype
 
 import (
-	"database/sql/driver"	
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 )
 
 type SessionID uuid.UUID
@@ -29,17 +29,11 @@ func (id SessionID) Less(other SessionID) bool {
 	return false
 }
 
-func (id *SessionID) Scan(src interface{}) error {
-	uuid := new(uuid.UUID)
-	if err := uuid.Scan(src); err != nil {
-		return err
+func (id *SessionID) StringPtr() *string {
+	if id == nil {
+		return nil
 	}
-	*id = SessionID(*uuid)
-	return nil
-}
-
-func (id SessionID) Value() (driver.Value, error) {
-	return id.String(), nil
+	return lo.ToPtr(id.String())
 }
 
 func NewSessionID() SessionID {

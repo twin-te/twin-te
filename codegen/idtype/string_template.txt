@@ -2,10 +2,7 @@
 
 package idtype
 
-import (
-	"database/sql/driver"
-	"fmt"
-)
+import "fmt"
 
 type ${id_name} string
 
@@ -15,22 +12,6 @@ func (id ${id_name}) String() string {
 
 func (id ${id_name}) IsZero() bool {
 	return id == ""
-}
-
-func (id *${id_name}) Scan(src interface{}) error {
-	switch src := src.(type) {
-	case nil:
-		return nil
-	case string:
-		*id = ${id_name}(src)
-		return nil
-	default:
-		return fmt.Errorf("Scan: unable to scan type %T into ${id_name}", src)
-	}
-}
-
-func (id ${id_name}) Value() (driver.Value, error) {
-	return id.String(), nil
 }
 
 func Parse${id_name}(s string) (${id_name}, error) {

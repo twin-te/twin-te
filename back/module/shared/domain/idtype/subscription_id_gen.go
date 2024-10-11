@@ -2,10 +2,7 @@
 
 package idtype
 
-import (
-	"database/sql/driver"
-	"fmt"
-)
+import "fmt"
 
 type SubscriptionID string
 
@@ -17,25 +14,9 @@ func (id SubscriptionID) IsZero() bool {
 	return id == ""
 }
 
-func (id *SubscriptionID) Scan(src interface{}) error {
-	switch src := src.(type) {
-	case nil:
-		return nil
-	case string:
-		*id = SubscriptionID(src)
-		return nil
-	default:
-		return fmt.Errorf("Scan: unable to scan type %T into SubscriptionID", src)
-	}
-}
-
-func (id SubscriptionID) Value() (driver.Value, error) {
-	return id.String(), nil
-}
-
 func ParseSubscriptionID(s string) (SubscriptionID, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse SubscriptionID %#v", s)
+		return "", fmt.Errorf("failed to parse SubscriptionID %v", s)
 	}
 	return SubscriptionID(s), nil
 }
