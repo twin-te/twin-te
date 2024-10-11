@@ -65,7 +65,8 @@ func (q *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 				return dbRegisteredCourse.CourseID.Get()
 			})
 
-			return tx.Where("id IN ?", courseIDs).
+			return tx.
+				Where("id IN ?", courseIDs).
 				Preload("RecommendedGrades").
 				Preload("Methods").
 				Preload("Schedules").
