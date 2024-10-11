@@ -7,8 +7,8 @@ CREATE TABLE already_reads (
     read_at timestamp without time zone NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE (user_id, announcement_id)
+    UNIQUE (user_id, announcement_id),
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE auth_providers (
@@ -117,8 +117,8 @@ CREATE TABLE courses (
     is_annual boolean NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,    
-    PRIMARY KEY (id),
-    UNIQUE (year, code)
+    UNIQUE (year, code),
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE course_methods (
@@ -162,9 +162,9 @@ CREATE TABLE registered_courses (
     attendance smallint NOT NULL,
     absence smallint NOT NULL,
     late smallint NOT NULL,
-    UNIQUE (user_id, course_id),
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,    
+    updated_at timestamp without time zone NOT NULL,   
+    UNIQUE (user_id, course_id),
     PRIMARY KEY (id),
     FOREIGN KEY (course_id) REFERENCES courses(id)
 );
