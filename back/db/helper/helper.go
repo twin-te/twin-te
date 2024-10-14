@@ -20,9 +20,11 @@ func NewDB() (*gorm.DB, error) {
 		DSN:                  appenv.DB_URL,
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
 	}), &gorm.Config{
-		SkipDefaultTransaction: true,
-		Logger:                 logger.Default.LogMode((logger.Info)),
-		NowFunc:                func() time.Time { return time.Now().Truncate(time.Microsecond) },
+		SkipDefaultTransaction:   true,
+		Logger:                   logger.Default.LogMode((logger.Info)),
+		NowFunc:                  func() time.Time { return time.Now().Truncate(time.Microsecond) },
+		DisableNestedTransaction: true,
+		CreateBatchSize:          1000,
 	})
 }
 
