@@ -42,7 +42,9 @@ func (r *impl) ListTags(ctx context.Context, filter timetableport.TagFilter, lim
 
 func (r *impl) CreateTags(ctx context.Context, tags ...*timetabledomain.Tag) error {
 	dbTags := base.Map(tags, timetabledbmodel.ToDBTag)
-	return r.db.WithContext(ctx).Create(dbTags).Error
+	return r.transaction(ctx, func(tx *gorm.DB) error {
+		return tx.Create(dbTags).Error
+	}, false)
 }
 
 func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {

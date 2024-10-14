@@ -47,7 +47,9 @@ func (r *impl) ListAlreadyReads(ctx context.Context, filter announcementport.Alr
 
 func (r *impl) CreateAlreadyReads(ctx context.Context, alreadyReads ...*announcementdomain.AlreadyRead) error {
 	dbAlreadyReads := base.Map(alreadyReads, announcementdbmodel.ToDBAlreadyRead)
-	return r.db.WithContext(ctx).Create(dbAlreadyReads).Error
+	return r.transaction(ctx, func(tx *gorm.DB) error {
+		return tx.Create(dbAlreadyReads).Error
+	}, false)
 }
 
 func (r *impl) DeleteAlreadyReads(ctx context.Context, filter announcementport.AlreadyReadFilter) (rowsAffected int, err error) {

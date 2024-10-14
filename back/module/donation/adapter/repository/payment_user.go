@@ -47,7 +47,9 @@ func (r *impl) ListPaymentUsers(ctx context.Context, filter donationport.Payment
 
 func (r *impl) CreatePaymentUsers(ctx context.Context, paymentUsers ...*donationdomain.PaymentUser) error {
 	dbPaymentUsers := base.Map(paymentUsers, donationdbmodel.ToDBPaymentUser)
-	return r.db.WithContext(ctx).Create(dbPaymentUsers).Error
+	return r.transaction(ctx, func(tx *gorm.DB) error {
+		return tx.Create(dbPaymentUsers).Error
+	}, false)
 }
 
 func (r *impl) UpdatePaymentUser(ctx context.Context, paymentUser *donationdomain.PaymentUser) error {

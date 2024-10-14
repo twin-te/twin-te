@@ -48,7 +48,9 @@ func (r *impl) ListSessions(ctx context.Context, filter authport.SessionFilter, 
 
 func (r *impl) CreateSessions(ctx context.Context, sessions ...*authdomain.Session) error {
 	dbSessions := base.Map(sessions, authdbmodel.ToDBSession)
-	return r.db.WithContext(ctx).Create(dbSessions).Error
+	return r.transaction(ctx, func(tx *gorm.DB) error {
+		return tx.Create(dbSessions).Error
+	}, false)
 }
 
 func (r *impl) DeleteSessions(ctx context.Context, filter authport.SessionFilter) (rowsAffected int, err error) {
