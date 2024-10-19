@@ -97,7 +97,7 @@ def migrate_registered_courses(active_user_ids: list[str]):
 
 
 def migrate_registered_course_tag_ids():
-    df = read_csv("data/raw/timetables_registered_course_tag_ids.csv")
+    df = read_csv("data/raw/timetables_registered_course_tags.csv")
     df.rename(
         columns={"registered_course": "registered_course_id", "tag": "tag_id"},
         inplace=True,
@@ -120,7 +120,7 @@ def load_all_kdb_courses():
     years = [2019, 2020, 2021, 2022, 2023, 2024]
     all_kdb_courses = []
     for year in years:
-        with open(f"../parser/data/parsed/{year}.json") as f:
+        with open(f"data/parsed/{year}.json") as f:
             kdb_courses = json.load(f)
             for kdb_course in kdb_courses:
                 kdb_course["year"] = year
