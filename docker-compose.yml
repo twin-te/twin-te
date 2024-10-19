@@ -80,6 +80,7 @@ services:
       POSTGRES_USER: postgres
     volumes:
       - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./db/onetime:/root/onetime
     ports:
       - 5432:5432
     networks:
