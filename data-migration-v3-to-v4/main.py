@@ -1,5 +1,7 @@
 import json
+import csv
 from datetime import datetime, timezone
+from typing import List
 
 import pandas as pd
 
@@ -11,12 +13,45 @@ def read_csv(path: str) -> pd.DataFrame:
 
 
 def to_csv(df: pd.DataFrame, path: str) -> None:
-    df.to_csv(path, encoding="utf-8", index=False)
+    df.to_csv(path, encoding="utf-8", index=False, na_rep='""', quoting=csv.QUOTE_NONNUMERIC)
+
+
+def exclude_deleted_user_ids(users_df: pd.DataFrame) -> List[str]:
+    return users_df[users_df["deletedAt"] == "null"]["id"].tolist()
+
+
+def exclude_duplicated_social_id_users(active_user_ids: List[str]) -> List[str]:
+    """
+    有効なユーザーIDのリストから、重複する social_id を持つユーザーを除外する。
+    何故か複数のユーザに同じ social_id が紐づいており DB のユニーク制約に違反してしまう。
+    そのため重複する social_id を持つユーザーのうち、有効なセッションが存在するユーザーのみを残す。
+    """
+
+    authentications_df = read_csv("data/raw/user_user_authentications.csv")
+    sessions_df = read_csv("data/raw/session_session.csv")
+
+    unique_social_ids = authentications_df[~authentications_df.duplicated(subset="social_id", keep=False)]
+    valid_user_ids = set(unique_social_ids["user_id"].tolist())
+
+    duplicate_social_ids = authentications_df[authentications_df.duplicated(subset="social_id", keep=False)]
+    merged_sessions = pd.merge(duplicate_social_ids, sessions_df, left_on="user_id", right_on="user_id", how="inner")
+    grouped_sessions = merged_sessions.groupby("social_id")
+    for social_id, group in grouped_sessions:
+        valid_sessions = group[pd.to_datetime(group["expired_at"]) > pd.Timestamp.now()]
+        print(valid_sessions['user_id'].nunique())
+        if valid_sessions.empty:
+            continue
+        if valid_sessions["user_id"].nunique() > 1:
+            raise ValueError(f"Social ID {social_id} に関連付けられた複数の有効セッションが見つかりました。")
+        valid_user_ids.update(valid_sessions["user_id"].tolist())
+
+    return [user_id for user_id in active_user_ids if user_id in valid_user_ids]
 
 
 def list_active_user_ids() -> list[str]:
-    df = read_csv("data/raw/user_users.csv")
-    active_user_ids: list[str] = df[df["deletedAt"] == "null"]["id"].tolist()
+    users_df = pd.read_csv("data/raw/user_users.csv")
+    active_user_ids = exclude_deleted_user_ids(users_df)
+    active_user_ids = exclude_duplicated_social_id_users(active_user_ids)
     return active_user_ids
 
 
@@ -58,6 +93,19 @@ def migrate_payment_users():
     to_csv(df, "data/processed/payment_users.csv")
 
 
+def replace_missing_course_ref_with_null(registered_courses_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    なぜか存在しない course_id を参照する registered_courses が存在するため、それを null に置き換える
+    """
+
+    courses_df = read_csv("data/raw/course_courses.csv")
+    registered_courses_df.loc[
+        ~registered_courses_df["course_id"].isin(courses_df["id"].tolist()),
+        "course_id"
+    ] = "null"
+    return registered_courses_df
+
+
 def migrate_registered_courses(active_user_ids: list[str]):
     df = read_csv("data/raw/timetables_registered_courses.csv")
     df.rename(columns={"instractor": "instructors"}, inplace=True)
@@ -93,11 +141,23 @@ def migrate_registered_courses(active_user_ids: list[str]):
         ]
     ]
 
+    df = replace_missing_course_ref_with_null(df)
+
     to_csv(df, "data/processed/registered_courses.csv")
 
 
-def migrate_registered_course_tag_ids():
-    df = read_csv("data/raw/timetables_registered_course_tags.csv")
+def migrate_registered_course_tag_ids(active_user_ids: list[str]):
+    registered_course_tags_df = read_csv("data/raw/timetables_registered_course_tags.csv")
+    registered_courses_df = read_csv("data/raw/timetables_registered_courses.csv")
+
+    df = pd.merge(
+        registered_course_tags_df,
+        registered_courses_df,
+        left_on="registered_course",
+        right_on="id",
+        how="left"
+    )
+    df = df[df["user_id"].isin(active_user_ids)]
     df.rename(
         columns={"registered_course": "registered_course_id", "tag": "tag_id"},
         inplace=True,
@@ -388,7 +448,7 @@ def main():
     migrate_sessions(active_user_ids)
 
     migrate_registered_courses(active_user_ids)
-    migrate_registered_course_tag_ids()
+    migrate_registered_course_tag_ids(active_user_ids)
 
     migrate_tags(active_user_ids)
 

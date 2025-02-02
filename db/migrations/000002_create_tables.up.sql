@@ -155,7 +155,7 @@ CREATE TABLE registered_courses (
     course_id uuid,
     name text,
     instructors text,
-    credit numeric(4, 1),
+    credit numeric(11, 1),
     methods text[],
     schedules jsonb,
     memo text NOT NULL,

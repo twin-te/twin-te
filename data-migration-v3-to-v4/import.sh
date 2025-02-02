@@ -20,17 +20,17 @@ docker compose -f ../docker-compose.yml run --rm db-migration bash -c 'make migr
 
 # テーブル名と対応するCSVファイルの組み合わせ
 csv_groups=(
+  "courses:courses_found.csv courses_not_found.csv"
+  "users:users.csv"
   "course_methods:course_methods_found.csv course_methods_not_found.csv"
   "course_recommended_grades:course_recommended_grades_found.csv course_recommended_grades_not_found.csv"
   "course_schedules:course_schedules_found.csv course_schedules_not_found.csv"
-  "courses:courses_found.csv courses_not_found.csv"
-  "payment_users:payment_users.csv"
   "registered_courses:registered_courses.csv"
   "registered_course_tag_ids:registered_course_tag_ids.csv"
-  "sessions:sessions.csv"
   "tags:tags.csv"
+  "payment_users:payment_users.csv"
   "user_authentications:user_authentications.csv"
-  "users:users.csv"
+  "sessions:sessions.csv"
 )
 
 docker exec twinte-db sh -c "mkdir -p /tmp/v3_dump"
@@ -43,6 +43,10 @@ for group in "${csv_groups[@]}"; do
   done
 done
 
+# "null" は PostgreSQL の COPY コマンドで文字列と解釈されるので null に変換
+# Ref: https://www.postgresql.org/docs/current/sql-copy.html
+docker exec twinte-db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
+
 # TODO: 本番移行時は良い感じに取得する
 POSTGRES_URL="postgres://postgres:password@db:5432/twinte_db?sslmode=disable"
 
@@ -50,6 +54,6 @@ POSTGRES_URL="postgres://postgres:password@db:5432/twinte_db?sslmode=disable"
 for group in "${csv_groups[@]}"; do
   IFS=":" read -r table csvs <<< "$group"
   for csv in $csvs; do
-    docker exec -i twinte-db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH CSV HEADER\""
+    docker exec -i twinte-db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH CSV HEADER NULL 'null'\""
   done
 done
