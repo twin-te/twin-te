@@ -48,7 +48,7 @@ def migrate_users() -> list[str]:
 
 def migrate_user_authentications(active_user_ids: list[str]):
     df = read_csv("data/raw/user_user_authentications.csv")
-    df = df[df["user_id"].isna()]
+    df = df[~df["user_id"].isna()]
     df = df[df["user_id"].isin(active_user_ids)]
     df = df[["user_id", "provider", "social_id"]]
     to_csv_and_replace_null(df, "data/processed/user_authentications.csv")
