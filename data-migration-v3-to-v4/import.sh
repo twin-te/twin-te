@@ -20,17 +20,17 @@ docker compose -f ../docker-compose.yml run --rm db-migration bash -c 'make migr
 
 # テーブル名と対応するCSVファイルの組み合わせ
 csv_groups=(
+  "courses:courses_found.csv courses_not_found.csv"  
   "course_methods:course_methods_found.csv course_methods_not_found.csv"
   "course_recommended_grades:course_recommended_grades_found.csv course_recommended_grades_not_found.csv"
   "course_schedules:course_schedules_found.csv course_schedules_not_found.csv"
-  "courses:courses_found.csv courses_not_found.csv"
+  "users:users.csv"
+  "user_authentications:user_authentications.csv"
+  "sessions:sessions.csv"
   "payment_users:payment_users.csv"
+  "tags:tags.csv"
   "registered_courses:registered_courses.csv"
   "registered_course_tag_ids:registered_course_tag_ids.csv"
-  "sessions:sessions.csv"
-  "tags:tags.csv"
-  "user_authentications:user_authentications.csv"
-  "users:users.csv"
 )
 
 docker exec twinte-db sh -c "mkdir -p /tmp/v3_dump"
