@@ -1,3 +1,4 @@
+import csv
 import json
 from datetime import datetime, timezone
 
@@ -7,34 +8,33 @@ now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")
 
 
 def read_csv(path: str) -> pd.DataFrame:
-    return pd.read_csv(path, keep_default_na=False)
+    return pd.read_csv(path, keep_default_na=False, na_values="null")
 
 
 def to_csv(df: pd.DataFrame, path: str) -> None:
-    df.to_csv(path, encoding="utf-8", index=False)
-
-
-def list_active_user_ids() -> list[str]:
-    df = read_csv("data/raw/user_users.csv")
-    active_user_ids: list[str] = df[df["deletedAt"] == "null"]["id"].tolist()
-    return active_user_ids
-
-
-def migrate_users(active_user_ids: list[str]):
-    df = read_csv("data/raw/user_users.csv")
-    df.rename(
-        columns={"createdAt": "created_at", "deletedAt": "deleted_at"}, inplace=True
+    df.to_csv(
+        path,
+        encoding="utf-8",
+        index=False,
+        quoting=csv.QUOTE_NONNUMERIC,
+        escapechar='"',
     )
-    df = df[df["id"].isin(active_user_ids)]
+
+
+def migrate_users() -> list[str]:
+    df = read_csv("data/raw/user_users.csv")
+    df = df[df["deletedAt"].isna()]
+    df.rename(columns={"createdAt": "created_at"}, inplace=True)
     df["updated_at"] = now
     df = df[["id", "created_at", "updated_at"]]
     to_csv(df, "data/processed/users.csv")
+    active_user_ids = df["id"].tolist()
+    return active_user_ids
 
 
 def migrate_user_authentications(active_user_ids: list[str]):
     df = read_csv("data/raw/user_user_authentications.csv")
-    df = df[df["user_id"] != "null"]
-    df.drop(columns=["id"], inplace=True)
+    df = df[df["user_id"].isna()]
     df = df[df["user_id"].isin(active_user_ids)]
     df = df[["user_id", "provider", "social_id"]]
     to_csv(df, "data/processed/user_authentications.csv")
@@ -58,13 +58,25 @@ def migrate_payment_users():
     to_csv(df, "data/processed/payment_users.csv")
 
 
-def migrate_registered_courses(active_user_ids: list[str]):
+def migrate_tags(active_user_ids: list[str]) -> list[str]:
+    df = read_csv("data/raw/timetables_tags.csv")
+    df = df[df["user_id"].isin(active_user_ids)]
+    df.rename(columns={"position": "order"}, inplace=True)
+    df["created_at"] = now
+    df["updated_at"] = now
+    df = df[["id", "user_id", "name", "order", "created_at", "updated_at"]]
+    to_csv(df, "data/processed/tags.csv")
+    active_tag_ids = df["id"].tolist()
+    return active_tag_ids
+
+
+def migrate_registered_courses(active_user_ids: list[str]) -> list[str]:
     df = read_csv("data/raw/timetables_registered_courses.csv")
     df.rename(columns={"instractor": "instructors"}, inplace=True)
 
-    df_tar = df[df["schedules"] != "null"]
-    for index, row in df_tar.iterrows():
-        schedules = json.loads(row["schedules"])
+    target_indices = df[~df["schedules"].isna()].index.values
+    for index in target_indices:
+        schedules = json.loads(df.at[index, "schedules"])
         for schedule in schedules:
             schedule["locations"] = schedule.pop("room")
         df.at[index, "schedules"] = json.dumps(schedules, ensure_ascii=False)
@@ -95,25 +107,22 @@ def migrate_registered_courses(active_user_ids: list[str]):
 
     to_csv(df, "data/processed/registered_courses.csv")
 
+    active_registered_course_ids = df["id"].tolist()
+    return active_registered_course_ids
 
-def migrate_registered_course_tag_ids():
+
+def migrate_registered_course_tag_ids(
+    active_registered_course_ids: list[str], active_tag_ids: list[str]
+):
     df = read_csv("data/raw/timetables_registered_course_tags.csv")
     df.rename(
         columns={"registered_course": "registered_course_id", "tag": "tag_id"},
         inplace=True,
     )
     df = df[["registered_course_id", "tag_id"]]
+    df = df[df["registered_course_id"].isin(active_registered_course_ids)]
+    df = df[df["tag_id"].isin(active_tag_ids)]
     to_csv(df, "data/processed/registered_course_tag_ids.csv")
-
-
-def migrate_tags(active_user_ids: list[str]):
-    df = read_csv("data/raw/timetables_tags.csv")
-    df = df[df["user_id"].isin(active_user_ids)]
-    df.rename(columns={"position": "order"}, inplace=True)
-    df["created_at"] = now
-    df["updated_at"] = now
-    df = df[["id", "user_id", "name", "order", "created_at", "updated_at"]]
-    to_csv(df, "data/processed/tags.csv")
 
 
 def load_all_kdb_courses():
@@ -273,13 +282,13 @@ def migrate_course_aggregate_found() -> set[str]:
     return course_id_set_not_found
 
 
-def migrate_course_not_found(course_ids_not_found: set[str]):
+def migrate_course_not_found(course_id_set_not_found: set[str]) -> set[str]:
     df = read_csv("data/raw/course_courses.csv")
     df.rename(
         columns={"instructor": "instructors", "last_update": "last_updated_at"},
         inplace=True,
     )
-    df = df[df["id"].isin(course_ids_not_found)]
+    df = df[df["id"].isin(course_id_set_not_found)]
     df["last_updated_at"] = df["last_updated_at"].str[:-3]
     df["created_at"] = now
     df["updated_at"] = now
@@ -303,10 +312,10 @@ def migrate_course_not_found(course_ids_not_found: set[str]):
     to_csv(df, "data/processed/courses_not_found.csv")
 
 
-def migrate_course_schedules_not_found(course_ids_not_found: set[str]):
+def migrate_course_schedules_not_found(course_id_set_not_found: set[str]):
     df = read_csv("data/raw/course_course_schedules.csv")
-    df = df[df["course_id"] != "null"]
-    df = df[df["course_id"].isin(course_ids_not_found)]
+    df = df[df["course_id"].isna()]
+    df = df[df["course_id"].isin(course_id_set_not_found)]
     df.drop(columns=["id"], inplace=True)
 
     df_annual = df[df["module"] == "Annual"]
@@ -360,39 +369,37 @@ def migrate_course_schedules_not_found(course_ids_not_found: set[str]):
     to_csv(df, "data/processed/course_schedules_not_found.csv")
 
 
-def migrate_course_recommended_grades_not_found(course_ids_not_found: set[str]):
+def migrate_course_recommended_grades_not_found(course_id_set_not_found: set[str]):
     df = read_csv("data/raw/course_course_recommended_grades.csv")
-    df = df[df["course_id"] != "null"]
-    df = df[df["course_id"].isin(course_ids_not_found)]
+    df = df[df["course_id"].isna()]
+    df = df[df["course_id"].isin(course_id_set_not_found)]
     df.drop(columns=["id"], inplace=True)
     df.rename(columns={"grade": "recommended_grade"}, inplace=True)
     df = df[["course_id", "recommended_grade"]]
     to_csv(df, "data/processed/course_recommended_grades_not_found.csv")
 
 
-def migrate_course_methods_not_found(course_ids_not_found: set[str]):
+def migrate_course_methods_not_found(course_id_set_not_found: set[str]):
     df = read_csv("data/raw/course_course_methods.csv")
-    df = df[df["course_id"] != "null"]
-    df = df[df["course_id"].isin(course_ids_not_found)]
+    df = df[df["course_id"].isna()]
+    df = df[df["course_id"].isin(course_id_set_not_found)]
     df.drop(columns=["id"], inplace=True)
     df = df[["course_id", "method"]]
     to_csv(df, "data/processed/course_methods_not_found.csv")
 
 
 def main():
-    active_user_ids = list_active_user_ids()
-
-    migrate_users(active_user_ids)
+    active_user_ids = migrate_users()
     migrate_user_authentications(active_user_ids)
 
     migrate_sessions(active_user_ids)
 
-    migrate_registered_courses(active_user_ids)
-    migrate_registered_course_tag_ids()
-
-    migrate_tags(active_user_ids)
-
     migrate_payment_users()
+
+    active_tag_ids = migrate_tags(active_user_ids)
+
+    active_registered_course_ids = migrate_registered_courses(active_user_ids)
+    migrate_registered_course_tag_ids(active_registered_course_ids, active_tag_ids)
 
     course_id_set_not_found = migrate_course_aggregate_found()
 
