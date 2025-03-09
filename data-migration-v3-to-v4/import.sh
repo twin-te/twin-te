@@ -60,6 +60,6 @@ for group in "${csv_groups[@]}"; do
   IFS=":" read -r table csvs <<< "$group"
   for csv in $csvs; do
     echo "Importing $csv to $table"
-    docker compose exec -T db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH (FORMAT csv, HEADER true, NULL 'NULL')\""
+    docker compose -f "$COMPOSE_FILE" exec -T db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH (FORMAT csv, HEADER true, NULL 'NULL')\""
   done
 done
