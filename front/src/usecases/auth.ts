@@ -53,17 +53,18 @@ export class AuthUseCase implements IAuthUseCase {
   async deleteUser(): Promise<
     null | UnauthenticatedError | NetworkError | InternalServerError
   > {
-    return this.#client
-      .deleteAccount({})
-      .then(() => null)
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .deleteAccount({})
+    //   .then(() => null)
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 }
