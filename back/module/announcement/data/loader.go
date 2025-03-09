@@ -3,6 +3,7 @@ package announcementdata
 import (
 	_ "embed"
 	"encoding/json"
+	"sort"
 	"time"
 
 	"github.com/twin-te/twin-te/back/base"
@@ -34,6 +35,10 @@ func loadAnnouncements(data []byte) (announcements []*announcementdomain.Announc
 			jsonAnnouncement.Content,
 			jsonAnnouncement.PublishedAt,
 		)
+	})
+
+	sort.Slice(announcements, func(i, j int) bool {
+		return announcements[i].PublishedAt.After(announcements[j].PublishedAt)
 	})
 
 	return
