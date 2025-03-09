@@ -45,7 +45,7 @@ for group in "${csv_groups[@]}"; do
   IFS=":" read -r table csvs <<< "$group"
   for csv in $csvs; do
     # docker compose cp を利用（サービス名は db）
-    docker compose cp data/processed/"$csv" db:/tmp/v3_dump/"$csv"
+    docker compose -f "$COMPOSE_FILE" cp data/processed/"$csv" db:/tmp/v3_dump/"$csv"
   done
 done
 
