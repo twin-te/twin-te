@@ -10,7 +10,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
-	"encoding/binary"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
@@ -140,7 +139,7 @@ func (jwk *appleJWK) RSAPublicKey() (*rsa.PublicKey, error) {
 	if err != nil {
 		return nil, err
 	}
-	publicExponent := int(binary.BigEndian.Uint32(publicExponentBytes))
+	publicExponent := int(big.NewInt(0).SetBytes(publicExponentBytes).Int64())
 
 	publicKey := &rsa.PublicKey{
 		N: modules,
