@@ -38,7 +38,7 @@ csv_groups=(
 )
 
 # コンテナ内の一時ディレクトリ作成（サービス名を db に変更）
-docker compose exec db mkdir -p /tmp/v3_dump
+docker compose -f "$COMPOSE_FILE" exec db mkdir -p /tmp/v3_dump
 
 # 全てのCSVファイルをコンテナにコピー
 for group in "${csv_groups[@]}"; do
