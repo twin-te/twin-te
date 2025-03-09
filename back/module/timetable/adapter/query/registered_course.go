@@ -151,6 +151,28 @@ func (q *impl) ListRegisteredCourses(ctx context.Context, conds timetableport.Li
 					return nil, err
 				}
 			}
+		} else {
+			registeredCourse.Name, err = timetabledomain.ParseName(dbRegisteredCourse.Name.MustGet())
+			if err != nil {
+				return nil, err
+			}
+
+			registeredCourse.Credit, err = timetabledomain.ParseCredit(dbRegisteredCourse.Credit.MustGet())
+			if err != nil {
+				return nil, err
+			}
+
+			registeredCourse.Instructors = dbRegisteredCourse.Instructors.MustGet()
+
+			registeredCourse.Methods, err = timetabledbmodel.FromDBRegisteredCourseMethods(dbRegisteredCourse.Methods.MustGet())
+			if err != nil {
+				return nil, err
+			}
+
+			registeredCourse.Schedules, err = timetabledbmodel.FromDBRegisteredCourseSchedules(dbhelper.NullToOption(dbRegisteredCourse.Schedules).MustGet())
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		registeredCourse.Memo = dbRegisteredCourse.Memo
