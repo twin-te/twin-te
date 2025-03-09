@@ -47,8 +47,7 @@ done
 # Ref: https://www.postgresql.org/docs/current/sql-copy.html
 docker exec twinte-db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
 
-# TODO: 本番移行時は良い感じに取得する
-POSTGRES_URL="postgres://postgres:password@db:5432/twinte_db?sslmode=disable"
+POSTGRES_URL=${POSTGRES_URL:-"postgres://postgres:password@db:5432/twinte_db?sslmode=disable"}
 
 # 各テーブルにデータをインポート
 for group in "${csv_groups[@]}"; do
