@@ -35,6 +35,7 @@ COPY package.json bun.lockb ./
 RUN bun install --frozen-lockfile
 
 COPY . .
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y ca-certificates
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) \
   bun run build:production

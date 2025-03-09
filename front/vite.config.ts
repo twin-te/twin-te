@@ -66,6 +66,7 @@ export default defineConfig(({ mode }) => ({
                 project: "front",
                 include: path.resolve(__dirname, "dist"),
                 authToken: process.env.SENTRY_AUTH_TOKEN,
+                release: `${process.env.npm_package_name}@${process.env.npm_package_version}`,
               })
             : null)(),
       ],
