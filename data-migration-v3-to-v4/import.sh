@@ -43,6 +43,10 @@ for group in "${csv_groups[@]}"; do
   done
 done
 
+# "null" は PostgreSQL の COPY コマンドで文字列と解釈されるので null に変換
+# Ref: https://www.postgresql.org/docs/current/sql-copy.html
+docker exec twinte-db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
+
 # TODO: 本番移行時は良い感じに取得する
 POSTGRES_URL="postgres://postgres:password@db:5432/twinte_db?sslmode=disable"
 
@@ -50,6 +54,7 @@ POSTGRES_URL="postgres://postgres:password@db:5432/twinte_db?sslmode=disable"
 for group in "${csv_groups[@]}"; do
   IFS=":" read -r table csvs <<< "$group"
   for csv in $csvs; do
+    echo "Importing $csv to $table"
     docker exec -i twinte-db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH (FORMAT csv, HEADER true, NULL 'NULL')\""
   done
 done

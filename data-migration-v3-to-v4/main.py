@@ -1,6 +1,8 @@
 import csv
 import json
+import csv
 from datetime import datetime, timezone
+from typing import List
 
 import pandas as pd
 
@@ -50,6 +52,14 @@ def migrate_user_authentications(active_user_ids: list[str]):
     df = read_csv("data/raw/user_user_authentications.csv")
     df = df[~df["user_id"].isna()]
     df = df[df["user_id"].isin(active_user_ids)]
+
+    # ID が若い authentications のみを残す
+    # V3 では (provider, social_id) が重複しているとき ID が若いものが取得されそうな挙動になっているため、それを再現する。
+    # Ref: https://github.com/twin-te/user-service/blob/ea0dac8344b9918ef679c12447015eec04687923/repository/repository.go#L204
+    # 件数は多くないので、仮に時間割データにアクセスできないという問い合わせが来た場合は
+    # 該当する user に紐づく social_id に紐づく V3 の他の user の情報の提示、復元を検討する。
+    df = df.sort_values("id").drop_duplicates(subset=["provider", "social_id"], keep="first")
+
     df = df[["user_id", "provider", "social_id"]]
     to_csv_and_replace_null(df, "data/processed/user_authentications.csv")
 
@@ -82,6 +92,19 @@ def migrate_tags(active_user_ids: list[str]) -> list[str]:
     to_csv_and_replace_null(df, "data/processed/tags.csv")
     active_tag_ids = df["id"].tolist()
     return active_tag_ids
+
+
+def replace_missing_course_ref_with_null(registered_courses_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    なぜか存在しない course_id を参照する registered_courses が存在するため、それを null に置き換える
+    """
+
+    courses_df = read_csv("data/raw/course_courses.csv")
+    registered_courses_df.loc[
+        ~registered_courses_df["course_id"].isin(courses_df["id"].tolist()),
+        "course_id"
+    ] = "null"
+    return registered_courses_df
 
 
 def migrate_registered_courses(active_user_ids: list[str]) -> list[str]:
@@ -118,6 +141,8 @@ def migrate_registered_courses(active_user_ids: list[str]) -> list[str]:
             "updated_at",
         ]
     ]
+
+    df = replace_missing_course_ref_with_null(df)
 
     to_csv_and_replace_null(df, "data/processed/registered_courses.csv")
 
@@ -413,6 +438,8 @@ def main():
     migrate_user_authentications(active_user_ids)
 
     migrate_sessions(active_user_ids)
+
+    migrate_tags(active_user_ids)
 
     migrate_payment_users()
 
