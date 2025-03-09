@@ -51,7 +51,7 @@ done
 
 # PostgreSQL の COPY コマンドで "null" を文字列と解釈しないように変換
 # Ref: https://www.postgresql.org/docs/current/sql-copy.html
-docker compose exec db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
+docker compose -f "$COMPOSE_FILE" exec db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
 
 POSTGRES_URL=${POSTGRES_URL:-"postgres://postgres:password@db:5432/twinte_db?sslmode=disable"}
 
