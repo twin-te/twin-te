@@ -30,8 +30,8 @@ var appleOAuth2Config = &oauth2.Config{
 	ClientID:     appenv.AUTH_APPLE_CLIENT_ID,
 	ClientSecret: "",
 	Endpoint: oauth2.Endpoint{
-		AuthURL:   "https://appleid.apple.com/auth/oauth2/v2/authorize",
-		TokenURL:  "https://appleid.apple.com/auth/oauth2/v2/token",
+		AuthURL:   "https://appleid.apple.com/auth/authorize",
+		TokenURL:  "https://appleid.apple.com/auth/token",
 		AuthStyle: oauth2.AuthStyleInParams,
 	},
 	RedirectURL: appenv.AUTH_APPLE_CALLBACK_URL,
