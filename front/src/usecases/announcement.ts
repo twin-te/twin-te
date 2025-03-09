@@ -45,17 +45,18 @@ export class AnnouncementUseCase implements IAnnouncementUseCase {
   async readAnnouncements(
     ids: string[]
   ): Promise<null | UnauthenticatedError | NetworkError | InternalServerError> {
-    return this.#client
-      .readAnnouncements({ ids: ids.map(toPBUUID) })
-      .then(() => null)
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return Promise.resolve(null);
+    // return this.#client
+    //   .readAnnouncements({ ids: ids.map(toPBUUID) })
+    //   .then(() => null)
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 }

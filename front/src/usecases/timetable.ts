@@ -377,37 +377,38 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    const pbAcademicYear = toPBAcademicYear(data.year);
-    return this.#client
-      .createRegisteredCoursesByCodes({
-        year: pbAcademicYear,
-        codes: data.codes,
-      })
-      .then((res) => res.registeredCourses.map(fromPBRegisteredCourse))
-      .then((registeredCourses) => {
-        return this.#mutex.registeredCourses.runExclusive(() => {
-          if (this.#registeredCourses) {
-            addElementsInArray(
-              this.#registeredCourses,
-              ...deepCopy(registeredCourses)
-            );
-          }
-          return registeredCourses;
-        });
-      })
-      .catch((error) =>
-        handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // const pbAcademicYear = toPBAcademicYear(data.year);
+    // return this.#client
+    //   .createRegisteredCoursesByCodes({
+    //     year: pbAcademicYear,
+    //     codes: data.codes,
+    //   })
+    //   .then((res) => res.registeredCourses.map(fromPBRegisteredCourse))
+    //   .then((registeredCourses) => {
+    //     return this.#mutex.registeredCourses.runExclusive(() => {
+    //       if (this.#registeredCourses) {
+    //         addElementsInArray(
+    //           this.#registeredCourses,
+    //           ...deepCopy(registeredCourses)
+    //         );
+    //       }
+    //       return registeredCourses;
+    //     });
+    //   })
+    //   .catch((error) =>
+    //     handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          if (connectError.code === Code.NotFound) {
-            return new NotFoundError();
-          }
+    //       if (connectError.code === Code.NotFound) {
+    //         return new NotFoundError();
+    //       }
 
-          throw error;
-        })
-      );
+    //       throw error;
+    //     })
+    //   );
   }
 
   async addCourseManually(
@@ -424,38 +425,39 @@ export class TimetableUseCase implements ITimetableUseCase {
   ): Promise<
     RegisteredCourse | UnauthenticatedError | NetworkError | InternalServerError
   > {
-    return this.#client
-      .createRegisteredCourseManually({
-        year: toPBAcademicYear(data.year),
-        name: data.name,
-        instructors: toPBInstructors(data.instructors),
-        credit: toPBCredit(data.credit),
-        schedules: toPBSchedules(data.schedules, data.rooms),
-        methods: data.methods.map(toPBCourseMethod),
-      })
-      .then((res) =>
-        fromPBRegisteredCourse(assurePresence(res.registeredCourse))
-      )
-      .then((registeredCourse) => {
-        return this.#mutex.registeredCourses.runExclusive(() => {
-          if (this.#registeredCourses) {
-            addElementsInArray(
-              this.#registeredCourses,
-              deepCopy(registeredCourse)
-            );
-          }
-          return registeredCourse;
-        });
-      })
-      .catch((error) =>
-        handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .createRegisteredCourseManually({
+    //     year: toPBAcademicYear(data.year),
+    //     name: data.name,
+    //     instructors: toPBInstructors(data.instructors),
+    //     credit: toPBCredit(data.credit),
+    //     schedules: toPBSchedules(data.schedules, data.rooms),
+    //     methods: data.methods.map(toPBCourseMethod),
+    //   })
+    //   .then((res) =>
+    //     fromPBRegisteredCourse(assurePresence(res.registeredCourse))
+    //   )
+    //   .then((registeredCourse) => {
+    //     return this.#mutex.registeredCourses.runExclusive(() => {
+    //       if (this.#registeredCourses) {
+    //         addElementsInArray(
+    //           this.#registeredCourses,
+    //           deepCopy(registeredCourse)
+    //         );
+    //       }
+    //       return registeredCourse;
+    //     });
+    //   })
+    //   .catch((error) =>
+    //     handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          throw error;
-        })
-      );
+    //       throw error;
+    //     })
+    //   );
   }
 
   async listRegisteredCourses(
@@ -523,60 +525,61 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    return this.#client
-      .updateRegisteredCourse({
-        id: toPBUUID(id),
-        name: data.name,
-        instructors: data.instructors
-          ? toPBInstructors(data.instructors)
-          : undefined,
-        credit: data.credit ? toPBCredit(data.credit) : undefined,
-        methods: data.methods
-          ? new TimetableV1PB.CourseMethodList({
-              values: data.methods.map(toPBCourseMethod),
-            })
-          : undefined,
-        schedules:
-          data.schedules && data.rooms
-            ? new TimetableV1PB.ScheduleList({
-                values: toPBSchedules(data.schedules, data.rooms),
-              })
-            : undefined,
-        memo: data.memo,
-        attendance: data.attendance,
-        absence: data.absence,
-        late: data.late,
-        tagIds: data.tagIds
-          ? new SharedPB.UUIDList({ values: data.tagIds.map(toPBUUID) })
-          : undefined,
-      })
-      .then((res) =>
-        fromPBRegisteredCourse(assurePresence(res.registeredCourse))
-      )
-      .then((registeredCourse) => {
-        return this.#mutex.registeredCourses.runExclusive(() => {
-          if (this.#registeredCourses) {
-            updateElementInArray(
-              this.#registeredCourses,
-              deepCopy(registeredCourse)
-            );
-          }
-          return registeredCourse;
-        });
-      })
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .updateRegisteredCourse({
+    //     id: toPBUUID(id),
+    //     name: data.name,
+    //     instructors: data.instructors
+    //       ? toPBInstructors(data.instructors)
+    //       : undefined,
+    //     credit: data.credit ? toPBCredit(data.credit) : undefined,
+    //     methods: data.methods
+    //       ? new TimetableV1PB.CourseMethodList({
+    //           values: data.methods.map(toPBCourseMethod),
+    //         })
+    //       : undefined,
+    //     schedules:
+    //       data.schedules && data.rooms
+    //         ? new TimetableV1PB.ScheduleList({
+    //             values: toPBSchedules(data.schedules, data.rooms),
+    //           })
+    //         : undefined,
+    //     memo: data.memo,
+    //     attendance: data.attendance,
+    //     absence: data.absence,
+    //     late: data.late,
+    //     tagIds: data.tagIds
+    //       ? new SharedPB.UUIDList({ values: data.tagIds.map(toPBUUID) })
+    //       : undefined,
+    //   })
+    //   .then((res) =>
+    //     fromPBRegisteredCourse(assurePresence(res.registeredCourse))
+    //   )
+    //   .then((registeredCourse) => {
+    //     return this.#mutex.registeredCourses.runExclusive(() => {
+    //       if (this.#registeredCourses) {
+    //         updateElementInArray(
+    //           this.#registeredCourses,
+    //           deepCopy(registeredCourse)
+    //         );
+    //       }
+    //       return registeredCourse;
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          if (connectError.code === Code.NotFound) {
-            return new NotFoundError();
-          }
+    //       if (connectError.code === Code.NotFound) {
+    //         return new NotFoundError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 
   async deleteRegisteredCourse(
@@ -588,29 +591,30 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    return this.#client
-      .deleteRegisteredCourse({ id: toPBUUID(id) })
-      .then(() => {
-        return this.#mutex.registeredCourses.runExclusive(() => {
-          if (this.#registeredCourses) {
-            deleteElementInArray(this.#registeredCourses, id);
-          }
-          return null;
-        });
-      })
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .deleteRegisteredCourse({ id: toPBUUID(id) })
+    //   .then(() => {
+    //     return this.#mutex.registeredCourses.runExclusive(() => {
+    //       if (this.#registeredCourses) {
+    //         deleteElementInArray(this.#registeredCourses, id);
+    //       }
+    //       return null;
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          if (connectError.code === Code.NotFound) {
-            return new NotFoundError();
-          }
+    //       if (connectError.code === Code.NotFound) {
+    //         return new NotFoundError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 
   async checkScheduleDuplicate(
@@ -643,26 +647,27 @@ export class TimetableUseCase implements ITimetableUseCase {
   async createTag(
     name: string
   ): Promise<Tag | UnauthenticatedError | NetworkError | InternalServerError> {
-    return this.#client
-      .createTag({ name })
-      .then((res) => fromPBTag(assurePresence(res.tag)))
-      .then((tag) => {
-        return this.#mutex.tags.runExclusive(() => {
-          if (this.#tags) {
-            addElementsInArray(this.#tags, deepCopy(tag));
-          }
-          return tag;
-        });
-      })
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .createTag({ name })
+    //   .then((res) => fromPBTag(assurePresence(res.tag)))
+    //   .then((tag) => {
+    //     return this.#mutex.tags.runExclusive(() => {
+    //       if (this.#tags) {
+    //         addElementsInArray(this.#tags, deepCopy(tag));
+    //       }
+    //       return tag;
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 
   async listTags(): Promise<
@@ -706,30 +711,31 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    return this.#client
-      .updateTag({ id: toPBUUID(id), name })
-      .then((res) => fromPBTag(assurePresence(res.tag)))
-      .then((tag) => {
-        return this.#mutex.tags.runExclusive(() => {
-          if (this.#tags) {
-            updateElementInArray(this.#tags, deepCopy(tag));
-          }
-          return tag;
-        });
-      })
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .updateTag({ id: toPBUUID(id), name })
+    //   .then((res) => fromPBTag(assurePresence(res.tag)))
+    //   .then((tag) => {
+    //     return this.#mutex.tags.runExclusive(() => {
+    //       if (this.#tags) {
+    //         updateElementInArray(this.#tags, deepCopy(tag));
+    //       }
+    //       return tag;
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          if (connectError.code === Code.NotFound) {
-            return new NotFoundError();
-          }
+    //       if (connectError.code === Code.NotFound) {
+    //         return new NotFoundError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 
   /**
@@ -741,26 +747,27 @@ export class TimetableUseCase implements ITimetableUseCase {
   ): Promise<
     Tag[] | UnauthenticatedError | NetworkError | InternalServerError
   > {
-    return this.#client
-      .rearrangeTags({ ids: ids.map(toPBUUID) })
-      .then((res) => res.tags.map((tag) => fromPBTag(assurePresence(tag))))
-      .then((tags) => {
-        return this.#mutex.tags.runExclusive(() => {
-          if (this.#tags) {
-            this.#tags = deepCopy(tags);
-          }
-          return tags;
-        });
-      })
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .rearrangeTags({ ids: ids.map(toPBUUID) })
+    //   .then((res) => res.tags.map((tag) => fromPBTag(assurePresence(tag))))
+    //   .then((tags) => {
+    //     return this.#mutex.tags.runExclusive(() => {
+    //       if (this.#tags) {
+    //         this.#tags = deepCopy(tags);
+    //       }
+    //       return tags;
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 
   async deleteTag(
@@ -772,28 +779,29 @@ export class TimetableUseCase implements ITimetableUseCase {
     | NetworkError
     | InternalServerError
   > {
-    return this.#client
-      .deleteTag({ id: toPBUUID(id) })
-      .then(() => {
-        return this.#mutex.tags.runExclusive(() => {
-          if (this.#tags) {
-            deleteElementInArray(this.#tags, id);
-          }
-          return null;
-        });
-      })
-      .catch((error) => {
-        return handleError(error, (connectError: ConnectError) => {
-          if (connectError.code === Code.Unauthenticated) {
-            return new UnauthenticatedError();
-          }
+    return new InternalServerError("現在メンテナンス中のため、この操作を実行することができません。")
+    // return this.#client
+    //   .deleteTag({ id: toPBUUID(id) })
+    //   .then(() => {
+    //     return this.#mutex.tags.runExclusive(() => {
+    //       if (this.#tags) {
+    //         deleteElementInArray(this.#tags, id);
+    //       }
+    //       return null;
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     return handleError(error, (connectError: ConnectError) => {
+    //       if (connectError.code === Code.Unauthenticated) {
+    //         return new UnauthenticatedError();
+    //       }
 
-          if (connectError.code === Code.NotFound) {
-            return new NotFoundError();
-          }
+    //       if (connectError.code === Code.NotFound) {
+    //         return new NotFoundError();
+    //       }
 
-          throw error;
-        });
-      });
+    //       throw error;
+    //     });
+    //   });
   }
 }
