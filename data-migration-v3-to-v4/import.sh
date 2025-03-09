@@ -2,6 +2,9 @@
 
 # NOTE: docker compose up db などで db が立ち上がっている状態で実行すること
 
+# COMPOSE_FILE 環境変数から参照（未設定の場合はデフォルトのパスを使用）
+COMPOSE_FILE=${COMPOSE_FILE:-../docker-compose.yml}
+
 rm -rf data/processed/*
 
 pip install -r requirements.txt
@@ -9,14 +12,15 @@ pip install -r ../parser/requirements.txt
 
 mkdir -p data/parsed
 years=(2019 2020 2021 2022 2023 2024)
-for year in ${years[@]}; do
-  python3 ../parser/download_and_parse.py --year $year --output-path data/parsed/$year.json
+for year in "${years[@]}"; do
+  python3 ../parser/download_and_parse.py --year "$year" --output-path data/parsed/"$year".json
 done
 
 mkdir -p data/processed
 python3 main.py
 
-docker compose -f ../docker-compose.yml run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
+# db-migration 用のコンテナ起動（-f で参照するファイルは環境変数 COMPOSE_FILE を利用）
+docker compose -f "$COMPOSE_FILE" run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
 
 # テーブル名と対応するCSVファイルの組み合わせ
 csv_groups=(
@@ -33,19 +37,21 @@ csv_groups=(
   "registered_course_tag_ids:registered_course_tag_ids.csv"
 )
 
-docker exec twinte-db sh -c "mkdir -p /tmp/v3_dump"
+# コンテナ内の一時ディレクトリ作成（サービス名を db に変更）
+docker compose exec db mkdir -p /tmp/v3_dump
 
 # 全てのCSVファイルをコンテナにコピー
 for group in "${csv_groups[@]}"; do
   IFS=":" read -r table csvs <<< "$group"
   for csv in $csvs; do
-    docker cp data/processed/$csv twinte-db:/tmp/v3_dump/$csv
+    # docker compose cp を利用（サービス名は db）
+    docker compose cp data/processed/"$csv" db:/tmp/v3_dump/"$csv"
   done
 done
 
-# "null" は PostgreSQL の COPY コマンドで文字列と解釈されるので null に変換
+# PostgreSQL の COPY コマンドで "null" を文字列と解釈しないように変換
 # Ref: https://www.postgresql.org/docs/current/sql-copy.html
-docker exec twinte-db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
+docker compose exec db sh -c "sed -i 's/\"null\"/null/g' /tmp/v3_dump/*"
 
 POSTGRES_URL=${POSTGRES_URL:-"postgres://postgres:password@db:5432/twinte_db?sslmode=disable"}
 
@@ -54,6 +60,6 @@ for group in "${csv_groups[@]}"; do
   IFS=":" read -r table csvs <<< "$group"
   for csv in $csvs; do
     echo "Importing $csv to $table"
-    docker exec -i twinte-db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH (FORMAT csv, HEADER true, NULL 'NULL')\""
+    docker compose exec -T db sh -c "psql -d $POSTGRES_URL -c \"COPY $table FROM '/tmp/v3_dump/$csv' WITH (FORMAT csv, HEADER true, NULL 'NULL')\""
   done
 done
