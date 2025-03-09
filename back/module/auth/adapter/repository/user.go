@@ -95,7 +95,7 @@ func applyUserFilter(db *gorm.DB, filter authport.UserFilter) *gorm.DB {
 	subdb := db
 
 	if id, ok := filter.ID.Get(); ok {
-		db.Where("id = ?", id.String())
+		db = db.Where("id = ?", id.String())
 	}
 
 	if userAuthentication, ok := filter.UserAuthentication.Get(); ok {
