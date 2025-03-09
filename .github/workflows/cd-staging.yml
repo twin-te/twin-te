@@ -127,7 +127,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Deploy to APP Server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ secrets.APP_HOST }}
           username: ${{ secrets.USERNAME }}
@@ -135,7 +135,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: ~/twin-te/infra/staging/app/script/deploy.sh
       - name: Deploy to DB Server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ secrets.DB_HOST }}
           username: ${{ secrets.USERNAME }}
