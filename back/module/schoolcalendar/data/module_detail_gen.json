@@ -348,5 +348,75 @@
     "module": "SpringVacation",
     "start": "2025-02-18",
     "end": "2025-03-31"
+  },
+  {
+    "id": 51,
+    "year": 2025,
+    "module": "SpringVacation",
+    "start": "2025-04-01",
+    "end": "2025-04-04"
+  },
+  {
+    "id": 52,
+    "year": 2025,
+    "module": "SpringA",
+    "start": "2025-04-05",
+    "end": "2025-05-22"
+  },
+  {
+    "id": 53,
+    "year": 2025,
+    "module": "SpringB",
+    "start": "2025-05-23",
+    "end": "2025-07-03"
+  },
+  {
+    "id": 54,
+    "year": 2025,
+    "module": "SpringC",
+    "start": "2025-07-04",
+    "end": "2025-08-08"
+  },
+  {
+    "id": 55,
+    "year": 2025,
+    "module": "SummerVacation",
+    "start": "2025-08-09",
+    "end": "2025-09-30"
+  },
+  {
+    "id": 56,
+    "year": 2025,
+    "module": "FallA",
+    "start": "2025-10-01",
+    "end": "2025-11-10"
+  },
+  {
+    "id": 57,
+    "year": 2025,
+    "module": "FallB",
+    "start": "2025-11-11",
+    "end": "2025-12-26"
+  },
+  {
+    "id": 58,
+    "year": 2025,
+    "module": "WinterVacation",
+    "start": "2025-12-27",
+    "end": "2026-01-04"
+  },
+  {
+    "id": 59,
+    "year": 2025,
+    "module": "FallC",
+    "start": "2026-01-05",
+    "end": "2026-02-16"
+  },
+  {
+    "id": 60,
+    "year": 2025,
+    "module": "SpringVacation",
+    "start": "2026-02-17",
+    "end": "2026-03-31"
   }
 ]
