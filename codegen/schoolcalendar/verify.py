@@ -1,8 +1,8 @@
+import datetime
 import json
 import sys
-import datetime
 from pathlib import Path
-from typing import TypedDict, Literal, Final
+from typing import TypedDict, Final
 
 
 class ModuleDetailJson(TypedDict):
