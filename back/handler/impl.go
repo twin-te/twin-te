@@ -15,6 +15,7 @@ import (
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	unifiedmodule "github.com/twin-te/twin-te/back/module/unified"
 )
 
 var _ http.Handler = (*impl)(nil)
@@ -45,6 +46,7 @@ func New(
 	donationUseCase donationmodule.UseCase,
 	schoolcalendarUseCase schoolcalendarmodule.UseCase,
 	timetableUseCase timetablemodule.UseCase,
+	unifiedUseCase unifiedmodule.UseCase,
 ) *impl {
 	authv4Handler := authv4.New(
 		accessController,
@@ -60,6 +62,7 @@ func New(
 		donationUseCase,
 		schoolcalendarUseCase,
 		timetableUseCase,
+		unifiedUseCase,
 	)
 
 	apiv4RPCHandler = cors.New(cors.Options{
