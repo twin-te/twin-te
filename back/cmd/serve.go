@@ -30,6 +30,7 @@ import (
 	timetablequery "github.com/twin-te/twin-te/back/module/timetable/adapter/query"
 	timetablerepository "github.com/twin-te/twin-te/back/module/timetable/adapter/repository"
 	timetableusecase "github.com/twin-te/twin-te/back/module/timetable/usecase"
+	unifiedusecase "github.com/twin-te/twin-te/back/module/unified/usecase"
 )
 
 // serveCmd represents the serve command
@@ -67,6 +68,8 @@ var serveCmd = &cobra.Command{
 		timetableRepository := timetablerepository.New(db)
 		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableQuery, timetableRepository)
 
+		unifiedUseCase := unifiedusecase.New(accessController, schoolcalendarUseCase, timetableUseCase)
+
 		announcements, err := announcementdata.LoadAnnouncements()
 		if err != nil {
 			log.Fatalln(err)
@@ -101,6 +104,7 @@ var serveCmd = &cobra.Command{
 			donationUseCase,
 			schoolcalendarUseCase,
 			timetableUseCase,
+			unifiedUseCase,
 		)
 
 		mux := http.NewServeMux()

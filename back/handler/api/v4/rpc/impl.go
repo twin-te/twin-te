@@ -11,18 +11,21 @@ import (
 	authv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/auth/v1/svc"
 	donationv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/donation/v1/svc"
 	schoolcalendarv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/schoolcalendar/v1/svc"
-	timetablev1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/timetable/v1/srv"
+	timetablev1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/timetable/v1/svc"
+	unifiedv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/unified/v1/svc"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1/announcementv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1/authv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/donation/v1/donationv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1/schoolcalendarv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/timetable/v1/timetablev1connect"
+	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/unified/v1/unifiedv1connect"
 	"github.com/twin-te/twin-te/back/handler/common/interceptor"
 	announcementmodule "github.com/twin-te/twin-te/back/module/announcement"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	unifiedmodule "github.com/twin-te/twin-te/back/module/unified"
 )
 
 var _ http.Handler = (*impl)(nil)
@@ -33,6 +36,7 @@ var _ http.Handler = (*impl)(nil)
 //   - "/donation.v1"
 //   - "/schoolcalendar.v1"
 //   - "/timetable.v1"
+//   - "/unified.v1"
 type impl struct {
 	pattenToHandler map[string]http.Handler
 }
@@ -58,6 +62,7 @@ func New(
 	donationUseCase donationmodule.UseCase,
 	schoolcalendarUseCase schoolcalendarmodule.UseCase,
 	timetableUseCase timetablemodule.UseCase,
+	unifiedUseCase unifiedmodule.UseCase,
 ) *impl {
 	h := &impl{
 		pattenToHandler: map[string]http.Handler{},
@@ -89,6 +94,10 @@ func New(
 	// "/timetable.v1"
 	timetablev1Svc := timetablev1svc.New(timetableUseCase)
 	h.register(timetablev1connect.NewTimetableServiceHandler(timetablev1Svc, handlerOptions...))
+
+	// "/unified.v1"
+	unifiedv1Svc := unifiedv1svc.New(unifiedUseCase)
+	h.register(unifiedv1connect.NewUnifiedServiceHandler(unifiedv1Svc, handlerOptions...))	
 
 	return h
 }
