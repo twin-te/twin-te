@@ -46,12 +46,13 @@
               label="担当教員"
             ></MultiTextFieldEditor>
           </section>
-          <section class="main__room">
+          <section id="section-rooms" ref="sectionRoom" class="main__room">
             <RoomEditor
               v-model:rooms="rooms"
               :schedules="targetSchedules"
               placeholder="例) 研究室"
               label="授業場所"
+              :highlight-label="isEditRooms"
             ></RoomEditor>
           </section>
           <section class="main__method method">
@@ -108,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from "vue-router";
 import { isResultError, NotFoundError } from "~/domain/error";
 import { methods } from "~/domain/method";
@@ -242,6 +243,15 @@ const onClickIconButton = () => {
   // }
   openModal();
 };
+
+/** 教室編集ボタンから遷移したときの処理 */
+const isEditRooms = computed(() => route.hash === '#section-rooms')
+const sectionRoom = ref<HTMLElement>()
+watch(sectionRoom, () => {
+  if (sectionRoom.value && isEditRooms.value && rooms.value.length == 0) {
+    sectionRoom.value.scrollIntoView()
+  }
+})
 </script>
 
 <style scoped lang="scss">
@@ -280,6 +290,10 @@ const onClickIconButton = () => {
   .button {
     display: inline-block;
   }
+}
+
+.highlight {
+  background-color: #faf0dc;
 }
 
 .method {
