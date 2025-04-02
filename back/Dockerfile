@@ -1,7 +1,7 @@
-FROM golang:1.22 AS local
+FROM golang:1.23 AS local
 WORKDIR /usr/src/twin-te/back
 
-RUN go install golang.org/x/tools/gopls@latest \
+RUN go install golang.org/x/tools/gopls@v0.18.1 \
   && go install github.com/bufbuild/buf/cmd/buf@latest \
   && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest \
   && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
