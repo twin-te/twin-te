@@ -172,7 +172,7 @@ func applyRegisteredCourseFilter(db *gorm.DB, filter timetableport.RegisteredCou
 
 	if tagID, ok := filter.TagID.Get(); ok {
 		db = db.Where(
-			"id = ( ? )",
+			"id IN ( ? )",
 			subdb.Select("registered_course_id").Where("tag_id = ?",
 				tagID.String(),
 			).Table("registered_course_tag_ids"),
