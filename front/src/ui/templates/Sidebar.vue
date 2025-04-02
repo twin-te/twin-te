@@ -115,6 +115,8 @@ const links = ref<Content[]>(
   ].filter((v) => v.show)
 );
 
+const { setting, updateSetting } = useSetting();
+
 const navigateHandler = async (link: string) => {
   const shareMessage = "#Twinte";
   if (link.startsWith("https://")) {
@@ -131,11 +133,20 @@ const navigateHandler = async (link: string) => {
         break;
       case "share":
         closeSidebar();
+        const share: ((message: string) => unknown) | undefined = isiOS()
+          ? window.webkit?.messageHandlers?.share?.postMessage
+          : window.android?.share;
+        if (share == null) return;
+
+        const prevShowRooms = setting.value.showRooms;
+        await updateSetting({ showRooms: false });
+
         setTimeout(() => {
-          if (isiOS())
-            window.webkit?.messageHandlers?.share?.postMessage(shareMessage);
-          else window.android?.share(shareMessage);
-        }, 300);
+          share(shareMessage);
+          setTimeout(() => {
+            updateSetting({ showRooms: prevShowRooms });
+          }, 200);
+        }, 500);
         break;
       default:
         router.push(link);

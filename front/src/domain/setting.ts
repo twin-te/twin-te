@@ -4,6 +4,7 @@ export type Setting = {
   nightPeriodMode: boolean; // Whether to show 7 and 8 periods.
   timeLabelMode: boolean; // Whether to show the start and end time in the timetable.
   displayYear: number; // Year used for course display and search. 0 means current year.
+  showRooms: boolean; // Whether to show rooms in the timetable
 };
 
 export const settingProps: (keyof Setting)[] = [
@@ -12,6 +13,7 @@ export const settingProps: (keyof Setting)[] = [
   "nightPeriodMode",
   "timeLabelMode",
   "displayYear",
+  "showRooms",
 ];
 
 export const getInitialSetting = (): Setting => ({
@@ -20,4 +22,5 @@ export const getInitialSetting = (): Setting => ({
   nightPeriodMode: false,
   timeLabelMode: true,
   displayYear: 0,
+  showRooms: true,
 });

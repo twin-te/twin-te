@@ -6,6 +6,7 @@ export type LocalStoragePropType = {
   nightPeriodMode: boolean;
   timeLabelMode: boolean;
   displayYear: number;
+  showRooms: boolean;
 };
 
 export type LocalStorageHandler<T> = {
@@ -54,4 +55,5 @@ export const localStorageConfig: LocalStorageConfig = {
   nightPeriodMode: createLocalStorageBooleanHandler("nightPeriodMode"),
   timeLabelMode: createLocalStorageBooleanHandler("timeLabelMode"),
   displayYear: createLocalStorageNumberHandler("displayYear"),
+  showRooms: createLocalStorageBooleanHandler("showRooms"),
 };
