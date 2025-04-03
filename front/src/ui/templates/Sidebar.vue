@@ -133,16 +133,14 @@ const navigateHandler = async (link: string) => {
         break;
       case "share":
         closeSidebar();
-        const share: ((message: string) => unknown) | undefined = isiOS()
-          ? window.webkit?.messageHandlers?.share?.postMessage
-          : window.android?.share;
-        if (share == null) return;
 
         const prevShowRooms = setting.value.showRooms;
         await updateSetting({ showRooms: false });
 
         setTimeout(() => {
-          share(shareMessage);
+          if (isiOS())
+            window.webkit?.messageHandlers?.share?.postMessage(shareMessage);
+          else window.android?.share(shareMessage);
           setTimeout(() => {
             updateSetting({ showRooms: prevShowRooms });
           }, 200);
