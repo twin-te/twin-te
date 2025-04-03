@@ -44,7 +44,7 @@ export default defineComponent({
     highlightLabel: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   emits: ["update:rooms"],
   setup(props, { emit }) {
@@ -78,7 +78,8 @@ export default defineComponent({
     );
 
     const addRoom = () => {
-      const schedules = props.rooms.length === 0 ? sortSchedules([...props.schedules]) : [];
+      const schedules =
+        props.rooms.length === 0 ? sortSchedules([...props.schedules]) : [];
       const newRooms = [...props.rooms, { name: "", schedules }];
       emit("update:rooms", newRooms);
     };

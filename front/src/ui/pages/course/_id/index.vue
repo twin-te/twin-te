@@ -51,9 +51,15 @@
           <CourseDetail item="授業場所" :value="displayCourse.room">
             <DecoratedIcon iconName="room"></DecoratedIcon>
             <template #value>
-              <template v-if="displayCourse.room">{{ displayCourse.room }}</template>
+              <template v-if="displayCourse.room">{{
+                displayCourse.room
+              }}</template>
               <template v-else>
-                <RouterLink class="add-room-link" :to="`/course/${id}/edit#section-rooms`">教室情報を追加する</RouterLink>
+                <RouterLink
+                  class="add-room-link"
+                  :to="`/course/${id}/edit#section-rooms`"
+                  >教室情報を追加する</RouterLink
+                >
               </template>
             </template>
           </CourseDetail>
@@ -453,9 +459,9 @@ if (displayCourse.value.code === "") popupContents.splice(1, 1);
   font-weight: 400;
   border-bottom: solid 1px;
   padding-right: 1.8rem;
-  
+
   &::after {
-    content: '';
+    content: "";
     vertical-align: middle;
     top: 8px;
     margin-left: 4px;

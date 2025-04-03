@@ -1,12 +1,12 @@
 <script setup lang="ts">
 defineProps<{
-  item: string
-  value: string
-}>()
+  item: string;
+  value: string;
+}>();
 defineSlots<{
-  default(): unknown
-  value(props: { value: string}): unknown
-}>()
+  default(): unknown;
+  value(props: { value: string }): unknown;
+}>();
 </script>
 
 <template>

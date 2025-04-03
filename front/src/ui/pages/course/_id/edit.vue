@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { isResultError, NotFoundError } from "~/domain/error";
 import { methods } from "~/domain/method";
@@ -245,13 +245,13 @@ const onClickIconButton = () => {
 };
 
 /** 教室編集ボタンから遷移したときの処理 */
-const isEditRooms = computed(() => route.hash === '#section-rooms')
-const sectionRoom = ref<HTMLElement>()
+const isEditRooms = computed(() => route.hash === "#section-rooms");
+const sectionRoom = ref<HTMLElement>();
 watch(sectionRoom, () => {
   if (sectionRoom.value && isEditRooms.value && rooms.value.length == 0) {
-    sectionRoom.value.scrollIntoView()
+    sectionRoom.value.scrollIntoView();
   }
-})
+});
 </script>
 
 <style scoped lang="scss">
