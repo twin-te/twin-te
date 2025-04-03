@@ -16,7 +16,7 @@ defineSlots<{
     </div>
     <div class="course-detail__item">{{ item }}</div>
     <div class="course-detail__value">
-      <slot name="value">{{ value }}</slot>
+      <slot :value="value" name="value">{{ value }}</slot>
     </div>
   </div>
 </template>
