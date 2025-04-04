@@ -1,8 +1,12 @@
-name: CI
+name: CI(front)
 on: [push]
 jobs:
   build:
     runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: ./front
 
     steps:
       - uses: actions/checkout@v4
