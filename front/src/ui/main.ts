@@ -1,6 +1,5 @@
 import "core-js/features/array/at";
 import { createGtm } from "@gtm-support/vue-gtm";
-import { BrowserTracing } from "@sentry/tracing";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@vueuse/head";
 import { createApp } from "vue";
@@ -15,11 +14,11 @@ Sentry.init({
   app,
   dsn: String(import.meta.env.VITE_APP_SENTRY_URL ?? ""),
   integrations: [
-    new BrowserTracing({
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+    Sentry.browserTracingIntegration({
+      router,
       tracingOrigins: ["app.twinte.net"],
     }),
-    new Sentry.Replay({
+    Sentry.replayIntegration({
       maskAllText: false,
     }),
   ],

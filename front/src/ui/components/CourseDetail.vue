@@ -1,18 +1,12 @@
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  props: {
-    item: {
-      type: String,
-      required: true,
-    },
-    value: {
-      type: String,
-      required: true,
-    },
-  },
-});
+<script setup lang="ts">
+defineProps<{
+  item: string;
+  value: string;
+}>();
+defineSlots<{
+  default(): unknown;
+  value(props: { value: string }): unknown;
+}>();
 </script>
 
 <template>
@@ -21,7 +15,9 @@ export default defineComponent({
       <slot></slot>
     </div>
     <div class="course-detail__item">{{ item }}</div>
-    <div class="course-detail__value">{{ value }}</div>
+    <div class="course-detail__value">
+      <slot :value="value" name="value">{{ value }}</slot>
+    </div>
   </div>
 </template>
 

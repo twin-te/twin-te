@@ -41,6 +41,10 @@ export default defineComponent({
       type: String as PropType<"normal" | "slim">,
       default: "normal",
     },
+    highlightLabel: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["update:rooms"],
   setup(props, { emit }) {
@@ -74,7 +78,9 @@ export default defineComponent({
     );
 
     const addRoom = () => {
-      const newRooms = [...props.rooms, { name: "", schedules: [] }];
+      const schedules =
+        props.rooms.length === 0 ? sortSchedules([...props.schedules]) : [];
+      const newRooms = [...props.rooms, { name: "", schedules }];
       emit("update:rooms", newRooms);
     };
 
@@ -131,6 +137,7 @@ export default defineComponent({
   <div class="room-editor">
     <Label
       v-if="label !== ''"
+      :class="{ highlight: highlightLabel }"
       :value="label"
       :mandatory="mandatory"
       :size="size"
@@ -187,5 +194,8 @@ export default defineComponent({
     display: grid;
     gap: $spacing-5;
   }
+}
+.highlight {
+  background: rgba(251, 255, 85, 0.7);
 }
 </style>

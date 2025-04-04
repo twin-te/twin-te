@@ -90,6 +90,7 @@ export default defineComponent({
           :ellipsis="true"
         ></CourseDetailMini>
         <CourseDetailMini
+          v-if="course.room"
           iconName="room"
           :text="course.room"
           :ellipsis="true"
@@ -137,7 +138,7 @@ export default defineComponent({
 <style scoped lang="scss">
 @import "~/ui/styles";
 
-$grid-template-pc: "checkbox ... courseId   ... ...    ... link" auto
+$grid-template-pc: "checkbox ... courseId   ... detail    ... link" auto
   "checkbox ... ...        ... detail ... link" 0.2rem
   "checkbox ... courseName ... detail ... link" auto
   "checkbox ... ...        ... detail ... link" $spacing-1
@@ -210,10 +211,12 @@ $grid-template-pc: "checkbox ... courseId   ... ...    ... link" auto
     &.--expanded {
       display: flex;
     }
+
     @include pc {
+      flex-direction: column;
       .course-detail-mini {
-        flex: 0 0 calc(50% - #{$spacing-2 / 2});
-        justify-content: flex-start;
+        width: fit-content;
+        max-width: 100%;
       }
     }
   }

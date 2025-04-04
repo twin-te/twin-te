@@ -119,6 +119,7 @@
                   :isChecked="isChecked(searchResult.course.id).value"
                   :isDetailed="detailed"
                   :isExpanded="courseIdToExpanded[searchResult.id]"
+                  :with-hr="index < searchResults.length - 1"
                   @click-checkbox="onClickCheckbox(searchResult)"
                   @click-card="onClickCard(searchResult.id)"
                 ></CardCourse>

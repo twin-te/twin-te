@@ -99,7 +99,9 @@
             class="table__course"
             :state="courses.length === 0 ? 'none' : 'default'"
             :name="courses.length === 0 ? '' : courses[0].name"
-            :room="courses.length === 0 ? '' : courses[0].room"
+            :room="
+              !setting.showRooms || courses.length === 0 ? '' : courses[0].room
+            "
             :caution="courses.length > 1 ? `他${courses.length - 1}件` : ''"
             @click="() => onClickCourseTile(day, period, courses)"
           />
