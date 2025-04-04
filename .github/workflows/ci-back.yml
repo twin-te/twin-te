@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: ./back/go.mod
-          cache-dependency-path: ./back/go.sub
+          cache-dependency-path: ./back/go.sum
 
       - name: Install dependencies
         run: go get .
