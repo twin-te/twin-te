@@ -463,14 +463,14 @@ if (displayCourse.value.code === "") popupContents.splice(1, 1);
   &::after {
     content: "";
     vertical-align: middle;
-    top: 8px;
+    top: 7px;
     margin-left: 4px;
     width: 0.7rem;
     height: 0.7rem;
     position: absolute;
-    border: solid 0 black;
-    border-top-width: 1px;
-    border-right-width: 1px;
+    border: solid 0 rgb(var(--color-text-main));
+    border-top-width: 2px;
+    border-right-width: 2px;
     transform: rotate(45deg);
   }
 }
