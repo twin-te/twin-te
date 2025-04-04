@@ -1,0 +1,26 @@
+name: CI(back)
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: ./back
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./back/go.mod
+          cache-dependency-path: ./back/go.sum
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v ./...

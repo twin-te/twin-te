@@ -1,0 +1,39 @@
+name: CI(front)
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: ./front
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        env:
+          CI: true
+
+      - name: Format
+        run: bun run format
+        env:
+          CI: true
+
+      - name: Lint
+        run: bun run lint
+        env:
+          CI: true
+
+      - name: Test
+        run: bun run test --ci --coverage --maxWorkers=2
+        env:
+          CI: true
+
+      - name: Build
+        run: bun run build
+        env:
+          CI: true
