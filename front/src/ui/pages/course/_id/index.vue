@@ -89,7 +89,7 @@
           placeholder="メモを入力"
           height="10.3rem"
           style="width: 100%"
-          @update:modelValue="updateMemo"
+          @change="updateMemo"
         ></TextFieldMultilines>
         <section class="main__attendance attendance">
           <div class="attendance__item">
@@ -255,9 +255,13 @@ const updateCourse = (
   });
 };
 
-const updateMemo = async (newMemo: string) => {
-  displayCourse.value = { ...displayCourse.value, memo: newMemo };
-  await updateCourse(id, { memo: newMemo });
+const updateMemo = async () => {
+  const memo = displayCourse.value.memo;
+  displayCourse.value = {
+    ...displayCourse.value,
+    memo,
+  };
+  await updateCourse(id, { memo });
 };
 
 const updateCounter = async (

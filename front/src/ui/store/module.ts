@@ -10,6 +10,7 @@ import { schoolCalendarUseCase } from "~/usecases";
 
 const module = ref<BaseModule>("SpringA");
 const currentModule = ref<BaseModule>("SpringA");
+const moduleInitialized = ref<boolean>(false);
 
 const setModule = (newModule: BaseModule) => {
   module.value = newModule;
@@ -39,12 +40,14 @@ const schoolCalendarModuleToBaseModule = (
 };
 
 const initializeModule = async () => {
+  if (moduleInitialized.value) return;
   return schoolCalendarUseCase.getCurrentModule().then((result) => {
     if (isResultError(result)) throw result;
 
     const baseModule: BaseModule = schoolCalendarModuleToBaseModule(result);
 
     module.value = currentModule.value = baseModule;
+    moduleInitialized.value = true;
   });
 };
 
