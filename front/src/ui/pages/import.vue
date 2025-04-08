@@ -15,7 +15,7 @@
     </PageHeader>
     <div class="main">
       <section key="result" class="main__result">
-        <Card v-show="courseResults.length > 0">
+        <Card v-if="courseResults.length > 0">
           <div
             v-for="(courseResult, i) in courseResults"
             :key="courseResult.course.id"
@@ -34,6 +34,10 @@
             />
           </div>
         </Card>
+        <p v-else>
+          インポートする授業が見つかりませんでした。<br />
+          TWINSで履修登録が完了しているかご確認の上、再度お試しください。
+        </p>
       </section>
     </div>
     <section class="import__bottom">
@@ -117,15 +121,19 @@ const { displayToast } = useToast();
 
 if (typeof route.query.codes !== "string") {
   displayToast("授業のインポートに失敗しました。");
-  await router.push("/");
+  router.push("/");
 }
 
-const codes: string[] = (route.query.codes as string).split(",");
+const codes = computed(() =>
+  typeof route.query.codes === "string"
+    ? route.query.codes.split(",").filter((code) => code)
+    : []
+);
 
 /** result */
 const result = await timetableUseCase.listCoursesByCodes({
   year: appliedYear.value,
-  codes,
+  codes: codes.value,
 });
 if (isResultError(result)) throw result;
 
@@ -151,7 +159,7 @@ const selectedCourseResults = computed(() =>
   courseResults.filter(({ selected }) => selected)
 );
 
-const missingCodes = codes.filter(
+const missingCodes = codes.value.filter(
   (code) => result.find((course) => course.code === code) == undefined
 );
 if (missingCodes.length > 0) {
