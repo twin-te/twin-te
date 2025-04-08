@@ -15,25 +15,33 @@
     </PageHeader>
     <div class="main">
       <section key="result" class="main__result">
-        <Card v-show="courseResults.length > 0">
-          <div
-            v-for="(courseResult, i) in courseResults"
-            :key="courseResult.course.id"
-            class="result__row"
-          >
-            <CardCourse
-              :course="courseResult.course"
-              :isChecked="courseResult.selected"
-              :isDetailed="false"
-              :isExpanded="courseResult.expanded"
-              :withHr="i < courseResults.length - 1"
-              @click-checkbox="
-                courseResults[i].selected = !courseResult.selected
-              "
-              @click-card="courseResults[i].expanded = !courseResult.expanded"
-            />
-          </div>
-        </Card>
+        <template v-if="courseResults.length > 0">
+          <Card>
+            <div
+              v-for="(courseResult, i) in courseResults"
+              :key="courseResult.course.id"
+              class="result__row"
+            >
+              <CardCourse
+                :course="courseResult.course"
+                :isChecked="courseResult.selected"
+                :isDetailed="false"
+                :isExpanded="courseResult.expanded"
+                :withHr="i < courseResults.length - 1"
+                @click-checkbox="
+                  courseResults[i].selected = !courseResult.selected
+                "
+                @click-card="courseResults[i].expanded = !courseResult.expanded"
+              />
+            </div>
+          </Card>
+        </template>
+        <template v-else>
+          <p>
+            インポートする授業が見つかりませんでした。
+            TWINSで履修登録が完了しているかご確認の上、再度お試しください。
+          </p>
+        </template>
       </section>
     </div>
     <section class="import__bottom">
@@ -120,7 +128,9 @@ if (typeof route.query.codes !== "string") {
   await router.push("/");
 }
 
-const codes: string[] = (route.query.codes as string).split(",");
+const codes: string[] = (route.query.codes as string)
+  .split(",")
+  .filter((code) => code);
 
 /** result */
 const result = await timetableUseCase.listCoursesByCodes({
