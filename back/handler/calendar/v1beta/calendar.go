@@ -139,6 +139,10 @@ func GetSchedules(modules []Module, ss []timetabledomain.Schedule) []Schedule {
 				continue
 			}
 			if m.Module > unifieddomain.TimetableModuleToSchoolCalendarModule[item.ModuleStart] {
+				if i == 0 {
+					continue
+				}
+
 				d := modules[i-1].End.AddDays(1)
 				for d.Before(m.Start) {
 					if d.In(jst).Weekday() == item.Day {
