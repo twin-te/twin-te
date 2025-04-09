@@ -53,7 +53,11 @@ func New(
 		authUseCase,
 	)
 
-	calendarv1betaHandler := calendarv1beta.New()
+	calendarv1betaHandler := calendarv1beta.New(
+		accessController,
+		schoolcalendarUseCase,
+		timetableUseCase,
+	)
 
 	var apiv4RPCHandler http.Handler = apiv4rpc.New(
 		accessController,
