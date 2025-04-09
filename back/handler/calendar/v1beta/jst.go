@@ -1,9 +1,17 @@
 package calendarv1beta
 
-import "time"
+import (
+	"log"
+	"time"
+)
 
 var jst *time.Location
 
 func init() {
-	jst, _ = time.LoadLocation("Asia/Tokyo") // TODO: Catch error gracefully
+	var err error
+	jst, err = time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		log.Printf("Failed to load timezone 'Asia/Tokyo': %v. Falling back to Local.", err)
+		jst = time.Local
+	}
 }
