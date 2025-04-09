@@ -94,7 +94,11 @@ func (h *impl) ICSHandler(c echo.Context) error {
 	}
 
 	var resp bytes.Buffer
-	WriteICalendar(&resp, modules, courses)
+	err = WriteICalendar(&resp, modules, courses)
+	if err != nil {
+		log.Printf("failed to write iCalendar: %+v", err)
+		return err
+	}
 
 	return c.Stream(http.StatusOK, "application/octet-stream", &resp)
 }
