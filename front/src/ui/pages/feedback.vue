@@ -22,6 +22,20 @@
             @update:selected-option="updateSelectedOption"
           ></Dropdown>
         </section>
+        <section v-if="feedbackType === 'Bug'" class="feedback__row">
+          <Label value="お問い合わせの前に" />
+          <div class="feedback__note">
+            既知の不具合は
+            <a
+              href="https://x.com/te_twin"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              X の公式アカウント</a
+            >にて発信しています。<br />
+            フィードバックの前に、まずは既知の不具合の確認をお願いします。
+          </div>
+        </section>
         <section class="feedback__row">
           <Label value="スクリーンショットの添付"></Label>
           <div class="feedback__note">
@@ -193,6 +207,10 @@ const onClickButton = async () => {
   &__note {
     @include text-description-sub;
     margin: 1rem 0;
+
+    a {
+      text-decoration: underline;
+    }
   }
   &__checkbox {
     margin: $spacing-2 0;
