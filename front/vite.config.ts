@@ -79,4 +79,8 @@ export default defineConfig(({ mode }) => ({
       ],
     },
   },
+  server: {
+      allowedHosts: ["front", "host.docker.internal"],
+      host: true
+  },
 }));
