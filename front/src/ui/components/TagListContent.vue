@@ -1,35 +1,29 @@
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-
+<script setup lang="ts">
 export type TagListContentMode = "default" | "edit";
 export type TagListContentDragHandle = "show" | "hide" | "disabled";
 
-export default defineComponent({
-  name: "TagListContent",
-  props: {
-    name: {
-      type: String,
-      default: "",
-    },
-    credit: {
-      type: String,
-      default: "0.0",
-    },
-    mode: {
-      type: String as PropType<TagListContentMode>,
-      default: "default",
-    },
-    textfield: {
-      type: Boolean,
-      default: false,
-    },
-    dragHandle: {
-      type: String as PropType<TagListContentDragHandle>,
-      default: "show",
-    },
-  },
-});
+withDefaults(
+  defineProps<{
+    name?: string;
+    type?: string;
+    credit?: string;
+    mode?: TagListContentMode;
+    textfield?: boolean;
+    dragHandle?: TagListContentDragHandle;
+    color?: string;
+  }>(),
+  {
+    name: "",
+    type: "default",
+    credit: "0.0",
+    mode: "default",
+    textfield: false,
+    dragHandle: "show",
+    color: null,
+  }
+);
 </script>
+
 <template>
   <div class="tag-list-content">
     <div
@@ -48,6 +42,11 @@ export default defineComponent({
       >
         drag_handle
       </div>
+      <div
+        v-if="mode === 'default'"
+        class="tag-list-content__color-chip"
+        :style="{ backgroundColor: color ? `var(--tag-${color})` : null }"
+      />
       <div
         v-if="mode === 'default' || !textfield"
         class="tag-list-content__name"
@@ -70,7 +69,8 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
+
 .tag-list-content {
   width: 100%;
 
@@ -84,6 +84,14 @@ export default defineComponent({
     &.--textfield {
       height: 4.8rem;
     }
+  }
+
+  &__color-chip {
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    background-color: rgba(var(--color-primary-light));
+    margin-right: 1rem;
   }
 
   &__name {

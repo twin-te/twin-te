@@ -31,6 +31,7 @@ export const getDisplayCreditTag = (
     id: tag.id,
     name: tag.name,
     credit: creditToDisplay(credit),
+    color: tag.color,
   };
 };
 
@@ -52,9 +53,10 @@ export const getDisplayCreditTags = (
       });
     });
 
-  return tags.map(({ id, name }) => ({
+  return tags.map(({ id, name, color }) => ({
     id,
     name,
     credit: creditToDisplay(tagIdToCredit[id]),
+    color,
   }));
 };

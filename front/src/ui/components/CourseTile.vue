@@ -1,49 +1,45 @@
-<script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { computed, PropType } from "vue";
+import { TagColor } from "~/domain/tag";
 
 export type State = "default" | "none";
 
-type Props = {
-  name: string;
-  room: string;
-  state: State;
-  caution: string;
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+  room: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String as PropType<TagColor | null>,
+    default: null,
+  },
+  state: {
+    type: String as PropType<State>,
+    required: true,
+    validator: function (value: string) {
+      return ["default", "none"].includes(value);
+    },
+  },
+  caution: {
+    type: String,
+    default: "", // 空欄の場合 caution は表示されない
+  },
+});
+
+const emit = defineEmits<{
+  click: [MouseEvent];
+}>();
+
+const handleClick = (e: MouseEvent) => {
+  emit("click", e);
 };
 
-export default defineComponent({
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    room: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String as PropType<State>,
-      required: true,
-      validator: function (value: string) {
-        return ["default", "none"].includes(value);
-      },
-    },
-    caution: {
-      type: String,
-      default: "", // 空欄の場合 caution は表示されない
-    },
-  },
-  emits: ["click"],
-  setup: (props: Props, { emit }) => {
-    const handleClick = (e: MouseEvent) => {
-      emit("click", e);
-    };
-
-    const hasCaution = computed(() => {
-      return props.caution !== "";
-    });
-
-    return { handleClick, hasCaution };
-  },
+const hasCaution = computed(() => {
+  return props.caution !== "";
 });
 </script>
 
@@ -53,6 +49,9 @@ export default defineComponent({
       tile: true,
       [`--${state}`]: true,
       [`--under-filter`]: hasCaution,
+    }"
+    :style="{
+      backgroundColor: color ? `var(--tag-${color})` : null,
     }"
     @click="handleClick"
   >
@@ -70,7 +69,7 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .tile {
   @include button-cursor;

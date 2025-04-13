@@ -12,6 +12,7 @@ func ToPBTag(tag *timetabledomain.Tag) *timetablev1.Tag {
 		UserId: sharedconv.ToPBUUID(tag.UserID),
 		Name:   tag.Name.String(),
 		Order:  int32(tag.Order),
+		Color:  tag.Color.ToPointer(),
 	}
 	return pbTag
 }

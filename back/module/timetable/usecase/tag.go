@@ -68,7 +68,7 @@ func (uc impl) UpdateTag(ctx context.Context, in timetablemodule.UpdateTagIn) (t
 		}
 
 		tag.BeforeUpdateHook()
-		tag.Update(timetabledomain.TagDataToUpdate{Name: in.Name})
+		tag.Update(timetabledomain.TagDataToUpdate{Name: in.Name, Color: in.Color})
 		return rtx.UpdateTag(ctx, tag)
 	}, false)
 

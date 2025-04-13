@@ -303,9 +303,12 @@ func (svc *impl) DeleteRegisteredCourse(ctx context.Context, req *connect.Reques
 }
 
 func (svc *impl) CreateTag(ctx context.Context, req *connect.Request[timetablev1.CreateTagRequest]) (res *connect.Response[timetablev1.CreateTagResponse], err error) {
-	name, err := timetabledomain.ParseName(req.Msg.Name)
-	if err != nil {
-		return
+	name := shareddomain.RequiredString(timetabledomain.DefaultTagName)
+	if req.Msg.Name != nil {
+		name, err = timetabledomain.ParseName(*req.Msg.Name)
+		if err != nil {
+			return
+		}
 	}
 
 	tag, err := svc.uc.CreateTag(ctx, name)
@@ -351,6 +354,8 @@ func (svc *impl) UpdateTag(ctx context.Context, req *connect.Request[timetablev1
 			return
 		}
 	}
+
+	in.Color = mo.Some(req.Msg.Color)
 
 	tag, err := svc.uc.UpdateTag(ctx, in)
 	if err != nil {

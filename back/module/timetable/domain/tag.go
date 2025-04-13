@@ -19,6 +19,7 @@ type Tag struct {
 	UserID idtype.UserID
 	Name   shareddomain.RequiredString
 	Order  shareddomain.NonNegativeInt
+	Color  mo.Option[string]
 
 	BeforeUpdated mo.Option[*Tag]
 }
@@ -33,12 +34,16 @@ func (t *Tag) BeforeUpdateHook() {
 }
 
 type TagDataToUpdate struct {
-	Name mo.Option[shareddomain.RequiredString]
+	Name  mo.Option[shareddomain.RequiredString]
+	Color mo.Option[*string]
 }
 
 func (t *Tag) Update(data TagDataToUpdate) {
 	if name, ok := data.Name.Get(); ok {
 		t.Name = name
+	}
+	if color, ok := data.Color.Get(); ok {
+		t.Color = mo.Some(*color)
 	}
 }
 
@@ -65,3 +70,5 @@ func RearrangeTags(tags []*Tag, ids []idtype.TagID) {
 		tag.Order = idToNewOrder[tag.ID]
 	}
 }
+
+var DefaultTagName = "新しいタグ"

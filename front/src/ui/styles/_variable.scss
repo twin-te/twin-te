@@ -1,5 +1,9 @@
+@use "sass:color";
+
 @function hexToRGB($hex) {
-  @return red($hex), green($hex), blue($hex), alpha($hex);
+  @return color.channel($hex, "red", $space: rgb),
+    color.channel($hex, "green", $space: rgb),
+    color.channel($hex, "blue", $space: rgb), color.alpha($hex);
 }
 @function getColor($color_name) {
   @return rgba(var(#{$color_name}));
@@ -78,10 +82,12 @@ $dark-theme-colors: (
 :root {
   --base-liner: linear-gradient(158.17deg, #f3f5fa -1.94%, #e5e7ed 102.24%);
   --primary-liner: linear-gradient(91.58deg, #6bcedc -8.01%, #71e2dc 105.39%);
+  color-scheme: light;
   @each $key, $color in $theme-colors {
     --color-#{""+$key}: #{hexToRGB($color)};
   }
   .dark {
+    color-scheme: dark;
     --base-liner: linear-gradient(
       158.17deg,
       #0c101a -1.94%,

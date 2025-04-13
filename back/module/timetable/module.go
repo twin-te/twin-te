@@ -145,6 +145,7 @@ type UpdateRegisteredCourseIn struct {
 }
 
 type UpdateTagIn struct {
-	ID   idtype.TagID
-	Name mo.Option[shareddomain.RequiredString]
+	ID    idtype.TagID
+	Name  mo.Option[shareddomain.RequiredString]
+	Color mo.Option[*string]
 }

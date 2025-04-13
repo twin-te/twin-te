@@ -1,0 +1,38 @@
+$tag-colors: (
+  pink: (
+    light: #fde2ff,
+    dark: #974188,
+  ),
+  sky: (
+    light: #d3edff,
+    dark: #236475,
+  ),
+  mint: (
+    light: #d5f4d2,
+    dark: #004d40,
+  ),
+  peach: (
+    light: #ffe6dd,
+    dark: #8b417c,
+  ),
+  lilac: (
+    light: #e9e7fd,
+    dark: #613d85,
+  ),
+  ivory: (
+    light: #fffff0,
+    dark: #695b56,
+  ),
+);
+
+:root {
+  @each $color, $values in $tag-colors {
+    --tag-#{$color}: #{map-get($values, light)};
+  }
+
+  .dark {
+    @each $color, $values in $tag-colors {
+      --tag-#{$color}: #{map-get($values, dark)};
+    }
+  }
+}

@@ -281,5 +281,6 @@ export const fromPBTag = (pbTag: TimetableV1PB.Tag): Tag => {
     id: fromPBUUID(assurePresence(pbTag.id)),
     name: pbTag.name,
     order: pbTag.order,
+    color: pbTag.color ?? null,
   };
 };

@@ -63,6 +63,7 @@
                 :credit="element.credit"
                 :mode="mode"
                 :textfield="editingTagId === element.id"
+                :color="element.color"
                 :drag-handle="editingTagId ? 'disabled' : 'show'"
               >
                 <template #textfiled>
@@ -270,12 +271,10 @@ const onClickNormalBtn = async (tag: DisplayCreditTag) => {
           return result;
         });
       } else {
-        await timetableUseCase
-          .updateTagName(tag.id, tag.name)
-          .then((result) => {
-            if (isResultError(result)) throw result;
-            return result;
-          });
+        await timetableUseCase.updateTag(tag.id, tag.name).then((result) => {
+          if (isResultError(result)) throw result;
+          return result;
+        });
       }
     } finally {
       updateDisplayCreditTags();
@@ -341,7 +340,7 @@ const onClickDeleteModal = async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .credit {
   @include max-width;

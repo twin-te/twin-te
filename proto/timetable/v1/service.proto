@@ -183,7 +183,7 @@ message DeleteRegisteredCourseRequest {
 message DeleteRegisteredCourseResponse {}
 
 message CreateTagRequest {
-  string name = 1;
+  optional string name = 1;
 }
 
 message CreateTagResponse {
@@ -199,6 +199,7 @@ message ListTagsResponse {
 message UpdateTagRequest {
   shared.UUID id = 1;
   optional string name = 2;
+  optional string color = 3;
 }
 
 message UpdateTagResponse {
