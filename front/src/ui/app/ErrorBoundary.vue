@@ -127,19 +127,19 @@ const onClickBackButton = () => {
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .error-boundary {
   width: 100%;
   height: 100vh;
 
   padding: $spacing-0 $spacing-4;
+  background: var(--base-liner);
+  color: var(--text-sub-light);
+
   @include landscape {
     padding: $spacing-0 $spacing-9;
   }
-
-  background: var(--base-liner);
-  color: var(--text-sub-light);
 }
 
 .error {
