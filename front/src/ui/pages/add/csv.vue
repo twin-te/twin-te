@@ -283,7 +283,7 @@ const buttonState = computed(() => {
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .header {
   @include max-width;

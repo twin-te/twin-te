@@ -553,7 +553,7 @@ const unselectTargetCourse = () => {
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .search {
   /* @include max-width; */
 }

@@ -2,7 +2,7 @@ import path from "path";
 import { sentryRollupPlugin } from "@sentry/rollup-plugin";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
-import ViteFonts from "vite-plugin-fonts";
+import {VitePluginFonts} from "vite-plugin-fonts";
 
 const sourcemap: Record<string, "inline" | boolean> = {
   development: "inline",
@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
   server: { allowedHosts: allowedHosts[mode] },
   plugins: [
     vue(),
-    ViteFonts({
+    VitePluginFonts({
       google: {
         families: [
           "Material+Icons",

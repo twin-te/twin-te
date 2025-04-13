@@ -379,7 +379,7 @@ if (displayCourse.value.code === "") popupContents.splice(1, 1);
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .course-detail {
   @include max-width;
