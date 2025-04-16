@@ -15,7 +15,7 @@ RUN go mod download && go mod verify
 COPY . .
 CMD [ "air" ]
 
-FROM golang:1.22-bullseye AS builder
+FROM golang:1.23-bullseye AS builder
 WORKDIR /usr/src/app
 
 COPY go.mod go.sum ./

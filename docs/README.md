@@ -38,7 +38,7 @@ Access to http://localhost:4000 or http://localhost:4000/sponsorship
 Only proxy-host, db and db-migration are running in the docker container.
 
 Version
-- Go : 1.22.x
+- Go : 1.23.x
 - Nodejs : nodejs 22.x.x
 - Python : 3.12.x
 
