@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go v0.112.1
 	connectrpc.com/cors v0.1.0
 	github.com/bufbuild/connect-go v1.10.0
-	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/rs/cors v1.10.1
