@@ -1,10 +1,19 @@
 
 services:
   back:
+    hostname: back
+    ports:
+      - "8080:8080"
+      - "2345:2345"
     depends_on:
       - db
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
   
   front:
+    hostname: front
     depends_on:
       - back
   
