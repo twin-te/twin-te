@@ -80,6 +80,7 @@ services:
       POSTGRES_USER: postgres
     volumes:
       - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
@@ -133,3 +134,6 @@ networks:
   twinte-network:
     name: twinte-network
     driver: bridge
+
+volumes:
+  postgres_data:
