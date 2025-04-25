@@ -21,8 +21,11 @@
             alt="appleでログイン"
           />
         </button>
-        <button @click="login('twitter')" class="main__login-button main__btn-x">
-          <img src="../assets/login-page/logo-x.png" alt="Xのロゴマーク">
+        <button
+          class="main__login-button main__btn-x"
+          @click="login('twitter')"
+        >
+          <img src="../assets/login-page/logo-x.png" alt="Xのロゴマーク" />
           <span>Xでサインイン</span>
         </button>
         <button @click="login('google')">
@@ -147,16 +150,16 @@ export default defineComponent({
     border-radius: $radius-button;
     display: flex;
     $icon-size: 18px;
-    img{
+    img {
       width: $icon-size;
       height: $icon-size;
     }
-    span{
+    span {
       width: calc(100% - $icon-size);
-      font-size: $font-large;
+      font-size: $font-medium;
     }
   }
-  &__btn-x{
+  &__btn-x {
     color: white;
     background: black;
     padding: 14px 24px;
