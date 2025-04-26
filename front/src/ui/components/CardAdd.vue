@@ -23,6 +23,10 @@ export default defineComponent({
       type: String,
       default: "100%",
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["click-next-button"],
   setup(_, { emit }) {
@@ -48,6 +52,7 @@ export default defineComponent({
           size="medium"
           color="normal"
           iconName="arrow_forward"
+          :state="disabled ? 'disabled' : 'default'"
           @click="emitClickEvent"
         ></IconButton>
       </div>

@@ -1,3 +1,4 @@
+import { CourseLocationInfo } from "~/domain/courseLocation";
 import { isContained } from "~/utils";
 
 export type LocalStoragePropType = {
@@ -7,6 +8,7 @@ export type LocalStoragePropType = {
   timeLabelMode: boolean;
   displayYear: number;
   showRooms: boolean;
+  courseLocationInfo: CourseLocationInfo;
 };
 
 export type LocalStorageHandler<T> = {
@@ -49,6 +51,24 @@ export const createLocalStorageNumberHandler = (
   },
 });
 
+export const createLocalStorageObjectHandler = <T>(
+  prop: string
+): LocalStorageHandler<T> => ({
+  getter: () => {
+    const value = localStorage.getItem(prop);
+    if (!value) return undefined;
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return undefined;
+    }
+  },
+  setter: (value) => {
+    if (value == undefined) localStorage.removeItem(prop);
+    else localStorage.setItem(prop, JSON.stringify(value));
+  },
+});
+
 export const localStorageConfig: LocalStorageConfig = {
   darkMode: createLocalStorageBooleanHandler("darkMode"),
   saturdayCourseMode: createLocalStorageBooleanHandler("saturdayCourseMode"),
@@ -56,4 +76,5 @@ export const localStorageConfig: LocalStorageConfig = {
   timeLabelMode: createLocalStorageBooleanHandler("timeLabelMode"),
   displayYear: createLocalStorageNumberHandler("displayYear"),
   showRooms: createLocalStorageBooleanHandler("showRooms"),
+  courseLocationInfo: createLocalStorageObjectHandler("courseLocationInfo"),
 };
