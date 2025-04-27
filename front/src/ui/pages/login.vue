@@ -21,12 +21,12 @@
             alt="appleでログイン"
           />
         </button>
-        <button @click="login('twitter')">
-          <img
-            class="main__login-button"
-            src="../assets/login-page/login-twitter.svg"
-            alt="twitterでログイン"
-          />
+        <button
+          class="main__login-button main__btn-x"
+          @click="login('twitter')"
+        >
+          <img src="../assets/login-page/logo-x.png" alt="Xのロゴマーク" />
+          <span>Xでサインイン</span>
         </button>
         <button @click="login('google')">
           <img
@@ -148,6 +148,21 @@ export default defineComponent({
     width: 100%;
     box-shadow: $shadow-convex;
     border-radius: $radius-button;
+    display: flex;
+    $icon-size: 18px;
+    img {
+      width: $icon-size;
+      height: $icon-size;
+    }
+    span {
+      width: calc(100% - $icon-size);
+      font-size: $font-medium;
+    }
+  }
+  &__btn-x {
+    color: white;
+    background: black;
+    padding: 14px 24px;
   }
   &__note {
     @include text-sub-discription;
