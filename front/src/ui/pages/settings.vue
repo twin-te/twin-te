@@ -95,6 +95,17 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
+        <div v-if="isLogin" class="main__content">
+          <p>ログアウト</p>
+          <Button
+            class="button"
+            size="small"
+            color="primary"
+            :pauseActiveStyle="false"
+            @click="logout"
+            >ログアウトする</Button
+          >
+        </div>
         <div class="main__content">
           <p>アカウント情報</p>
           <Button
@@ -159,7 +170,8 @@ import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
 import { authUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
-import { useSetting, useToast } from "../store";
+import { useAuth, useSetting, useToast } from "../store";
+import { getLogoutUrl, redirectToUrl } from "../url";
 
 const router = useRouter();
 const { displayToast } = useToast();
@@ -169,6 +181,14 @@ useHead({
 });
 
 const { setting, updateSetting } = useSetting();
+
+const { isAuthenticated } = useAuth();
+const isLogin = isAuthenticated.value;
+
+/** logout */
+const logout = () => {
+  redirectToUrl(getLogoutUrl());
+};
 
 /** display year */
 const autoOption = "自動(現在の年度)";

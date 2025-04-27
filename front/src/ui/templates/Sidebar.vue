@@ -36,7 +36,7 @@ import { useRoute, useRouter } from "vue-router";
 import Button from "~/ui/components/Button.vue";
 import SidebarContent from "~/ui/components/SidebarContent.vue";
 import { isiOS, isMobile } from "~/ui/ua";
-import { getLogoutUrl, openUrl, redirectToUrl } from "~/ui/url";
+import { openUrl } from "~/ui/url";
 import { useSetting, useSidebar } from "../store";
 
 defineProps<{
@@ -48,11 +48,6 @@ const { closeSidebar } = useSidebar();
 const route = useRoute();
 const router = useRouter();
 router.afterEach(closeSidebar); // Close sidebar whenever the page transition happen.
-
-/** logout */
-const logout = () => {
-  redirectToUrl(getLogoutUrl());
-};
 
 /** year */
 const { appliedYear: year } = useSetting();
@@ -157,17 +152,7 @@ const navigateHandler = async (link: string) => {
   <div class="sidebar">
     <section class="sidebar__head">
       <Button
-        v-if="isLogin"
-        size="small"
-        layout="fill"
-        color="base"
-        :pauseActiveStyle="false"
-        @click="logout"
-      >
-        ログアウト
-      </Button>
-      <Button
-        v-else
+        v-if="!isLogin"
         size="small"
         layout="fill"
         color="primary"
