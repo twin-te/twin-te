@@ -29,7 +29,7 @@ function goBack() {
   }
 }
 
-const steps = ["description", "upload", "apply", "finish"] as const;
+const steps = ["description", "upload", "apply"] as const;
 const currentStep = ref<typeof steps[number]>("description");
 
 const localStorage = LocalStorage.getInstance();
@@ -94,7 +94,11 @@ async function upload() {
       const schedules = sortSchedules(
         removeDuplicateSchedules(registeredMap.get(course.id)?.schedules ?? [])
       );
-      console.info({ name: course.location, schedules });
+      console.info({
+        id: course.id,
+        rooms: { name: course.location, schedules },
+        schedules,
+      });
       await timetableUseCase
         .updateRegisteredCourse(course.id, {
           rooms: [
@@ -103,6 +107,7 @@ async function upload() {
               schedules,
             },
           ],
+          schedules,
         })
         .then((result) => {
           if (isResultError(result)) throw result;
@@ -116,7 +121,7 @@ async function upload() {
     displayPeriod: 5000,
     type: "primary",
   });
-  return;
+  await router.push("/");
 }
 </script>
 
@@ -166,7 +171,7 @@ async function upload() {
               新たに授業を追加した際には、再度データの登録操作が必要です。
             </li>
             <li>
-              手動または自動で既に授業場所が登録されている授業は変更されないため、
+              既に授業場所が登録されている授業は変更されないため、
               授業場所が変更された場合には手動で修正してください。
             </li>
             <li>
@@ -199,7 +204,7 @@ async function upload() {
 
         <div class="download-info">
           <h6>Excel ファイルのダウンロード方法</h6>
-          Excel ファイルは筑波大学関係者限定で配布されています。<br />
+          Excel ファイルは筑波大学関係者限定で配布されています。
           以下のリンクから、<code>kdb_(年度)--ja.xlsx</code>
           ファイルをダウンロードしてください。<br />
           <a href="https://bit.ly/UT-classroominfo" target="_blank">
@@ -236,7 +241,14 @@ async function upload() {
           </div>
         </div>
         <div class="label">以下の授業に授業場所が登録されます:</div>
-        <div class="cards__mask">
+        <div v-if="applyingCourses.length === 0" class="no-data">
+          登録できる授業が存在しません
+          <div class="small">
+            既に場所が登録されている授業には上書きされません。<br />
+            修正がある場合は手動で編集してください。
+          </div>
+        </div>
+        <div v-else class="cards__mask">
           <div class="cards">
             <div
               v-for="course in applyingCourses"
@@ -257,9 +269,13 @@ async function upload() {
         <Button
           class="btn-upload"
           color="primary"
-          size="small"
+          size="medium"
           layout="fill"
-          :state="uploadLoading ? 'disabled' : 'default'"
+          :state="
+            uploadLoading || applyingCourses.length === 0
+              ? 'disabled'
+              : 'default'
+          "
           @click="upload"
         >
           このデータを登録する</Button
@@ -353,6 +369,19 @@ async function upload() {
 .page-apply {
   display: flex;
   flex-direction: column;
+
+  .no-data {
+    flex: 1 1 0;
+    margin: variable.$spacing-4 0 variable.$spacing-6;
+    font-size: 1.4rem;
+    line-height: 1.4;
+
+    .small {
+      margin-top: variable.$spacing-1;
+      font-size: 1.2rem;
+      color: variable.getColor(--color-text-sub);
+    }
+  }
 
   .data-info {
     width: max-content;

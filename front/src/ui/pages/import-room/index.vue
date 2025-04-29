@@ -26,14 +26,8 @@ const { openSidebar } = useSidebar();
       <CardAdd
         iconName="view_list"
         heading="Excel ファイルをアップロード"
-        text="TWINS や manaba で配布されている Excel ファイルから授業場所情報を登録します。登録されたデータはアカウントごとに保存され、自動で更新されません。"
+        text="配布されている Excel ファイルから授業場所情報を登録します。"
         @click-next-button="$router.push('/import-room/excel')"
-      />
-      <CardAdd
-        text="現在開発中です。"
-        heading="TWINS の Excel ファイルから自動でインポート"
-        icon-name="cloud_download"
-        disabled
       />
     </main>
   </div>
