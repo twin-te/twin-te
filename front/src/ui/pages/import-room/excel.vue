@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { computed, customRef, reactive, ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { isResultError } from "~/domain/error";
 import { removeDuplicateSchedules, sortSchedules } from "~/domain/schedule";
 import { getKdbClassroom } from "~/infrastructure/local/courseLocationExcel";
 import { LocalStorage } from "~/infrastructure/localstorage";
 import { registeredCourseToDisplay } from "~/presentation/presenters/course";
-import { displayToSchedules } from "~/presentation/presenters/schedule";
 import Button from "~/ui/components/Button.vue";
 import CardAdd from "~/ui/components/CardAdd.vue";
 import CourseDetailMini from "~/ui/components/CourseDetailMini.vue";
@@ -22,7 +21,7 @@ const { displayToast } = useToast();
 const router = useRouter();
 
 function goBack() {
-  if (currentStep.value === "description" || currentStep.value === "finish") {
+  if (currentStep.value === "description") {
     router.back();
   } else {
     currentStep.value = "description";
