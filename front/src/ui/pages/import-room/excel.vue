@@ -228,7 +228,7 @@ async function upload() {
           <div class="data-info__content">
             <div class="title">アップロード日</div>
             <div class="content">
-              {{ dayjs(latestData.uploadAt).format(dayjsFormat) }}
+              {{ dayjs(latestData!.uploadAt).format(dayjsFormat) }}
             </div>
           </div>
           <div class="data-info__content">
