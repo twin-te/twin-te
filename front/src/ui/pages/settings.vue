@@ -95,7 +95,7 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
-        <div v-if="isLogin" class="main__content">
+        <div v-if="isAuthenticated" class="main__content">
           <p>ログアウト</p>
           <Button
             class="button"
@@ -183,7 +183,6 @@ useHead({
 const { setting, updateSetting } = useSetting();
 
 const { isAuthenticated } = useAuth();
-const isLogin = isAuthenticated.value;
 
 /** logout */
 const logout = () => {
