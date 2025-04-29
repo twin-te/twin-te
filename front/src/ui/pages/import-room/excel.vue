@@ -39,7 +39,6 @@ const dataLength = computed(() =>
 );
 
 /* upload */
-
 const loadState = ref<"ready" | "loading" | "error" | "ok">("ready");
 async function load(file: File) {
   loadState.value = "loading";
@@ -93,11 +92,6 @@ async function upload() {
       const schedules = sortSchedules(
         removeDuplicateSchedules(registeredMap.get(course.id)?.schedules ?? [])
       );
-      console.info({
-        id: course.id,
-        rooms: { name: course.location, schedules },
-        schedules,
-      });
       await timetableUseCase
         .updateRegisteredCourse(course.id, {
           rooms: [
