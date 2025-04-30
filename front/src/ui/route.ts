@@ -19,6 +19,8 @@ const Import = () => import("./pages/import.vue");
 const Login = () => import("./pages/login.vue");
 const News = () => import("./pages/news.vue");
 const Settings = () => import("./pages/settings.vue");
+const ImportRoom = () => import("./pages/import-room/index.vue");
+const ImportRoomExcel = () => import("./pages/import-room/excel.vue");
 
 const history = createWebHistory();
 
@@ -45,6 +47,8 @@ const routes: RouteRecordRaw[] = [
   { path: "/news", component: News },
   { path: "/credit", component: Credit },
   { path: "/credit/:id", component: Courses },
+  { path: "/import-room", component: ImportRoom },
+  { path: "/import-room/excel", component: ImportRoomExcel },
   { path: "/:pathMatch(.*)*", component: Error404 },
 ];
 

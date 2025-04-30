@@ -64,6 +64,12 @@ const menu = ref<Content[]>(
   [
     { iconName: "home", item: "ホーム", link: "/", show: true },
     { iconName: "add", item: "授業の追加", link: "/add", show: true },
+    {
+      iconName: "meeting_room",
+      item: "授業場所の登録",
+      link: "/import-room",
+      show: true,
+    },
     { iconName: "payments", item: "単位数", link: "/credit", show: true },
     {
       iconName: "event_note",
