@@ -95,27 +95,27 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
-        <div v-if="isAuthenticated" class="main__content">
-          <p>ログアウト</p>
-          <Button
-            class="button"
-            size="small"
-            color="primary"
-            :pauseActiveStyle="false"
-            @click="logout"
-            >ログアウトする</Button
-          >
-        </div>
-        <div class="main__content">
+        <div class="main__content--account-btns">
           <p>アカウント情報</p>
-          <Button
-            class="button"
-            size="small"
-            color="danger"
-            :pauseActiveStyle="false"
-            @click="onClickAccountDeleteModel()"
-            >アカウントを削除する</Button
-          >
+          <div>
+            <Button
+              v-if="isAuthenticated"
+              class="button"
+              size="small"
+              color="primary"
+              :pauseActiveStyle="false"
+              @click="logout"
+              >ログアウトする</Button
+            >
+            <Button
+              class="button"
+              size="small"
+              color="danger"
+              :pauseActiveStyle="false"
+              @click="onClickAccountDeleteModel()"
+              >アカウントを削除する</Button
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -276,9 +276,6 @@ const confirmDeleteAccount = async () => {
     padding: 1.2rem 0;
     color: getColor(--color-text-main);
     font-weight: 500;
-    & .button {
-      margin: 0 0 0 auto;
-    }
     & .switch {
       margin: 0 0 0 auto;
     }
@@ -290,6 +287,23 @@ const confirmDeleteAccount = async () => {
         line-height: $single-line;
         font-weight: 500;
         color: getColor(--color-text-main);
+      }
+    }
+    &--account-btns {
+      display: flex;
+      padding: 1.2rem 0;
+      p {
+        color: getColor(--color-text-main);
+        font-weight: 500;
+      }
+      div {
+        margin: 0 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        & .button {
+          margin: 0 0 0 auto;
+        }
       }
     }
   }
