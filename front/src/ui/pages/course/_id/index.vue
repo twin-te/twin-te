@@ -55,11 +55,16 @@
                 displayCourse.room
               }}</template>
               <template v-else>
-                <RouterLink
-                  class="add-room-link"
-                  :to="`/course/${id}/edit#section-rooms`"
-                  >教室情報を追加する</RouterLink
-                >
+                <div class="add-room-links">
+                  <RouterLink
+                    class="add-room-link"
+                    :to="`/course/${id}/edit#section-rooms`"
+                    >手動で入力する</RouterLink
+                  >
+                  <RouterLink class="add-room-link" to="/import-room"
+                    >Excelからインポートする</RouterLink
+                  >
+                </div>
               </template>
             </template>
           </CourseDetail>
@@ -455,6 +460,13 @@ if (displayCourse.value.code === "") popupContents.splice(1, 1);
       grid-area: minus-btn;
     }
   }
+}
+
+.add-room-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  gap: 1.2rem 0.8rem;
 }
 
 .add-room-link {
