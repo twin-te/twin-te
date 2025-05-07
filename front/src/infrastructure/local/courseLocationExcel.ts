@@ -26,7 +26,10 @@ export const getKdbClassroom = async (
       [key: string]: string;
     }>(sheet, { range })
     .filter((it) => it["教室"].trim() !== "" && it["科目番号"].trim() !== "")
-    .map((it) => ({ courseId: it["科目番号"], classroom: it["教室"] }));
+    .map((it) => ({
+      courseId: it["科目番号"],
+      classroom: it["教室"].split(/[\n\r]+/).join(","),
+    }));
 
   const courseIdToClassroom = records.reduce((acc, item) => {
     acc[item.courseId] = item.classroom;
