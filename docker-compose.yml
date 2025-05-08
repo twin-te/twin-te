@@ -83,7 +83,12 @@ services:
     ports:
       - 5432:5432
     networks:
-      - twinte-network     
+      - twinte-network
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$POSTGRES_USER"']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   db-migration:
     container_name: twinte-db-migration
@@ -99,7 +104,8 @@ services:
     networks:
       - twinte-network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   parser:
     container_name: twinte-parser
@@ -121,7 +127,7 @@ services:
     volumes:
       - .:/usr/src/twin-te
     networks:
-      - twinte-network      
+      - twinte-network
 
 networks:
   twinte-network:
