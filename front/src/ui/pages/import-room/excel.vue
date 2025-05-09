@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { captureException, startSpan } from "@sentry/vue";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -42,14 +43,30 @@ const dataLength = computed(() =>
 const loadState = ref<"ready" | "loading" | "error" | "ok">("ready");
 async function load(file: File) {
   loadState.value = "loading";
-  try {
-    const data = await getKdbClassroom(file);
-    latestData.value = data;
-    localStorage.set("courseLocationInfo", data);
-    loadState.value = "ok";
-  } catch {
-    loadState.value = "error";
-  }
+  startSpan(
+    {
+      name: "Excel Load",
+      op: "excel.load",
+      attributes: {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      },
+    },
+    async (span) => {
+      try {
+        const data = await getKdbClassroom(file);
+        latestData.value = data;
+        localStorage.set("courseLocationInfo", data);
+        loadState.value = "ok";
+        span?.setAttribute("excel.load.success", true);
+      } catch (error) {
+        loadState.value = "error";
+        span?.setAttribute("excel.load.success", false);
+        captureException(error);
+      }
+    }
+  );
 }
 
 /* apply */
