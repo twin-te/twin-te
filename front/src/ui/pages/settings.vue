@@ -95,9 +95,9 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
-        <div class="main__content--account-btns">
+        <div class="main__content--account">
           <p>アカウント情報</p>
-          <div>
+          <div class="account-btns">
             <Button
               v-if="isAuthenticated"
               class="button"
@@ -289,14 +289,12 @@ const confirmDeleteAccount = async () => {
         color: getColor(--color-text-main);
       }
     }
-    &--account-btns {
+    &--account {
       display: flex;
       padding: 1.2rem 0;
-      p {
-        color: getColor(--color-text-main);
-        font-weight: 500;
-      }
-      div {
+      color: getColor(--color-text-main);
+      font-weight: 500;
+      .account-btns {
         margin: 0 0 0 auto;
         display: flex;
         flex-direction: column;
