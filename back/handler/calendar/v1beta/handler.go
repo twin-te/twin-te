@@ -71,6 +71,9 @@ func (h *impl) ICSHandler(c echo.Context) error {
 		return err
 	}
 
+	rdateParam := c.QueryParam("rdate")
+	isRdateSupported := rdateParam == "" || rdateParam == "true"
+
 	ctx := c.Request().Context()
 	modules, err := h.GetSchoolCalendar(ctx, year)
 	if err != nil {
@@ -94,7 +97,7 @@ func (h *impl) ICSHandler(c echo.Context) error {
 	}
 
 	var resp bytes.Buffer
-	err = WriteICalendar(&resp, modules, courses)
+	err = WriteICalendar(&resp, modules, courses, isRdateSupported)
 	if err != nil {
 		log.Printf("failed to write iCalendar: %+v", err)
 		return err
