@@ -95,11 +95,10 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
-        <div class="main__content--account">
+        <div v-if="isAuthenticated" class="main__content--account">
           <p>アカウント情報</p>
           <div class="account-btns">
             <Button
-              v-if="isAuthenticated"
               class="button"
               size="small"
               color="primary"
