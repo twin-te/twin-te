@@ -77,7 +77,7 @@ const Success: NextPage = () => {
 					className="twitter-share-button"
 					data-text={getTwitterText()}
 					data-size="large"
-					data-url="https://sponsorship.twinte.net"
+					data-url="https://app.twinte.net/sponsorship"
 					data-via="te_twin"
 					data-hashtags="Twinte"
 					data-related="te_twin"
