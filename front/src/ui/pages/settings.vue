@@ -95,16 +95,26 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
-        <div class="main__content">
+        <div v-if="isAuthenticated" class="main__content--account">
           <p>アカウント情報</p>
-          <Button
-            class="button"
-            size="small"
-            color="danger"
-            :pauseActiveStyle="false"
-            @click="onClickAccountDeleteModel()"
-            >アカウントを削除する</Button
-          >
+          <div class="account-btns">
+            <Button
+              class="button"
+              size="small"
+              color="primary"
+              :pauseActiveStyle="false"
+              @click="logout"
+              >ログアウトする</Button
+            >
+            <Button
+              class="button"
+              size="small"
+              color="danger"
+              :pauseActiveStyle="false"
+              @click="onClickAccountDeleteModel()"
+              >アカウントを削除する</Button
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -159,7 +169,8 @@ import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
 import { authUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
-import { useSetting, useToast } from "../store";
+import { useAuth, useSetting, useToast } from "../store";
+import { getLogoutUrl, redirectToUrl } from "../url";
 
 const router = useRouter();
 const { displayToast } = useToast();
@@ -169,6 +180,13 @@ useHead({
 });
 
 const { setting, updateSetting } = useSetting();
+
+const { isAuthenticated } = useAuth();
+
+/** logout */
+const logout = () => {
+  redirectToUrl(getLogoutUrl());
+};
 
 /** display year */
 const autoOption = "自動(現在の年度)";
@@ -257,9 +275,6 @@ const confirmDeleteAccount = async () => {
     padding: 1.2rem 0;
     color: getColor(--color-text-main);
     font-weight: 500;
-    & .button {
-      margin: 0 0 0 auto;
-    }
     & .switch {
       margin: 0 0 0 auto;
     }
@@ -271,6 +286,21 @@ const confirmDeleteAccount = async () => {
         line-height: $single-line;
         font-weight: 500;
         color: getColor(--color-text-main);
+      }
+    }
+    &--account {
+      display: flex;
+      padding: 1.2rem 0;
+      color: getColor(--color-text-main);
+      font-weight: 500;
+      .account-btns {
+        margin: 0 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        & .button {
+          margin: 0 0 0 auto;
+        }
       }
     }
   }
