@@ -40,7 +40,7 @@ func (w *errWriter) write(format string, a ...any) {
 	_, w.err = fmt.Fprintf(w.w, format+"\r\n", a...)
 }
 
-func WriteICalendar(writer io.Writer, modules []Module, courses []*timetableappdto.RegisteredCourse) error {
+func WriteICalendar(writer io.Writer, modules []Module, courses []*timetableappdto.RegisteredCourse, isRdateSupported bool) error {
 	w := &errWriter{w: writer}
 
 	w.write("BEGIN:VCALENDAR")
@@ -60,7 +60,7 @@ func WriteICalendar(writer io.Writer, modules []Module, courses []*timetableappd
 	for _, c := range courses {
 		ss := GetSchedules(modules, c.Schedules)
 		for _, s := range ss {
-			writeCalendarEvent(w, c, s)
+			writeCalendarEvent(w, c, s, isRdateSupported)
 		}
 	}
 
@@ -86,7 +86,7 @@ func buildDescription(c *timetableappdto.RegisteredCourse) string {
 	}
 }
 
-func writeCalendarEvent(w *errWriter, c *timetableappdto.RegisteredCourse, s Schedule) {
+func writeCalendarEvent(w *errWriter, c *timetableappdto.RegisteredCourse, s Schedule, isRdateSupported bool) {
 	w.write("BEGIN:VEVENT")
 
 	w.write("DTSTAMP;%s", icsTime(s.StartTime))
@@ -103,8 +103,33 @@ func writeCalendarEvent(w *errWriter, c *timetableappdto.RegisteredCourse, s Sch
 	for _, t := range s.Exceptions {
 		w.write("EXDATE;%s", icsTime(t))
 	}
-	for _, t := range s.Additions {
-		w.write("RDATE;%s", icsTime(t))
+	if isRdateSupported {
+		for _, t := range s.Additions {
+			w.write("RDATE;%s", icsTime(t))
+		}
+	} else {
+		for _, t := range s.Additions {
+			w.write("END:VEVENT")
+			w.write("BEGIN:VEVENT")
+
+			newStartTime := s.StartTime
+			newStartTime.Date = t.Date
+			newEndTime := s.EndTime
+			newEndTime.Date = t.Date
+
+			newSchedule := s
+			newSchedule.StartTime = newStartTime
+
+			w.write("UID:%s", generateUID(c, newSchedule))
+			w.write("DTSTAMP;%s", icsTime(newStartTime))
+
+			w.write("SUMMARY:%s", icsTextEscaper.Replace(c.Name.String()))
+			w.write("LOCATION:%s", icsTextEscaper.Replace(s.Location))
+			w.write("DESCRIPTION:%s", icsTextEscaper.Replace(buildDescription(c)))
+
+			w.write("DTSTART;%s", icsTime(newStartTime))
+			w.write("DTEND;%s", icsTime(newEndTime))
+		}
 	}
 
 	w.write("END:VEVENT")
