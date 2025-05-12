@@ -8,11 +8,11 @@ const SEO: NextSeoProps = {
 		type: 'website',
 		title: 'Twin:te スポンサー',
 		description: 'Twin:te 協賛ページ',
-		url: 'https://sponsorship.twinte.net/',
+		url: 'https://app.twinte.net/sponsorship',
 		site_name: 'Twin:te Sponsorship',
 		images: [
 			{
-				url: 'https://sponsorship.twinte.net/images/sponsor-ogp.jpg',
+				url: 'https://app.twinte.net/sponsorship/images/sponsor-ogp.jpg',
 				alt: 'Twin:te 協賛ページ'
 			}
 		]
