@@ -11,7 +11,7 @@ const sourcemap: Record<string, "inline" | boolean> = {
 };
 
 const allowedHosts: Record<string, string[]> = {
-  development: ["front"],
+  development: ["front", "host.docker.internal"],
   staging: [],
   production: [],
 };
