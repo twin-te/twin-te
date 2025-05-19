@@ -52,10 +52,10 @@ brew install oven-sh/bun/bun
 terminal root
 ```sh
 # build images
-docker compose build db db-migration proxy-host
+docker compose --profile host build
 
 # run containers
-docker compose up -d db db-migration proxy-host
+docker compose --profile host up -d
 
 # run db migration
 docker compose run --rm db-migration bash -c 'make migrate-up db_url=${DB_URL}'
