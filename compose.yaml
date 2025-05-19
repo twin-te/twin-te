@@ -120,9 +120,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    profiles:
-      - docker
-      - host
+    profiles: []
 
   parser:
     container_name: twinte-parser
@@ -134,8 +132,7 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
-    profiles:
-      - docker
+    profiles: []
 
   codegen:
     container_name: twinte-codegen
@@ -147,8 +144,7 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
-    profiles:
-      - docker
+    profiles: []
 
 networks:
   twinte-network:
