@@ -10,7 +10,14 @@ const sourcemap: any = {
   production: true,
 };
 
+const allowedHosts: any = {
+  development: ["front"],
+  staging: [],
+  production: [],
+};
+
 export default defineConfig(({ mode }) => ({
+  server: { allowedHosts: allowedHosts[mode] },
   plugins: [
     vue(),
     ViteFonts({
