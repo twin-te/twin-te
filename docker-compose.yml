@@ -16,6 +16,8 @@ services:
       - twinte-network
     depends_on:
       - db
+    profiles:
+      - docker
 
   front:
     container_name: twinte-front
@@ -29,6 +31,8 @@ services:
       - /usr/src/twin-te/front/node_modules
     networks:
       - twinte-network
+    profiles:
+      - docker
 
   sponsorship:
     container_name: twinte-sponsorship
@@ -43,6 +47,8 @@ services:
       - /usr/src/twin-te/sponsorship/.next
     networks:
       - twinte-network
+    profiles:
+      - docker
 
   proxy-docker:
     container_name: twinte-proxy-docker
@@ -58,6 +64,8 @@ services:
       - front
       - sponsorship
       - db
+    profiles:
+      - docker
 
   proxy-host:
     container_name: twinte-proxy-host
@@ -70,6 +78,8 @@ services:
       - twinte-network
     depends_on:
       - db
+    profiles:
+      - host
 
   db:
     container_name: twinte-db
@@ -90,6 +100,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    profiles:
+      - docker
+      - host
 
   db-migration:
     container_name: twinte-db-migration
@@ -107,6 +120,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    profiles:
+      - docker
+      - host
 
   parser:
     container_name: twinte-parser
@@ -118,6 +134,8 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
+    profiles:
+      - docker
 
   codegen:
     container_name: twinte-codegen
@@ -129,6 +147,8 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
+    profiles:
+      - docker
 
 networks:
   twinte-network:
