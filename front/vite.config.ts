@@ -4,13 +4,13 @@ import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 import ViteFonts from "vite-plugin-fonts";
 
-const sourcemap: any = {
+const sourcemap: Record<string, "inline" | boolean> = {
   development: "inline",
   staging: "inline",
   production: true,
 };
 
-const allowedHosts: any = {
+const allowedHosts: Record<string, string[]> = {
   development: ["front"],
   staging: [],
   production: [],
@@ -78,9 +78,5 @@ export default defineConfig(({ mode }) => ({
             : null)(),
       ],
     },
-  },
-  server: {
-      allowedHosts: ["front", "host.docker.internal"],
-      host: true
   },
 }));
