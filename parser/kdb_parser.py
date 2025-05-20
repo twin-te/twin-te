@@ -120,7 +120,7 @@ def analyze_day_and_period(s: str) -> list[dict]:
                         }
                     )
 
-            _match = re.search(f"([{day}]).*(\d)-(\d)", string)
+            _match = re.search(rf"([{day}]).*(\d)-(\d)", string)
             if _match is not None:
                 for i in range(int(_match.groups()[1]), int(_match.groups()[2]) + 1):
                     flag = True
