@@ -85,7 +85,7 @@ services:
     networks:
       - twinte-network
     healthcheck:
-      test: ["CMD-SHELL", 'pg_isready -U "$POSTGRES_USER"']
+      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER"']
       interval: 5s
       timeout: 5s
       retries: 5
