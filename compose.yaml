@@ -16,6 +16,8 @@ services:
       - twinte-network
     depends_on:
       - db
+    profiles:
+      - docker
 
   front:
     container_name: twinte-front
@@ -29,6 +31,8 @@ services:
       - /usr/src/twin-te/front/node_modules
     networks:
       - twinte-network
+    profiles:
+      - docker
 
   sponsorship:
     container_name: twinte-sponsorship
@@ -43,6 +47,8 @@ services:
       - /usr/src/twin-te/sponsorship/.next
     networks:
       - twinte-network
+    profiles:
+      - docker
 
   proxy-docker:
     container_name: twinte-proxy-docker
@@ -58,6 +64,8 @@ services:
       - front
       - sponsorship
       - db
+    profiles:
+      - docker
 
   proxy-host:
     container_name: twinte-proxy-host
@@ -70,6 +78,8 @@ services:
       - twinte-network
     depends_on:
       - db
+    profiles:
+      - host
 
   db:
     container_name: twinte-db
@@ -80,6 +90,7 @@ services:
       POSTGRES_USER: postgres
     volumes:
       - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
@@ -89,6 +100,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    profiles:
+      - docker
+      - host
 
   db-migration:
     container_name: twinte-db-migration
@@ -106,6 +120,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    profiles: []
 
   parser:
     container_name: twinte-parser
@@ -117,6 +132,7 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
+    profiles: []
 
   codegen:
     container_name: twinte-codegen
@@ -128,8 +144,12 @@ services:
       - .:/usr/src/twin-te
     networks:
       - twinte-network
+    profiles: []
 
 networks:
   twinte-network:
     name: twinte-network
     driver: bridge
+
+volumes:
+  postgres_data:

@@ -2,14 +2,14 @@
 
 # 必要な依存
 
-- Node.js v16 以上推奨
-- yarn (Node.js が入っている場合は`corepack enable`)
+- Node.js v22 以上推奨
+- bun
 
 # 開発方法
 
 ```sh
-yarn install
-yarn dev # https://localhost:3000
+bun install
+bun run dev
 ```
 
 - 注意: [拡張機能](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf)などでブラウザの CORS を無効にしてください
@@ -21,7 +21,7 @@ yarn dev # https://localhost:3000
 
 推奨理由は Vue Language Features (Volar) により Single File Components 内の型検査結果が視覚的に示されるためです。
 
-なお IDE の型検査はあくまで開発補助機能であり `yarn typecheck` により同様の型検査が行えます。
+なお IDE の型検査はあくまで開発補助機能であり `bun run typecheck` により同様の型検査が行えます。
 
 # イベント測定用のマーカについて
 
