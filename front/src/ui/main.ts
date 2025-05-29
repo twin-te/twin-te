@@ -16,7 +16,7 @@ Sentry.init({
   integrations: [
     Sentry.browserTracingIntegration({
       router,
-      tracingOrigins: ["app.twinte.net"],
+      tracePropagationTargets: ["localhost", /^https:\/\/app\.twinte\.net/],
     }),
     Sentry.replayIntegration({
       maskAllText: false,
