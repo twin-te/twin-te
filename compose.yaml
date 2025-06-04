@@ -3,6 +3,7 @@ name: twinte-local
 services:
   back:
     container_name: twinte-back
+    hostname: back
     image: twinte-back-local
     build:
       context: ./back
@@ -12,15 +13,23 @@ services:
       - ./back/.env.local
     volumes:
       - .:/usr/src/twin-te
+    ports:
+      - "8080:8080"
+      - "2345:2345"
     networks:
       - twinte-network
     depends_on:
       - db
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
     profiles:
       - docker
 
   front:
     container_name: twinte-front
+    hostname: front
     image: twinte-front-local
     build:
       context: ./front
@@ -31,6 +40,8 @@ services:
       - /usr/src/twin-te/front/node_modules
     networks:
       - twinte-network
+    depends_on:
+      - back
     profiles:
       - docker
 
@@ -47,6 +58,8 @@ services:
       - /usr/src/twin-te/sponsorship/.next
     networks:
       - twinte-network
+    depends_on:
+      - back
     profiles:
       - docker
 
