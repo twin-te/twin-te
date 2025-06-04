@@ -24,7 +24,7 @@ require (
 	google.golang.org/protobuf v1.32.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gen v0.3.25
-	gorm.io/gorm v1.25.6
+	gorm.io/gorm v1.30.0
 	gorm.io/plugin/dbresolver v1.5.0
 )
 
