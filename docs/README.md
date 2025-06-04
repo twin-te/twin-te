@@ -39,10 +39,8 @@ Only proxy-host, db and db-migration are running in the docker container.
 
 Version
 - Go : 1.23.x
-- Nodejs : nodejs 22.x.x
 - Python : 3.12.x
-
-Please Install [Bun](https://bun.sh/docs/installation).
+- Bun : 1.2.x
 
 Example in Mac
 ```sh
