@@ -77,10 +77,9 @@
             <Tag
               v-for="tag in displayCourse.tags"
               :key="tag.id"
-              :assign="tag.assign"
+              :tag="tag"
               @click="() => onClickTag(tag)"
-              >{{ tag.name }}
-            </Tag>
+            />
             <template v-if="displayCourse.tags.length === 0">
               作成済みのタグがありません。<br />
               タグを作成すると授業を分類することができます。
