@@ -29,9 +29,9 @@ docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_U
 次に [KdB](https://kdb.tsukuba.ac.jp/) から最新の講義情報を取得します。
 
 ```console
-docker compose run -u root --rm parser python ./download_and_parse.py --year 2024 --output-path kdb_2024.json
+docker compose run -u root --rm parser python ./download_and_parse.py --year 2025 --output-path kdb_2025.json
 mv ./parser/kdb_2025.json ./back/kdb_2025.json
-docker compose run -u root --rm back go run . update-courses-based-on-kdb --year 2024 --kdb-json-file-path kdb_2024.json
+docker compose run -u root --rm back go run . update-courses-based-on-kdb --year 2025 --kdb-json-file-path kdb_2025.json
 rm ./back/kdb_2025.json
 ```
 
