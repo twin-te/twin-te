@@ -6,6 +6,7 @@ import "shared/option.proto";
 import "shared/type.proto";
 
 option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1;schoolcalendarv1";
+option java_package = "net.twinte.api.schoolcalendar.v1";
 
 // The following error codes are not stated explicitly in the each rpc, but may be returned.
 //   - shared.InvalidArgument

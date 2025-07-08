@@ -4,6 +4,7 @@ package auth.v1;
 import "shared/type.proto";
 
 option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1;authv1";
+option java_package = "net.twinte.api.auth.v1";
 
 enum Provider {
   PROVIDER_UNSPECIFIED = 0;
