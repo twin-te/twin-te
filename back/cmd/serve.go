@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/spf13/cobra"
 	"github.com/twin-te/twin-te/back/appenv"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
@@ -38,6 +39,18 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start server",
 	Run: func(cmd *cobra.Command, args []string) {
+		err := sentry.Init(sentry.ClientOptions{
+			Dsn:            appenv.SENTRY_DSN,
+			Debug:          true,
+			SendDefaultPII: true,
+		})
+
+		if err != nil {
+			log.Fatalf("sentry.Init: %s", err)
+		}
+
+		defer sentry.Flush(2 * time.Second)
+		sentry.CaptureMessage("It works!")
 		db, err := dbhelper.NewDB()
 		if err != nil {
 			log.Fatalln(err)
