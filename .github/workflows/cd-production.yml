@@ -8,7 +8,6 @@ on:
 jobs:
   push-image-back:
     runs-on: ubuntu-latest
-    environment: prod
     permissions:
       contents: read
       packages: write
@@ -72,7 +71,6 @@ jobs:
 
   push-image-sponsorship:
     runs-on: ubuntu-latest
-    environment: prod
     permissions:
       contents: read
       packages: write
@@ -103,7 +101,6 @@ jobs:
 
   push-image-parser:
     runs-on: ubuntu-latest
-    environment: prod
     permissions:
       contents: read
       packages: write
@@ -148,19 +145,16 @@ jobs:
         if: github.ref != 'refs/heads/master'
         run: |
           exit 1
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PRIV_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_APP_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SSH_DB_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy to APP Server
-        uses: appleboy/ssh-action@v1.2.1
-        with:
-          host: ${{ secrets.APP_HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: ~/twin-te/infra/production/app/script/deploy.sh
+        run: |
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_APP_HOST }} -p ${{ secrets.SSH_PORT }} "~/twin-te/infra/production/app/script/deploy.sh"
       - name: Deploy to DB Server
-        uses: appleboy/ssh-action@v1.2.1
-        with:
-          host: ${{ secrets.DB_HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
-          script: ~/twin-te/infra/production/db/deploy.sh
+        run: |
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_DB_HOST }} -p ${{ secrets.SSH_PORT }} "~/twin-te/infra/production/db/deploy.sh"
