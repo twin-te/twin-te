@@ -127,8 +127,8 @@ jobs:
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIV_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.SSH_APP_HOST }} >> ~/.ssh/known_hosts
-          ssh-keyscan -H ${{ secrets.SSH_DB_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_APP_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_DB_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy to APP Server
         run: |
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_APP_HOST }} -p ${{ secrets.SSH_PORT }} "~/twin-te/infra/staging/app/script/deploy.sh"
