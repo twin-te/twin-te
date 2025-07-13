@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/spf13/cobra"
 	"github.com/twin-te/twin-te/back/appenv"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
@@ -40,9 +41,10 @@ var serveCmd = &cobra.Command{
 	Short: "Start server",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := sentry.Init(sentry.ClientOptions{
-			Dsn:            appenv.SENTRY_DSN,
-			Debug:          true,
-			SendDefaultPII: true,
+			Dsn:              appenv.SENTRY_DSN,
+			SendDefaultPII:   true,
+			EnableTracing:    true,
+			TracesSampleRate: 0.3,
 		})
 
 		if err != nil {
@@ -50,7 +52,6 @@ var serveCmd = &cobra.Command{
 		}
 
 		defer sentry.Flush(2 * time.Second)
-		sentry.CaptureMessage("It works!")
 		db, err := dbhelper.NewDB()
 		if err != nil {
 			log.Fatalln(err)
@@ -122,10 +123,11 @@ var serveCmd = &cobra.Command{
 
 		mux := http.NewServeMux()
 		mux.Handle("/", h)
+		sentryhandler := sentryhttp.New(sentryhttp.Options{}).Handle(mux)
 
 		log.Printf("listen and serve on %s\n", appenv.ADDR)
 
-		if err := http.ListenAndServe(appenv.ADDR, mux); err != nil {
+		if err := http.ListenAndServe(appenv.ADDR, sentryhandler); err != nil {
 			log.Fatalln(err)
 		}
 	},
