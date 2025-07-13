@@ -1,4 +1,4 @@
-FROM golang:1.23 AS local
+FROM golang:1.24 AS local
 WORKDIR /usr/src/twin-te/back
 
 RUN go install golang.org/x/tools/gopls@v0.18.1 \
@@ -16,7 +16,7 @@ RUN go mod download && go mod verify
 COPY . .
 CMD [ "air" ]
 
-FROM golang:1.23-bullseye AS builder
+FROM golang:1.24-bullseye AS builder
 WORKDIR /usr/src/app
 
 COPY go.mod go.sum ./
