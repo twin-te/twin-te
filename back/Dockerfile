@@ -2,7 +2,8 @@ ARG GO_VERSION=1.24.5
 FROM golang:${GO_VERSION} AS base
 WORKDIR /usr/src/twin-te/back
 
-RUN --mount=type=cache,target=/go/pkg/mod/ \
+RUN --mount=type=cache,target=/go/pkg/mod/,sharing=locked \
+  --mount=type=bind,source=go.sum,target=go.sum \
   --mount=type=bind,source=go.mod,target=go.mod \
   go mod download -x
 
