@@ -1,20 +1,11 @@
 FROM golang:1.24 AS local
 WORKDIR /usr/src/twin-te/back
 
-RUN go install golang.org/x/tools/gopls@v0.18.1 \
-  && go install github.com/bufbuild/buf/cmd/buf@latest \
-  && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest \
-  && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
-  && go install github.com/bufbuild/connect-go/cmd/protoc-gen-connect-go@latest \
-  && go install github.com/spf13/cobra-cli@latest \
-  && go install github.com/air-verse/air@v1.61.7 \
-  && go install github.com/go-delve/delve/cmd/dlv@latest
-
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-CMD [ "air" ]
+CMD [ "go", "tool", "air" ]
 
 FROM golang:1.24-bullseye AS builder
 WORKDIR /usr/src/app
