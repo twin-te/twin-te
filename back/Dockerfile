@@ -1,36 +1,28 @@
-FROM golang:1.23 AS local
+ARG GO_VERSION=1.24.5
+FROM golang:${GO_VERSION} AS base
 WORKDIR /usr/src/twin-te/back
 
-RUN go install golang.org/x/tools/gopls@v0.18.1 \
-  && go install github.com/bufbuild/buf/cmd/buf@latest \
-  && go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest \
-  && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
-  && go install github.com/bufbuild/connect-go/cmd/protoc-gen-connect-go@latest \
-  && go install github.com/spf13/cobra-cli@latest \
-  && go install github.com/air-verse/air@v1.61.7 \
-  && go install github.com/go-delve/delve/cmd/dlv@latest
+RUN --mount=type=cache,target=/go/pkg/mod/,sharing=locked \
+  --mount=type=bind,source=go.sum,target=go.sum \
+  --mount=type=bind,source=go.mod,target=go.mod \
+  go mod download -x
 
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+FROM base AS local
 
-COPY . .
-CMD [ "air" ]
+CMD [ "go", "tool", "air" ]
 
-FROM golang:1.23-bullseye AS builder
+FROM golang:${GO_VERSION}-bullseye AS builder
 WORKDIR /usr/src/app
 
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
-
-COPY . .
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o /usr/local/bin/app
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+  --mount=type=bind,target=. \
+  GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o /usr/local/bin/app
 
 FROM debian:bullseye-slim AS deploy
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -yq ca-certificates openssl \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  apt-get update && apt-get install -y ca-certificates openssl
 
 COPY --from=builder /usr/local/bin/app .
 
