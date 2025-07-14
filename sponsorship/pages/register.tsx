@@ -11,7 +11,7 @@ import SweetModal from '@/components/SweetAlert';
 import RadioButton from '@/components/RadioButton';
 
 const ACTUAL_RECEIVED_PERCENTAGE = 0.964;
-const MONTHLY_COST = 7052; // ref: /public/images/twinte-cost.png
+const MONTHLY_COST = 6608; // ref: /public/images/twinte-cost.svg
 
 const Register: NextPage = () => {
 	const donationPrices = [500, 1000, 1500, 2000, 3000, 5000, 7000, 10000];
