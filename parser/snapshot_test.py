@@ -4,18 +4,12 @@ import os
 import sys
 import argparse
 
-# 現在のスクリプトのディレクトリ（twin-te/parser）を取得
-current_script_dir = os.path.dirname(os.path.abspath(__file__))
-# モジュール（download_and_parseなど）をインポートできるように、このディレクトリをsys.pathに追加
-sys.path.insert(0, current_script_dir)
-
 from download_and_parse import run_old
 
 class TestRunOldSnapshot(unittest.TestCase):
     # スナップショットを更新するかどうかを格納するクラス属性
     update_snapshots = False
-    # テスト対象の年を格納するクラス属性
-    years_to_test = None
+    test_years = []
 
     def setUp(self):
         # スナップショットJSONファイルが保存されているディレクトリ
@@ -33,14 +27,10 @@ class TestRunOldSnapshot(unittest.TestCase):
         """
         kdbのパース結果が保存されたスナップショットと一致することをテストします。
         UPDATE_SNAPSHOTSがTrueの場合、不一致またはファイルが存在しない場合はスナップショットを更新します。
-        指定された年がある場合、その年のみをテストします。
         """
-        if TestRunOldSnapshot.years_to_test:
-            years = TestRunOldSnapshot.years_to_test
-        else:
-            years = range(2019, 2023) # デフォルトのテスト対象年
+        years_to_test = TestRunOldSnapshot.test_years if TestRunOldSnapshot.test_years else range(2019, 2023) # テスト対象の年を2019年から2022年まで（2023年を含まない）
 
-        for year in years:
+        for year in years_to_test:
             with self.subTest(year=year):
                 snapshot_filename = f"{year}.json"
                 snapshot_path = os.path.join(self.test_data_dir, snapshot_filename)
@@ -75,15 +65,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='run_old関数のスナップショットテストを実行します。')
     parser.add_argument('-u', '--update-snapshots', action='store_true',
                         help='不一致がある場合、またはスナップショットが見つからない場合にスナップショットを更新します。')
-    parser.add_argument('-y', '--years', type=str,
-                        help='テストする年をカンマ区切りで指定します (例: "2019,2020")。')
+    parser.add_argument('-y', '--years', type=int, nargs='*',
+                        help='テストを実行する年（例: --years 2019 2020）。指定しない場合、2019年から2022年までがテストされます。')
     # unittest.mainが自身の引数（例: -v, -f）を処理できるようにparse_known_argsを使用
     args, argv_remainder = parser.parse_known_args()
 
     # パースされた引数に基づいてクラス属性を設定
     TestRunOldSnapshot.update_snapshots = args.update_snapshots
-    if args.years:
-        TestRunOldSnapshot.years_to_test = [int(y.strip()) for y in args.years.split(',')]
+    TestRunOldSnapshot.test_years = args.years
 
     # 残りの引数をunittest.mainに渡す
     unittest.main(argv=sys.argv[:1] + argv_remainder)
