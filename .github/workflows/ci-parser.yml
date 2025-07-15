@@ -8,6 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        year: [2019, 2020, 2021, 2022]
 
     steps:
       - name: Checkout code
@@ -23,7 +26,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r parser/requirements.txt
 
-      - name: Run Snapshot Tests
-        # --update-snapshots オプションなしでテストを実行し、差分をチェックします。
-        run: python parser/snapshot_test.py
+      - name: Run Snapshot Tests for year ${{ matrix.year }}
+        run: python parser/snapshot_test.py --years ${{ matrix.year }}
         working-directory: ${{ github.workspace }}
