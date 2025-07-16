@@ -44,28 +44,28 @@ class TestParseSnapshot(unittest.TestCase):
             xlsx_bytes = f.read()
 
         # parse関数を直接実行し、現在の出力を取得
-        actual_data = parse(io.BytesIO(xlsx_bytes))
+        actual_data_obj = parse(io.BytesIO(xlsx_bytes))
+        # 比較のために整形されたJSON文字列に変換
+        actual_data_json_str = json.dumps(actual_data_obj, ensure_ascii=False, indent=4)
 
-        expected_data = None
+        expected_data_json_str = None
         # スナップショットファイルが存在するか確認
         if os.path.exists(snapshot_path):
             with open(snapshot_path, "r", encoding="utf-8") as f:
-                expected_data = json.load(f)
+                expected_data_json_str = f.read()
 
-        # 比較または更新
-        if expected_data is None or expected_data != actual_data:
-            if TestParseSnapshot.update_snapshots:
+        # スナップショット更新モードの場合
+        if TestParseSnapshot.update_snapshots:
+            # スナップショットが存在しないか、データが一致しない場合は更新
+            if expected_data_json_str is None or expected_data_json_str != actual_data_json_str:
                 print(f"{year} 年のスナップショットを {snapshot_path} で更新しています。")
                 with open(snapshot_path, "w", encoding="utf-8") as f:
                     # 差分を見やすくするためにJSONを整形して保存
-                    json.dump(actual_data, f, ensure_ascii=False, indent=4)
+                    json.dump(actual_data_obj, f, ensure_ascii=False, indent=4)
                 print(f"{year} 年のスナップショットが更新されました。")
-            else:
-                # 更新モードでなく、不一致またはスナップショットが見つからない場合、テストを失敗させる
-                self.assertEqual(expected_data, actual_data, f"{year} 年のスナップショットの不一致、またはスナップショットが見つかりません (--update-snapshots を使用してください)。")
         else:
-            # データが一致する場合、テストは合格
-            self.assertEqual(expected_data, actual_data, f"{year} 年のスナップショットは既に一致しています。")
+            # スナップショット更新モードでない場合、期待されるデータと実際のデータを比較
+            self.assertEqual(expected_data_json_str, actual_data_json_str, f"{year} 年のスナップショットの不一致、またはスナップショットが見つかりません (--update-snapshots を使用してください)。")
 
 
 if __name__ == '__main__':
