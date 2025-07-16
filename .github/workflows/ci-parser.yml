@@ -9,15 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        year: [2019, 2020, 2021, 2022]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build and Run Snapshot Tests for ${{ matrix.year }}
-        # --update-snapshots オプションなしでテストを実行し、差分をチェックします。
-        # Dockerコンテナ内でテストを実行します。
-        run: docker compose run -T --build --rm parser python /usr/src/twin-te/parser/snapshot_test.py --years ${{ matrix.year }}
+      - name: Build and Run Snapshot Tests
+        run: docker compose run -T --build --rm parser python /usr/src/twin-te/parser/snapshot_test.py
