@@ -16,7 +16,7 @@ class TestRunOldSnapshot(unittest.TestCase):
         self.test_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "__tests__")
         if not os.path.exists(self.test_data_dir):
             # __tests__ディレクトリが存在しない場合、更新モードでなければエラーとする
-            if not TestRunOldSnapshot.update_snapshots:
+            if not self.update_snapshots:
                  self.fail(f"テストデータディレクトリが見つかりません: {self.test_data_dir}。--update-snapshots を付けて実行してください。")
             else:
                 # 更新モードでディレクトリが存在しない場合、作成する
