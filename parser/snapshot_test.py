@@ -65,8 +65,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='run_old関数のスナップショットテストを実行します。')
     parser.add_argument('-u', '--update-snapshots', action='store_true',
                         help='不一致がある場合、またはスナップショットが見つからない場合にスナップショットを更新します。')
-    parser.add_argument('-y', '--years', type=int, nargs='*',
-                        help='テストを実行する年（例: --years 2019 2020）。指定しない場合、2019年から2022年までがテストされます。')
+    parser.add_argument('-y', '--years', type=int, nargs='+',
+                        help='テストを実行する年（例: --years 2019 2020）。--yearsを使用する場合、少なくとも1つの年を指定してください。指定しない場合、2019年から2022年までがテストされます。')
     # unittest.mainが自身の引数（例: -v, -f）を処理できるようにparse_known_argsを使用
     args, argv_remainder = parser.parse_known_args()
 
