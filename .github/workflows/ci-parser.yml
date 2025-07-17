@@ -3,7 +3,6 @@ name: CI (parser)
 on:
   push:
     paths:
-      - "parser/**"
       - ".github/workflows/**"
 
 jobs:
