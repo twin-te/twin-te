@@ -1,0 +1,16 @@
+name: CI (parser)
+
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and Run Snapshot Tests
+        run: docker compose run -T --build --rm parser python /usr/src/twin-te/parser/snapshot_test.py
