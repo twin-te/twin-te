@@ -40,7 +40,7 @@
       </section>
       <section class="main__card">
         <CardAdd
-          iconName="styles"
+          iconName="style"
           heading="手動で授業を作成"
           text="手入力でカスタマイズして授業を作成します。"
           @click-next-button="$router.push('/add/manual')"
