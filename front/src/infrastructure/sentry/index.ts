@@ -6,11 +6,10 @@ export class Sentry {
     return captureFeedback(
       {
         email: feedback.email,
-        name: feedback.email,
+        name: userId,
         message: feedback.content,
         tags: {
           type: feedback.type,
-          userId,
         },
       },
       {
