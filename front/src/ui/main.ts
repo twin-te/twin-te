@@ -16,16 +16,15 @@ Sentry.init({
   integrations: [
     Sentry.browserTracingIntegration({
       router,
-      tracePropagationTargets: ["localhost", /^https:\/\/app\.twinte\.net/],
     }),
     Sentry.replayIntegration({
       maskAllText: false,
     }),
   ],
+  tracePropagationTargets: ["localhost", /^https:\/\/app\.twinte\.net/],
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.01,
   replaysOnErrorSampleRate: 1.0,
-  logErrors: true,
 });
 
 const head = createHead();
