@@ -13,6 +13,7 @@ const app = createApp(App);
 Sentry.init({
   app,
   dsn: String(import.meta.env.VITE_APP_SENTRY_URL ?? ""),
+  environment: import.meta.env.DEV ? "development" : undefined,
   integrations: [
     Sentry.browserTracingIntegration({
       router,
