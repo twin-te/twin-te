@@ -29,7 +29,7 @@ docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_U
 次に [KdB](https://kdb.tsukuba.ac.jp/) から最新の講義情報を取得します。
 
 ```sh
-docker compose run -u root --rm parser python ./download_and_parse.py --year 2025 --output-path kdb_2025.json
+docker compose run -u root --rm parser uv run ./download_and_parse.py --year 2025 --output-path kdb_2025.json
 mv ./parser/kdb_2025.json ./back/kdb_2025.json
 docker compose run -u root --rm back go run . update-courses-based-on-kdb --year 2025 --kdb-json-file-path kdb_2025.json
 rm ./back/kdb_2025.json
@@ -68,7 +68,7 @@ proxy-host, db, db-migrationのみをDockerコンテナで実行し、他のサ�
 
 バージョン
 - Go : 1.23.x
-- Python : 3.12.x
+- uv: 3.12.x
 - Bun : 1.2.x
 
 bunをインストールします。
@@ -95,8 +95,8 @@ parserを実行するには以下のコマンドを実行します。
 
 ```sh
 cd parser
-pip install -r requirements.txt
-python download_and_parse.py --year 2025 --output-path kdb_2025.json
+uv sync --locked
+uv run download_and_parse.py --year 2025 --output-path kdb_2025.json
 ```
 
 backを実行するには以下のコマンドを実行します。

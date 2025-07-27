@@ -9,5 +9,5 @@ fi
 
 for year in {2019..2024}
 do
-  python kdb_downloader.py --year $year --output-path ./data/raw/$year.xlsx
+  uv run kdb_downloader.py --year $year --output-path ./data/raw/$year.xlsx
 done
