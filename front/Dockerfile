@@ -13,8 +13,10 @@ CMD ["bun", "run", "vite", "--host", "0.0.0.0", "--port", "5173"]
 FROM oven/bun:${BUN_VERSION}-slim AS staging-builder
 WORKDIR /app
 
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+RUN --mount=type=cache,target=~/.bun/install/cache \
+  --mount=type=bind,source=package.json,target=package.json \
+  --mount=type=bind,source=bun.lockb,target=bun.lockb \
+  bun install --frozen-lockfile
 
 COPY . .
 RUN bun run build:staging
@@ -26,8 +28,10 @@ COPY --from=staging-builder /app/dist /usr/share/nginx/html
 FROM oven/bun:${BUN_VERSION}-slim AS production-builder
 WORKDIR /app
 
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+RUN --mount=type=cache,target=~/.bun/install/cache \
+  --mount=type=bind,source=package.json,target=package.json \
+  --mount=type=bind,source=bun.lockb,target=bun.lockb \
+  bun install --frozen-lockfile
 
 COPY . .
 RUN --mount=type=cache,target=/var/lib/apt,sharing=locked \
