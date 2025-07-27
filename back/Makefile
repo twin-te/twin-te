@@ -1,2 +1,2 @@
 buf-gen:
-	rm -rf ./handler/api/rpcgen && buf generate --template ./buf.gen.yaml ../proto
+	rm -rf ./handler/api/rpcgen && go tool buf generate --template ./buf.gen.yaml ../proto
