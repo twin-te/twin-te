@@ -68,7 +68,8 @@ proxy-host, db, db-migrationのみをDockerコンテナで実行し、他のサ�
 
 バージョン
 - Go : 1.23.x
-- uv: 3.12.x
+- Python : 3.12.x
+- [uv](https://docs.astral.sh/uv/): 0.8.x
 - Bun : 1.2.x
 
 bunをインストールします。
