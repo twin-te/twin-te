@@ -201,4 +201,5 @@ tool (
 	github.com/go-delve/delve/cmd/dlv
 	github.com/spf13/cobra-cli
 	golang.org/x/tools/gopls
+	google.golang.org/protobuf/cmd/protoc-gen-go
 )
