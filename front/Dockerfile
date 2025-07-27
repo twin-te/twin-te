@@ -32,7 +32,7 @@ RUN bun install --frozen-lockfile
 COPY . .
 RUN --mount=type=cache,target=/var/lib/apt,sharing=locked \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  apt-get update && apt-get install -y ca-certificates
+  DEBIAN_FRONTEND=noninteractive apt-get install -U -y ca-certificates
 RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) \
   bun run build:production
