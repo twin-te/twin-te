@@ -14,4 +14,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and Run Snapshot Tests
-        run: docker compose run -T --build --rm parser python /usr/src/twin-te/parser/snapshot_test.py
+        run: docker compose run -T --build --rm parser uv run ./snapshot_test.py
