@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.24.5
+ARG GO_VERSION=1.24.6
 FROM golang:${GO_VERSION} AS base
 WORKDIR /usr/src/twin-te/back
 
