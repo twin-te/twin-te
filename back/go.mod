@@ -1,6 +1,6 @@
 module github.com/twin-te/twin-te/back
 
-go 1.24.5
+go 1.24.6
 
 require (
 	cloud.google.com/go v0.116.0
