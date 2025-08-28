@@ -47,5 +47,12 @@
     "title": "アンケートのお願い / Request for cooperation with a survey",
     "content": "Twin:teをより良いサービスにするために、アンケートを実施中です。最短2分で完了する簡単なアンケートです。詳細は<a href=\"https://forms.gle/3CejPTF7e7nHGFWc6\">こちら</a>をご確認ください。<br/>We're conducting a short survey (approx. 2 min) to make our service even better for you. For details, please visit <a href=\"https://forms.gle/3CejPTF7e7nHGFWc6\">here</a>.",
     "publishedAt": "2025-05-29T18:00:00+09:00"
+  },
+  {
+    "id": "cd4cba3e-2390-42bb-ab1b-55200a50b5a5",
+    "tags": ["Information", "Notification"],
+    "title": "iOSアプリメンテナンスのお知らせ",
+    "content": "2025年9月6日（土） 12:00~24:00にiOSアプリのメンテナンスを実施します。メンテナンス作業中はiOSアプリやAppleアカウントによるサインインがご利用になれない場合がございます。ご不便をおかけしますが、ご理解のほどよろしくお願い申し上げます。",
+    "publishedAt": "2025-08-27T22:30:00+09:00"
   }
 ]
