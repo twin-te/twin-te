@@ -14,6 +14,9 @@
       </div>
       <div class="main__head">ログイン方法を選択</div>
       <div class="main__provider">
+        <div class="main__note">
+          現在Appleアカウントでのサインインはメンテナンス中です。
+        </div>
         <!-- <button @click="login('apple')">
           <img
             class="main__login-button"
