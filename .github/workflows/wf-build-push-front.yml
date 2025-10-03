@@ -47,7 +47,7 @@ jobs:
           context: front
           target: ${{ inputs.target }}
           push: true
-          tags: ghcr.io/twin-te/twin-te:front-stg
+          tags: ghcr.io/twin-te/twin-te:front-${{ inputs.target }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
