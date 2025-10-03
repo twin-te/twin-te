@@ -37,6 +37,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   push-image-front:
+    environment: prod
     permissions:
       contents: read
       packages: write
