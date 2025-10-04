@@ -6,7 +6,7 @@
     "dev": "vite",
     "typecheck": "vue-tsc --noEmit",
     "build": "bun run typecheck && vite build",
-    "build:staging": "vite build --mode staging",
+    "build:staging": "bun --env-file=.env.staging vite build --mode staging",
     "build:production": "SOURCE_MAP=1 vite build --mode production",
     "preview": "bun run build && vite preview --port 8080",
     "format": "prettier ./src --check",
