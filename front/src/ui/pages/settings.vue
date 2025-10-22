@@ -275,7 +275,8 @@ const confirmDeleteAccount = async () => {
     padding: 1.2rem 0;
     color: getColor(--color-text-main);
     font-weight: 500;
-    & .switch {
+    & .switch,
+    & .button {
       margin: 0 0 0 auto;
     }
     &--dropdown {
