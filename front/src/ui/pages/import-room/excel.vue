@@ -289,7 +289,7 @@ async function upload() {
           登録できる授業が存在しません
         </div>
         <div v-else class="cards__mask">
-          <div v-if="coursesWithChange.length > 0" class="group">
+          <div class="group">
             <div class="label">以下の授業に授業場所が登録されます:</div>
             <div class="cards">
               <div
