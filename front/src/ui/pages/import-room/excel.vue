@@ -10,6 +10,7 @@ import { LocalStorage } from "~/infrastructure/localstorage";
 import { registeredCourseToDisplay } from "~/presentation/presenters/course";
 import Button from "~/ui/components/Button.vue";
 import CardAdd from "~/ui/components/CardAdd.vue";
+import Checkbox from "~/ui/components/Checkbox.vue";
 import CourseDetailMini from "~/ui/components/CourseDetailMini.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import InputButtonFile from "~/ui/components/InputButtonFile.vue";
@@ -89,23 +90,41 @@ const registeredMap = new Map(registered.map((course) => [course.id, course]));
 
 if (isResultError(registered)) throw registered;
 
-const applyingCourses = computed(() =>
-  registered
+type CourseWithLocation = ReturnType<typeof registeredCourseToDisplay> & {
+  newLocation: string;
+  selected: boolean;
+};
+
+const allCourses = ref<CourseWithLocation[]>([]);
+
+const selectedCourses = computed(() =>
+  allCourses.value.filter((course) => course.selected)
+);
+
+const initializeCourseSelection = () => {
+  allCourses.value = registered
     .map((course) => registeredCourseToDisplay(course, tags))
-    .filter((course) => !course.room)
     .map((course) => ({
       ...course,
-      location: latestData.value?.courseLocations[course.code] ?? "",
+      newLocation: latestData.value?.courseLocations[course.code] ?? "",
+      selected: !course.room,
     }))
-    .filter((course) => course.location)
-);
+    .filter((course) => course.newLocation)
+    .sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
+};
+
+const toggleCourseSelection = (courseId: string) => {
+  const course = allCourses.value.find((c) => c.id === courseId);
+  if (!course) return;
+  course.selected = !course.selected;
+};
 
 const uploadLoading = ref(false);
 async function upload() {
   uploadLoading.value = true;
 
   await Promise.all(
-    applyingCourses.value.map(async (course) => {
+    selectedCourses.value.map(async (course) => {
       const schedules = sortSchedules(
         removeDuplicateSchedules(registeredMap.get(course.id)?.schedules ?? [])
       );
@@ -113,7 +132,7 @@ async function upload() {
         .updateRegisteredCourse(course.id, {
           rooms: [
             {
-              name: course.location,
+              name: course.newLocation,
               schedules,
             },
           ],
@@ -167,7 +186,12 @@ async function upload() {
             text="アップロードしたデータはデバイスのみに保存されています。"
             icon-name="file_open"
             :disabled="latestData == null"
-            @click-next-button="currentStep = 'apply'"
+            @click-next-button="
+              () => {
+                currentStep = 'apply';
+                initializeCourseSelection();
+              }
+            "
           />
         </div>
 
@@ -179,10 +203,6 @@ async function upload() {
             </li>
             <li>
               新たに授業を追加した際には、再度データの登録操作が必要です。
-            </li>
-            <li>
-              既に授業場所が登録されている授業は変更されないため、
-              授業場所が変更された場合には手動で修正してください。
             </li>
             <li>
               授業場所を登録した Twin:te
@@ -228,7 +248,12 @@ async function upload() {
           size="medium"
           layout="fill"
           :state="loadState === 'ok' ? 'default' : 'disabled'"
-          @click="currentStep = 'apply'"
+          @click="
+            () => {
+              currentStep = 'apply';
+              initializeCourseSelection();
+            }
+          "
         >
           次へ
         </Button>
@@ -251,27 +276,33 @@ async function upload() {
           </div>
         </div>
         <div class="label">以下の授業に授業場所が登録されます:</div>
-        <div v-if="applyingCourses.length === 0" class="no-data">
+        <div v-if="allCourses.length === 0" class="no-data">
           登録できる授業が存在しません
-          <div class="small">
-            既に場所が登録されている授業には上書きされません。<br />
-            修正がある場合は手動で編集してください。
-          </div>
         </div>
         <div v-else class="cards__mask">
           <div class="cards">
             <div
-              v-for="course in applyingCourses"
+              v-for="course in allCourses"
               :key="course.id"
               class="course-card"
+              @click="toggleCourseSelection(course.id)"
             >
-              <div class="name">{{ course.name }}</div>
-              <div class="details">
-                <CourseDetailMini
-                  icon-name="schedule"
-                  :text="course.schedule.full"
-                />
-                <CourseDetailMini icon-name="room" :text="course.location" />
+              <Checkbox
+                :isChecked="course.selected"
+                @clickCheckbox.stop="toggleCourseSelection(course.id)"
+              />
+              <div>
+                <div class="name">{{ course.name }}</div>
+                <div class="details">
+                  <CourseDetailMini
+                    icon-name="schedule"
+                    :text="course.schedule.full"
+                  />
+                  <CourseDetailMini
+                    icon-name="room"
+                    :text="`${course.room || '未登録'} → ${course.newLocation}`"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -282,7 +313,7 @@ async function upload() {
           size="medium"
           layout="fill"
           :state="
-            uploadLoading || applyingCourses.length === 0
+            uploadLoading || selectedCourses.length === 0
               ? 'disabled'
               : 'default'
           "
@@ -424,7 +455,7 @@ async function upload() {
     margin: variable.$spacing-2 0 variable.$spacing-4;
     padding: variable.$spacing-3 variable.$spacing-2 variable.$spacing-3
       variable.$spacing-0;
-    gap: variable.$spacing-2;
+    gap: variable.$spacing-4;
 
     &__mask {
       margin-top: variable.$spacing-2;
@@ -435,9 +466,13 @@ async function upload() {
   }
 
   .course-card {
+    display: flex;
+    gap: variable.$spacing-4;
+    align-items: center;
+    cursor: pointer;
+
     .name {
-      font-weight: 500;
-      font-size: 1.2rem;
+      @include mixin.text-main;
     }
     .details {
       display: flex;
