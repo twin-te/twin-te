@@ -95,26 +95,36 @@ type CourseWithLocation = ReturnType<typeof registeredCourseToDisplay> & {
   selected: boolean;
 };
 
-const allCourses = ref<CourseWithLocation[]>([]);
+const coursesWithChange = ref<CourseWithLocation[]>([]);
+const coursesWithoutChange = ref<CourseWithLocation[]>([]);
 
 const selectedCourses = computed(() =>
-  allCourses.value.filter((course) => course.selected)
+  coursesWithChange.value.filter((course) => course.selected)
 );
 
 const initializeCourseSelection = () => {
-  allCourses.value = registered
+  const allCourses = registered
     .map((course) => registeredCourseToDisplay(course, tags))
-    .map((course) => ({
-      ...course,
-      newLocation: latestData.value?.courseLocations[course.code] ?? "",
-      selected: !course.room,
-    }))
-    .filter((course) => course.newLocation)
-    .sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
+    .map((course) => {
+      const newLocation = latestData.value?.courseLocations[course.code] ?? "";
+      return {
+        ...course,
+        newLocation,
+        selected: course.room !== newLocation,
+      };
+    })
+    .filter((course) => course.newLocation);
+
+  coursesWithChange.value = allCourses.filter(
+    (course) => course.room !== course.newLocation
+  );
+  coursesWithoutChange.value = allCourses
+    .filter((course) => course.room === course.newLocation)
+    .sort((a, b) => (a.room === undefined ? -1 : b.room === undefined ? 1 : 0)); // 未登録のものを先に
 };
 
 const toggleCourseSelection = (courseId: string) => {
-  const course = allCourses.value.find((c) => c.id === courseId);
+  const course = coursesWithChange.value.find((c) => c.id === courseId);
   if (!course) return;
   course.selected = !course.selected;
 };
@@ -275,33 +285,62 @@ async function upload() {
             </div>
           </div>
         </div>
-        <div class="label">以下の授業に授業場所が登録されます:</div>
-        <div v-if="allCourses.length === 0" class="no-data">
+        <div v-if="coursesWithChange.length === 0" class="no-data">
           登録できる授業が存在しません
         </div>
         <div v-else class="cards__mask">
-          <div class="cards">
-            <div
-              v-for="course in allCourses"
-              :key="course.id"
-              class="course-card"
-              @click="toggleCourseSelection(course.id)"
-            >
-              <Checkbox
-                :isChecked="course.selected"
-                @clickCheckbox.stop="toggleCourseSelection(course.id)"
-              />
-              <div>
-                <div class="name">{{ course.name }}</div>
-                <div class="details">
-                  <CourseDetailMini
-                    icon-name="schedule"
-                    :text="course.schedule.full"
-                  />
-                  <CourseDetailMini
-                    icon-name="room"
-                    :text="`${course.room || '未登録'} → ${course.newLocation}`"
-                  />
+          <div v-if="coursesWithChange.length > 0" class="group">
+            <div class="label">以下の授業に授業場所が登録されます:</div>
+            <div class="cards">
+              <div
+                v-for="course in coursesWithChange"
+                :key="course.id"
+                class="course-card"
+              >
+                <Checkbox
+                  :isChecked="course.selected"
+                  @clickCheckbox.stop="toggleCourseSelection(course.id)"
+                />
+                <div>
+                  <div class="name">{{ course.name }}</div>
+                  <div class="details">
+                    <CourseDetailMini
+                      icon-name="schedule"
+                      :text="course.schedule.full"
+                    />
+                    <CourseDetailMini
+                      icon-name="room"
+                      :text="`${course.room || '未登録'} → ${
+                        course.newLocation
+                      }`"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="coursesWithoutChange.length > 0" class="group">
+            <div class="label">
+              以下の授業は既に同じ授業場所が登録されています:
+            </div>
+            <div class="cards">
+              <div
+                v-for="course in coursesWithoutChange"
+                :key="course.id"
+                class="course-card"
+              >
+                <div>
+                  <div class="name">{{ course.name }}</div>
+                  <div class="details">
+                    <CourseDetailMini
+                      icon-name="schedule"
+                      :text="course.schedule.full"
+                    />
+                    <CourseDetailMini
+                      icon-name="room"
+                      :text="course.newLocation"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -445,10 +484,6 @@ async function upload() {
     }
   }
 
-  .label:not(:first-child) {
-    margin-top: variable.$spacing-8;
-  }
-
   .cards {
     display: flex;
     flex-direction: column;
@@ -465,11 +500,15 @@ async function upload() {
     }
   }
 
+  .group {
+    margin-top: variable.$spacing-8;
+  }
+
   .course-card {
     display: flex;
+    margin-inline-start: variable.$spacing-2;
     gap: variable.$spacing-4;
     align-items: center;
-    cursor: pointer;
 
     .name {
       @include mixin.text-main;
