@@ -3,10 +3,10 @@ import styles from '../styles/pages/Home.module.scss';
 import { NextSeo } from 'next-seo';
 import { useEffect, useState } from 'react';
 import { useCase } from '@/usecases';
-import { Contributor } from '@/api/gen/donation/v1/type_pb';
+import { Contributor } from '@/domain';
 
 const Home: NextPage = () => {
-	const [sponserNames, setSponsorNames] = useState<Contributor[]>([]);
+	const [contributors, setContributors] = useState<Contributor[]>([]);
 
 	useEffect(() => {
 		useCase.listContributors().then((contributors) => {
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
 				</p>
 
 				<ul>
-					{sponserNames.map((name, index) => (
+					{contributors.map((name, index) => (
 						<li key={index}>
 							{name.link === undefined ? (
 								name.displayName
