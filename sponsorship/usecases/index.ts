@@ -1,8 +1,14 @@
 import { createPromiseClient, PromiseClient, Transport } from '@connectrpc/connect';
-import { PaymentHistory, SubscriptionPlan, Subscription, User } from '../domain';
+import { PaymentHistory, SubscriptionPlan, Subscription, User, Contributor } from '../domain';
 import { DonationService } from '../api/gen/donation/v1/service_connect';
 import { AuthService } from '../api/gen/auth/v1/service_connect';
-import { fromPBPaymentHistory, fromPBPaymentUser, fromPBPlan, fromPBSubscription } from '../api/converters/donationv1';
+import {
+	fromPBContributor,
+	fromPBPaymentHistory,
+	fromPBPaymentUser,
+	fromPBPlan,
+	fromPBSubscription
+} from '../api/converters/donationv1';
 import { assurePresence } from '../api/converters/utils';
 import { createConnectTransport } from '@connectrpc/connect-web';
 import { ConvertAPIError, isUnauthenticatedError } from './error';
@@ -50,6 +56,13 @@ class UseCase {
 		return this.#donationClient
 			.listSubscriptionPlans({})
 			.then((res) => res.subscriptionPlans.map(fromPBPlan))
+			.catch(ConvertAPIError);
+	}
+
+	async listContributors(): Promise<Contributor[]> {
+		return this.#donationClient
+			.listContributors({})
+			.then((res) => res.contributors.map(fromPBContributor))
 			.catch(ConvertAPIError);
 	}
 
