@@ -8,6 +8,7 @@ import { createConnectTransport } from '@connectrpc/connect-web';
 import { ConvertAPIError, isUnauthenticatedError } from './error';
 import { ENV_NEXT_PUBLIC_API_BASE_URL } from '@/env';
 import { toOptionalString } from '@/api/converters/shared';
+import { Contributor } from '@/api/gen/donation/v1/type_pb';
 
 class UseCase {
 	#authClient: PromiseClient<typeof AuthService>;
@@ -50,6 +51,13 @@ class UseCase {
 		return this.#donationClient
 			.listSubscriptionPlans({})
 			.then((res) => res.subscriptionPlans.map(fromPBPlan))
+			.catch(ConvertAPIError);
+	}
+
+	async listContributors(): Promise<Contributor[]> {
+		return this.#donationClient
+			.listContributors({})
+			.then((res) => res.contributors)
 			.catch(ConvertAPIError);
 	}
 
