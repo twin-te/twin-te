@@ -39,7 +39,7 @@ const Home: NextPage = () => {
 							{name.link === undefined ? (
 								name.displayName
 							) : (
-								<a href={name.link} target="_blank" referrerPolicy="no-referrer">
+								<a href={name.link} target="_blank" rel="nofollow noopener noreferrer" referrerPolicy="no-referrer">
 									{name.displayName}
 								</a>
 							)}
