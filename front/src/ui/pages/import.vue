@@ -164,7 +164,8 @@ if (duplicatedResults.length > 0) {
 const isCourseNotDuplicated = (course: Course) =>
   duplicatedResults.find(
     (duplicatedCourse) =>
-      course.code === duplicatedCourse.code && course.year === duplicatedCourse.year
+      course.code === duplicatedCourse.code &&
+      course.year === duplicatedCourse.year
   ) === undefined;
 
 const courseResults = reactive(
