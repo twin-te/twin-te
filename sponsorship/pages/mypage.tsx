@@ -10,6 +10,7 @@ import { useCase } from '@/usecases';
 import { Subscription, User } from '@/domain';
 import { isNotFoundError, isUnauthenticatedError } from '@/usecases/error';
 import EditUserInfoModal from '@/components/EditUserInfoModal';
+import Link from 'next/link';
 
 const MyPage: NextPage = () => {
 	const router = useRouter();
@@ -95,7 +96,7 @@ const MyPage: NextPage = () => {
 							/>
 							<div className="content">
 								<p>
-									<a href="https://www.twinte.net/sponsor">寄付者一覧</a>
+									<Link href="sponsors-list">寄付者一覧</Link>
 									に表示するお名前とリンクです。
 								</p>
 								<p className="has-text-primary has-text-weight-bold is-marginless">ID</p>
