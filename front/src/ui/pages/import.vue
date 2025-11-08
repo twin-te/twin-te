@@ -99,6 +99,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { Course } from "~/domain/course";
 import { isResultError } from "~/domain/error";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import Button from "~/ui/components/Button.vue";
@@ -160,7 +161,7 @@ if (duplicatedResults.length > 0) {
   );
 }
 
-const isCourseNotDuplicated = (course) =>
+const isCourseNotDuplicated = (course: Course) =>
   duplicatedResults.find(
     (duplicatedCourse) => course.code === duplicatedCourse.code
   ) === undefined;
