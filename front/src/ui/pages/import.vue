@@ -191,18 +191,6 @@ if (missingCodes.length > 0) {
   );
 }
 
-const alreadyRegisteredCodes = codes.value.filter(
-  (code) => result.find((course) => course.code === code) == undefined
-);
-if (alreadyRegisteredCodes.length > 0) {
-  displayToast(
-    `以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
-      "  "
-    )}`,
-    { displayPeriod: 0 }
-  );
-}
-
 const addCourses = async (warning = true) => {
   if (buttonState.value === "disabled") return;
 
