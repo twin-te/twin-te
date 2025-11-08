@@ -65,9 +65,9 @@ services:
 
   proxy-docker:
     container_name: twinte-proxy-docker
-    image: nginx
+    image: caddy:2
     volumes:
-      - ./proxy/nginx.docker.conf:/etc/nginx/nginx.conf
+      - ./proxy/Caddyfile.docker:/etc/caddy/Caddyfile
     ports:
       - "4000:80"
     networks:
@@ -82,9 +82,9 @@ services:
 
   proxy-host:
     container_name: twinte-proxy-host
-    image: nginx
+    image: caddy:2
     volumes:
-      - ./proxy/nginx.host.conf:/etc/nginx/nginx.conf
+      - ./proxy/Caddyfile.host:/etc/caddy/Caddyfile
     ports:
       - "4000:80"
     networks:

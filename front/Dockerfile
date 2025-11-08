@@ -21,9 +21,9 @@ RUN --mount=type=cache,target=~/.bun/install/cache \
 COPY . .
 RUN bun run build:staging
 
-FROM nginx AS staging-deploy
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=staging-builder /app/dist /usr/share/nginx/html
+FROM caddy:2 AS staging-deploy
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=staging-builder /app/dist /usr/share/caddy
 
 FROM oven/bun:${BUN_VERSION}-slim AS production-builder
 WORKDIR /app
@@ -41,6 +41,6 @@ RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) \
   bun run build:production
 
-FROM nginx AS production-deploy
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=production-builder /app/dist /usr/share/nginx/html
+FROM caddy:2 AS production-deploy
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=production-builder /app/dist /usr/share/caddy

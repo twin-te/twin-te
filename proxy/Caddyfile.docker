@@ -1,0 +1,8 @@
+:80 {
+  reverse_proxy /api* back:8080
+  reverse_proxy /auth* back:8080
+  reverse_proxy /calendar* back:8080
+  reverse_proxy /sponsorship* sponsorship:3000
+  reverse_proxy /* front:5173
+}
+
