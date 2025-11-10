@@ -39,7 +39,7 @@ jobs:
             tag: parser-prod
             environment: ""
             secrets: ""
-    environment: ${{ matrix.service.environment }}
+    environment: ${{ matrix.service.environment || null }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
