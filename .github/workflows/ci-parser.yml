@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build and Run Snapshot Tests
         run: docker compose run -T --build --rm parser uv run ./snapshot_test.py
