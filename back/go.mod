@@ -14,7 +14,7 @@ require (
 	github.com/samber/lo v1.39.0
 	github.com/samber/mo v1.11.0
 	github.com/spf13/cobra v1.9.1
-	github.com/stripe/stripe-go/v76 v76.18.0
+	github.com/stripe/stripe-go/v76 v76.25.0
 	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.15.0
