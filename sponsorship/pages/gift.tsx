@@ -26,7 +26,7 @@ const Gift: NextPage = () => {
 					<div className={styles.imageWrapper}>
 						<Image objectFit="contain" src={TwinteSticker} alt="Twin:teステッカー" />
 					</div>
-					<p>Twin:teのロゴのステッカーです！シールになっているので好きなところに張れますよ！</p>
+					<p>Twin:teのロゴのステッカーです！シールになっているので好きなところに貼れますよ！</p>
 				</div>
 				<div className="card">
 					<div>
