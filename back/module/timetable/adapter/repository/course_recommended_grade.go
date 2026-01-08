@@ -23,7 +23,7 @@ func (r *impl) updateCourseRecommendedGrades(db *gorm.DB, course *timetabledomai
 		dbRecommendedGrades := base.MapWithArg(toDelete, course.ID, timetabledbmodel.ToDBRecommendedGrade)
 		return db.
 			Where("course_id = ?", course.ID.String()).
-			Where("grade IN ?", base.Map(dbRecommendedGrades, func(dbRecommendedGrade timetabledbmodel.CourseRecommendedGrade) any {
+			Where("recommended_grade IN ?", base.Map(dbRecommendedGrades, func(dbRecommendedGrade timetabledbmodel.CourseRecommendedGrade) any {
 				return dbRecommendedGrade.RecommendedGrade
 			})).
 			Delete(&timetabledbmodel.CourseRecommendedGrade{}).
