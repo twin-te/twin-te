@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { captureException, startSpan } from "@sentry/vue";
 import dayjs from "dayjs";
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { isResultError } from "~/domain/error";
 import { removeDuplicateSchedules, sortSchedules } from "~/domain/schedule";
@@ -76,8 +76,8 @@ const dayjsFormat = "YYYY/MM/DD HH:mm:ss";
 const { appliedYear } = useSetting();
 
 watch(currentStep, (newValue) => {
-  if (newValue === 'apply') initializeCourseSelection();
-})
+  if (newValue === "apply") initializeCourseSelection();
+});
 
 const tags = await timetableUseCase.listTags().then((result) => {
   if (isResultError(result)) throw result;
@@ -257,8 +257,7 @@ async function upload() {
           size="medium"
           layout="fill"
           :state="loadState === 'ok' ? 'default' : 'disabled'"
-          @click="
-            () => currentStep = 'apply'"
+          @click="() => (currentStep = 'apply')"
         >
           次へ
         </Button>
