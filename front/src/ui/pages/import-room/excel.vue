@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { captureException, startSpan } from "@sentry/vue";
 import dayjs from "dayjs";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from 'vue'
 import { useRouter } from "vue-router";
 import { isResultError } from "~/domain/error";
 import { removeDuplicateSchedules, sortSchedules } from "~/domain/schedule";
@@ -74,6 +74,10 @@ async function load(file: File) {
 const dayjsFormat = "YYYY/MM/DD HH:mm:ss";
 
 const { appliedYear } = useSetting();
+
+watch(currentStep, (newValue) => {
+  if (newValue === 'apply') initializeCourseSelection();
+})
 
 const tags = await timetableUseCase.listTags().then((result) => {
   if (isResultError(result)) throw result;
@@ -196,12 +200,7 @@ async function upload() {
             text="アップロードしたデータはデバイスのみに保存されています。"
             icon-name="file_open"
             :disabled="latestData == null"
-            @click-next-button="
-              () => {
-                currentStep = 'apply';
-                initializeCourseSelection();
-              }
-            "
+            @click-next-button="currentStep = 'apply'"
           />
         </div>
 
@@ -259,11 +258,7 @@ async function upload() {
           layout="fill"
           :state="loadState === 'ok' ? 'default' : 'disabled'"
           @click="
-            () => {
-              currentStep = 'apply';
-              initializeCourseSelection();
-            }
-          "
+            () => currentStep = 'apply'"
         >
           次へ
         </Button>
