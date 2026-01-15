@@ -257,7 +257,7 @@ async function upload() {
           size="medium"
           layout="fill"
           :state="loadState === 'ok' ? 'default' : 'disabled'"
-          @click="() => (currentStep = 'apply')"
+          @click="currentStep = 'apply'"
         >
           次へ
         </Button>
