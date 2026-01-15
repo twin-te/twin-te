@@ -24,8 +24,14 @@ export const getKdbClassroom = async (
   const records: { courseId: string; classroom: string }[] = XLSX.utils
     .sheet_to_json<{
       [key: string]: string;
-    }>(sheet, { range })
-    .filter((it) => it["教室"].trim() !== "" && it["科目番号"].trim() !== "")
+    }>(sheet, { range, raw: false })
+    .filter(
+      (it) =>
+        it["教室"] &&
+        it["科目番号"] &&
+        it["教室"].trim() !== "" &&
+        it["科目番号"].trim() !== ""
+    )
     .map((it) => ({
       courseId: it["科目番号"],
       classroom: it["教室"].split(/[\n\r]+/).join(","),
