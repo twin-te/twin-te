@@ -21,7 +21,7 @@ require (
 	google.golang.org/api v0.221.0
 	google.golang.org/protobuf v1.36.6
 	gorm.io/driver/postgres v1.5.4
-	gorm.io/gorm v1.25.6
+	gorm.io/gorm v1.31.1
 )
 
 require (
