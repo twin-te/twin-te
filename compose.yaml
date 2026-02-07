@@ -97,7 +97,7 @@ services:
   db:
     container_name: twinte-db
     image: postgres:16
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
