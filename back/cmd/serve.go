@@ -16,6 +16,8 @@ import (
 	announcementrepository "github.com/twin-te/twin-te/back/module/announcement/adapter/repository"
 	announcementdata "github.com/twin-te/twin-te/back/module/announcement/data"
 	announcementusecase "github.com/twin-te/twin-te/back/module/announcement/usecase"
+	calendarrepository "github.com/twin-te/twin-te/back/module/calendar/adapter/repository"
+	calendarusecase "github.com/twin-te/twin-te/back/module/calendar/usecase"
 	"github.com/twin-te/twin-te/back/module/auth/accesscontroller"
 	authfactory "github.com/twin-te/twin-te/back/module/auth/adapter/factory"
 	authrepository "github.com/twin-te/twin-te/back/module/auth/adapter/repository"
@@ -82,6 +84,9 @@ var serveCmd = &cobra.Command{
 		timetableRepository := timetablerepository.New(db)
 		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableQuery, timetableRepository)
 
+		calendarRepository := calendarrepository.New(db)
+		calendarUseCase := calendarusecase.New(accessController, calendarRepository, schoolcalendarUseCase, timetableUseCase)
+
 		unifiedUseCase := unifiedusecase.New(accessController, schoolcalendarUseCase, timetableUseCase)
 
 		announcements, err := announcementdata.LoadAnnouncements()
@@ -115,6 +120,7 @@ var serveCmd = &cobra.Command{
 			accessController,
 			announcementUsecase,
 			authUseCase,
+			calendarUseCase,
 			donationUseCase,
 			schoolcalendarUseCase,
 			timetableUseCase,

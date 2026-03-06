@@ -95,6 +95,45 @@ declare global {
             >通知設定を開く</Button
           >
         </div>
+        <div v-if="isAuthenticated" class="main__content--ical">
+          <p>カレンダー連携（ベータ版）</p>
+          <ToggleSwitch
+            class="switch"
+            :isChecked="icalUrl !== null"
+            @click-toggle-switch="onIcalToggle"
+          />
+          <div v-if="icalUrl" class="ical-detail">
+            <p class="ical-description">
+              以下のURLをGoogleカレンダーやAppleのカレンダーアプリなどに登録すると、Twin:teの時間割が自動的に同期されます。
+            </p>
+            <div class="ical-url-row">
+              <input
+                v-model="icalUrl"
+                type="text"
+                readonly
+                class="ical-url-input"
+              />
+              <Button
+                class="button"
+                size="small"
+                color="base"
+                :pauseActiveStyle="false"
+                @click="copyIcalUrl"
+                >コピー</Button
+              >
+            </div>
+            <div>
+              <h5>注意事項</h5>
+              <ul class="ical-cautions">
+                <li>
+                  このURLを知っている人は誰でもあなたの時間割を閲覧できます。取り扱いにご注意ください。
+                </li>
+                <li>カレンダーへの反映には時間がかかる場合があります。</li>
+                <li>一度機能を無効にするとURLが変更されます。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
         <div v-if="isAuthenticated" class="main__content--account">
           <p>アカウント情報</p>
           <div class="account-btns">
@@ -151,7 +190,7 @@ declare global {
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   InternalServerError,
@@ -167,7 +206,7 @@ import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
-import { authUseCase } from "~/usecases";
+import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
 import { getLogoutUrl, redirectToUrl } from "../url";
@@ -182,6 +221,59 @@ useHead({
 const { setting, updateSetting } = useSetting();
 
 const { isAuthenticated } = useAuth();
+
+/** ical subscription */
+const icalUrl = ref<string | null>(null);
+
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    return;
+  }
+  const result = await calendarUseCase.getIcalSubscriptionUrl();
+  if (!isResultError(result) && "url" in result && result.url) {
+    icalUrl.value = result.url;
+  } else {
+    icalUrl.value = null;
+  }
+});
+
+const onIcalToggle = async () => {
+  if (icalUrl.value !== null) {
+    const result = await calendarUseCase.disableIcalSubscription();
+    if (!isResultError(result)) {
+      icalUrl.value = null;
+    } else if (result instanceof NetworkError) {
+      displayToast(
+        "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
+        { type: "danger" }
+      );
+    } else if (result instanceof InternalServerError) {
+      displayToast("サーバーエラーが発生しました。", { type: "danger" });
+    }
+  } else {
+    const result = await calendarUseCase.enableIcalSubscription();
+    if (!isResultError(result) && "url" in result) {
+      icalUrl.value = result.url;
+    } else if (result instanceof NetworkError) {
+      displayToast(
+        "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
+        { type: "danger" }
+      );
+    } else if (result instanceof InternalServerError) {
+      displayToast("サーバーエラーが発生しました。", { type: "danger" });
+    }
+  }
+};
+
+const copyIcalUrl = async () => {
+  if (!icalUrl.value) return;
+  try {
+    await navigator.clipboard.writeText(icalUrl.value);
+    displayToast("URLをコピーしました", { type: "primary" });
+  } catch {
+    displayToast("コピーに失敗しました", { type: "danger" });
+  }
+};
 
 /** logout */
 const logout = () => {
@@ -268,6 +360,9 @@ const confirmDeleteAccount = async () => {
   margin-top: $spacing-5;
   &__contents {
     height: calc(#{$vh} - 8rem);
+    overflow-y: auto;
+    padding: 0 1.2rem;
+    margin: 0 -1.2rem;
   }
   &__content {
     display: flex;
@@ -287,6 +382,50 @@ const confirmDeleteAccount = async () => {
         line-height: $single-line;
         font-weight: 500;
         color: getColor(--color-text-main);
+      }
+    }
+    &--ical {
+      display: flex;
+      align-items: center;
+      padding: 1.2rem 0;
+      flex-wrap: wrap;
+      p {
+        font-weight: 500;
+        color: getColor(--color-text-main);
+      }
+      & .switch {
+        margin: 0 0 0 auto;
+      }
+      .ical-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 0.8rem;
+      }
+      .ical-description {
+        line-height: $single-line;
+        color: getColor(--color-text-sub);
+        font-weight: 400;
+      }
+      .ical-url-row {
+        display: flex;
+        gap: 1.6rem;
+        align-items: center;
+      }
+      .ical-url-input {
+        flex: 1;
+        width: 0;
+        color: getColor(--color-text-main);
+        background: getColor(--color-background-sub);
+        text-overflow: ellipsis;
+      }
+      .ical-cautions {
+        margin-top: 0.8rem;
+        li {
+          list-style: disc inside;
+          margin-bottom: 0.8rem;
+          font-weight: 400;
+        }
       }
     }
     &--account {
