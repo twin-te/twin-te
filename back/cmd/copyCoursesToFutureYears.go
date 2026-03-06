@@ -19,14 +19,13 @@ import (
 )
 
 var (
-	year            int
-	kdbJSONFilePath string
+	copySourceYear     int
+	copyMaxFutureYears int
 )
 
-// UpdateCoursesBasedOnKdBCmd represents the update-courses-based-on-kdb command
-var UpdateCoursesBasedOnKdBCmd = &cobra.Command{
-	Use:   "update-courses-based-on-kdb",
-	Short: "Update courses based on KdB",
+var CopyCoursesToFutureYearsCmd = &cobra.Command{
+	Use:   "copy-courses-to-future-years",
+	Short: "Copy courses from source year to future years",
 	Run: func(cmd *cobra.Command, args []string) {
 		db, err := dbhelper.NewDB()
 		if err != nil {
@@ -37,27 +36,27 @@ var UpdateCoursesBasedOnKdBCmd = &cobra.Command{
 		accessController := accesscontroller.New(authRepository)
 
 		timetableFactory := timetablefactory.New(db)
-		timetableIntegrator := timetableintegrator.New(kdbJSONFilePath)
+		timetableIntegrator := timetableintegrator.New("")
 		timetableQuery := timetablequery.New(db)
 		timetableRepository := timetablerepository.New(db)
 		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableQuery, timetableRepository)
 
-		year, err := shareddomain.ParseAcademicYear(year)
+		sourceYear, err := shareddomain.ParseAcademicYear(copySourceYear)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
 		ctx := appctx.SetActor(context.Background(), authdomain.NewUnknown(authdomain.PermissionExecuteBatchJob))
 
-		if _, err := timetableUseCase.UpdateCoursesBasedOnKdB(ctx, year); err != nil {
+		if err := timetableUseCase.CopyCoursesToFutureYears(ctx, sourceYear, copyMaxFutureYears); err != nil {
 			log.Fatalln(err)
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(UpdateCoursesBasedOnKdBCmd)
+	rootCmd.AddCommand(CopyCoursesToFutureYearsCmd)
 
-	UpdateCoursesBasedOnKdBCmd.Flags().IntVar(&year, "year", 0, "academic year of courses you want to update")
-	UpdateCoursesBasedOnKdBCmd.Flags().StringVar(&kdbJSONFilePath, "kdb-json-file-path", "", "kdb json file path that is used in timetable integrator")
+	CopyCoursesToFutureYearsCmd.Flags().IntVar(&copySourceYear, "source-year", 0, "academic year of courses to copy from")
+	CopyCoursesToFutureYearsCmd.Flags().IntVar(&copyMaxFutureYears, "max-future-years", 1, "number of future years to copy to")
 }

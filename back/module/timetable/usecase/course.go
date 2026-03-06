@@ -13,8 +13,10 @@ import (
 	"github.com/twin-te/twin-te/back/base"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
@@ -91,15 +93,17 @@ func (uc *impl) SearchCourses(ctx context.Context, conds timetablemodule.SearchC
 	return base.MapByClone(courses), nil
 }
 
-func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) error {
+func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetabledomain.Code, error) {
 	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
-		return err
+		return nil, err
 	}
 
 	courseWithoutIDs, err := uc.i.ListCourseWithoutIDsFromKdB(ctx, year)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	importedCodes := make([]timetabledomain.Code, 0, len(courseWithoutIDs))
 
 	for _, courseWithoutID := range courseWithoutIDs {
 		err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
@@ -139,6 +143,146 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 			}
 
 			return nil
+		}, false)
+		if err != nil {
+			return nil, err
+		}
+		importedCodes = append(importedCodes, courseWithoutID.Code)
+	}
+
+	return importedCodes, nil
+}
+
+func (uc *impl) CopyCoursesToFutureYears(ctx context.Context, sourceYear shareddomain.AcademicYear, maxFutureYears int) error {
+	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
+		return err
+	}
+
+	sourceCourses, err := uc.r.ListCourses(ctx, timetableport.CourseFilter{
+		Year: mo.Some(sourceYear),
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
+	if err != nil {
+		return err
+	}
+
+	for futureOffset := 1; futureOffset <= maxFutureYears; futureOffset++ {
+		targetYear, err := shareddomain.ParseAcademicYear(sourceYear.Int() + futureOffset)
+		if err != nil {
+			return err
+		}
+
+		for _, sourceCourse := range sourceCourses {
+			err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+				courseOption, err := rtx.FindCourse(ctx, timetableport.CourseFilter{
+					Year: mo.Some(targetYear),
+					Code: mo.Some(sourceCourse.Code),
+				}, sharedport.LockExclusive)
+				if err != nil {
+					return err
+				}
+
+				_, found := courseOption.Get()
+				if !found {
+					courseWithoutID := timetableappdto.CourseWithoutID{
+						Year:              targetYear,
+						Code:              sourceCourse.Code,
+						Name:              sourceCourse.Name,
+						Instructors:       sourceCourse.Instructors,
+						Credit:            sourceCourse.Credit,
+						Overview:          sourceCourse.Overview,
+						Remarks:           sourceCourse.Remarks,
+						LastUpdatedAt:     sourceCourse.LastUpdatedAt,
+						HasParseError:     sourceCourse.HasParseError,
+						IsAnnual:          sourceCourse.IsAnnual,
+						RecommendedGrades: sourceCourse.RecommendedGrades,
+						Methods:           sourceCourse.Methods,
+						Schedules:         sourceCourse.Schedules,
+					}
+					newCourse, err := uc.f.NewCourse(courseWithoutID)
+					if err != nil {
+						return err
+					}
+					return rtx.CreateCourses(ctx, newCourse)
+				}
+
+				return nil
+			}, false)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (uc *impl) ListMissingCourses(ctx context.Context, year shareddomain.AcademicYear, importedCodes []timetabledomain.Code) ([]*timetabledomain.Course, error) {
+	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
+		return nil, err
+	}
+
+	allCourses, err := uc.r.ListCourses(ctx, timetableport.CourseFilter{
+		Year: mo.Some(year),
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
+	if err != nil {
+		return nil, err
+	}
+
+	importedCodeSet := lo.SliceToMap(importedCodes, func(code timetabledomain.Code) (timetabledomain.Code, struct{}) {
+		return code, struct{}{}
+	})
+
+	missingCourses := lo.Filter(allCourses, func(course *timetabledomain.Course, _ int) bool {
+		_, exists := importedCodeSet[course.Code]
+		return !exists
+	})
+
+	return missingCourses, nil
+}
+
+func (uc *impl) MigrateMissingCourses(ctx context.Context, year shareddomain.AcademicYear, importedCodes []timetabledomain.Code) error {
+	missingCourses, err := uc.ListMissingCourses(ctx, year, importedCodes)
+	if err != nil {
+		return err
+	}
+
+	for _, course := range missingCourses {
+		err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+			registeredCourses, err := rtx.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
+				CourseIDs: mo.Some([]idtype.CourseID{course.ID}),
+			}, sharedport.LimitOffset{}, sharedport.LockExclusive)
+			if err != nil {
+				return err
+			}
+
+			for _, rc := range registeredCourses {
+				rc.BeforeUpdateHook()
+
+				deprecatedName, err := timetabledomain.ParseName("【移行失敗】" + course.Name.String())
+				if err != nil {
+					return err
+				}
+
+				rc.CourseID = mo.None[idtype.CourseID]()
+				rc.Name = mo.Some(deprecatedName)
+				rc.Instructors = mo.Some(course.Instructors)
+				rc.Credit = mo.Some(course.Credit)
+				rc.Methods = mo.Some(base.CopySlice(course.Methods))
+				rc.Schedules = mo.Some(base.CopySlice(course.Schedules))
+				if rc.Memo != "" {
+					rc.Memo = rc.Memo + "\n"
+				}
+				rc.Memo = rc.Memo + "元の科目番号: " + course.Code.String()
+
+				if err := rtx.UpdateRegisteredCourse(ctx, rc); err != nil {
+					return err
+				}
+			}
+
+			_, err = rtx.DeleteCourses(ctx, timetableport.CourseFilter{
+				ID: mo.Some(course.ID),
+			})
+			return err
 		}, false)
 		if err != nil {
 			return err

@@ -162,6 +162,15 @@ func (r *impl) UpdateCourse(ctx context.Context, course *timetabledomain.Course)
 	}, false)
 }
 
+func (r *impl) DeleteCourses(ctx context.Context, filter timetableport.CourseFilter) (rowsAffected int, err error) {
+	err = r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = applyCourseFilter(tx, filter)
+		rowsAffected = int(tx.Delete(&timetabledbmodel.Course{}).RowsAffected)
+		return tx.Error
+	}, false)
+	return
+}
+
 func applyCourseFilter(db *gorm.DB, filter timetableport.CourseFilter) *gorm.DB {
 	if id, ok := filter.ID.Get(); ok {
 		db = db.Where("id = ?", id.String())
