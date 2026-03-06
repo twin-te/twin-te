@@ -54,7 +54,7 @@ func (h *impl) ICSHandler(c echo.Context) error {
 	}
 
 	rdateParam := c.QueryParam("rdate")
-	isRdateSupported := rdateParam == "" || rdateParam == "true"
+	isRdateSupported := rdateParam == "true"
 
 	tags, err := getTags(c)
 	if err != nil {
