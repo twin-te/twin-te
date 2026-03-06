@@ -4,6 +4,14 @@
 
 Twin:te をローカルで動かすための最低限の手順を以下に示します。
 
+### イメージのビルド
+
+以下のコマンドで必要な Docker イメージをビルドします。
+
+```sh
+docker compose build db db-migration back front sponsorship proxy-docker parser codegen
+```
+
 ### 環境変数の設定
 
 `.env.local` を作成します。
