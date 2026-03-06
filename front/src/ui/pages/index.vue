@@ -11,6 +11,7 @@
         ></IconButton
       ></template>
     </PageHeader>
+    <FutureYearBanner />
     <section class="main">
       <ToggleButton
         class="main__toggle"
@@ -271,6 +272,7 @@ import { formatPublishedAt } from "~/presentation/presenters/news";
 import { getDisplayTimetable } from "~/presentation/presenters/timetable";
 import Button from "~/ui/components/Button.vue";
 import CourseTile from "~/ui/components/CourseTile.vue";
+import FutureYearBanner from "~/ui/components/FutureYearBanner.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import NewsBox from "~/ui/components/NewsBox.vue";
@@ -438,6 +440,12 @@ const onClickNewsModal = async () => {
 <style lang="scss" scoped>
 @import "~/ui/styles";
 
+.home {
+  display: flex;
+  flex-direction: column;
+  height: $vh;
+}
+
 .main {
   display: grid;
   border-radius: $radius-4 $radius-4 $radius-0 $radius-0;
@@ -447,7 +455,8 @@ const onClickNewsModal = async () => {
   @include landscape {
     margin: $spacing-4 $spacing-0 $spacing-0;
   }
-  height: calc(#{$vh} - 7.6rem);
+  flex: 1;
+  min-height: 0;
   grid-template:
     "toggle module btn" $spacing-7
     "table table table" 1fr
@@ -455,7 +464,6 @@ const onClickNewsModal = async () => {
 
   @include landscape {
     border-radius: $spacing-4;
-    height: calc(#{$vh} - 9.6rem);
   }
 
   &__toggle {
@@ -558,10 +566,6 @@ const onClickNewsModal = async () => {
 
 .special {
   grid-area: table;
-  height: calc(#{$vh} - 14.8rem);
-  @include landscape {
-    height: calc(#{$vh} - 16.4rem);
-  }
   overflow-y: auto;
   margin-top: $spacing-3;
 }

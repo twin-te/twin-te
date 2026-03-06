@@ -36,6 +36,7 @@
     </PageHeader>
     <article class="main">
       <div class="main__contents">
+        <FutureYearBanner />
         <p class="main__code">{{ displayCourse.code }}</p>
         <h1 class="main__name">{{ displayCourse.name }}</h1>
         <section class="main__details">
@@ -205,6 +206,7 @@ import { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
 import Button from "~/ui/components/Button.vue";
 import CourseDetail from "~/ui/components/CourseDetail.vue";
 import DecoratedIcon from "~/ui/components/DecoratedIcon.vue";
+import FutureYearBanner from "~/ui/components/FutureYearBanner.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";

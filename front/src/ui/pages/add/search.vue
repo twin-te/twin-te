@@ -11,6 +11,7 @@
       </template>
       <template #title>授業の検索</template>
     </PageHeader>
+    <FutureYearBanner />
     <div class="main">
       <div class="main__search">
         <section class="search__top">
@@ -273,6 +274,7 @@ import Card from "~/ui/components/Card.vue";
 import CardCourse from "~/ui/components/CardCourse.vue";
 import Checkbox from "~/ui/components/Checkbox.vue";
 import CourseDetailMini from "~/ui/components/CourseDetailMini.vue";
+import FutureYearBanner from "~/ui/components/FutureYearBanner.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import LabeledTextField from "~/ui/components/LabeledTextField.vue";
 import Modal from "~/ui/components/Modal.vue";
@@ -556,12 +558,22 @@ const unselectTargetCourse = () => {
 @import "~/ui/styles";
 .search {
   /* @include max-width; */
+  display: flex;
+  flex-direction: column;
+  height: $vh;
 }
 
 .main {
   margin-top: $spacing-3;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   &__search {
-    height: calc(#{$vh} - 15.4rem);
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     padding: $spacing-3 $spacing-0 $spacing-0;
   }
   &__bottom {
@@ -598,9 +610,8 @@ const unselectTargetCourse = () => {
   }
   &__result,
   &__accordion {
-    height: calc(
-      #{$vh} - 26.6rem - 5rem - v-bind("`${isSelectedOpen ? selectedSearchResults.length * 2.7 : 0}rem`")
-    );
+    flex: 1;
+    min-height: 0;
   }
   &__selected {
     padding: $spacing-2 $spacing-2 0;
