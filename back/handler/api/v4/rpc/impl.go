@@ -8,12 +8,14 @@ import (
 
 	"github.com/bufbuild/connect-go"
 	announcementv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/announcement/v1/svc"
+	calendarv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/calendar/v1/svc"
 	authv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/auth/v1/svc"
 	donationv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/donation/v1/svc"
 	schoolcalendarv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/schoolcalendar/v1/svc"
 	timetablev1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/timetable/v1/svc"
 	unifiedv1svc "github.com/twin-te/twin-te/back/handler/api/v4/rpc/unified/v1/svc"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1/announcementv1connect"
+	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/calendar/v1/calendarv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1/authv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/donation/v1/donationv1connect"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1/schoolcalendarv1connect"
@@ -22,6 +24,7 @@ import (
 	"github.com/twin-te/twin-te/back/handler/common/interceptor"
 	announcementmodule "github.com/twin-te/twin-te/back/module/announcement"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
@@ -33,6 +36,7 @@ var _ http.Handler = (*impl)(nil)
 // impl handles requests with paths beginning with the following prefixes
 //   - "/announcement.v1"
 //   - "/auth.v1"
+//   - "/calendar.v1"
 //   - "/donation.v1"
 //   - "/schoolcalendar.v1"
 //   - "/timetable.v1"
@@ -59,6 +63,7 @@ func New(
 	accessController authmodule.AccessController,
 	announcementUsecase announcementmodule.UseCase,
 	authUseCase authmodule.UseCase,
+	calendarUseCase calendarmodule.UseCase,
 	donationUseCase donationmodule.UseCase,
 	schoolcalendarUseCase schoolcalendarmodule.UseCase,
 	timetableUseCase timetablemodule.UseCase,
@@ -82,6 +87,10 @@ func New(
 	// "/auth.v1"
 	authv1Svc := authv1svc.New(authUseCase)
 	h.register(authv1connect.NewAuthServiceHandler(authv1Svc, handlerOptions...))
+
+	// "/calendar.v1"
+	calendarv1Svc := calendarv1svc.New(calendarUseCase)
+	h.register(calendarv1connect.NewCalendarServiceHandler(calendarv1Svc, handlerOptions...))
 
 	// "/donation.v1"
 	donationv1Svc := donationv1svc.New(donationUseCase)

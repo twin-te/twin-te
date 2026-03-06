@@ -12,6 +12,7 @@ import (
 	calendarv1beta "github.com/twin-te/twin-te/back/handler/calendar/v1beta"
 	announcementmodule "github.com/twin-te/twin-te/back/module/announcement"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
@@ -43,6 +44,7 @@ func New(
 	accessController authmodule.AccessController,
 	announcementUsecase announcementmodule.UseCase,
 	authUseCase authmodule.UseCase,
+	calendarUseCase calendarmodule.UseCase,
 	donationUseCase donationmodule.UseCase,
 	schoolcalendarUseCase schoolcalendarmodule.UseCase,
 	timetableUseCase timetablemodule.UseCase,
@@ -55,14 +57,14 @@ func New(
 
 	calendarv1betaHandler := calendarv1beta.New(
 		accessController,
-		schoolcalendarUseCase,
-		timetableUseCase,
+		calendarUseCase,
 	)
 
 	var apiv4RPCHandler http.Handler = apiv4rpc.New(
 		accessController,
 		announcementUsecase,
 		authUseCase,
+		calendarUseCase,
 		donationUseCase,
 		schoolcalendarUseCase,
 		timetableUseCase,

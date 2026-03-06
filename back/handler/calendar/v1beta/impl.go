@@ -5,26 +5,21 @@ import (
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/twin-te/twin-te/back/handler/common/middleware"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
-	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
-	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 )
 
 // impl handles the requests beginning with the following paths.
 //   - "/timetable.ics"
 type impl struct {
-	schoolcalendar schoolcalendarmodule.UseCase
-	timetable      timetablemodule.UseCase
+	calendar calendarmodule.UseCase
 }
 
 func New(
 	accessController authmodule.AccessController,
-
-	schoolcalendar schoolcalendarmodule.UseCase,
-	timetable timetablemodule.UseCase,
+	calendar calendarmodule.UseCase,
 ) *echo.Echo {
 	h := &impl{
-		schoolcalendar: schoolcalendar,
-		timetable:      timetable,
+		calendar: calendar,
 	}
 
 	e := echo.New()
@@ -33,7 +28,7 @@ func New(
 		echomiddleware.Recover(),
 		echomiddleware.Logger(),
 		middleware.NewEchoErrorHandler(),
-		middleware.NewEchoWithActor(accessController),
+		newEchoWithActorOrIcalToken(accessController, calendar),
 	)
 
 	e.GET("/timetable.ics", h.ICSHandler)
