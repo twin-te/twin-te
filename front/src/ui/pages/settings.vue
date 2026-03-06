@@ -224,15 +224,12 @@ const { isAuthenticated } = useAuth();
 
 /** ical subscription */
 const icalUrl = ref<string | null>(null);
-const icalLoading = ref(true);
 
 onMounted(async () => {
   if (!isAuthenticated.value) {
-    icalLoading.value = false;
     return;
   }
   const result = await calendarUseCase.getIcalSubscriptionUrl();
-  icalLoading.value = false;
   if (!isResultError(result) && "url" in result && result.url) {
     icalUrl.value = result.url;
   } else {
