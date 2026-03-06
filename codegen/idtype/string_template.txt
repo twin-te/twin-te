@@ -16,7 +16,7 @@ func (id ${id_name}) IsZero() bool {
 
 func Parse${id_name}(s string) (${id_name}, error) {
 	if s == "" {
-		return "", fmt.Errorf("failed to parse ${id_name} %#v", s)
+		return "", fmt.Errorf("failed to parse ${id_name} %v", s)
 	}
 	return ${id_name}(s), nil
 }
