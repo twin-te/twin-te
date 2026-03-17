@@ -13,7 +13,7 @@ const Gift: NextPage = () => {
 				<div className={styles.description}>
 					<h1 className="title pagetitle">返礼品一覧</h1>
 					<p>
-						寄付合計金額が以下に記載の値段を超える方はそれぞれの返礼品を申し込むことができます。
+						寄付合計額が以下に記載の金額以上の方はそれぞれの返礼品を申し込むことができます。
 						<br />
 						返礼品をご希望の場合は、マイページに記載のID・合計金額・希望する返礼品を記載の上
 						<a href="mailto:info@twinte.net?subject=返礼品について">info@twinte.net</a>までご連絡ください。
