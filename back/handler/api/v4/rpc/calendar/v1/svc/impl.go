@@ -16,13 +16,18 @@ type impl struct {
 }
 
 func (svc *impl) GetIcalSubscriptionUrl(ctx context.Context, req *connect.Request[calendarv1.GetIcalSubscriptionUrlRequest]) (res *connect.Response[calendarv1.GetIcalSubscriptionUrlResponse], err error) {
-	url, ok, err := svc.uc.GetIcalSubscriptionUrl(ctx)
-	if !ok || err != nil {
+	optUrl, err := svc.uc.GetIcalSubscriptionUrl(ctx)
+	if err != nil {
 		return nil, err
 	}
 
+	var url *string
+	if v, ok := optUrl.Get(); ok {
+		url = &v
+	}
+
 	res = connect.NewResponse(&calendarv1.GetIcalSubscriptionUrlResponse{
-		Url: &url,
+		Url: url,
 	})
 
 	return

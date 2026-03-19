@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/base"
 	calendarport "github.com/twin-te/twin-te/back/module/calendar/port"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
@@ -12,24 +14,21 @@ import (
 
 const icalSubscriptionPath = "/calendar/v1beta/timetable.ics"
 
-func (uc *impl) GetIcalSubscriptionUrl(ctx context.Context) (url string, ok bool, err error) {
+func (uc *impl) GetIcalSubscriptionUrl(ctx context.Context) (mo.Option[string], error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
-		return "", false, err
+		return mo.None[string](), err
 	}
 
 	subID, err := uc.r.FindIcalSubscriptionByUserID(ctx, userID, sharedport.LockNone)
 	if err != nil {
-		return "", false, err
+		return mo.None[string](), err
 	}
-	if subID.IsAbsent() {
-		return "", false, nil
-	}
-	id, _ := subID.Get()
-	return buildIcalSubscriptionUrl(id), true, nil
+
+	return base.OptionMap(subID, buildIcalSubscriptionUrl), nil
 }
 
-func (uc *impl) EnableIcalSubscription(ctx context.Context) (url string, err error) {
+func (uc *impl) EnableIcalSubscription(ctx context.Context) (string, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return "", err

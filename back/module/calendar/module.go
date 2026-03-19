@@ -3,6 +3,7 @@ package calendarmodule
 import (
 	"context"
 
+	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -22,12 +23,12 @@ type UseCase interface {
 	// GetIcalSubscriptionUrl returns the public iCal URL if the user has enabled it.
 	//
 	// [Authentication] required
-	GetIcalSubscriptionUrl(ctx context.Context) (url string, ok bool, err error)
+	GetIcalSubscriptionUrl(ctx context.Context) (mo.Option[string], error)
 
 	// EnableIcalSubscription creates or returns the public iCal URL for the user.
 	//
 	// [Authentication] required
-	EnableIcalSubscription(ctx context.Context) (url string, err error)
+	EnableIcalSubscription(ctx context.Context) (string, error)
 
 	// DisableIcalSubscription removes the public iCal URL for the user.
 	//
