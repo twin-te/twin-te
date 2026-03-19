@@ -15,16 +15,17 @@ type impl struct {
 	uc calendarmodule.UseCase
 }
 
-func (svc *impl) GetIcalSubscriptionUrl(ctx context.Context, req *connect.Request[calendarv1.GetIcalSubscriptionUrlRequest]) (*connect.Response[calendarv1.GetIcalSubscriptionUrlResponse], error) {
+func (svc *impl) GetIcalSubscriptionUrl(ctx context.Context, req *connect.Request[calendarv1.GetIcalSubscriptionUrlRequest]) (res *connect.Response[calendarv1.GetIcalSubscriptionUrlResponse], err error) {
 	url, ok, err := svc.uc.GetIcalSubscriptionUrl(ctx)
-	if err != nil {
+	if !ok || err != nil {
 		return nil, err
 	}
-	res := &calendarv1.GetIcalSubscriptionUrlResponse{}
-	if ok {
-		res.Url = &url
-	}
-	return connect.NewResponse(res), nil
+
+	res = connect.NewResponse(&calendarv1.GetIcalSubscriptionUrlResponse{
+		Url: &url,
+	})
+
+	return
 }
 
 func (svc *impl) EnableIcalSubscription(ctx context.Context, req *connect.Request[calendarv1.EnableIcalSubscriptionRequest]) (*connect.Response[calendarv1.EnableIcalSubscriptionResponse], error) {
