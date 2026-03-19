@@ -1,6 +1,7 @@
 package calendardomain
 
 import (
+	"slices"
 	"time"
 
 	"cloud.google.com/go/civil"
@@ -16,10 +17,15 @@ type SchoolCalendarModule struct {
 }
 
 func (m *SchoolCalendarModule) AddException(weekday time.Weekday, date civil.Date) {
-	for _, d := range m.Exceptions[weekday] {
-		if d == date {
-			return
-		}
+	if slices.Contains(m.Exceptions[weekday], date) {
+		return
 	}
 	m.Exceptions[weekday] = append(m.Exceptions[weekday], date)
+}
+
+func (m *SchoolCalendarModule) AddAddition(weekday time.Weekday, date civil.Date) {
+	if slices.Contains(m.Additions[weekday], date) {
+		return
+	}
+	m.Additions[weekday] = append(m.Additions[weekday], date)
 }

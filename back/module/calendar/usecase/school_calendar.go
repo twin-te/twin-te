@@ -50,7 +50,7 @@ func (uc *impl) buildSchoolCalendarModules(ctx context.Context, year shareddomai
 			if changeTo, ok := e.ChangeTo.Get(); ok {
 				if changeTo != eventWeekday {
 					m.AddException(eventWeekday, e.Date)
-					m.Additions[changeTo] = append(m.Additions[changeTo], e.Date)
+					m.AddAddition(changeTo, e.Date)
 				}
 			} else {
 				m.AddException(eventWeekday, e.Date)
