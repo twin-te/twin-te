@@ -8,7 +8,7 @@ import (
 	"github.com/twin-te/twin-te/back/appenv"
 	calendarv1 "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/calendar/v1"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/calendar/v1/calendarv1connect"
-	calendarv1beta "github.com/twin-te/twin-te/back/handler/calendar/v1beta"
+	calendarv1handler "github.com/twin-te/twin-te/back/handler/calendar/v1"
 	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -54,7 +54,7 @@ func (svc *impl) DisableIcalSubscription(ctx context.Context, req *connect.Reque
 }
 
 func buildIcalSubscriptionUrl(id idtype.IcalSubscriptionID) string {
-	return fmt.Sprintf("%s%s/timetable.ics?token=%s", appenv.APP_URL, calendarv1beta.PathPrefix, id.String())
+	return fmt.Sprintf("%s%s/timetable.ics?token=%s", appenv.APP_URL, calendarv1handler.PathPrefix, id.String())
 }
 
 func New(uc calendarmodule.UseCase) *impl {

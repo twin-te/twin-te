@@ -1,4 +1,4 @@
-package calendarv1beta
+package calendarv1
 
 import (
 	"bytes"

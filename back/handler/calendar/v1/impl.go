@@ -1,4 +1,4 @@
-package calendarv1beta
+package calendarv1
 
 import (
 	"github.com/labstack/echo/v4"
@@ -8,7 +8,7 @@ import (
 	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 )
 
-const PathPrefix = "/calendar/v1beta"
+const PathPrefix = "/calendar/v1"
 
 // impl handles the requests beginning with the following paths.
 //   - "/timetable.ics"
