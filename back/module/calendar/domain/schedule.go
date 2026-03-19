@@ -33,7 +33,7 @@ func newCivilDateTime(date civil.Date, t civil.Time) civil.DateTime {
 	return civil.DateTime{Date: date, Time: t}
 }
 
-func GetSchedules(modules []*SchoolCalendarModule, ss []timetabledomain.Schedule) []Schedule {
+func GetSchedules(modules []SchoolCalendarModule, ss []timetabledomain.Schedule) []Schedule {
 	type item struct {
 		moduleStart timetabledomain.Module
 		moduleEnd   timetabledomain.Module

@@ -12,15 +12,15 @@ import (
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 )
 
-func (uc *impl) buildSchoolCalendarModules(ctx context.Context, year shareddomain.AcademicYear) ([]*calendardomain.SchoolCalendarModule, error) {
+func (uc *impl) buildSchoolCalendarModules(ctx context.Context, year shareddomain.AcademicYear) ([]calendardomain.SchoolCalendarModule, error) {
 	modulesMsg, err := uc.schoolcalendar.ListModuleDetails(ctx, year)
 	if err != nil {
 		return nil, err
 	}
 
-	ms := make([]*calendardomain.SchoolCalendarModule, len(modulesMsg))
+	ms := make([]calendardomain.SchoolCalendarModule, len(modulesMsg))
 	for i, m := range modulesMsg {
-		ms[i] = &calendardomain.SchoolCalendarModule{
+		ms[i] = calendardomain.SchoolCalendarModule{
 			Module:     m.Module,
 			Start:      m.Start,
 			End:        m.End,
@@ -38,7 +38,8 @@ func (uc *impl) buildSchoolCalendarModules(ctx context.Context, year shareddomai
 		if e.Type == schoolcalendardomain.EventTypeOther {
 			continue
 		}
-		for _, m := range ms {
+		for i := range ms {
+			m := &ms[i]
 			if e.Date.Before(m.Start) || e.Date.After(m.End) {
 				continue
 			}

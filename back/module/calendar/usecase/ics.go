@@ -50,7 +50,7 @@ func (w *errWriter) write(format string, a ...any) {
 	_, w.err = fmt.Fprintf(w.w, format+"\r\n", a...)
 }
 
-func (uc *impl) writeICalendar(writer io.Writer, modules []*calendardomain.SchoolCalendarModule, courses []*timetableappdto.RegisteredCourse, isRdateSupported bool) error {
+func (uc *impl) writeICalendar(writer io.Writer, modules []calendardomain.SchoolCalendarModule, courses []*timetableappdto.RegisteredCourse, isRdateSupported bool) error {
 	w := &errWriter{w: writer}
 
 	w.write("BEGIN:VCALENDAR")
