@@ -5,13 +5,13 @@ import (
 
 	"github.com/samber/mo"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
-	"github.com/twin-te/twin-te/back/module/calendar/dbmodel"
+	calendardbmodel "github.com/twin-te/twin-te/back/module/calendar/dbmodel"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	"gorm.io/gorm"
 )
 
-func (r *impl) FindIcalSubscriptionByID(ctx context.Context, id idtype.IcalSubscriptionID, lock sharedport.Lock) (mo.Option[idtype.UserID], error) {
+func (r *impl) FindUserByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID, lock sharedport.Lock) (mo.Option[idtype.UserID], error) {
 	db := r.db.WithContext(ctx).Where("id = ?", id.String())
 	db = dbhelper.ApplyLock(db, lock)
 

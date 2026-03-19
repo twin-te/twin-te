@@ -58,7 +58,7 @@ func (uc *impl) DisableIcalSubscription(ctx context.Context) error {
 }
 
 func (uc *impl) ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID) (idtype.UserID, bool, error) {
-	userID, err := uc.r.FindIcalSubscriptionByID(ctx, id, sharedport.LockNone)
+	userID, err := uc.r.FindUserByIcalSubscriptionID(ctx, id, sharedport.LockNone)
 	if err != nil {
 		return idtype.UserID{}, false, err
 	}
@@ -68,4 +68,3 @@ func (uc *impl) ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype
 	uid, _ := userID.Get()
 	return uid, true, nil
 }
-

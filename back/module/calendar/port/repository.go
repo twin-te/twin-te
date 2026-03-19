@@ -11,7 +11,7 @@ import (
 type Repository interface {
 	Transaction(ctx context.Context, fn func(rtx Repository) error, readOnly bool) error
 
-	FindIcalSubscriptionByID(ctx context.Context, id idtype.IcalSubscriptionID, lock sharedport.Lock) (mo.Option[idtype.UserID], error)
+	FindUserByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID, lock sharedport.Lock) (mo.Option[idtype.UserID], error)
 	FindIcalSubscriptionByUserID(ctx context.Context, userID idtype.UserID, lock sharedport.Lock) (mo.Option[idtype.IcalSubscriptionID], error)
 	CreateIcalSubscription(ctx context.Context, id idtype.IcalSubscriptionID, userID idtype.UserID) error
 	DeleteIcalSubscriptionByUserID(ctx context.Context, userID idtype.UserID) (rowsAffected int, err error)
