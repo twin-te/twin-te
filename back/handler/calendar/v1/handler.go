@@ -63,10 +63,24 @@ func (h *impl) ICSHandler(c echo.Context) error {
 	}
 
 	ctx := c.Request().Context()
-	data, err := h.calendar.ExportTimetableToICal(ctx, year, tags, isRdateSupported)
-	if err != nil {
-		log.Printf("failed to export timetable to iCal: %+v", err)
-		return err
+
+	var data []byte
+	if tokenStr := c.QueryParam("token"); tokenStr != "" {
+		id, err := idtype.ParseIcalSubscriptionID(tokenStr)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+		}
+		data, err = h.calendar.ExportTimetableToICalByIcalSubscriptionID(ctx, id, year, tags, isRdateSupported)
+		if err != nil {
+			log.Printf("failed to export timetable to iCal: %+v", err)
+			return err
+		}
+	} else {
+		data, err = h.calendar.ExportTimetableToICal(ctx, year, tags, isRdateSupported)
+		if err != nil {
+			log.Printf("failed to export timetable to iCal: %+v", err)
+			return err
+		}
 	}
 
 	return c.Stream(http.StatusOK, "text/calendar; charset=utf-8", bytes.NewReader(data))

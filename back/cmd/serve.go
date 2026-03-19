@@ -16,12 +16,12 @@ import (
 	announcementrepository "github.com/twin-te/twin-te/back/module/announcement/adapter/repository"
 	announcementdata "github.com/twin-te/twin-te/back/module/announcement/data"
 	announcementusecase "github.com/twin-te/twin-te/back/module/announcement/usecase"
-	calendarrepository "github.com/twin-te/twin-te/back/module/calendar/adapter/repository"
-	calendarusecase "github.com/twin-te/twin-te/back/module/calendar/usecase"
 	"github.com/twin-te/twin-te/back/module/auth/accesscontroller"
 	authfactory "github.com/twin-te/twin-te/back/module/auth/adapter/factory"
 	authrepository "github.com/twin-te/twin-te/back/module/auth/adapter/repository"
 	authusecase "github.com/twin-te/twin-te/back/module/auth/usecase"
+	calendarrepository "github.com/twin-te/twin-te/back/module/calendar/adapter/repository"
+	calendarusecase "github.com/twin-te/twin-te/back/module/calendar/usecase"
 	donationfactory "github.com/twin-te/twin-te/back/module/donation/adapter/factory"
 	donationintegrator "github.com/twin-te/twin-te/back/module/donation/adapter/integrator"
 	donationrepository "github.com/twin-te/twin-te/back/module/donation/adapter/repository"
@@ -85,7 +85,7 @@ var serveCmd = &cobra.Command{
 		timetableUseCase := timetableusecase.New(accessController, timetableFactory, timetableIntegrator, timetableQuery, timetableRepository)
 
 		calendarRepository := calendarrepository.New(db)
-		calendarUseCase := calendarusecase.New(accessController, calendarRepository, schoolcalendarUseCase, timetableUseCase)
+		calendarUseCase := calendarusecase.New(accessController, calendarRepository, schoolcalendarUseCase, timetableQuery)
 
 		unifiedUseCase := unifiedusecase.New(accessController, schoolcalendarUseCase, timetableUseCase)
 

@@ -20,6 +20,11 @@ type UseCase interface {
 	// [Authentication] required
 	ExportTimetableToICal(ctx context.Context, year shareddomain.AcademicYear, tagIDs []idtype.TagID, isRdateSupported bool) ([]byte, error)
 
+	// ExportTimetableToICalByIcalSubscriptionID returns iCalendar bytes for the user bound to the given iCal subscription ID.
+	//
+	// [Authentication] not required
+	ExportTimetableToICalByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID, year shareddomain.AcademicYear, tagIDs []idtype.TagID, isRdateSupported bool) ([]byte, error)
+
 	// FindIcalSubscriptionID returns the iCal subscription ID if the user has enabled it.
 	//
 	// [Authentication] required
@@ -34,9 +39,4 @@ type UseCase interface {
 	//
 	// [Authentication] required
 	DisableIcalSubscription(ctx context.Context) error
-
-	// ResolveUserIDByIcalSubscriptionID returns the user ID for the given public iCal subscription ID.
-	//
-	// [Authentication] optional
-	ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID) (idtype.UserID, error)
 }

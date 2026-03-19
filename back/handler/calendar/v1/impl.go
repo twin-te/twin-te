@@ -30,7 +30,7 @@ func New(
 		echomiddleware.Recover(),
 		echomiddleware.Logger(),
 		middleware.NewEchoErrorHandler(),
-		newEchoWithActorOrIcalToken(accessController, calendar),
+		middleware.NewEchoWithActor(accessController),
 	)
 
 	e.GET("/timetable.ics", h.ICSHandler)

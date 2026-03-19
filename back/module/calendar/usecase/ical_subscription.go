@@ -2,11 +2,12 @@ package calendarusecase
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/samber/mo"
+	"github.com/twin-te/twin-te/back/apperr"
 	calendarport "github.com/twin-te/twin-te/back/module/calendar/port"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
+	sharederr "github.com/twin-te/twin-te/back/module/shared/err"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
@@ -58,7 +59,7 @@ func (uc *impl) DisableIcalSubscription(ctx context.Context) error {
 	return err
 }
 
-func (uc *impl) ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID) (idtype.UserID, error) {
+func (uc *impl) resolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID) (idtype.UserID, error) {
 	optUserID, err := uc.r.FindUserByIcalSubscriptionID(ctx, id, sharedport.LockNone)
 	if err != nil {
 		return idtype.UserID{}, err
@@ -66,7 +67,7 @@ func (uc *impl) ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype
 
 	userID, ok := optUserID.Get()
 	if !ok {
-		return idtype.UserID{}, fmt.Errorf("invalid token")
+		return idtype.UserID{}, apperr.New(sharederr.CodeUnauthenticated, "invalid token")
 	}
 
 	return userID, nil
