@@ -8,6 +8,8 @@ import (
 	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 )
 
+const PathPrefix = "/calendar/v1beta"
+
 // impl handles the requests beginning with the following paths.
 //   - "/timetable.ics"
 type impl struct {

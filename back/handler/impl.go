@@ -33,8 +33,8 @@ func (h *impl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.StripPrefix("/api/v4", h.apiv4RPCHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/auth/v4"):
 		http.StripPrefix("/auth/v4", h.authv4Handler).ServeHTTP(w, r)
-	case strings.HasPrefix(r.URL.Path, "/calendar/v1beta"):
-		http.StripPrefix("/calendar/v1beta", h.calendarv1betaHandler).ServeHTTP(w, r)
+	case strings.HasPrefix(r.URL.Path, calendarv1beta.PathPrefix):
+		http.StripPrefix(calendarv1beta.PathPrefix, h.calendarv1betaHandler).ServeHTTP(w, r)
 	default:
 		http.NotFound(w, r)
 	}

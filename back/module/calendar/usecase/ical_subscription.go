@@ -2,36 +2,31 @@ package calendarusecase
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/samber/mo"
-	"github.com/twin-te/twin-te/back/appenv"
-	"github.com/twin-te/twin-te/back/base"
 	calendarport "github.com/twin-te/twin-te/back/module/calendar/port"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-const icalSubscriptionPath = "/calendar/v1beta/timetable.ics"
-
-func (uc *impl) GetIcalSubscriptionUrl(ctx context.Context) (mo.Option[string], error) {
+func (uc *impl) GetIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
-		return mo.None[string](), err
+		return mo.None[idtype.IcalSubscriptionID](), err
 	}
 
 	subID, err := uc.r.FindIcalSubscriptionByUserID(ctx, userID, sharedport.LockNone)
 	if err != nil {
-		return mo.None[string](), err
+		return mo.None[idtype.IcalSubscriptionID](), err
 	}
 
-	return base.OptionMap(subID, buildIcalSubscriptionUrl), nil
+	return subID, nil
 }
 
-func (uc *impl) EnableIcalSubscription(ctx context.Context) (string, error) {
+func (uc *impl) EnableIcalSubscription(ctx context.Context) (idtype.IcalSubscriptionID, error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
-		return "", err
+		return idtype.IcalSubscriptionID{}, err
 	}
 
 	var resultID idtype.IcalSubscriptionID
@@ -48,9 +43,9 @@ func (uc *impl) EnableIcalSubscription(ctx context.Context) (string, error) {
 		return rtx.CreateIcalSubscription(ctx, resultID, userID)
 	}, false)
 	if err != nil {
-		return "", err
+		return idtype.IcalSubscriptionID{}, err
 	}
-	return buildIcalSubscriptionUrl(resultID), nil
+	return resultID, nil
 }
 
 func (uc *impl) DisableIcalSubscription(ctx context.Context) error {
@@ -74,6 +69,3 @@ func (uc *impl) ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype
 	return uid, true, nil
 }
 
-func buildIcalSubscriptionUrl(id idtype.IcalSubscriptionID) string {
-	return fmt.Sprintf("%s%s?token=%s", appenv.APP_URL, icalSubscriptionPath, id.String())
-}

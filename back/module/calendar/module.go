@@ -20,15 +20,15 @@ type UseCase interface {
 	// [Authentication] required
 	ExportTimetableToICal(ctx context.Context, year shareddomain.AcademicYear, tagIDs []idtype.TagID, isRdateSupported bool) ([]byte, error)
 
-	// GetIcalSubscriptionUrl returns the public iCal URL if the user has enabled it.
+	// GetIcalSubscriptionID returns the iCal subscription ID if the user has enabled it.
 	//
 	// [Authentication] required
-	GetIcalSubscriptionUrl(ctx context.Context) (mo.Option[string], error)
+	GetIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error)
 
-	// EnableIcalSubscription creates or returns the public iCal URL for the user.
+	// EnableIcalSubscription creates or returns the iCal subscription ID for the user.
 	//
 	// [Authentication] required
-	EnableIcalSubscription(ctx context.Context) (string, error)
+	EnableIcalSubscription(ctx context.Context) (idtype.IcalSubscriptionID, error)
 
 	// DisableIcalSubscription removes the public iCal URL for the user.
 	//
