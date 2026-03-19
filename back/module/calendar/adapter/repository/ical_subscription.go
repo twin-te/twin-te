@@ -19,7 +19,7 @@ func (r *impl) FindUserByIcalSubscriptionID(ctx context.Context, id idtype.IcalS
 	if err := db.Take(dbSub).Error; err != nil {
 		return dbhelper.ConvertErrRecordNotFound[idtype.UserID](err)
 	}
-	_, userID, err := calendardbmodel.FromDBIcalSubscription(dbSub.ID, dbSub.UserID)
+	userID, err := idtype.ParseUserID(dbSub.UserID)
 	if err != nil {
 		return mo.None[idtype.UserID](), err
 	}
@@ -34,7 +34,7 @@ func (r *impl) FindIcalSubscriptionByUserID(ctx context.Context, userID idtype.U
 	if err := db.Take(dbSub).Error; err != nil {
 		return dbhelper.ConvertErrRecordNotFound[idtype.IcalSubscriptionID](err)
 	}
-	subID, _, err := calendardbmodel.FromDBIcalSubscription(dbSub.ID, dbSub.UserID)
+	subID, err := idtype.ParseIcalSubscriptionID(dbSub.ID)
 	if err != nil {
 		return mo.None[idtype.IcalSubscriptionID](), err
 	}
