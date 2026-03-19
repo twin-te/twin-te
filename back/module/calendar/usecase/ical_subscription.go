@@ -9,7 +9,7 @@ import (
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 )
 
-func (uc *impl) GetIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error) {
+func (uc *impl) FindIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error) {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return mo.None[idtype.IcalSubscriptionID](), err

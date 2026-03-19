@@ -20,7 +20,7 @@ type impl struct {
 }
 
 func (svc *impl) GetIcalSubscriptionUrl(ctx context.Context, req *connect.Request[calendarv1.GetIcalSubscriptionUrlRequest]) (res *connect.Response[calendarv1.GetIcalSubscriptionUrlResponse], err error) {
-	optID, err := svc.uc.GetIcalSubscriptionID(ctx)
+	optID, err := svc.uc.FindIcalSubscriptionID(ctx)
 	if err != nil {
 		return nil, err
 	}

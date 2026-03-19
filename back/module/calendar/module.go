@@ -20,10 +20,10 @@ type UseCase interface {
 	// [Authentication] required
 	ExportTimetableToICal(ctx context.Context, year shareddomain.AcademicYear, tagIDs []idtype.TagID, isRdateSupported bool) ([]byte, error)
 
-	// GetIcalSubscriptionID returns the iCal subscription ID if the user has enabled it.
+	// FindIcalSubscriptionID returns the iCal subscription ID if the user has enabled it.
 	//
 	// [Authentication] required
-	GetIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error)
+	FindIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error)
 
 	// EnableIcalSubscription creates or returns the iCal subscription ID for the user.
 	//
