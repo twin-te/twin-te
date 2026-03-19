@@ -25,12 +25,9 @@ func newEchoWithActorOrIcalToken(accessController authmodule.AccessController, c
 				if err != nil {
 					return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
 				}
-				userID, ok, err := calendar.ResolveUserIDByIcalSubscriptionID(ctx, id)
+				userID, err := calendar.ResolveUserIDByIcalSubscriptionID(ctx, id)
 				if err != nil {
 					return err
-				}
-				if !ok {
-					return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
 				}
 				ctx = appctx.SetActor(ctx, authdomain.NewAuthNUser(userID))
 				c.SetRequest(c.Request().WithContext(ctx))

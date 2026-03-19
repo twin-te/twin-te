@@ -38,5 +38,5 @@ type UseCase interface {
 	// ResolveUserIDByIcalSubscriptionID returns the user ID for the given public iCal subscription ID.
 	//
 	// [Authentication] optional
-	ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID) (idtype.UserID, bool, error)
+	ResolveUserIDByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID) (idtype.UserID, error)
 }
