@@ -49,11 +49,10 @@ func (r *impl) CreateIcalSubscription(ctx context.Context, id idtype.IcalSubscri
 }
 
 func (r *impl) DeleteIcalSubscriptionByUserID(ctx context.Context, userID idtype.UserID) (rowsAffected int, err error) {
-	var rows int
 	err = r.transaction(ctx, func(tx *gorm.DB) error {
 		result := tx.Where("user_id = ?", userID.String()).Delete(&calendardbmodel.IcalSubscription{})
-		rows = int(result.RowsAffected)
+		rowsAffected = int(result.RowsAffected)
 		return result.Error
 	}, false)
-	return rows, err
+	return
 }
