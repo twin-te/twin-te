@@ -23,4 +23,4 @@ export const validateAcademicYear = (year: number): boolean => {
 };
 
 export const isFutureYear = (year: number): boolean =>
-  year > currentAcademicYear;
+  currentAcademicYear < year;
