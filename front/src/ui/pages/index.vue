@@ -11,7 +11,7 @@
         ></IconButton
       ></template>
     </PageHeader>
-    <FutureYearBanner />
+    <FutureYearBanner v-if="isFutureYear(year)" />
     <section class="main">
       <ToggleButton
         class="main__toggle"
@@ -262,6 +262,7 @@ import {
 } from "~/domain/error";
 import { baseModules } from "~/domain/module";
 import { daytimePeriods, periods } from "~/domain/period";
+import { isFutureYear } from "~/domain/year";
 import {
   dayMap,
   normalDayMap,

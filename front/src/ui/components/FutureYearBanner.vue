@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isFutureYear(appliedYear)" class="future-year-banner">
+  <div class="future-year-banner">
     <span class="material-icons future-year-banner__icon">info</span>
     <span class="future-year-banner__text">
       【ベータ版】{{ currentAcademicYear }}年度のシラバスを使用しています。
@@ -8,10 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { currentAcademicYear, isFutureYear } from "~/domain/year";
-import { useSetting } from "~/ui/store";
-
-const { appliedYear } = useSetting();
+import { currentAcademicYear } from "~/domain/year";
 </script>
 
 <style lang="scss" scoped>

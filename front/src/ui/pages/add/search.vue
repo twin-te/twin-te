@@ -11,7 +11,7 @@
       </template>
       <template #title>授業の検索</template>
     </PageHeader>
-    <FutureYearBanner />
+    <FutureYearBanner v-if="isFutureYear(year)" />
     <div class="main">
       <div class="main__search">
         <section class="search__top">
@@ -263,6 +263,7 @@ import { ComponentPublicInstance, computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { isResultError } from "~/domain/error";
 import { timetableToSchedules } from "~/domain/timetable";
+import { isFutureYear } from "~/domain/year";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import {
   editableSchedulesToTimetable,
