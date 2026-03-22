@@ -241,6 +241,10 @@ func (uc *impl) ListMissingCourses(ctx context.Context, year shareddomain.Academ
 }
 
 func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*timetabledomain.Course) error {
+	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
+		return err
+	}
+
 	for _, course := range missingCourses {
 		err := uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
 			registeredCourses, err := rtx.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
