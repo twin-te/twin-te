@@ -244,12 +244,18 @@ func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*tim
 	}
 
 	for _, course := range missingCourses {
-		err := uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+		err := uc.r.Transaction(ctx, func(rtx timetableport.Repository) (err error) {
+			defer func() {
+				if err != nil {
+					err = fmt.Errorf("failed to migrate course(code=%s): %w", course.Code, err)
+				}
+			}()
+
 			registeredCourses, err := rtx.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
 				CourseIDs: mo.Some([]idtype.CourseID{course.ID}),
 			}, sharedport.LimitOffset{}, sharedport.LockExclusive)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to list registered courses: %w", err)
 			}
 
 			for _, rc := range registeredCourses {
@@ -259,7 +265,7 @@ func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*tim
 				if name, ok := rc.Name.Get(); ok {
 					deprecatedName, err := timetabledomain.ParseName(fmt.Sprintf("【移行失敗】%s", name))
 					if err != nil {
-						return err
+						return fmt.Errorf("failed to parse name for registered course(id=%s): %w", rc.ID, err)
 					}
 					rc.Name = mo.Some(deprecatedName)
 				}
@@ -272,14 +278,17 @@ func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*tim
 				}
 
 				if err := rtx.UpdateRegisteredCourse(ctx, rc); err != nil {
-					return fmt.Errorf("failed to update registered course(id=%s, course code=%s): %w", rc.ID, course.Code, err)
+					return fmt.Errorf("failed to update registered course(id=%s): %w", rc.ID, err)
 				}
 			}
 
 			_, err = rtx.DeleteCourses(ctx, timetableport.CourseFilter{
 				ID: mo.Some(course.ID),
 			})
-			return err
+			if err != nil {
+				return fmt.Errorf("failed to delete course: %w", err)
+			}
+			return nil
 		}, false)
 		if err != nil {
 			return err
