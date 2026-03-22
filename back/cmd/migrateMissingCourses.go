@@ -88,7 +88,7 @@ var MigrateMissingCoursesCmd = &cobra.Command{
 			return
 		}
 
-		if err := timetableUseCase.MigrateMissingCourses(ctx, year, importedCodes); err != nil {
+		if err := timetableUseCase.MigrateMissingCourses(ctx, missingCourses); err != nil {
 			log.Fatalln(err)
 		}
 		fmt.Println("Migration completed.")

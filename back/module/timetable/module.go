@@ -62,7 +62,7 @@ type UseCase interface {
 	//
 	// [Permission]
 	//   - PermissionExecuteBatchJob
-	MigrateMissingCourses(ctx context.Context, year shareddomain.AcademicYear, importedCodes []timetabledomain.Code) error
+	MigrateMissingCourses(ctx context.Context, missingCourses []*timetabledomain.Course) error
 
 	// CreateRegisteredCoursesByCodes creates new registered courses by the given year and codes.
 	//

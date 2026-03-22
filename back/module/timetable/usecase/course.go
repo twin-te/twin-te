@@ -240,14 +240,9 @@ func (uc *impl) ListMissingCourses(ctx context.Context, year shareddomain.Academ
 	return missingCourses, nil
 }
 
-func (uc *impl) MigrateMissingCourses(ctx context.Context, year shareddomain.AcademicYear, importedCodes []timetabledomain.Code) error {
-	missingCourses, err := uc.ListMissingCourses(ctx, year, importedCodes)
-	if err != nil {
-		return err
-	}
-
+func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*timetabledomain.Course) error {
 	for _, course := range missingCourses {
-		err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+		err := uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
 			registeredCourses, err := rtx.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
 				CourseIDs: mo.Some([]idtype.CourseID{course.ID}),
 			}, sharedport.LimitOffset{}, sharedport.LockExclusive)
