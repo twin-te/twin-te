@@ -272,7 +272,7 @@ func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*tim
 				}
 
 				if err := rtx.UpdateRegisteredCourse(ctx, rc); err != nil {
-					return err
+					return fmt.Errorf("failed to update registered course(id=%s, course code=%s): %w", rc.ID, course.Code, err)
 				}
 			}
 
