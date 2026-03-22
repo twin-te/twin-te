@@ -2,6 +2,7 @@ package timetableusecase
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -253,22 +254,22 @@ func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*tim
 
 			for _, rc := range registeredCourses {
 				rc.BeforeUpdateHook()
+				rc.DetachFromCourse(course)
 
-				deprecatedName, err := timetabledomain.ParseName("【移行失敗】" + course.Name.String())
-				if err != nil {
-					return err
+				if name, ok := rc.Name.Get(); ok {
+					deprecatedName, err := timetabledomain.ParseName(fmt.Sprintf("【移行失敗】%s", name))
+					if err != nil {
+						return err
+					}
+					rc.Name = mo.Some(deprecatedName)
 				}
 
-				rc.CourseID = mo.None[idtype.CourseID]()
-				rc.Name = mo.Some(deprecatedName)
-				rc.Instructors = mo.Some(course.Instructors)
-				rc.Credit = mo.Some(course.Credit)
-				rc.Methods = mo.Some(base.CopySlice(course.Methods))
-				rc.Schedules = mo.Some(base.CopySlice(course.Schedules))
-				if rc.Memo != "" {
-					rc.Memo = rc.Memo + "\n"
+				memoSuffix := fmt.Sprintf("元の科目番号: %s", course.Code)
+				if rc.Memo == "" {
+					rc.Memo = memoSuffix
+				} else {
+					rc.Memo = rc.Memo + "\n" + memoSuffix
 				}
-				rc.Memo = rc.Memo + "元の科目番号: " + course.Code.String()
 
 				if err := rtx.UpdateRegisteredCourse(ctx, rc); err != nil {
 					return err
