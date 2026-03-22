@@ -93,17 +93,15 @@ func (uc *impl) SearchCourses(ctx context.Context, conds timetablemodule.SearchC
 	return base.MapByClone(courses), nil
 }
 
-func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetabledomain.Code, error) {
+func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) error {
 	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
-		return nil, err
+		return err
 	}
 
 	courseWithoutIDs, err := uc.i.ListCourseWithoutIDsFromKdB(ctx, year)
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	importedCodes := make([]timetabledomain.Code, 0, len(courseWithoutIDs))
 
 	for _, courseWithoutID := range courseWithoutIDs {
 		err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
@@ -145,12 +143,11 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 			return nil
 		}, false)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		importedCodes = append(importedCodes, courseWithoutID.Code)
 	}
 
-	return importedCodes, nil
+	return nil
 }
 
 func (uc *impl) CopyCoursesToFutureYears(ctx context.Context, sourceYear shareddomain.AcademicYear, maxFutureYears int) error {

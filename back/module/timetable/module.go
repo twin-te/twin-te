@@ -31,13 +31,12 @@ type UseCase interface {
 	SearchCourses(ctx context.Context, in SearchCoursesIn) ([]*timetabledomain.Course, error)
 
 	// UpdateCoursesBasedOnKdB retrieves data about courses from kdb and updates courses.
-	// Returns the list of codes that were imported.
 	//
 	// [Authentication] not required
 	//
 	// [Permission]
 	//   - PermissionExecuteBatchJob
-	UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) ([]timetabledomain.Code, error)
+	UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) error
 
 	// CopyCoursesToFutureYears copies courses from the source year to future years.
 	//

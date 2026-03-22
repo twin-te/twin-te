@@ -49,7 +49,7 @@ var UpdateCoursesBasedOnKdBCmd = &cobra.Command{
 
 		ctx := appctx.SetActor(context.Background(), authdomain.NewUnknown(authdomain.PermissionExecuteBatchJob))
 
-		if _, err := timetableUseCase.UpdateCoursesBasedOnKdB(ctx, year); err != nil {
+		if err := timetableUseCase.UpdateCoursesBasedOnKdB(ctx, year); err != nil {
 			log.Fatalln(err)
 		}
 	},
