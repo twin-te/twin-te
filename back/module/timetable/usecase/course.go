@@ -2,6 +2,7 @@ package timetableusecase
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -13,8 +14,10 @@ import (
 	"github.com/twin-te/twin-te/back/base"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	sharedport "github.com/twin-te/twin-te/back/module/shared/port"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
+	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 	timetabledomain "github.com/twin-te/twin-te/back/module/timetable/domain"
 	timetableport "github.com/twin-te/twin-te/back/module/timetable/port"
 )
@@ -138,6 +141,153 @@ func (uc *impl) UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.A
 				return rtx.UpdateCourse(ctx, course)
 			}
 
+			return nil
+		}, false)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (uc *impl) CopyCoursesToFutureYears(ctx context.Context, sourceYear shareddomain.AcademicYear, maxFutureYears int) error {
+	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
+		return err
+	}
+
+	sourceCourses, err := uc.r.ListCourses(ctx, timetableport.CourseFilter{
+		Year: mo.Some(sourceYear),
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
+	if err != nil {
+		return err
+	}
+
+	for futureOffset := 1; futureOffset <= maxFutureYears; futureOffset++ {
+		targetYear, err := shareddomain.ParseAcademicYear(sourceYear.Int() + futureOffset)
+		if err != nil {
+			return err
+		}
+
+		for _, sourceCourse := range sourceCourses {
+			err = uc.r.Transaction(ctx, func(rtx timetableport.Repository) error {
+				courseOption, err := rtx.FindCourse(ctx, timetableport.CourseFilter{
+					Year: mo.Some(targetYear),
+					Code: mo.Some(sourceCourse.Code),
+				}, sharedport.LockExclusive)
+				if err != nil {
+					return err
+				}
+
+				_, found := courseOption.Get()
+				if !found {
+					courseWithoutID := timetableappdto.CourseWithoutID{
+						Year:              targetYear,
+						Code:              sourceCourse.Code,
+						Name:              sourceCourse.Name,
+						Instructors:       sourceCourse.Instructors,
+						Credit:            sourceCourse.Credit,
+						Overview:          sourceCourse.Overview,
+						Remarks:           sourceCourse.Remarks,
+						LastUpdatedAt:     sourceCourse.LastUpdatedAt,
+						HasParseError:     sourceCourse.HasParseError,
+						IsAnnual:          sourceCourse.IsAnnual,
+						RecommendedGrades: sourceCourse.RecommendedGrades,
+						Methods:           sourceCourse.Methods,
+						Schedules:         sourceCourse.Schedules,
+					}
+					newCourse, err := uc.f.NewCourse(courseWithoutID)
+					if err != nil {
+						return err
+					}
+					return rtx.CreateCourses(ctx, newCourse)
+				}
+
+				return nil
+			}, false)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (uc *impl) ListMissingCourses(ctx context.Context, year shareddomain.AcademicYear, importedCodes []timetabledomain.Code) ([]*timetabledomain.Course, error) {
+	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
+		return nil, err
+	}
+
+	allCourses, err := uc.r.ListCourses(ctx, timetableport.CourseFilter{
+		Year: mo.Some(year),
+	}, sharedport.LimitOffset{}, sharedport.LockNone)
+	if err != nil {
+		return nil, err
+	}
+
+	importedCodeSet := lo.SliceToMap(importedCodes, func(code timetabledomain.Code) (timetabledomain.Code, struct{}) {
+		return code, struct{}{}
+	})
+
+	missingCourses := lo.Filter(allCourses, func(course *timetabledomain.Course, _ int) bool {
+		_, exists := importedCodeSet[course.Code]
+		return !exists
+	})
+
+	return missingCourses, nil
+}
+
+func (uc *impl) MigrateMissingCourses(ctx context.Context, missingCourses []*timetabledomain.Course) error {
+	if err := uc.a.Authorize(ctx, authdomain.PermissionExecuteBatchJob); err != nil {
+		return err
+	}
+
+	for _, course := range missingCourses {
+		err := uc.r.Transaction(ctx, func(rtx timetableport.Repository) (err error) {
+			defer func() {
+				if err != nil {
+					err = fmt.Errorf("failed to migrate course(code=%s): %w", course.Code, err)
+				}
+			}()
+
+			registeredCourses, err := rtx.ListRegisteredCourses(ctx, timetableport.RegisteredCourseFilter{
+				CourseIDs: mo.Some([]idtype.CourseID{course.ID}),
+			}, sharedport.LimitOffset{}, sharedport.LockExclusive)
+			if err != nil {
+				return fmt.Errorf("failed to list registered courses: %w", err)
+			}
+
+			for _, rc := range registeredCourses {
+				rc.BeforeUpdateHook()
+				rc.DetachFromCourse(course)
+
+				if name, ok := rc.Name.Get(); ok {
+					deprecatedName, err := timetabledomain.ParseName(fmt.Sprintf("【移行失敗】%s", name))
+					if err != nil {
+						return fmt.Errorf("failed to parse name for registered course(id=%s): %w", rc.ID, err)
+					}
+					rc.Name = mo.Some(deprecatedName)
+				}
+
+				memoSuffix := fmt.Sprintf("元の科目番号: %s", course.Code)
+				if rc.Memo == "" {
+					rc.Memo = memoSuffix
+				} else {
+					rc.Memo = rc.Memo + "\n" + memoSuffix
+				}
+
+				if err := rtx.UpdateRegisteredCourse(ctx, rc); err != nil {
+					return fmt.Errorf("failed to update registered course(id=%s): %w", rc.ID, err)
+				}
+			}
+
+			_, err = rtx.DeleteCourses(ctx, timetableport.CourseFilter{
+				ID: mo.Some(course.ID),
+			})
+			if err != nil {
+				return fmt.Errorf("failed to delete course: %w", err)
+			}
 			return nil
 		}, false)
 		if err != nil {

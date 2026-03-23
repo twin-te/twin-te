@@ -36,6 +36,7 @@
     </PageHeader>
     <article class="main">
       <div class="main__contents">
+        <FutureYearBanner v-if="isFutureYear(year)" />
         <p class="main__code">{{ displayCourse.code }}</p>
         <h1 class="main__name">{{ displayCourse.name }}</h1>
         <section class="main__details">
@@ -200,11 +201,13 @@
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { NotFoundError, isResultError } from "~/domain/error";
+import { isFutureYear } from "~/domain/year";
 import { registeredCourseToDisplay } from "~/presentation/presenters/course";
 import { DisplayRegisteredCourse } from "~/presentation/viewmodels/course";
 import Button from "~/ui/components/Button.vue";
 import CourseDetail from "~/ui/components/CourseDetail.vue";
 import DecoratedIcon from "~/ui/components/DecoratedIcon.vue";
+import FutureYearBanner from "~/ui/components/FutureYearBanner.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
@@ -215,6 +218,7 @@ import TagEditor from "~/ui/components/TagEditor.vue";
 import TextFieldMultilines from "~/ui/components/TextFieldMultilines.vue";
 import ToggleIconButton from "~/ui/components/ToggleIconButton.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
+import { useSetting } from "~/ui/store";
 import { getSyllabusUrl, openUrl, getResponUrl, getMapUrl } from "~/ui/url";
 import { timetableUseCase } from "~/usecases";
 import type { RegisteredCourse } from "~/domain/course";
@@ -223,6 +227,7 @@ import type { PopupContentColor } from "~/ui/components/PopupContent.vue";
 
 const route = useRoute();
 const router = useRouter();
+const { appliedYear: year } = useSetting();
 
 /** course */
 const { id } = route.params as { id: string };
