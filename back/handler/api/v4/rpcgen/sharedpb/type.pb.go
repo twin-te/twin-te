@@ -377,7 +377,8 @@ const file_shared_type_proto_rawDesc = "" +
 	"\x11WEEKDAY_WEDNESDAY\x10\x04\x12\x14\n" +
 	"\x10WEEKDAY_THURSDAY\x10\x05\x12\x12\n" +
 	"\x0eWEEKDAY_FRIDAY\x10\x06\x12\x14\n" +
-	"\x10WEEKDAY_SATURDAY\x10\aB@Z>github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpbb\x06proto3"
+	"\x10WEEKDAY_SATURDAY\x10\aBW\n" +
+	"\x15net.twinte.api.sharedZ>github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpbb\x06proto3"
 
 var (
 	file_shared_type_proto_rawDescOnce sync.Once

@@ -195,7 +195,8 @@ const file_announcement_v1_service_proto_rawDesc = "" +
 	"\x19ReadAnnouncementsResponse2\xa4\x02\n" +
 	"\x13AnnouncementService\x12u\n" +
 	"\x11ListAnnouncements\x12).announcement.v1.ListAnnouncementsRequest\x1a*.announcement.v1.ListAnnouncementsResponse\"\t\x82\xb5\x18\x02\b\x02\x90\x02\x01\x12\x95\x01\n" +
-	"\x11ReadAnnouncements\x12).announcement.v1.ReadAnnouncementsRequest\x1a*.announcement.v1.ReadAnnouncementsResponse\")\x82\xb5\x18%\b\x03\x12!announcement.AnnouncementNotFoundBVZTgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1;announcementv1b\x06proto3"
+	"\x11ReadAnnouncements\x12).announcement.v1.ReadAnnouncementsRequest\x1a*.announcement.v1.ReadAnnouncementsResponse\")\x82\xb5\x18%\b\x03\x12!announcement.AnnouncementNotFoundBv\n" +
+	"\x1enet.twinte.api.announcement.v1ZTgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1;announcementv1b\x06proto3"
 
 var (
 	file_announcement_v1_service_proto_rawDescOnce sync.Once

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import styles from '../styles/pages/Home.module.scss';
-import TwinteCost from '@/public/images/twinte-cost.png';
+import TwinteCost from '@/public/images/twinte-cost.svg';
 import Image from 'next/image';
 import { NextSeo } from 'next-seo';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ const Home: NextPage = () => {
 
 				<p>
 					いつもTwin:teをご利用いただきありがとうございます。
-					Twin:teはおかげさまで2022年2月で3周年を迎え、筑波大学生の過半数に利用していただいている状況となりました。
+					Twin:teはおかげさまで2025年2月で6周年を迎え、筑波大学生の過半数に利用していただいている状況となりました。
 				</p>
 				<p>
 					当初よりTwin:teは「<span className="has-text-weight-bold">広告なしで無料の筑波大学生専用時間割アプリ</span>

@@ -1,0 +1,17 @@
+name: CI (parser)
+
+on:
+  push:
+    paths:
+      - "parser/**"
+      - ".github/workflows/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Build and Run Snapshot Tests
+        run: docker compose run -T --build --rm parser uv run ./snapshot_test.py

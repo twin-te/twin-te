@@ -169,6 +169,27 @@ func (rc *RegisteredCourse) Update(data RegisteredCourseDataToUpdate, courseOpti
 	return nil
 }
 
+// DetachFromCourse detaches the registered course from its based course.
+// Fields that were overwritten by the user are kept as-is.
+func (rc *RegisteredCourse) DetachFromCourse(course *Course) {
+	rc.CourseID = mo.None[idtype.CourseID]()
+	if rc.Name.IsAbsent() {
+		rc.Name = mo.Some(course.Name)
+	}
+	if rc.Instructors.IsAbsent() {
+		rc.Instructors = mo.Some(course.Instructors)
+	}
+	if rc.Credit.IsAbsent() {
+		rc.Credit = mo.Some(course.Credit)
+	}
+	if rc.Methods.IsAbsent() {
+		rc.Methods = mo.Some(base.CopySlice(course.Methods))
+	}
+	if rc.Schedules.IsAbsent() {
+		rc.Schedules = mo.Some(base.CopySlice(course.Schedules))
+	}
+}
+
 func (rc *RegisteredCourse) DetachTag(toDetach idtype.TagID) {
 	rc.TagIDs = lo.Filter(rc.TagIDs, func(tagID idtype.TagID, _ int) bool {
 		return tagID != toDetach

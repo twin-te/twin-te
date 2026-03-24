@@ -17,6 +17,7 @@ type Repository interface {
 	ListCourses(ctx context.Context, filter CourseFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.Course, error)
 	CreateCourses(ctx context.Context, courses ...*timetabledomain.Course) error
 	UpdateCourse(ctx context.Context, course *timetabledomain.Course) error
+	DeleteCourses(ctx context.Context, filter CourseFilter) (rowsAffected int, err error)
 
 	FindRegisteredCourse(ctx context.Context, filter RegisteredCourseFilter, lock sharedport.Lock) (mo.Option[*timetabledomain.RegisteredCourse], error)
 	ListRegisteredCourses(ctx context.Context, filter RegisteredCourseFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*timetabledomain.RegisteredCourse, error)

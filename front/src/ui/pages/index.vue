@@ -11,6 +11,7 @@
         ></IconButton
       ></template>
     </PageHeader>
+    <FutureYearBanner v-if="isFutureYear(year)" />
     <section class="main">
       <ToggleButton
         class="main__toggle"
@@ -100,7 +101,7 @@
             :state="courses.length === 0 ? 'none' : 'default'"
             :name="courses.length === 0 ? '' : courses[0].name"
             :room="
-              !setting.showRooms || courses.length === 0 ? '' : courses[0].room
+              setting.showRooms && courses.length > 0 ? courses[0].room : ''
             "
             :color="courses.length !== 1 ? null : getTagColor(courses[0])"
             :caution="courses.length > 1 ? `他${courses.length - 1}件` : ''"
@@ -133,7 +134,7 @@
                 class="special-contents__course"
                 state="default"
                 :name="course.name"
-                :room="course.room"
+                :room="setting.showRooms ? course.room : ''"
                 :color="getTagColor(course)"
                 @click="$router.push(`/course/${course.id}`)"
               />
@@ -264,6 +265,7 @@ import {
 } from "~/domain/error";
 import { baseModules } from "~/domain/module";
 import { daytimePeriods, periods } from "~/domain/period";
+import { isFutureYear } from "~/domain/year";
 import {
   dayMap,
   normalDayMap,
@@ -274,6 +276,7 @@ import { formatPublishedAt } from "~/presentation/presenters/news";
 import { getDisplayTimetable } from "~/presentation/presenters/timetable";
 import Button from "~/ui/components/Button.vue";
 import CourseTile from "~/ui/components/CourseTile.vue";
+import FutureYearBanner from "~/ui/components/FutureYearBanner.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import NewsBox from "~/ui/components/NewsBox.vue";
@@ -450,7 +453,13 @@ const onClickNewsModal = async () => {
 </script>
 
 <style lang="scss" scoped>
-@use "~/ui/styles" as *;
+@import "~/ui/styles";
+
+.home {
+  display: flex;
+  flex-direction: column;
+  height: $vh;
+}
 
 .main {
   display: grid;
@@ -459,6 +468,8 @@ const onClickNewsModal = async () => {
   padding: $spacing-4 $spacing-3;
   margin: $spacing-4 (-$spacing-4) $spacing-0; //縦向きの画面でLayoutのpaddingを無視するため
   height: calc(#{$vh} - 7.6rem);
+  flex: 1;
+  min-height: 0;
   grid-template:
     "toggle module btn" $spacing-7
     "table table table" 1fr
@@ -470,7 +481,6 @@ const onClickNewsModal = async () => {
 
   @include landscape {
     border-radius: $spacing-4;
-    height: calc(#{$vh} - 9.6rem);
   }
 
   &__toggle {
@@ -575,10 +585,6 @@ const onClickNewsModal = async () => {
   grid-area: table;
   overflow-y: auto;
   margin-top: $spacing-3;
-  height: calc(#{$vh} - 14.8rem);
-  @include landscape {
-    height: calc(#{$vh} - 16.4rem);
-  }
 }
 
 .special-header {

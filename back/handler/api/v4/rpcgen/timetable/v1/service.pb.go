@@ -824,7 +824,7 @@ func (*DeleteRegisteredCourseResponse) Descriptor() ([]byte, []int) {
 
 type CreateTagRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -860,8 +860,8 @@ func (*CreateTagRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *CreateTagRequest) GetName() string {
-	if x != nil && x.Name != nil {
-		return *x.Name
+	if x != nil {
+		return x.Name
 	}
 	return ""
 }
@@ -994,7 +994,6 @@ type UpdateTagRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *sharedpb.UUID         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Color         *string                `protobuf:"bytes,3,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1039,13 +1038,6 @@ func (x *UpdateTagRequest) GetId() *sharedpb.UUID {
 func (x *UpdateTagRequest) GetName() string {
 	if x != nil && x.Name != nil {
 		return *x.Name
-	}
-	return ""
-}
-
-func (x *UpdateTagRequest) GetColor() string {
-	if x != nil && x.Color != nil {
-		return *x.Color
 	}
 	return ""
 }
@@ -1336,21 +1328,18 @@ const file_timetable_v1_service_proto_rawDesc = "" +
 	"\x11registered_course\x18\x01 \x01(\v2\x1e.timetable.v1.RegisteredCourseR\x10registeredCourse\"=\n" +
 	"\x1dDeleteRegisteredCourseRequest\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\v2\f.shared.UUIDR\x02id\" \n" +
-	"\x1eDeleteRegisteredCourseResponse\"4\n" +
-	"\x10CreateTagRequest\x12\x17\n" +
-	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01B\a\n" +
-	"\x05_name\"8\n" +
+	"\x1eDeleteRegisteredCourseResponse\"&\n" +
+	"\x10CreateTagRequest\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\"8\n" +
 	"\x11CreateTagResponse\x12#\n" +
 	"\x03tag\x18\x01 \x01(\v2\x11.timetable.v1.TagR\x03tag\"\x11\n" +
 	"\x0fListTagsRequest\"9\n" +
 	"\x10ListTagsResponse\x12%\n" +
-	"\x04tags\x18\x01 \x03(\v2\x11.timetable.v1.TagR\x04tags\"w\n" +
+	"\x04tags\x18\x01 \x03(\v2\x11.timetable.v1.TagR\x04tags\"R\n" +
 	"\x10UpdateTagRequest\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\v2\f.shared.UUIDR\x02id\x12\x17\n" +
-	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12\x19\n" +
-	"\x05color\x18\x03 \x01(\tH\x01R\x05color\x88\x01\x01B\a\n" +
-	"\x05_nameB\b\n" +
-	"\x06_color\"8\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01B\a\n" +
+	"\x05_name\"8\n" +
 	"\x11UpdateTagResponse\x12#\n" +
 	"\x03tag\x18\x01 \x01(\v2\x11.timetable.v1.TagR\x03tag\"0\n" +
 	"\x10DeleteTagRequest\x12\x1c\n" +
@@ -1372,7 +1361,8 @@ const file_timetable_v1_service_proto_rawDesc = "" +
 	"\bListTags\x12\x1d.timetable.v1.ListTagsRequest\x1a\x1e.timetable.v1.ListTagsResponse\"\t\x82\xb5\x18\x02\b\x03\x90\x02\x01\x12k\n" +
 	"\tUpdateTag\x12\x1e.timetable.v1.UpdateTagRequest\x1a\x1f.timetable.v1.UpdateTagResponse\"\x1d\x82\xb5\x18\x19\b\x03\x12\x15timetable.TagNotFound\x12k\n" +
 	"\tDeleteTag\x12\x1e.timetable.v1.DeleteTagRequest\x1a\x1f.timetable.v1.DeleteTagResponse\"\x1d\x82\xb5\x18\x19\b\x03\x12\x15timetable.TagNotFound\x12`\n" +
-	"\rRearrangeTags\x12\".timetable.v1.RearrangeTagsRequest\x1a#.timetable.v1.RearrangeTagsResponse\"\x06\x82\xb5\x18\x02\b\x03BPZNgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/timetable/v1;timetablev1b\x06proto3"
+	"\rRearrangeTags\x12\".timetable.v1.RearrangeTagsRequest\x1a#.timetable.v1.RearrangeTagsResponse\"\x06\x82\xb5\x18\x02\b\x03Bm\n" +
+	"\x1bnet.twinte.api.timetable.v1ZNgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/timetable/v1;timetablev1b\x06proto3"
 
 var (
 	file_timetable_v1_service_proto_rawDescOnce sync.Once
@@ -1490,7 +1480,6 @@ func file_timetable_v1_service_proto_init() {
 	file_timetable_v1_type_proto_init()
 	file_timetable_v1_service_proto_msgTypes[8].OneofWrappers = []any{}
 	file_timetable_v1_service_proto_msgTypes[10].OneofWrappers = []any{}
-	file_timetable_v1_service_proto_msgTypes[14].OneofWrappers = []any{}
 	file_timetable_v1_service_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

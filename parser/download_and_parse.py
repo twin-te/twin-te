@@ -2,6 +2,8 @@ import argparse
 import io
 import json
 import pathlib
+import sentry_sdk
+import os
 
 from kdb_downloader import KDBDownloader
 from kdb_parser import parse
@@ -27,6 +29,9 @@ def run_all(year: int) -> str:
 
 
 def main():
+    dsn = os.getenv("PARSER_SENTRY_DSN")
+    if dsn:
+        sentry_sdk.init(dsn=dsn, send_default_pii=True)
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--year", type=int, required=True, help="academic year")

@@ -193,7 +193,8 @@ const file_auth_v1_type_proto_rawDesc = "" +
 	"\x14PROVIDER_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fPROVIDER_GOOGLE\x10\x01\x12\x12\n" +
 	"\x0ePROVIDER_APPLE\x10\x02\x12\x14\n" +
-	"\x10PROVIDER_TWITTER\x10\x03BFZDgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1;authv1b\x06proto3"
+	"\x10PROVIDER_TWITTER\x10\x03B^\n" +
+	"\x16net.twinte.api.auth.v1ZDgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_type_proto_rawDescOnce sync.Once

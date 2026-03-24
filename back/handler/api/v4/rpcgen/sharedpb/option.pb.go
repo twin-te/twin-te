@@ -157,7 +157,8 @@ const file_shared_option_proto_rawDesc = "" +
 	"\vNOT_REQURED\x10\x01\x12\f\n" +
 	"\bOPTIONAL\x10\x02\x12\v\n" +
 	"\aREQURED\x10\x03:U\n" +
-	"\x06twinte\x12\x1e.google.protobuf.MethodOptions\x18І\x03 \x01(\v2\x1b.shared.TwinteMethodOptionsR\x06twinteB@Z>github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpbb\x06proto3"
+	"\x06twinte\x12\x1e.google.protobuf.MethodOptions\x18І\x03 \x01(\v2\x1b.shared.TwinteMethodOptionsR\x06twinteBW\n" +
+	"\x15net.twinte.api.sharedZ>github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpbb\x06proto3"
 
 var (
 	file_shared_option_proto_rawDescOnce sync.Once

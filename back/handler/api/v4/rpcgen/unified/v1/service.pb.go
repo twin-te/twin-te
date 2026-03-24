@@ -141,7 +141,8 @@ const file_unified_v1_service_proto_rawDesc = "" +
 	"\x06module\x18\x02 \x01(\x0e2\x19.schoolcalendar.v1.ModuleR\x06module\x12M\n" +
 	"\x12registered_courses\x18\x03 \x03(\v2\x1e.timetable.v1.RegisteredCourseR\x11registeredCourses2\x84\x01\n" +
 	"\x0eUnifiedService\x12r\n" +
-	"\tGetByDate\x12\x1c.unified.v1.GetByDateRequest\x1a\x1d.unified.v1.GetByDateResponse\"(\x82\xb5\x18!\b\x03\x12\x1dschoolcalendar.ModuleNotFound\x90\x02\x01BLZJgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/unified/v1;unifiedv1b\x06proto3"
+	"\tGetByDate\x12\x1c.unified.v1.GetByDateRequest\x1a\x1d.unified.v1.GetByDateResponse\"(\x82\xb5\x18!\b\x03\x12\x1dschoolcalendar.ModuleNotFound\x90\x02\x01Bg\n" +
+	"\x19net.twinte.api.unified.v1ZJgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/unified/v1;unifiedv1b\x06proto3"
 
 var (
 	file_unified_v1_service_proto_rawDescOnce sync.Once

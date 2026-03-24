@@ -37,10 +37,9 @@ type kdbCourse struct {
 }
 
 type kdbSchedule struct {
-	Module    string `json:"module"`
-	Day       string `json:"day"`
-	Period    int    `json:"period"`
-	Locations string `json:"locations"`
+	Module string `json:"module"`
+	Day    string `json:"day"`
+	Period int    `json:"period"`
 }
 
 func loadKdBCourseFromJSON(kdbJsonFilePath string) (ret []*kdbCourse, err error) {
@@ -92,7 +91,8 @@ func parseKdbCoure(kdbCourse *kdbCourse, year shareddomain.AcademicYear) (course
 			kdbSchedule.Module,
 			kdbSchedule.Day,
 			kdbSchedule.Period,
-			kdbSchedule.Locations,
+			// 教室情報が KdB から削除されたため、固定で空白を返すように
+			"",
 		)
 	})
 	if err != nil {

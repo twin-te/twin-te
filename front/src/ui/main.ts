@@ -13,19 +13,19 @@ const app = createApp(App);
 Sentry.init({
   app,
   dsn: String(import.meta.env.VITE_APP_SENTRY_URL ?? ""),
+  environment: import.meta.env.DEV ? "development" : undefined,
   integrations: [
     Sentry.browserTracingIntegration({
       router,
-      tracingOrigins: ["app.twinte.net"],
     }),
     Sentry.replayIntegration({
       maskAllText: false,
     }),
   ],
+  tracePropagationTargets: ["localhost", /^https:\/\/app\.twinte\.net/],
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.01,
   replaysOnErrorSampleRate: 1.0,
-  logErrors: true,
 });
 
 const head = createHead();

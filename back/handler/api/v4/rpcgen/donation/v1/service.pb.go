@@ -906,7 +906,8 @@ const file_donation_v1_service_proto_rawDesc = "" +
 	"\x15GetActiveSubscription\x12).donation.v1.GetActiveSubscriptionRequest\x1a*.donation.v1.GetActiveSubscriptionResponse\"(\x82\xb5\x18!\b\x03\x12\x1ddonation.SubscriptionNotFound\x90\x02\x01\x12w\n" +
 	"\vUnsubscribe\x12\x1f.donation.v1.UnsubscribeRequest\x1a .donation.v1.UnsubscribeResponse\"%\x82\xb5\x18!\b\x03\x12\x1ddonation.SubscriptionNotFound\x12d\n" +
 	"\x0eGetTotalAmount\x12\".donation.v1.GetTotalAmountRequest\x1a#.donation.v1.GetTotalAmountResponse\"\t\x82\xb5\x18\x02\b\x01\x90\x02\x01\x12j\n" +
-	"\x10ListContributors\x12$.donation.v1.ListContributorsRequest\x1a%.donation.v1.ListContributorsResponse\"\t\x82\xb5\x18\x02\b\x01\x90\x02\x01BNZLgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/donation/v1;donationv1b\x06proto3"
+	"\x10ListContributors\x12$.donation.v1.ListContributorsRequest\x1a%.donation.v1.ListContributorsResponse\"\t\x82\xb5\x18\x02\b\x01\x90\x02\x01Bj\n" +
+	"\x1anet.twinte.api.donation.v1ZLgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/donation/v1;donationv1b\x06proto3"
 
 var (
 	file_donation_v1_service_proto_rawDescOnce sync.Once

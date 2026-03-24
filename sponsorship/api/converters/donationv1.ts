@@ -1,5 +1,5 @@
 import * as DonationV1PB from '../../api/gen/donation/v1/type_pb';
-import { Subscription, User, SubscriptionPlan, PaymentHistory } from '../../domain';
+import { Subscription, User, SubscriptionPlan, PaymentHistory, Contributor } from '../../domain';
 import { PaymentStatus, PaymentType } from '../../domain/payment_history';
 import { fromPBRFC3339DateTime, fromPBUUID } from './shared';
 import { assurePresence } from './utils';
@@ -59,5 +59,12 @@ export const fromPBPaymentHistory = (pbPaymentHistory: DonationV1PB.PaymentHisto
 		status: fromPBPaymentStatus(pbPaymentHistory.status),
 		amount: pbPaymentHistory.amount,
 		createdAt: fromPBRFC3339DateTime(assurePresence(pbPaymentHistory.createdAt))
+	};
+};
+
+export const fromPBContributor = (pbContributor: DonationV1PB.Contributor): Contributor => {
+	return {
+		displayName: pbContributor.displayName,
+		link: pbContributor.link
 	};
 };

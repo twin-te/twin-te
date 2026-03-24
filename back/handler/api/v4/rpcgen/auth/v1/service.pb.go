@@ -270,7 +270,8 @@ const file_auth_v1_service_proto_rawDesc = "" +
 	"\vAuthService\x12A\n" +
 	"\x05GetMe\x12\x15.auth.v1.GetMeRequest\x1a\x16.auth.v1.GetMeResponse\"\t\x82\xb5\x18\x02\b\x03\x90\x02\x01\x12\x9d\x01\n" +
 	"\x18DeleteUserAuthentication\x12(.auth.v1.DeleteUserAuthenticationRequest\x1a).auth.v1.DeleteUserAuthenticationResponse\",\x82\xb5\x18(\b\x03\x12$auth.UserHasAtLeastOneAuthentication\x12V\n" +
-	"\rDeleteAccount\x12\x1d.auth.v1.DeleteAccountRequest\x1a\x1e.auth.v1.DeleteAccountResponse\"\x06\x82\xb5\x18\x02\b\x03BFZDgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1;authv1b\x06proto3"
+	"\rDeleteAccount\x12\x1d.auth.v1.DeleteAccountRequest\x1a\x1e.auth.v1.DeleteAccountResponse\"\x06\x82\xb5\x18\x02\b\x03B^\n" +
+	"\x16net.twinte.api.auth.v1ZDgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/auth/v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_service_proto_rawDescOnce sync.Once

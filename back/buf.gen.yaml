@@ -1,8 +1,10 @@
 version: v1
 plugins:
   - plugin: go
+    path: ["go", "tool", "protoc-gen-go"]
     out: .
     opt: module=github.com/twin-te/twin-te/back,paths=import
   - plugin: connect-go
+    path: ["go", "tool", "protoc-gen-connect-go"]
     out: .
     opt: module=github.com/twin-te/twin-te/back,paths=import

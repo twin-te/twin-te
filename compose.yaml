@@ -3,6 +3,7 @@ name: twinte-local
 services:
   back:
     container_name: twinte-back
+    hostname: back
     image: twinte-back-local
     build:
       context: ./back
@@ -12,15 +13,23 @@ services:
       - ./back/.env.local
     volumes:
       - .:/usr/src/twin-te
+    ports:
+      - "8080:8080"
+      - "2345:2345"
     networks:
       - twinte-network
     depends_on:
       - db
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_PTRACE
     profiles:
       - docker
 
   front:
     container_name: twinte-front
+    hostname: front
     image: twinte-front-local
     build:
       context: ./front
@@ -31,6 +40,8 @@ services:
       - /usr/src/twin-te/front/node_modules
     networks:
       - twinte-network
+    depends_on:
+      - back
     profiles:
       - docker
 
@@ -47,6 +58,8 @@ services:
       - /usr/src/twin-te/sponsorship/.next
     networks:
       - twinte-network
+    depends_on:
+      - back
     profiles:
       - docker
 
@@ -56,7 +69,7 @@ services:
     volumes:
       - ./proxy/nginx.docker.conf:/etc/nginx/nginx.conf
     ports:
-      - 4000:80
+      - "4000:80"
     networks:
       - twinte-network
     depends_on:
@@ -73,7 +86,7 @@ services:
     volumes:
       - ./proxy/nginx.host.conf:/etc/nginx/nginx.conf
     ports:
-      - 4000:80
+      - "4000:80"
     networks:
       - twinte-network
     depends_on:
@@ -84,7 +97,7 @@ services:
   db:
     container_name: twinte-db
     image: postgres:16
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
@@ -92,17 +105,18 @@ services:
       - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5432:5432"
     networks:
       - twinte-network
     healthcheck:
-      test: ["CMD-SHELL", 'pg_isready -U "$POSTGRES_USER"']
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 5s
       timeout: 5s
       retries: 5
     profiles:
       - docker
       - host
+      - migration
 
   db-migration:
     container_name: twinte-db-migration
@@ -121,8 +135,7 @@ services:
       db:
         condition: service_healthy
     profiles:
-      - docker
-      - host
+      - migration
 
   parser:
     container_name: twinte-parser

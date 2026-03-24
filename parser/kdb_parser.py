@@ -120,7 +120,7 @@ def analyze_day_and_period(s: str) -> list[dict]:
                         }
                     )
 
-            _match = re.search(f"([{day}]).*(\d)-(\d)", string)
+            _match = re.search(rf"([{day}]).*(\d)-(\d)", string)
             if _match is not None:
                 for i in range(int(_match.groups()[1]), int(_match.groups()[2]) + 1):
                     flag = True
@@ -158,13 +158,13 @@ def analyze_row(row: list[str]) -> dict:
         "name": row[1],
         "credits": parse_credits(row[3]),
         "type": int(row[2]),
-        "overview": row[9],
-        "remarks": row[10],
+        "overview": row[8],
+        "remarks": row[9],
         "recommendedGrade": parse_recommended_grade(row[4]),
         "schedules": [],
-        "instructor": row[8],
+        "instructor": row[7],
         "error": False,
-        "lastUpdate": datetime.datetime.fromisoformat(row[18] + "+09:00")
+        "lastUpdate": datetime.datetime.fromisoformat(row[17] + "+09:00")
         .astimezone(datetime.timezone.utc)
         .isoformat(timespec="milliseconds")
         .replace("+00:00", "Z"),  # JST保証
@@ -172,18 +172,15 @@ def analyze_row(row: list[str]) -> dict:
 
     module_str = row[5]
     period_str = row[6]
-    location_str = row[7]
 
     module_array = re.split("\r\n", module_str)
     period_array = re.split("\r\n", period_str)
-    location_array = re.split("\r\n", location_str)
 
-    count = max([len(module_array), len(period_array), len(location_array)])
+    count = max([len(module_array), len(period_array)])
 
     if not (
         (len(module_array) == count or len(module_array) == 1)
         and (len(period_array) == count or len(period_array) == 1)
-        and (len(location_array) == count or len(location_array) == 1)
     ):
         course_data["error"] = True
 
@@ -214,15 +211,6 @@ def analyze_row(row: list[str]) -> dict:
                         "module": mod,
                         "period": w["period"],
                         "day": w["day"],
-                        "location": (
-                            location_array[0]
-                            if len(location_array) == 1
-                            else (
-                                location_array[i]
-                                if len(location_array) > i and location_array[i]
-                                else ""
-                            )
-                        ),
                     }
                 )
 
@@ -230,7 +218,7 @@ def analyze_row(row: list[str]) -> dict:
 
 
 def parse(path_or_bytes: str | io.BytesIO) -> list:
-    df = pd.read_excel(path_or_bytes, skiprows=[0, 1, 2, 3])
+    df = pd.read_excel(path_or_bytes, skiprows=[0, 1, 2, 3], dtype=str)
     courses = [
         analyze_row(row.tolist())
         for _, row in df.fillna("").iterrows()

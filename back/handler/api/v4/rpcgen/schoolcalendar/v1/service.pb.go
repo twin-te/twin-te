@@ -213,7 +213,8 @@ const file_schoolcalendar_v1_service_proto_rawDesc = "" +
 	"\x06module\x18\x01 \x01(\x0e2\x19.schoolcalendar.v1.ModuleR\x06module2\xa4\x02\n" +
 	"\x15SchoolCalendarService\x12v\n" +
 	"\x10ListEventsByDate\x12*.schoolcalendar.v1.ListEventsByDateRequest\x1a+.schoolcalendar.v1.ListEventsByDateResponse\"\t\x82\xb5\x18\x02\b\x01\x90\x02\x01\x12\x92\x01\n" +
-	"\x0fGetModuleByDate\x12).schoolcalendar.v1.GetModuleByDateRequest\x1a*.schoolcalendar.v1.GetModuleByDateResponse\"(\x82\xb5\x18!\b\x01\x12\x1dschoolcalendar.ModuleNotFound\x90\x02\x01BZZXgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1;schoolcalendarv1b\x06proto3"
+	"\x0fGetModuleByDate\x12).schoolcalendar.v1.GetModuleByDateRequest\x1a*.schoolcalendar.v1.GetModuleByDateResponse\"(\x82\xb5\x18!\b\x01\x12\x1dschoolcalendar.ModuleNotFound\x90\x02\x01B|\n" +
+	" net.twinte.api.schoolcalendar.v1ZXgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1;schoolcalendarv1b\x06proto3"
 
 var (
 	file_schoolcalendar_v1_service_proto_rawDescOnce sync.Once

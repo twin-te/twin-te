@@ -38,6 +38,31 @@ type UseCase interface {
 	//   - PermissionExecuteBatchJob
 	UpdateCoursesBasedOnKdB(ctx context.Context, year shareddomain.AcademicYear) error
 
+	// CopyCoursesToFutureYears copies courses from the source year to future years.
+	//
+	// [Authentication] not required
+	//
+	// [Permission]
+	//   - PermissionExecuteBatchJob
+	CopyCoursesToFutureYears(ctx context.Context, sourceYear shareddomain.AcademicYear, maxFutureYears int) error
+
+	// ListMissingCourses returns courses that exist in the DB but are not in the imported codes.
+	//
+	// [Authentication] not required
+	//
+	// [Permission]
+	//   - PermissionExecuteBatchJob
+	ListMissingCourses(ctx context.Context, year shareddomain.AcademicYear, importedCodes []timetabledomain.Code) ([]*timetabledomain.Course, error)
+
+	// MigrateMissingCourses migrates registered courses whose based courses are missing from KdB.
+	// It converts them to manual registrations, then deletes the missing courses.
+	//
+	// [Authentication] not required
+	//
+	// [Permission]
+	//   - PermissionExecuteBatchJob
+	MigrateMissingCourses(ctx context.Context, missingCourses []*timetabledomain.Course) error
+
 	// CreateRegisteredCoursesByCodes creates new registered courses by the given year and codes.
 	//
 	// [Authentication] required

@@ -9,5 +9,5 @@ fi
 
 for year in {2019..2024}
 do
-  python download_and_parse.py --year $year --output-path ./data/parsed/$year.json
+  uv run download_and_parse.py --year $year --output-path ./data/parsed/$year.json
 done

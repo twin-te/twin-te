@@ -41,4 +41,7 @@ var (
 	COOKIE_SESSION_NAME           string = loadString("COOKIE_SESSION_NAME")
 	COOKIE_AUTH_STATE_NAME        string = loadString("COOKIE_AUTH_STATE_NAME")
 	COOKIE_AUTH_REDIRECT_URL_NAME string = loadString("COOKIE_AUTH_REDIRECT_URL_NAME")
+
+	// Sentry
+	SENTRY_DSN string = loadString("SENTRY_DSN")
 )

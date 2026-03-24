@@ -12,7 +12,7 @@ exclude_file = []
 exclude_regex = ["_test.go"]
 exclude_unchanged = false
 follow_symlink = false
-full_bin = "APP_USER=air dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec --continue ./tmp/main"
+full_bin = "APP_USER=air go tool dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec --continue ./tmp/main"
 include_dir = []
 include_ext = ["go", "tpl", "tmpl", "html"]
 include_file = []

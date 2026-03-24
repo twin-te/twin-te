@@ -20,6 +20,11 @@ export const Sidebar: React.FC = () => {
 						</NavLink>
 					</li>
 					<li>
+						<NavLink href="/sponsors-list" activeClassName={styles.activeLink}>
+							寄付者一覧
+						</NavLink>
+					</li>
+					<li>
 						<NavLink href="/register" activeClassName={styles.activeLink}>
 							寄付・サブスク登録
 						</NavLink>

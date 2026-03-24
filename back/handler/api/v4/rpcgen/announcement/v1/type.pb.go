@@ -173,7 +173,8 @@ const file_announcement_v1_type_proto_rawDesc = "" +
 	"\x0fAnnouncementTag\x12 \n" +
 	"\x1cANNOUNCEMENT_TAG_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cANNOUNCEMENT_TAG_INFORMATION\x10\x01\x12!\n" +
-	"\x1dANNOUNCEMENT_TAG_NOTIFICATION\x10\x02BVZTgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1;announcementv1b\x06proto3"
+	"\x1dANNOUNCEMENT_TAG_NOTIFICATION\x10\x02Bv\n" +
+	"\x1enet.twinte.api.announcement.v1ZTgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/announcement/v1;announcementv1b\x06proto3"
 
 var (
 	file_announcement_v1_type_proto_rawDescOnce sync.Once

@@ -256,7 +256,8 @@ const file_schoolcalendar_v1_type_proto_rawDesc = "" +
 	"\rMODULE_FALL_B\x10\x06\x12\x1a\n" +
 	"\x16MODULE_WINTER_VACATION\x10\a\x12\x11\n" +
 	"\rMODULE_FALL_C\x10\b\x12\x1a\n" +
-	"\x16MODULE_SPRING_VACATION\x10\tBZZXgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1;schoolcalendarv1b\x06proto3"
+	"\x16MODULE_SPRING_VACATION\x10\tB|\n" +
+	" net.twinte.api.schoolcalendar.v1ZXgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/schoolcalendar/v1;schoolcalendarv1b\x06proto3"
 
 var (
 	file_schoolcalendar_v1_type_proto_rawDescOnce sync.Once

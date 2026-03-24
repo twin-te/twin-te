@@ -488,7 +488,8 @@ const file_donation_v1_type_proto_rawDesc = "" +
 	"\x1aPAYMENT_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16PAYMENT_STATUS_PENDING\x10\x01\x12\x1b\n" +
 	"\x17PAYMENT_STATUS_CANCELED\x10\x02\x12\x1c\n" +
-	"\x18PAYMENT_STATUS_SUCCEEDED\x10\x03BNZLgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/donation/v1;donationv1b\x06proto3"
+	"\x18PAYMENT_STATUS_SUCCEEDED\x10\x03Bj\n" +
+	"\x1anet.twinte.api.donation.v1ZLgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/donation/v1;donationv1b\x06proto3"
 
 var (
 	file_donation_v1_type_proto_rawDescOnce sync.Once
