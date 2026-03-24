@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "typecheck": "vue-tsc --noEmit",
     "build": "bun run typecheck && vite build",
     "build:staging": "bun --env-file=.env.staging vite build --mode staging",
