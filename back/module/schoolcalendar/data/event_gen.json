@@ -2419,5 +2419,353 @@
     "date": "2026-03-25",
     "type": "Other",
     "description": "卒業式/学位記授与式"
+  },
+  {
+    "id": 397,
+    "date": "2026-04-06",
+    "type": "Holiday",
+    "description": "入学式"
+  },
+  {
+    "id": 398,
+    "date": "2026-04-07",
+    "type": "Holiday",
+    "description": "学群1年次TOEIC IPテスト"
+  },
+  {
+    "id": 399,
+    "date": "2026-04-06",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション"
+  },
+  {
+    "id": 400,
+    "date": "2026-04-07",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション"
+  },
+  {
+    "id": 401,
+    "date": "2026-04-08",
+    "type": "Holiday",
+    "description": "新入生オリエンテーション"
+  },
+  {
+    "id": 402,
+    "date": "2026-04-09",
+    "type": "Holiday",
+    "description": "オリエンテーション予備日"
+  },
+  {
+    "id": 403,
+    "date": "2026-04-10",
+    "type": "Holiday",
+    "description": "新入生歓迎祭"
+  },
+  {
+    "id": 404,
+    "date": "2026-04-13",
+    "type": "Holiday",
+    "description": "オリエンテーション予備日"
+  },
+  {
+    "id": 405,
+    "date": "2026-04-29",
+    "type": "PublicHoliday",
+    "description": "昭和の日"
+  },
+  {
+    "id": 406,
+    "date": "2026-04-30",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Wednesday"
+  },
+  {
+    "id": 407,
+    "date": "2026-05-03",
+    "type": "PublicHoliday",
+    "description": "憲法記念日"
+  },
+  {
+    "id": 408,
+    "date": "2026-05-04",
+    "type": "PublicHoliday",
+    "description": "みどりの日"
+  },
+  {
+    "id": 409,
+    "date": "2026-05-05",
+    "type": "PublicHoliday",
+    "description": "こどもの日"
+  },
+  {
+    "id": 410,
+    "date": "2026-05-06",
+    "type": "PublicHoliday",
+    "description": "憲法記念日 振替休日"
+  },
+  {
+    "id": 411,
+    "date": "2026-05-08",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "id": 412,
+    "date": "2026-05-16",
+    "type": "Other",
+    "description": "春季スポーツ・デー"
+  },
+  {
+    "id": 413,
+    "date": "2026-05-17",
+    "type": "Other",
+    "description": "春季スポーツ・デー"
+  },
+  {
+    "id": 414,
+    "date": "2026-05-25",
+    "type": "Other",
+    "description": "春Aモジュール後予備日"
+  },
+  {
+    "id": 415,
+    "date": "2026-06-30",
+    "type": "Other",
+    "description": "春Bモジュール後予備日"
+  },
+  {
+    "id": 416,
+    "date": "2026-07-01",
+    "type": "Other",
+    "description": "春Bモジュール後予備日"
+  },
+  {
+    "id": 417,
+    "date": "2026-07-11",
+    "type": "Other",
+    "description": "学群編入学試験"
+  },
+  {
+    "id": 418,
+    "date": "2026-07-12",
+    "type": "Other",
+    "description": "学群編入学試験"
+  },
+  {
+    "id": 419,
+    "date": "2026-07-20",
+    "type": "PublicHoliday",
+    "description": "海の日"
+  },
+  {
+    "id": 420,
+    "date": "2026-07-23",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "id": 421,
+    "date": "2026-08-07",
+    "type": "Other",
+    "description": "春Cモジュール後予備日"
+  },
+  {
+    "id": 422,
+    "date": "2026-09-25",
+    "type": "Other",
+    "description": "卒業式/学位記授与式"
+  },
+  {
+    "id": 423,
+    "date": "2026-09-30",
+    "type": "Other",
+    "description": "秋学期入学式"
+  },
+  {
+    "id": 424,
+    "date": "2026-10-12",
+    "type": "PublicHoliday",
+    "description": "スポーツの日"
+  },
+  {
+    "id": 425,
+    "date": "2026-10-15",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "id": 426,
+    "date": "2026-10-30",
+    "type": "Holiday",
+    "description": "学園祭"
+  },
+  {
+    "id": 427,
+    "date": "2026-10-31",
+    "type": "Holiday",
+    "description": "学園祭"
+  },
+  {
+    "id": 428,
+    "date": "2026-11-01",
+    "type": "Holiday",
+    "description": "学園祭"
+  },
+  {
+    "id": 429,
+    "date": "2026-11-02",
+    "type": "Holiday",
+    "description": "臨時休講"
+  },
+  {
+    "id": 430,
+    "date": "2026-11-03",
+    "type": "PublicHoliday",
+    "description": "文化の日"
+  },
+  {
+    "id": 431,
+    "date": "2026-11-11",
+    "type": "Other",
+    "description": "秋Aモジュール後予備日"
+  },
+  {
+    "id": 432,
+    "date": "2026-11-14",
+    "type": "Other",
+    "description": "秋季スポーツ・デー"
+  },
+  {
+    "id": 433,
+    "date": "2026-11-15",
+    "type": "Other",
+    "description": "秋季スポーツ・デー"
+  },
+  {
+    "id": 434,
+    "date": "2026-11-23",
+    "type": "PublicHoliday",
+    "description": "勤労感謝の日"
+  },
+  {
+    "id": 435,
+    "date": "2026-11-24",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Wednesday"
+  },
+  {
+    "id": 436,
+    "date": "2026-11-25",
+    "type": "Holiday",
+    "description": "臨時休業"
+  },
+  {
+    "id": 437,
+    "date": "2026-11-26",
+    "type": "Holiday",
+    "description": "推薦入試"
+  },
+  {
+    "id": 438,
+    "date": "2026-11-27",
+    "type": "Holiday",
+    "description": "推薦入試"
+  },
+  {
+    "id": 439,
+    "date": "2026-12-23",
+    "type": "Other",
+    "description": "秋Bモジュール後予備日"
+  },
+  {
+    "id": 440,
+    "date": "2026-12-24",
+    "type": "Other",
+    "description": "秋Bモジュール後予備日"
+  },
+  {
+    "id": 441,
+    "date": "2027-01-11",
+    "type": "PublicHoliday",
+    "description": "成人の日"
+  },
+  {
+    "id": 442,
+    "date": "2027-01-13",
+    "type": "SubstituteDay",
+    "description": "",
+    "changeTo": "Monday"
+  },
+  {
+    "id": 443,
+    "date": "2027-01-15",
+    "type": "Holiday",
+    "description": "臨時休業"
+  },
+  {
+    "id": 444,
+    "date": "2027-01-16",
+    "type": "Other",
+    "description": "大学入学共通テスト"
+  },
+  {
+    "id": 445,
+    "date": "2027-01-17",
+    "type": "Other",
+    "description": "大学入学共通テスト"
+  },
+  {
+    "id": 446,
+    "date": "2027-01-18",
+    "type": "Holiday",
+    "description": "臨時休業"
+  },
+  {
+    "id": 447,
+    "date": "2027-02-11",
+    "type": "PublicHoliday",
+    "description": "建国記念の日"
+  },
+  {
+    "id": 448,
+    "date": "2027-02-16",
+    "type": "Other",
+    "description": "秋Cモジュール後予備日"
+  },
+  {
+    "id": 449,
+    "date": "2027-02-25",
+    "type": "Other",
+    "description": "個別学力検査等前期日程"
+  },
+  {
+    "id": 450,
+    "date": "2027-02-26",
+    "type": "Other",
+    "description": "個別学力検査等前期日程"
+  },
+  {
+    "id": 451,
+    "date": "2027-03-10",
+    "type": "Other",
+    "description": "医学類卒業日"
+  },
+  {
+    "id": 452,
+    "date": "2027-03-12",
+    "type": "Other",
+    "description": "個別学力検査等後期日程"
+  },
+  {
+    "id": 453,
+    "date": "2027-03-25",
+    "type": "Other",
+    "description": "卒業式/学位記授与式"
   }
 ]
