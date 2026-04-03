@@ -24,15 +24,15 @@ class TestParseSnapshot(unittest.TestCase):
                 os.makedirs(self.test_data_dir, exist_ok=True)
 
         # テスト対象のExcelファイルのパス
-        self.excel_file_path = os.path.join(self.test_data_dir, "kdb_2021.xlsx")
+        self.excel_file_path = os.path.join(self.test_data_dir, "kdb_2026.xlsx")
 
 
-    def test_parse_2021_snapshot(self):
+    def test_parse_2026_snapshot(self):
         """
         kdb.parse関数の結果が保存されたスナップショットと一致することをテストします。
         UPDATE_SNAPSHOTSがTrueの場合、不一致またはファイルが存在しない場合はスナップショットを更新します。
         """
-        year = 2021 # テスト対象の年を2021に固定
+        year = 2026 # テスト対象の年を2026に固定
         snapshot_filename = f"{year}.json"
         snapshot_path = os.path.join(self.test_data_dir, snapshot_filename)
 
