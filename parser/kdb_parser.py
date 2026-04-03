@@ -173,8 +173,8 @@ def analyze_row(row: list[str]) -> dict:
     module_str = row[5]
     period_str = row[6]
 
-    module_array = re.split("\r\n", module_str)
-    period_array = re.split("\r\n", period_str)
+    module_array = re.split("\r?\n", module_str)
+    period_array = re.split("\r?\n", period_str)
 
     count = max([len(module_array), len(period_array)])
 
