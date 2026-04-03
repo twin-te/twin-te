@@ -206,16 +206,16 @@ def convert(row: dict) -> Course:
             except ValueError:
                 has_parse_error = True
 
-    recommended_grade_set = set(recommended_grades)
-    if len(recommended_grades) != len(recommended_grade_set):
+    recommended_grade_unique = list(dict.fromkeys(recommended_grades))
+    if len(recommended_grades) != len(recommended_grade_unique):
         has_parse_error = True
 
-    method_set = set(methods)
-    if len(methods) != len(method_set):
+    method_unique = list(dict.fromkeys(methods))
+    if len(methods) != len(method_unique):
         has_parse_error = True
 
-    schedule_set = set(schedules)
-    if len(schedules) != len(schedule_set):
+    schedule_unique = list(dict.fromkeys(schedules))
+    if len(schedules) != len(schedule_unique):
         has_parse_error = True
 
     return Course(
@@ -228,9 +228,9 @@ def convert(row: dict) -> Course:
         last_updated_at=row["lastUpdate"],
         has_parse_error=has_parse_error,
         is_annual=is_annual,
-        recommended_grades=list(recommended_grade_set),
-        methods=list(method_set),
-        schedules=list(schedule_set),
+        recommended_grades=recommended_grade_unique,
+        methods=method_unique,
+        schedules=schedule_unique,
     )
 
 
