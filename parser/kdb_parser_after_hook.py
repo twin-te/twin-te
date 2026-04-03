@@ -1,21 +1,22 @@
 import dataclasses
 import json
+from enum import StrEnum
 
 import kdb_parser
 
 
-class Module(str):
+class Module(StrEnum):
     SpringA = "SpringA"
     SpringB = "SpringB"
     SpringC = "SpringC"
+    SummerVacation = "SummerVacation"
     FallA = "FallA"
     FallB = "FallB"
     FallC = "FallC"
-    SummerVacation = "SummerVacation"
     SpringVacation = "SpringVacation"
 
 
-class Day(str):
+class Day(StrEnum):
     Sun = "Sun"
     Mon = "Mon"
     Tue = "Tue"
@@ -41,6 +42,10 @@ class CourseMethod(str):
     OnlineSynchronous = "OnlineSynchronous"
     FaceToFace = "FaceToFace"
     Others = "Others"
+
+
+MODULE_SORT_ORDER = {module: index for index, module in enumerate(Module)}
+DAY_SORT_ORDER = {day: index for index, day in enumerate(Day)}
 
 
 @dataclasses.dataclass
@@ -170,6 +175,17 @@ def extract_course_methods(remarks: str) -> list[CourseMethod]:
     return ret
 
 
+def sorted_schedules(schedules: list[Schedule]) -> list[Schedule]:
+    return sorted(
+        schedules,
+        key=lambda schedule: (
+            MODULE_SORT_ORDER[schedule.module],
+            DAY_SORT_ORDER[schedule.day],
+            schedule.period,
+        ),
+    )
+
+
 def convert(row: dict) -> Course:
     has_parse_error = row["error"]
 
@@ -230,7 +246,7 @@ def convert(row: dict) -> Course:
         is_annual=is_annual,
         recommended_grades=recommended_grade_unique,
         methods=method_unique,
-        schedules=schedule_unique,
+        schedules=sorted_schedules(schedule_unique),
     )
 
 
