@@ -156,7 +156,7 @@ const readCSV = async (file: File): Promise<CSV> => {
       const line = reader.result
         .split(/\r\n|\r|\n/)
         .filter((v) => v) // drop blank line
-        .map((v) => v.replace(/"/g, ""));
+        .map((v) => v.replace(/"/g, "").trim());
 
       // 履修フォーマット
       if (line[0].length === 7) {

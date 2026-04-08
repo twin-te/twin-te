@@ -1,21 +1,22 @@
 import dataclasses
 import json
+from enum import StrEnum
 
 import kdb_parser
 
 
-class Module(str):
+class Module(StrEnum):
     SpringA = "SpringA"
     SpringB = "SpringB"
     SpringC = "SpringC"
+    SummerVacation = "SummerVacation"
     FallA = "FallA"
     FallB = "FallB"
     FallC = "FallC"
-    SummerVacation = "SummerVacation"
     SpringVacation = "SpringVacation"
 
 
-class Day(str):
+class Day(StrEnum):
     Sun = "Sun"
     Mon = "Mon"
     Tue = "Tue"
@@ -41,6 +42,10 @@ class CourseMethod(str):
     OnlineSynchronous = "OnlineSynchronous"
     FaceToFace = "FaceToFace"
     Others = "Others"
+
+
+MODULE_SORT_ORDER = {module: index for index, module in enumerate(Module)}
+DAY_SORT_ORDER = {day: index for index, day in enumerate(Day)}
 
 
 @dataclasses.dataclass
@@ -170,6 +175,17 @@ def extract_course_methods(remarks: str) -> list[CourseMethod]:
     return ret
 
 
+def sorted_schedules(schedules: list[Schedule]) -> list[Schedule]:
+    return sorted(
+        schedules,
+        key=lambda schedule: (
+            MODULE_SORT_ORDER[schedule.module],
+            DAY_SORT_ORDER[schedule.day],
+            schedule.period,
+        ),
+    )
+
+
 def convert(row: dict) -> Course:
     has_parse_error = row["error"]
 
@@ -206,16 +222,16 @@ def convert(row: dict) -> Course:
             except ValueError:
                 has_parse_error = True
 
-    recommended_grade_set = set(recommended_grades)
-    if len(recommended_grades) != len(recommended_grade_set):
+    recommended_grade_unique = list(dict.fromkeys(recommended_grades))
+    if len(recommended_grades) != len(recommended_grade_unique):
         has_parse_error = True
 
-    method_set = set(methods)
-    if len(methods) != len(method_set):
+    method_unique = list(dict.fromkeys(methods))
+    if len(methods) != len(method_unique):
         has_parse_error = True
 
-    schedule_set = set(schedules)
-    if len(schedules) != len(schedule_set):
+    schedule_unique = list(dict.fromkeys(schedules))
+    if len(schedules) != len(schedule_unique):
         has_parse_error = True
 
     return Course(
@@ -228,9 +244,9 @@ def convert(row: dict) -> Course:
         last_updated_at=row["lastUpdate"],
         has_parse_error=has_parse_error,
         is_annual=is_annual,
-        recommended_grades=list(recommended_grade_set),
-        methods=list(method_set),
-        schedules=list(schedule_set),
+        recommended_grades=recommended_grade_unique,
+        methods=method_unique,
+        schedules=sorted_schedules(schedule_unique),
     )
 
 
