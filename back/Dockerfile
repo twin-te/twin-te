@@ -11,7 +11,7 @@ FROM base AS local
 
 CMD [ "go", "tool", "air" ]
 
-FROM golang:${GO_VERSION}-bullseye AS builder
+FROM golang:${GO_VERSION}-trixie AS builder
 WORKDIR /usr/src/app
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
