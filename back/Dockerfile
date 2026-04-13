@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
   --mount=type=bind,target=. \
   GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o /usr/local/bin/app
 
-FROM debian:bullseye-slim AS deploy
+FROM debian:trixie-slim AS deploy
 
 RUN --mount=type=cache,target=/var/lib/apt,sharing=locked \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
