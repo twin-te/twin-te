@@ -75,7 +75,7 @@ docker compose --profile docker up
 proxy-host, db, db-migrationのみをDockerコンテナで実行し、他のサービスはホストマシン上で実行する方法です。
 
 バージョン
-- Go : 1.23.x
+- Go : 1.26.x
 - Python : 3.12.x
 - [uv](https://docs.astral.sh/uv/): 0.8.x
 - Bun : 1.2.x

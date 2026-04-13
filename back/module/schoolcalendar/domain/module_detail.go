@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/civil"
-	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -58,7 +57,7 @@ type ModuleDetail struct {
 }
 
 func (md *ModuleDetail) Clone() *ModuleDetail {
-	ret := lo.ToPtr(*md)
+	ret := new(*md)
 	return ret
 }
 

@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/samber/lo"
 )
 
 type AlreadyReadID uuid.UUID
@@ -33,7 +32,7 @@ func (id *AlreadyReadID) StringPtr() *string {
 	if id == nil {
 		return nil
 	}
-	return lo.ToPtr(id.String())
+	return new(id.String())
 }
 
 func NewAlreadyReadID() AlreadyReadID {

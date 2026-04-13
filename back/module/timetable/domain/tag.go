@@ -3,7 +3,6 @@ package timetabledomain
 import (
 	"fmt"
 
-	"github.com/samber/lo"
 	"github.com/samber/mo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -24,7 +23,7 @@ type Tag struct {
 }
 
 func (t *Tag) Clone() *Tag {
-	ret := lo.ToPtr(*t)
+	ret := new(*t)
 	return ret
 }
 

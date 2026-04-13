@@ -21,7 +21,7 @@ func ToPBAnnouncement(announcement *announcementdomain.Announcement, idToReadFla
 		Title:       announcement.Title.String(),
 		Content:     announcement.Content.String(),
 		PublishedAt: sharedconv.ToPBRFC3339DateTime(announcement.PublishedAt),
-		IsRead:      lo.Ternary(idToReadFlag == nil, nil, lo.ToPtr(idToReadFlag[announcement.ID])),
+		IsRead:      lo.Ternary(idToReadFlag == nil, nil, new(idToReadFlag[announcement.ID])),
 	}
 
 	return pbAnnouncement, nil
