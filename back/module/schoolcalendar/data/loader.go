@@ -20,7 +20,7 @@ type jsonEvent struct {
 	Type        string            `json:"type"`
 	Date        string            `json:"date"`
 	Description string            `json:"description"`
-	ChangeTo    mo.Option[string] `json:"changeTo,omitempty"`
+	ChangeTo    mo.Option[string] `json:"changeTo"`
 }
 
 type jsonModuleDetail struct {

@@ -55,7 +55,7 @@ func getAppleSocialID(ctx context.Context, code string) (socialID authdomain.Soc
 	// cf. https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user#3383769
 	idToken, err := jwt.Parse(
 		idTokenString,
-		func(t *jwt.Token) (interface{}, error) {
+		func(t *jwt.Token) (any, error) {
 			if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %+v", t.Header["alg"])
 			}

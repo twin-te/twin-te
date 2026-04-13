@@ -2,6 +2,7 @@ package calendarv1beta
 
 import (
 	"context"
+	"slices"
 	"sort"
 	"time"
 
@@ -20,10 +21,8 @@ type Module struct {
 }
 
 func (m Module) addException(weekday time.Weekday, date civil.Date) {
-	for _, d := range m.Exceptions[weekday] {
-		if d == date {
-			return // Already exists
-		}
+	if slices.Contains(m.Exceptions[weekday], date) {
+		return // Already exists
 	}
 	m.Exceptions[weekday] = append(m.Exceptions[weekday], date)
 }

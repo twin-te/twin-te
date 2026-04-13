@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/apperr"
 	"github.com/twin-te/twin-te/back/base"
@@ -24,7 +23,7 @@ type User struct {
 }
 
 func (u *User) Clone() *User {
-	ret := lo.ToPtr(*u)
+	ret := new(*u)
 	ret.Authentications = base.CopySlice(u.Authentications)
 	return ret
 }
