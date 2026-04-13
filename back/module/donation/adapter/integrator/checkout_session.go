@@ -25,25 +25,25 @@ func (i *impl) CreateOneTimeCheckoutSession(ctx context.Context, paymentUserID m
 			Context: ctx,
 		},
 		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
-		SubmitType:         new("donate"),
+		SubmitType:         stripe.String("donate"),
 		Customer:           base.OptionMapByString(paymentUserID).ToPointer(),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
 				Quantity: stripe.Int64(1),
 				PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
 					ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
-						Name:        new("Twin:te寄付"),
-						Description: new("寄付いただいたお金はTwin:teの運用や開発に使用します"),
+						Name:        stripe.String("Twin:te寄付"),
+						Description: stripe.String("寄付いただいたお金はTwin:teの運用や開発に使用します"),
 						Images:      stripe.StringSlice([]string{"https://www.twinte.net/ogp.jpg"}),
 					},
-					Currency:   new("jpy"),
-					UnitAmount: new(int64(amount)),
+					Currency:   stripe.String("jpy"),
+					UnitAmount: stripe.Int64(int64(amount)),
 				},
 			},
 		},
 		Mode:       stripe.String(string(stripe.CheckoutSessionModePayment)),
-		SuccessURL: new(fmt.Sprintf("%s?type=onetime&amount=%d", appenv.STRIPE_CHECKOUT_SUCCESS_URL, amount)),
-		CancelURL:  new(appenv.STRIPE_CHECKOUT_CANCEL_URL),
+		SuccessURL: stripe.String(fmt.Sprintf("%s?type=onetime&amount=%d", appenv.STRIPE_CHECKOUT_SUCCESS_URL, amount)),
+		CancelURL:  stripe.String(appenv.STRIPE_CHECKOUT_CANCEL_URL),
 	}
 
 	s, err := session.New(params)
@@ -60,16 +60,16 @@ func (i *impl) CreateSubscriptionCheckoutSession(ctx context.Context, paymentUse
 			Context: ctx,
 		},
 		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
-		Customer:           new(paymentUserID.String()),
+		Customer:           stripe.String(paymentUserID.String()),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
-				Price:    new(subscriptionPlanID.String()),
+				Price:    stripe.String(subscriptionPlanID.String()),
 				Quantity: stripe.Int64(1),
 			},
 		},
 		Mode:       stripe.String(string(stripe.CheckoutSessionModeSubscription)),
-		SuccessURL: new(fmt.Sprintf("%s?type=subscription&plan_id=%s", appenv.STRIPE_CHECKOUT_SUCCESS_URL, subscriptionPlanID)),
-		CancelURL:  new(appenv.STRIPE_CHECKOUT_CANCEL_URL),
+		SuccessURL: stripe.String(fmt.Sprintf("%s?type=subscription&plan_id=%s", appenv.STRIPE_CHECKOUT_SUCCESS_URL, subscriptionPlanID)),
+		CancelURL:  stripe.String(appenv.STRIPE_CHECKOUT_CANCEL_URL),
 	}
 
 	s, err := session.New(params)

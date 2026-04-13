@@ -27,8 +27,8 @@ func (i *impl) ListSubscriptions(ctx context.Context, paymentUserID idtype.Payme
 				Limit:         stripe.Int64(100),
 				StartingAfter: startingAfter,
 			},
-			Customer: new(paymentUserID.String()),
-			Status:   new("all"),
+			Customer: stripe.String(paymentUserID.String()),
+			Status:   stripe.String("all"),
 		})
 
 		if err := iter.Err(); err != nil {
@@ -95,7 +95,7 @@ func (i *impl) loadSubscriptionPlans() (err error) {
 				Limit:         stripe.Int64(100),
 				StartingAfter: startingAfter,
 			},
-			Active: new(true),
+			Active: stripe.Bool(true),
 		})
 
 		if err := iter.Err(); err != nil {
