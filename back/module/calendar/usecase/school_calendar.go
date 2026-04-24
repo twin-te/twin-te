@@ -2,7 +2,6 @@ package calendarusecase
 
 import (
 	"context"
-	"slices"
 	"sort"
 	"time"
 
