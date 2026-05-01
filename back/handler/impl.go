@@ -9,9 +9,10 @@ import (
 	"github.com/twin-te/twin-te/back/appenv"
 	apiv4rpc "github.com/twin-te/twin-te/back/handler/api/v4/rpc"
 	authv4 "github.com/twin-te/twin-te/back/handler/auth/v4"
-	calendarv1beta "github.com/twin-te/twin-te/back/handler/calendar/v1beta"
+	calendarv1 "github.com/twin-te/twin-te/back/handler/calendar/v1"
 	announcementmodule "github.com/twin-te/twin-te/back/module/announcement"
 	authmodule "github.com/twin-te/twin-te/back/module/auth"
+	calendarmodule "github.com/twin-te/twin-te/back/module/calendar"
 	donationmodule "github.com/twin-te/twin-te/back/module/donation"
 	schoolcalendarmodule "github.com/twin-te/twin-te/back/module/schoolcalendar"
 	timetablemodule "github.com/twin-te/twin-te/back/module/timetable"
@@ -22,7 +23,7 @@ var _ http.Handler = (*impl)(nil)
 
 type impl struct {
 	authv4Handler         http.Handler
-	calendarv1betaHandler http.Handler
+	calendarv1Handler http.Handler
 	apiv4RPCHandler       http.Handler
 }
 
@@ -32,8 +33,8 @@ func (h *impl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.StripPrefix("/api/v4", h.apiv4RPCHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/auth/v4"):
 		http.StripPrefix("/auth/v4", h.authv4Handler).ServeHTTP(w, r)
-	case strings.HasPrefix(r.URL.Path, "/calendar/v1beta"):
-		http.StripPrefix("/calendar/v1beta", h.calendarv1betaHandler).ServeHTTP(w, r)
+	case strings.HasPrefix(r.URL.Path, calendarv1.PathPrefix):
+		http.StripPrefix(calendarv1.PathPrefix, h.calendarv1Handler).ServeHTTP(w, r)
 	default:
 		http.NotFound(w, r)
 	}
@@ -43,6 +44,7 @@ func New(
 	accessController authmodule.AccessController,
 	announcementUsecase announcementmodule.UseCase,
 	authUseCase authmodule.UseCase,
+	calendarUseCase calendarmodule.UseCase,
 	donationUseCase donationmodule.UseCase,
 	schoolcalendarUseCase schoolcalendarmodule.UseCase,
 	timetableUseCase timetablemodule.UseCase,
@@ -53,16 +55,16 @@ func New(
 		authUseCase,
 	)
 
-	calendarv1betaHandler := calendarv1beta.New(
+	calendarv1Handler := calendarv1.New(
 		accessController,
-		schoolcalendarUseCase,
-		timetableUseCase,
+		calendarUseCase,
 	)
 
 	var apiv4RPCHandler http.Handler = apiv4rpc.New(
 		accessController,
 		announcementUsecase,
 		authUseCase,
+		calendarUseCase,
 		donationUseCase,
 		schoolcalendarUseCase,
 		timetableUseCase,
@@ -79,7 +81,7 @@ func New(
 
 	h := &impl{
 		authv4Handler:         authv4Handler,
-		calendarv1betaHandler: calendarv1betaHandler,
+		calendarv1Handler: calendarv1Handler,
 		apiv4RPCHandler:       apiv4RPCHandler,
 	}
 

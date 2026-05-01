@@ -18,6 +18,7 @@ var (
 
 	// handler
 	ADDR                 string   = loadString("ADDR")
+	APP_URL              string   = loadString("APP_URL")
 	CORS_ALLOWED_ORIGINS []string = loadStringSlice("CORS_ALLOWED_ORIGINS")
 
 	AUTH_DEFAULT_REDIRECT_URL  string   = loadString("AUTH_DEFAULT_REDIRECT_URL")

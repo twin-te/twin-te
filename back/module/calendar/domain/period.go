@@ -1,4 +1,4 @@
-package calendarv1beta
+package calendardomain
 
 import (
 	"cloud.google.com/go/civil"
@@ -33,11 +33,11 @@ func GetPeriodEnd(period timetabledomain.Period) civil.Time {
 	case 3:
 		return civil.Time{Hour: 13, Minute: 30}
 	case 4:
-		return civil.Time{Hour: 15, Minute: 00}
+		return civil.Time{Hour: 15, Minute: 0}
 	case 5:
 		return civil.Time{Hour: 16, Minute: 30}
 	case 6:
-		return civil.Time{Hour: 18, Minute: 00}
+		return civil.Time{Hour: 18, Minute: 0}
 	default:
 		return civil.Time{Hour: 23, Minute: 59}
 	}
