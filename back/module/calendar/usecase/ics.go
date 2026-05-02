@@ -56,6 +56,8 @@ func (uc *impl) writeICalendar(writer io.Writer, modules []calendardomain.School
 	w.write("BEGIN:VCALENDAR")
 	w.write("VERSION:2.0")
 	w.write("PRODID:-//Twin:te//Twin:te Calendar Service//EN")
+	w.write("NAME:Twin:te")
+	w.write("X-WR-CALNAME:Twin:te")
 
 	w.write("BEGIN:VTIMEZONE")
 	w.write("TZID:Asia/Tokyo")
