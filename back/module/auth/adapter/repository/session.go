@@ -65,7 +65,7 @@ func applySessionFilter(db *gorm.DB, filter authport.SessionFilter) *gorm.DB {
 	}
 
 	if userID, ok := filter.UserID.Get(); ok {
-		db.Where("user_id = ?", userID.String())
+		db = db.Where("user_id = ?", userID.String())
 	}
 
 	if expiredAtAfter, ok := filter.ExpiredAtAfter.Get(); ok {
