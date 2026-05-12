@@ -17,16 +17,14 @@ const transport = createConnectTransport({
   useHttpGet: true,
 });
 
-export const announcementUseCase: IAnnouncementUseCase = new AnnouncementUseCase(
-  transport
-);
+export const announcementUseCase: IAnnouncementUseCase =
+  new AnnouncementUseCase(transport);
 export const authUseCase: IAuthUseCase = new AuthUseCase(transport);
 export const calendarUseCase: ICalendarUseCase = new CalendarUseCase(transport);
 export const feedbackUseCase: IFeedbackUseCase = new FeedbackUseCase();
-export const schoolCalendarUseCase: ISchoolCalendarUseCase = new SchoolCalendarUseCase(
-  transport
-);
+export const schoolCalendarUseCase: ISchoolCalendarUseCase =
+  new SchoolCalendarUseCase(transport);
 export const settingUseCase: ISettingUseCase = new SettingUseCase();
 export const timetableUseCase: ITimetableUseCase = new TimetableUseCase(
-  transport
+  transport,
 );

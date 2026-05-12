@@ -31,13 +31,13 @@ function goBack() {
 }
 
 const steps = ["description", "upload", "apply"] as const;
-const currentStep = ref<typeof steps[number]>("description");
+const currentStep = ref<(typeof steps)[number]>("description");
 
 const localStorage = LocalStorage.getInstance();
 const latestData = ref(localStorage.get("courseLocationInfo"));
 
 const dataLength = computed(() =>
-  latestData.value ? Object.keys(latestData.value.courseLocations).length : 0
+  latestData.value ? Object.keys(latestData.value.courseLocations).length : 0,
 );
 
 /* upload */
@@ -66,7 +66,7 @@ async function load(file: File) {
         span?.setAttribute("excel.load.success", false);
         captureException(error);
       }
-    }
+    },
   );
 }
 
@@ -103,7 +103,7 @@ const coursesWithChange = ref<CourseWithLocation[]>([]);
 const coursesWithoutChange = ref<CourseWithLocation[]>([]);
 
 const selectedCourses = computed(() =>
-  coursesWithChange.value.filter((course) => course.selected)
+  coursesWithChange.value.filter((course) => course.selected),
 );
 
 const initializeCourseSelection = () => {
@@ -120,7 +120,7 @@ const initializeCourseSelection = () => {
     .filter((course) => course.newLocation);
 
   coursesWithChange.value = allCourses.filter(
-    (course) => course.room !== course.newLocation
+    (course) => course.room !== course.newLocation,
   );
   coursesWithoutChange.value = allCourses
     .filter((course) => course.room === course.newLocation)
@@ -140,7 +140,7 @@ async function upload() {
   await Promise.all(
     selectedCourses.value.map(async (course) => {
       const schedules = sortSchedules(
-        removeDuplicateSchedules(registeredMap.get(course.id)?.schedules ?? [])
+        removeDuplicateSchedules(registeredMap.get(course.id)?.schedules ?? []),
       );
       await timetableUseCase
         .updateRegisteredCourse(course.id, {
@@ -156,7 +156,7 @@ async function upload() {
           if (isResultError(result)) throw result;
           return result;
         });
-    })
+    }),
   );
 
   uploadLoading.value = false;

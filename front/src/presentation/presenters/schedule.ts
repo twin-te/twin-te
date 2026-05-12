@@ -55,7 +55,7 @@ import {
 import { isEditablePeriod } from "./period";
 
 export const isDisplayNormalSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is DisplayNormalSchedule => {
   return (
     hasProperty(schedule, "module", isDisplayModule) &&
@@ -65,7 +65,7 @@ export const isDisplayNormalSchedule = (
 };
 
 export const isDisplaySpecialSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is DisplaySpecialSchedule => {
   return (
     hasProperty(schedule, "module", isDisplayModule) &&
@@ -74,7 +74,7 @@ export const isDisplaySpecialSchedule = (
 };
 
 export const isDisplaySchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is DisplaySchedule => {
   return (
     isDisplayNormalSchedule(schedule) || isDisplaySpecialSchedule(schedule)
@@ -82,7 +82,7 @@ export const isDisplaySchedule = (
 };
 
 export const isEditableNormalSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is EditableNormalSchedule => {
   return (
     hasProperty(schedule, "module", isEditableModule) &&
@@ -92,7 +92,7 @@ export const isEditableNormalSchedule = (
 };
 
 export const isEditableSpecialSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is EditableSpecialSchedule => {
   return (
     hasProperty(schedule, "module", isEditableModule) &&
@@ -101,7 +101,7 @@ export const isEditableSpecialSchedule = (
 };
 
 export const isEditableSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is EditableSchedule => {
   return (
     isEditableNormalSchedule(schedule) || isEditableSpecialSchedule(schedule)
@@ -141,7 +141,7 @@ export const scheduleToDisplay = (schedule: Schedule) => {
 };
 
 export const schedulesToDisplay = (
-  schedules: Schedule[]
+  schedules: Schedule[],
 ): DisplaySchedule[] => {
   return schedules.map(scheduleToDisplay);
 };
@@ -175,24 +175,20 @@ export const displayToSchedule = (schedule: DisplaySchedule): Schedule => {
 };
 
 export const displayToSchedules = (
-  displaySchedules: DisplaySchedule[]
+  displaySchedules: DisplaySchedule[],
 ): Schedule[] => {
   return displaySchedules.map((displaySchedule) =>
-    displayToSchedule(displaySchedule)
+    displayToSchedule(displaySchedule),
   );
 };
 
 export const editableSchedulesToTimetable = (
-  editableSchedules: EditableSchedule[]
+  editableSchedules: EditableSchedule[],
 ): Timetable<Module, boolean> => {
-  const normalTimetable: NormalTimetable<
-    Module,
-    boolean
-  > = initializeNormalTimetable(modules, false);
-  const specialTimetable: SpecialTimetable<
-    Module,
-    boolean
-  > = initializeSpecialTimetable(modules, false);
+  const normalTimetable: NormalTimetable<Module, boolean> =
+    initializeNormalTimetable(modules, false);
+  const specialTimetable: SpecialTimetable<Module, boolean> =
+    initializeSpecialTimetable(modules, false);
 
   const additionalEditableSchedules = editableSchedules.reduce<
     EditableSchedule[]
@@ -253,7 +249,7 @@ export const editableSchedulesToTimetable = (
 };
 
 export const isNotSpecifiedSchedule = (
-  schedule: EditableSchedule
+  schedule: EditableSchedule,
 ): schedule is
   | { module: NotSpecified; day: NotSpecified; period: NotSpecified }
   | { module: NotSpecified; day: NotSpecified } => {
@@ -273,7 +269,7 @@ export const schedulesToModuleStrings = (schedules: Schedule[]): string[] => {
       obj[module] = true;
       return obj;
     },
-    initializeObject(modules, false)
+    initializeObject(modules, false),
   );
 
   const moduleStrings: string[] = [];
@@ -319,7 +315,7 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
     {
       normal: initializeNormalTimetable(modules, false),
       special: initializeSpecialTimetable(modules, false),
-    }
+    },
   );
 
   const moduleToDateString: Record<
@@ -359,7 +355,7 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
 
         return dayToPeriodString;
       },
-      {} as Record<NormalDay, string>
+      {} as Record<NormalDay, string>,
     );
 
     moduleToDateString.normal[module] = normalDays
@@ -367,7 +363,7 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
         if (dayToPeriodString[day] === "") return ret;
 
         const index = ret.findIndex(
-          ({ period }) => period === dayToPeriodString[day]
+          ({ period }) => period === dayToPeriodString[day],
         );
 
         if (index === -1)
@@ -385,10 +381,9 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
       .join(" ");
   });
 
-  const combinedModulesAndDate = (["normal", "special"] as (
-    | "normal"
-    | "special"
-  )[]).reduce<
+  const combinedModulesAndDate = (
+    ["normal", "special"] as ("normal" | "special")[]
+  ).reduce<
     Record<
       "normal" | "special",
       Record<"spring" | "fall", { modules: BaseModule[]; date: string }>
@@ -431,14 +426,14 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
         spring: { modules: [], date: "" },
         fall: { modules: [], date: "" },
       },
-    }
+    },
   );
 
   const moduleAndDateStrings: { module: string; date: string }[] = [];
 
   const processBaseModule = (
     courseType: "normal" | "special",
-    module: BaseModule
+    module: BaseModule,
   ): void => {
     const moduleType = module.startsWith("Spring") ? "spring" : "fall";
 
@@ -458,7 +453,7 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
         moduleMap[module].slice(0, -1) +
         combinedModulesAndDate[courseType][moduleType].modules
           .map((combinedModule) =>
-            combinedModule.charAt(combinedModule.length - 1)
+            combinedModule.charAt(combinedModule.length - 1),
           )
           .join("");
       moduleAndDateStrings.push({
@@ -470,7 +465,7 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
 
   const processVacationModule = (
     courseType: "normal" | "special",
-    module: VacationModule
+    module: VacationModule,
   ) => {
     moduleAndDateStrings.push({
       module: moduleMap[module],
@@ -492,7 +487,7 @@ export const schedulesToFullString = (schedules: Schedule[]): string => {
     .filter(({ date }) => date !== "")
     .reduce<{ module: string; date: string }[]>((ret, { module, date }) => {
       const index = ret.findIndex(
-        (moduleAndDateString) => moduleAndDateString.module === module
+        (moduleAndDateString) => moduleAndDateString.module === module,
       );
       if (index === -1) ret.push({ module, date });
       else ret[index].date += ` ${date}`;

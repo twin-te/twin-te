@@ -44,7 +44,7 @@ export default defineComponent({
     watch(isOptionsShown, (isOptionsShown) => {
       if (!isOptionsShown) return;
       unselectedOptions.value = props.options.filter(
-        (o) => o !== props.selectedOption
+        (o) => o !== props.selectedOption,
       );
     });
 

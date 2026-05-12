@@ -115,7 +115,7 @@ export const isEditableNormalDay = (day: unknown): day is EditableNormalDay => {
 };
 
 export const isEditableSpecialDay = (
-  day: unknown
+  day: unknown,
 ): day is EditableSpecialDay => {
   return isContained(day, editableSpecialDays);
 };
@@ -126,14 +126,14 @@ export const isEditableDay = (day: unknown): day is EditableDay => {
 
 export const displayToNormalDay = (displayDay: DisplayNormalDay): NormalDay => {
   return normalDays.find(
-    (day) => normalDayMap[day] === displayDay
+    (day) => normalDayMap[day] === displayDay,
   ) as NormalDay;
 };
 
 export const displayToSpecialDay = (
-  displayDay: DisplaySpecialDay
+  displayDay: DisplaySpecialDay,
 ): SpecialDay => {
   return specialDays.find(
-    (day) => specialDayMap[day] === displayDay
+    (day) => specialDayMap[day] === displayDay,
   ) as SpecialDay;
 };

@@ -23,7 +23,7 @@ export type LocalStorageConfig = {
 };
 
 export const createLocalStorageBooleanHandler = (
-  prop: string
+  prop: string,
 ): LocalStorageHandler<boolean> => ({
   getter: () => {
     const value = localStorage.getItem(prop);
@@ -38,7 +38,7 @@ export const createLocalStorageBooleanHandler = (
 });
 
 export const createLocalStorageNumberHandler = (
-  prop: string
+  prop: string,
 ): LocalStorageHandler<number> => ({
   getter: () => {
     const value = localStorage.getItem(prop);
@@ -52,7 +52,7 @@ export const createLocalStorageNumberHandler = (
 });
 
 export const createLocalStorageObjectHandler = <T>(
-  prop: string
+  prop: string,
 ): LocalStorageHandler<T> => ({
   getter: () => {
     const value = localStorage.getItem(prop);

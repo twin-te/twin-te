@@ -6,7 +6,7 @@ import { creditToDisplay } from "./credit";
 
 export const getDisplayCourseTags = (
   course: RegisteredCourse,
-  tags: Tag[]
+  tags: Tag[],
 ): DisplayCourseTag[] => {
   return tags.map(({ id, name }) => ({
     id,
@@ -18,7 +18,7 @@ export const getDisplayCourseTags = (
 export const getDisplayCreditTag = (
   courses: RegisteredCourse[],
   tag: Tag,
-  years: number[]
+  years: number[],
 ): DisplayCreditTag => {
   const credit = courses
     .filter(({ year }) => years.includes(year))
@@ -37,11 +37,11 @@ export const getDisplayCreditTag = (
 export const getDisplayCreditTags = (
   courses: RegisteredCourse[],
   tags: Tag[],
-  years: number[]
+  years: number[],
 ): DisplayCreditTag[] => {
   const tagIdToCredit: Record<string, number> = initializeObject(
     tags.map(({ id }) => id),
-    0
+    0,
   );
 
   courses

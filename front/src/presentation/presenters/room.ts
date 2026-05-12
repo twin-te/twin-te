@@ -6,6 +6,6 @@ export const roomsToDisplay = (rooms: Room[]): string => {
 
 export const validateRooms = (rooms: Room[]): boolean => {
   return rooms.every(
-    ({ name, schedules }) => name !== "" && schedules.length > 0
+    ({ name, schedules }) => name !== "" && schedules.length > 0,
   );
 };

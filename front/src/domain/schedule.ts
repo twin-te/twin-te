@@ -25,7 +25,7 @@ export type SpecialSchedule = {
 export type Schedule = NormalSchedule | SpecialSchedule;
 
 export const isNormalSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is NormalSchedule => {
   return (
     hasProperty(schedule, "module", isModule) &&
@@ -35,7 +35,7 @@ export const isNormalSchedule = (
 };
 
 export const isSpecialSchedule = (
-  schedule: object
+  schedule: object,
 ): schedule is SpecialSchedule => {
   return (
     hasProperty(schedule, "module", isModule) &&
@@ -49,7 +49,7 @@ export const isSchedule = (schedule: object): schedule is Schedule => {
 
 export const isEqualSchedule = (
   scheduleA: Schedule,
-  scheduleB: Schedule
+  scheduleB: Schedule,
 ): boolean => {
   if (isNormalSchedule(scheduleA) && isNormalSchedule(scheduleB)) {
     return (

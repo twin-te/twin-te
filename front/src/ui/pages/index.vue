@@ -375,8 +375,8 @@ const timetable = computed(() =>
       ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
       : ["Mon", "Tue", "Wed", "Thu", "Fri"],
     specialDays,
-    setting.value.nightPeriodMode ? periods : daytimePeriods
-  )
+    setting.value.nightPeriodMode ? periods : daytimePeriods,
+  ),
 );
 
 /** duplicate state */
@@ -400,17 +400,14 @@ const useDuplicateState = () => {
   return { duplicateState, setDuplicateState, clearDuplicateState };
 };
 
-const {
-  duplicateState,
-  setDuplicateState,
-  clearDuplicateState,
-} = useDuplicateState();
+const { duplicateState, setDuplicateState, clearDuplicateState } =
+  useDuplicateState();
 
 /** course tile */
 const onClickCourseTile = async (
   day: NormalDay,
   period: Period,
-  courses: DisplayRegisteredCourse[]
+  courses: DisplayRegisteredCourse[],
 ) => {
   switch (courses.length) {
     case 0:
@@ -427,7 +424,7 @@ const onClickCourseTile = async (
 
 /** news modal */
 const [isNewsModalVisible, , closeNewsModal] = useSwitch(
-  isAuthenticated.value && unreadAnnouncements.length > 0
+  isAuthenticated.value && unreadAnnouncements.length > 0,
 );
 
 const onClickNewsModal = async () => {

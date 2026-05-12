@@ -11,7 +11,7 @@ export interface ISettingUseCase {
   getSetting(): Promise<Setting | NetworkError | InternalServerError>;
 
   updateSetting(
-    data: Partial<Setting>
+    data: Partial<Setting>,
   ): Promise<
     Setting | UnauthenticatedError | NetworkError | InternalServerError
   >;
@@ -34,7 +34,7 @@ export class SettingUseCase implements ISettingUseCase {
   }
 
   async updateSetting(
-    data: Partial<Setting>
+    data: Partial<Setting>,
   ): Promise<
     Setting | UnauthenticatedError | NetworkError | InternalServerError
   > {

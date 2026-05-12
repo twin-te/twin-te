@@ -101,14 +101,14 @@ export interface ITimetableUseCase {
       | "schedules"
       | "methods"
       | "rooms"
-    >
+    >,
   ): Promise<
     RegisteredCourse | UnauthenticatedError | NetworkError | InternalServerError
   >;
 
   listRegisteredCourses(
     year?: number,
-    tagID?: string
+    tagID?: string,
   ): Promise<
     | RegisteredCourse[]
     | UnauthenticatedError
@@ -117,7 +117,7 @@ export interface ITimetableUseCase {
   >;
 
   getRegisteredCourseById(
-    id: string
+    id: string,
   ): Promise<
     | RegisteredCourse
     | NotFoundError
@@ -128,7 +128,7 @@ export interface ITimetableUseCase {
 
   updateRegisteredCourse(
     id: string,
-    data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
+    data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>,
   ): Promise<
     | RegisteredCourse
     | NotFoundError
@@ -138,7 +138,7 @@ export interface ITimetableUseCase {
   >;
 
   deleteRegisteredCourse(
-    id: string
+    id: string,
   ): Promise<
     | null
     | NotFoundError
@@ -152,13 +152,13 @@ export interface ITimetableUseCase {
    */
   checkScheduleDuplicate(
     year: number,
-    schedules: Schedule[]
+    schedules: Schedule[],
   ): Promise<
     boolean | UnauthenticatedError | NetworkError | InternalServerError
   >;
 
   createTag(
-    name: string
+    name: string,
   ): Promise<Tag | UnauthenticatedError | NetworkError | InternalServerError>;
 
   listTags(): Promise<
@@ -166,7 +166,7 @@ export interface ITimetableUseCase {
   >;
 
   getTagById(
-    id: string
+    id: string,
   ): Promise<
     | Tag
     | NotFoundError
@@ -177,7 +177,7 @@ export interface ITimetableUseCase {
 
   updateTagName(
     id: string,
-    name: string
+    name: string,
   ): Promise<
     | Tag
     | NotFoundError
@@ -191,11 +191,11 @@ export interface ITimetableUseCase {
    * @param ids - List of tag ids. The index represents each tag order.
    */
   updateTagOrders(
-    ids: string[]
+    ids: string[],
   ): Promise<Tag[] | UnauthenticatedError | NetworkError | InternalServerError>;
 
   deleteTag(
-    id: string
+    id: string,
   ): Promise<
     | null
     | NotFoundError
@@ -313,11 +313,11 @@ export class TimetableUseCase implements ITimetableUseCase {
         codePrefixesExcluded: conds.codePrefixes.excluded,
         schedulesFullyIncluded: toPBSchedules(
           conds.schedules.fullyIncluded,
-          []
+          [],
         ),
         schedulesPartiallyOverlapped: toPBSchedules(
           conds.schedules.partiallyOverlapped,
-          []
+          [],
         ),
         offset: conds.offset,
         limit: conds.limit,
@@ -389,7 +389,7 @@ export class TimetableUseCase implements ITimetableUseCase {
           if (this.#registeredCourses) {
             addElementsInArray(
               this.#registeredCourses,
-              ...deepCopy(registeredCourses)
+              ...deepCopy(registeredCourses),
             );
           }
           return registeredCourses;
@@ -406,7 +406,7 @@ export class TimetableUseCase implements ITimetableUseCase {
           }
 
           throw error;
-        })
+        }),
       );
   }
 
@@ -420,7 +420,7 @@ export class TimetableUseCase implements ITimetableUseCase {
       | "schedules"
       | "methods"
       | "rooms"
-    >
+    >,
   ): Promise<
     RegisteredCourse | UnauthenticatedError | NetworkError | InternalServerError
   > {
@@ -434,14 +434,14 @@ export class TimetableUseCase implements ITimetableUseCase {
         methods: data.methods.map(toPBCourseMethod),
       })
       .then((res) =>
-        fromPBRegisteredCourse(assurePresence(res.registeredCourse))
+        fromPBRegisteredCourse(assurePresence(res.registeredCourse)),
       )
       .then((registeredCourse) => {
         return this.#mutex.registeredCourses.runExclusive(() => {
           if (this.#registeredCourses) {
             addElementsInArray(
               this.#registeredCourses,
-              deepCopy(registeredCourse)
+              deepCopy(registeredCourse),
             );
           }
           return registeredCourse;
@@ -454,13 +454,13 @@ export class TimetableUseCase implements ITimetableUseCase {
           }
 
           throw error;
-        })
+        }),
       );
   }
 
   async listRegisteredCourses(
     year?: number,
-    tagID?: string
+    tagID?: string,
   ): Promise<
     | RegisteredCourse[]
     | UnauthenticatedError
@@ -477,13 +477,13 @@ export class TimetableUseCase implements ITimetableUseCase {
 
     if (year) {
       registeredCourses = registeredCourses.filter(
-        (registeredCourse) => registeredCourse.year === year
+        (registeredCourse) => registeredCourse.year === year,
       );
     }
 
     if (tagID) {
       registeredCourses = registeredCourses.filter((registeredCourse) =>
-        registeredCourse.tagIds.includes(tagID)
+        registeredCourse.tagIds.includes(tagID),
       );
     }
 
@@ -491,7 +491,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   }
 
   async getRegisteredCourseById(
-    id: string
+    id: string,
   ): Promise<
     | RegisteredCourse
     | NotFoundError
@@ -506,7 +506,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     }
 
     const registeredCourse = result.find(
-      (registeredCourse) => registeredCourse.id === id
+      (registeredCourse) => registeredCourse.id === id,
     );
 
     return registeredCourse ?? new NotFoundError();
@@ -515,7 +515,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   // If you want to update either schedules or rooms, please specify both.
   async updateRegisteredCourse(
     id: string,
-    data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
+    data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>,
   ): Promise<
     | RegisteredCourse
     | NotFoundError
@@ -551,14 +551,14 @@ export class TimetableUseCase implements ITimetableUseCase {
           : undefined,
       })
       .then((res) =>
-        fromPBRegisteredCourse(assurePresence(res.registeredCourse))
+        fromPBRegisteredCourse(assurePresence(res.registeredCourse)),
       )
       .then((registeredCourse) => {
         return this.#mutex.registeredCourses.runExclusive(() => {
           if (this.#registeredCourses) {
             updateElementInArray(
               this.#registeredCourses,
-              deepCopy(registeredCourse)
+              deepCopy(registeredCourse),
             );
           }
           return registeredCourse;
@@ -580,7 +580,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   }
 
   async deleteRegisteredCourse(
-    id: string
+    id: string,
   ): Promise<
     | null
     | NotFoundError
@@ -615,7 +615,7 @@ export class TimetableUseCase implements ITimetableUseCase {
 
   async checkScheduleDuplicate(
     year: number,
-    schedules: Schedule[]
+    schedules: Schedule[],
   ): Promise<
     boolean | UnauthenticatedError | NetworkError | InternalServerError
   > {
@@ -627,21 +627,19 @@ export class TimetableUseCase implements ITimetableUseCase {
       .flat()
       .filter(isNormalSchedule);
 
-    const regisreredNormalTimetable: NormalTimetable<
-      Module,
-      boolean
-    > = normalSchedulesToNormalTimetable(registeredNormalSchedules);
+    const regisreredNormalTimetable: NormalTimetable<Module, boolean> =
+      normalSchedulesToNormalTimetable(registeredNormalSchedules);
 
     return !schedules
       .filter(isNormalSchedule)
       .some(
         ({ module, day, period }) =>
-          regisreredNormalTimetable[module][day][period]
+          regisreredNormalTimetable[module][day][period],
       );
   }
 
   async createTag(
-    name: string
+    name: string,
   ): Promise<Tag | UnauthenticatedError | NetworkError | InternalServerError> {
     return this.#client
       .createTag({ name })
@@ -678,7 +676,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   }
 
   async getTagById(
-    id: string
+    id: string,
   ): Promise<
     | Tag
     | NotFoundError
@@ -698,7 +696,7 @@ export class TimetableUseCase implements ITimetableUseCase {
 
   async updateTagName(
     id: string,
-    name: string
+    name: string,
   ): Promise<
     | Tag
     | NotFoundError
@@ -737,7 +735,7 @@ export class TimetableUseCase implements ITimetableUseCase {
    * @param ids - List of tag ids. The index represents each tag order.
    */
   async updateTagOrders(
-    ids: string[]
+    ids: string[],
   ): Promise<
     Tag[] | UnauthenticatedError | NetworkError | InternalServerError
   > {
@@ -764,7 +762,7 @@ export class TimetableUseCase implements ITimetableUseCase {
   }
 
   async deleteTag(
-    id: string
+    id: string,
   ): Promise<
     | null
     | NotFoundError

@@ -7,18 +7,18 @@ export const deepCopy = <T>(value: T): T => {
 
 export const isContained = <T extends string | number | boolean>(
   value: unknown,
-  array: T[]
+  array: T[],
 ): value is T => {
   return array.findIndex((el) => el === value) !== -1;
 };
 
 export const initializeObject = <K extends string | number | symbol, V>(
   keys: K[],
-  initValue: V
+  initValue: V,
 ): Record<K, V> => {
   return keys.reduce(
     (obj, key) => ({ ...obj, [key]: deepCopy(initValue) }),
-    {} as Record<K, V>
+    {} as Record<K, V>,
   );
 };
 
@@ -30,7 +30,7 @@ export const removeDuplicate = <T>(array: T[]): T[] =>
 
 export const isEqualPrimitive = <T extends string | number | boolean>(
   v1: T,
-  v2: T
+  v2: T,
 ): boolean => v1 === v2;
 
 export const isEqualSet = <T>(s1: Set<T>, s2: Set<T>): boolean => {
@@ -51,7 +51,7 @@ export const isBetween = (
   target: Dayjs,
   start: Dayjs,
   end: Dayjs,
-  unit?: OpUnitType
+  unit?: OpUnitType,
 ): boolean => {
   return (
     (start.isSame(target, unit) || start.isBefore(target, unit)) &&
@@ -64,7 +64,7 @@ export const isBetween = (
  */
 export const containedInArray = <T extends { id: string }>(
   array: T[],
-  element: T
+  element: T,
 ): boolean => {
   return array.findIndex(({ id }) => id === element.id) !== -1;
 };
@@ -81,7 +81,7 @@ export const addElementsInArray = <T extends { id: string }>(
  */
 export const updateAllElementsInArray = <T extends { id: string }>(
   array: T[],
-  newElements: T[]
+  newElements: T[],
 ) => {
   array.splice(0, array.length, ...newElements);
 };
@@ -92,7 +92,7 @@ export const updateAllElementsInArray = <T extends { id: string }>(
  */
 export const updateElementInArray = <T extends { id: string }>(
   array: T[],
-  newElement: T
+  newElement: T,
 ) => {
   const index = array.findIndex((element) => element.id === newElement.id);
   if (index === -1) array.push(newElement);
@@ -105,7 +105,7 @@ export const updateElementInArray = <T extends { id: string }>(
  */
 export const deleteElementInArray = <T extends { id: string }>(
   array: T[],
-  id: string
+  id: string,
 ) => {
   const index = array.findIndex((element) => element.id === id);
   if (index !== -1) array.splice(index, 1);
@@ -113,7 +113,7 @@ export const deleteElementInArray = <T extends { id: string }>(
 
 const hasUnknownProperty = <P extends string>(
   obj: object,
-  prop: P
+  prop: P,
 ): obj is { [key in P]: unknown } => {
   return prop in obj;
 };
@@ -121,7 +121,7 @@ const hasUnknownProperty = <P extends string>(
 const clarifyPropertyType = <P extends string, T>(
   obj: { [key in P]: unknown },
   prop: P,
-  fn: (value: unknown) => value is T
+  fn: (value: unknown) => value is T,
 ): obj is { [key in P]: T } => {
   return fn(obj[prop]);
 };
@@ -129,14 +129,14 @@ const clarifyPropertyType = <P extends string, T>(
 export const hasProperty = <P extends string, T>(
   obj: object,
   prop: P,
-  fn: (value: unknown) => value is T
+  fn: (value: unknown) => value is T,
 ): obj is { [key in P]: T } => {
   return hasUnknownProperty(obj, prop) && clarifyPropertyType(obj, prop, fn);
 };
 
 export const asyncFilter = async <T, S>(
   array: T[],
-  asyncCallback: (arg: T) => Promise<S>
+  asyncCallback: (arg: T) => Promise<S>,
 ) => {
   const mask = await Promise.all(array.map(asyncCallback));
   return array.filter((_, i) => Boolean(mask[i]));

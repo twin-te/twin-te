@@ -53,7 +53,7 @@ export default defineComponent({
         const contents = props.schedules.map((schedule) => ({
           label: schedulesToFullString([schedule]),
           checked: room.schedules.some((target) =>
-            isEqualSchedule(target, schedule)
+            isEqualSchedule(target, schedule),
           ),
         }));
 
@@ -61,7 +61,7 @@ export default defineComponent({
           name: room.name,
           contents,
         };
-      })
+      }),
     );
 
     watch(
@@ -70,11 +70,11 @@ export default defineComponent({
         const newRooms = props.rooms.map(({ name, schedules }) => ({
           name,
           schedules: schedules.filter((target) =>
-            newSchedules.some((schedule) => isEqualSchedule(schedule, target))
+            newSchedules.some((schedule) => isEqualSchedule(schedule, target)),
           ),
         }));
         emit("update:rooms", newRooms);
-      }
+      },
     );
 
     const addRoom = () => {
@@ -95,7 +95,7 @@ export default defineComponent({
       const targetRoom = props.rooms[i];
       const targetSchedule = props.schedules[j];
       const k = targetRoom.schedules.findIndex((schedule) =>
-        isEqualSchedule(schedule, targetSchedule)
+        isEqualSchedule(schedule, targetSchedule),
       );
       const newRooms = [...props.rooms];
 

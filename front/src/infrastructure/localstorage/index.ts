@@ -18,7 +18,7 @@ export class LocalStorage {
 
   set<K extends keyof LocalStoragePropType>(
     prop: K,
-    value: LocalStoragePropType[K] | undefined
+    value: LocalStoragePropType[K] | undefined,
   ) {
     LocalStorage.#config[prop]["setter"](value);
   }

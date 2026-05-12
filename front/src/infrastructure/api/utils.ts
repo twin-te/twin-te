@@ -6,7 +6,7 @@ export const handleError = <T>(
   error: unknown,
   callback: (connectError: ConnectError) => T = () => {
     throw error;
-  }
+  },
 ) => {
   const connectError = ConnectError.from(error);
 

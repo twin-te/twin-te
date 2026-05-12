@@ -177,9 +177,9 @@ const instructors = ref([...course.instructors]);
 const targetSchedules = computed(() =>
   sortSchedules(
     removeDuplicateSchedules(
-      displayToSchedules(editableSchedules.filter(isDisplaySchedule))
-    )
-  )
+      displayToSchedules(editableSchedules.filter(isDisplaySchedule)),
+    ),
+  ),
 );
 
 const rooms = ref([...course.rooms]);
@@ -190,7 +190,7 @@ const checkboxContents = reactive(
     key: method,
     label: methodMap[method],
     checked: course.methods.includes(method),
-  }))
+  })),
 );
 
 /** save button */
@@ -209,7 +209,7 @@ const save = async () => {
   if (!editableSchedules.every(isDisplaySchedule)) return;
 
   const schedules = sortSchedules(
-    removeDuplicateSchedules(displayToSchedules(editableSchedules))
+    removeDuplicateSchedules(displayToSchedules(editableSchedules)),
   );
   const methods = checkboxContents
     .filter(({ checked }) => checked)

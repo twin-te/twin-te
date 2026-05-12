@@ -17,10 +17,10 @@ export class Sentry {
           feedback.screenShots.map(async (s) => ({
             filename: s.name,
             data: await s.arrayBuffer().then((buf) => new Uint8Array(buf)),
-          }))
+          })),
         ),
         includeReplay: true,
-      }
+      },
     );
   }
 }

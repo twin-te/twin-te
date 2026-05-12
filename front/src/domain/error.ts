@@ -25,7 +25,7 @@ export type ResultError =
   | InternalServerError;
 
 export const isResultError = <T>(
-  result: T | ResultError
+  result: T | ResultError,
 ): result is ResultError => {
   return result instanceof BaseResultError;
 };

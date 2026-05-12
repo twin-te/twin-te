@@ -8,7 +8,7 @@ import * as SchoolCalendarV1PB from "~/infrastructure/api/gen/schoolcalendar/v1/
 import { assurePresence } from "./utils";
 
 export const fromPBModule = (
-  pbModule: SchoolCalendarV1PB.Module
+  pbModule: SchoolCalendarV1PB.Module,
 ): SchoolCalendarModule => {
   switch (pbModule) {
     case SchoolCalendarV1PB.Module.SPRING_A:
@@ -34,7 +34,7 @@ export const fromPBModule = (
 };
 
 export const fromPBEventType = (
-  pbEventType: SchoolCalendarV1PB.EventType
+  pbEventType: SchoolCalendarV1PB.EventType,
 ): EventType => {
   switch (pbEventType) {
     case SchoolCalendarV1PB.EventType.HOLIDAY:

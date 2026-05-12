@@ -34,7 +34,7 @@ export const courseToDisplay = (course: Course): DisplayCourse => {
  */
 export const registeredCourseToDisplay = (
   course: RegisteredCourse,
-  tags: Tag[]
+  tags: Tag[],
 ): DisplayRegisteredCourse => {
   return {
     id: course.id,
@@ -44,7 +44,7 @@ export const registeredCourseToDisplay = (
     schedule: {
       full: schedulesToFullString(course.schedules),
       onlyModule: schedulesToModuleStrings(
-        course.schedules.filter(isSpecialSchedule)
+        course.schedules.filter(isSpecialSchedule),
       ),
     },
     credit: creditToDisplay(course.credit),

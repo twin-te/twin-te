@@ -10,9 +10,9 @@ export type Room = {
  */
 export const extractRoomsBySchedule = (
   rooms: Room[],
-  targetSchedule: Schedule
+  targetSchedule: Schedule,
 ): Room[] => {
   return rooms.filter(({ schedules }) =>
-    schedules.some((schedule) => isEqualSchedule(schedule, targetSchedule))
+    schedules.some((schedule) => isEqualSchedule(schedule, targetSchedule)),
   );
 };

@@ -54,7 +54,7 @@ export default defineComponent({
 
     const getButtonWidthPixel = () => {
       const documentFontSize = parseFloat(
-        getComputedStyle(document.documentElement).fontSize
+        getComputedStyle(document.documentElement).fontSize,
       );
 
       switch (props.size) {

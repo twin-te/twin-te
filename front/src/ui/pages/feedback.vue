@@ -134,8 +134,7 @@ const updateSelectedOption = (option: DisplayFeedbackType) => {
 };
 
 const placeholder: Record<FeedbackType, string> = {
-  Bug:
-    "例）授業の検索ページで「XXXX」という授業を追加しようとしたら、「OOOO」というエラーメッセージが出てきて追加できませんでした。Pixel4a、Android11です。",
+  Bug: "例）授業の検索ページで「XXXX」という授業を追加しようとしたら、「OOOO」というエラーメッセージが出てきて追加できませんでした。Pixel4a、Android11です。",
   NewFeature:
     "例）学部生ですが、検索で大学院の授業ばかりでてきてしまうので大学院の授業を除外して検索する機能がほしいです。",
   Contact: "例）Twin:te の発音はツインテですか？トゥインテですか？",
@@ -169,7 +168,7 @@ const onClickButton = async () => {
     })
     .catch(() => {
       displayToast(
-        "申し訳ございません。フィードバックの送信に失敗しました。ネットワーク環境をご確認ください。"
+        "申し訳ございません。フィードバックの送信に失敗しました。ネットワーク環境をご確認ください。",
       );
     });
 };

@@ -32,13 +32,13 @@ export const eventTypes: EventType[] = [
 ];
 
 export const isNormalEventType = (
-  eventType: unknown
+  eventType: unknown,
 ): eventType is NormalEventType => {
   return isContained(eventType, eventTypes) && eventType !== "SubstituteDay";
 };
 
 export const isSubstituteEventType = (
-  eventType: unknown
+  eventType: unknown,
 ): eventType is SubstituteEventType => {
   return eventType === "SubstituteDay";
 };
@@ -50,7 +50,7 @@ export const isNormalEvent = (event: object): event is NormalEvent => {
     hasProperty(
       event,
       "description",
-      (v: unknown): v is string => typeof v === "string"
+      (v: unknown): v is string => typeof v === "string",
     )
   );
 };
@@ -62,7 +62,7 @@ export const isSubstituteEvent = (event: object): event is SubstituteEvent => {
     hasProperty(
       event,
       "description",
-      (v: unknown): v is string => typeof v === "string"
+      (v: unknown): v is string => typeof v === "string",
     ) &&
     hasProperty(event, "changeTo", isNormalDay)
   );

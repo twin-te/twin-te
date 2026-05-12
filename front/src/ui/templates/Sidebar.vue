@@ -78,7 +78,7 @@ const menu = ref<Content[]>(
       link: "/news",
       show: true,
     },
-  ].filter((v) => v.show)
+  ].filter((v) => v.show),
 );
 
 const settings = ref<Content[]>(
@@ -89,7 +89,7 @@ const settings = ref<Content[]>(
       link: "/settings",
       show: true,
     },
-  ].filter((v) => v.show)
+  ].filter((v) => v.show),
 );
 
 const links = ref<Content[]>(
@@ -113,7 +113,7 @@ const links = ref<Content[]>(
       link: "share",
       show: isMobile(),
     },
-  ].filter((v) => v.show)
+  ].filter((v) => v.show),
 );
 
 const { setting, updateSetting } = useSetting();

@@ -17,7 +17,7 @@ import { handleError } from "~/infrastructure/api/utils";
 
 export interface ISchoolCalendarUseCase {
   getEventByDate(
-    date: Dayjs
+    date: Dayjs,
   ): Promise<Event | null | NetworkError | InternalServerError>;
 
   getCurrentModule(): Promise<
@@ -33,7 +33,7 @@ export class SchoolCalendarUseCase implements ISchoolCalendarUseCase {
   }
 
   async getEventByDate(
-    date: Dayjs
+    date: Dayjs,
   ): Promise<Event | null | NetworkError | InternalServerError> {
     return this.#client
       .listEventsByDate({ date: toPBRFC3339FullDate(date) })

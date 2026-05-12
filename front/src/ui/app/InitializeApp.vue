@@ -9,11 +9,8 @@ import { UnauthenticatedError, isResultError } from "~/domain/error";
 import { authUseCase } from "~/usecases";
 import { useAuth, useSetting } from "../store";
 
-const {
-  isAuthenticated,
-  capturedUnauthenticatedError,
-  initializeAuth,
-} = useAuth();
+const { isAuthenticated, capturedUnauthenticatedError, initializeAuth } =
+  useAuth();
 const { initializeSetting } = useSetting();
 
 await initializeAuth();

@@ -122,7 +122,7 @@ export const toPBPeriod = (period: Period): number => {
 };
 
 export const fromPBCourseMethod = (
-  pbCourseMethod: TimetableV1PB.CourseMethod
+  pbCourseMethod: TimetableV1PB.CourseMethod,
 ): Method => {
   switch (pbCourseMethod) {
     case TimetableV1PB.CourseMethod.ONLINE_ASYNCHRONOUS:
@@ -138,7 +138,7 @@ export const fromPBCourseMethod = (
 };
 
 export const toPBCourseMethod = (
-  courseMethod: Method
+  courseMethod: Method,
 ): TimetableV1PB.CourseMethod => {
   switch (courseMethod) {
     case "Asynchronous":
@@ -154,7 +154,7 @@ export const toPBCourseMethod = (
 
 export const fromPBInstructors = (pbInstructors: string): string[] => {
   return removeDuplicate(
-    pbInstructors.split(/,|、/).map((instructor) => instructor.trim())
+    pbInstructors.split(/,|、/).map((instructor) => instructor.trim()),
   );
 };
 
@@ -172,7 +172,7 @@ export const toPBCredit = (credit: number): string => {
 
 export const parseRoom = (row: string): string[] => {
   return removeDuplicate(row.split(/,| /).map((room) => room.trim())).filter(
-    (roomName) => roomName !== ""
+    (roomName) => roomName !== "",
   );
 };
 
@@ -192,7 +192,7 @@ const fromPBSchedule = (pbSchedule: TimetableV1PB.Schedule): Schedule => {
 };
 
 export const fromPBSchedules = (
-  pbSchedules: TimetableV1PB.Schedule[]
+  pbSchedules: TimetableV1PB.Schedule[],
 ): { schedules: Schedule[]; rooms: Room[] } => {
   const schedules: Schedule[] = [];
   const roomNameToSchedules: Record<string, Schedule[]> = {};
@@ -219,7 +219,7 @@ export const fromPBSchedules = (
 
 export const toPBSchedules = (
   schedules: Schedule[],
-  rooms: Room[]
+  rooms: Room[],
 ): TimetableV1PB.Schedule[] => {
   return schedules.map((schedule) => {
     const pbLocations = extractRoomsBySchedule(rooms, schedule)
@@ -255,7 +255,7 @@ export const fromPBCourse = (pbCourse: TimetableV1PB.Course): Course => {
 };
 
 export const fromPBRegisteredCourse = (
-  pbRegisteredCourse: TimetableV1PB.RegisteredCourse
+  pbRegisteredCourse: TimetableV1PB.RegisteredCourse,
 ): RegisteredCourse => {
   const { schedules, rooms } = fromPBSchedules(pbRegisteredCourse.schedules);
   return {

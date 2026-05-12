@@ -320,7 +320,7 @@ const conditions = computed<{ style: "outline" | "filled"; label: string }>(
     if (onlyBlank.value) return { style: "filled", label: "空きコマのみ" };
     else if (
       schedules.every((schedule) =>
-        Object.values(schedule).every((value) => value === notSpecified)
+        Object.values(schedule).every((value) => value === notSpecified),
       )
     ) {
       return { style: "outline", label: "未指定" };
@@ -332,21 +332,17 @@ const conditions = computed<{ style: "outline" | "filled"; label: string }>(
             (schedule) =>
               `${schedule.module}${schedule.day}${
                 "period" in schedule ? schedule.period : ""
-              }`
+              }`,
           )
           .join(","),
       };
     }
-  }
+  },
 );
 
 /** schedule editor */
-const {
-  schedules,
-  addSchedule,
-  removeSchedule,
-  updateSchedules,
-} = useScheduleEditor();
+const { schedules, addSchedule, removeSchedule, updateSchedules } =
+  useScheduleEditor();
 
 /** search */
 let currentOffset = 0;
@@ -381,8 +377,8 @@ const search = async (init = true) => {
       ? []
       : timetableToSchedules(
           editableSchedulesToTimetable(
-            schedules.filter((schedule) => !isNotSpecifiedSchedule(schedule))
-          )
+            schedules.filter((schedule) => !isNotSpecifiedSchedule(schedule)),
+          ),
         );
 
     result = await timetableUseCase.searchCourses({
@@ -441,7 +437,7 @@ const options = {
 
 const setSearchResultRef = (
   el: Element | null | ComponentPublicInstance,
-  index: number
+  index: number,
 ) => {
   // TODO: el === null のエラーハンドリングを実装
   // TODO: ComponentPublicInstance と Element で振る舞いを分ける必要があるか調査
@@ -455,7 +451,7 @@ const setSearchResultRef = (
         search(false);
         observer.unobserve(entry.target);
       },
-      options
+      options,
     );
   }
 };
@@ -468,13 +464,13 @@ const selectedSearchResults = reactive<SearchResult[]>([]);
 const isChecked = (id: string) => {
   return computed(
     () =>
-      selectedSearchResults.findIndex(({ course }) => course.id === id) !== -1
+      selectedSearchResults.findIndex(({ course }) => course.id === id) !== -1,
   );
 };
 
 const onClickCheckbox = (searchResult: SearchResult) => {
   const index = selectedSearchResults.findIndex(
-    ({ id }) => id === searchResult.id
+    ({ id }) => id === searchResult.id,
   );
   if (index !== -1) selectedSearchResults.splice(index, 1);
   else selectedSearchResults.push(searchResult);
@@ -486,14 +482,14 @@ const onClickCard = (id: string) => {
 
 /** add button */
 const buttonState = computed(() =>
-  selectedSearchResults.length > 0 ? "default" : "disabled"
+  selectedSearchResults.length > 0 ? "default" : "disabled",
 );
 
 const duplicatedScheduleCourses = ref<DisplayCourse[]>([]);
 
 const addCourses = async (warning = true) => {
   const registeredCourse = await timetableUseCase.listRegisteredCourses(
-    year.value
+    year.value,
   );
 
   if (isResultError(registeredCourse)) throw registeredCourse;
@@ -502,7 +498,7 @@ const addCourses = async (warning = true) => {
     .filter(({ course: { code: selectedCourseCode } }) => {
       return registeredCourse.some(
         ({ code: registeredCourseCode }) =>
-          registeredCourseCode === selectedCourseCode
+          registeredCourseCode === selectedCourseCode,
       );
     })
     .map(({ course }) => course);
@@ -522,7 +518,7 @@ const addCourses = async (warning = true) => {
     await asyncFilter(
       selectedSearchResults,
       async ({ schedules }) =>
-        !(await timetableUseCase.checkScheduleDuplicate(year.value, schedules))
+        !(await timetableUseCase.checkScheduleDuplicate(year.value, schedules)),
     )
   ).map(({ course }) => course);
 
@@ -539,11 +535,8 @@ const addCourses = async (warning = true) => {
 };
 
 /** duplicate modal */
-const [
-  isDuplicateModalVisible,
-  openDuplicateModal,
-  closeDuplicateModal,
-] = useSwitch(false);
+const [isDuplicateModalVisible, openDuplicateModal, closeDuplicateModal] =
+  useSwitch(false);
 
 /** unselecte course modal */
 const targetCourseToUnselect = ref<DisplayCourse>();

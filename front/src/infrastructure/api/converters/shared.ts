@@ -3,13 +3,13 @@ import { NormalDay } from "~/domain/day";
 import * as SharedPB from "~/infrastructure/api/gen/shared/type_pb";
 
 export const fromPBAcademicYear = (
-  pbAcademicYear: SharedPB.AcademicYear
+  pbAcademicYear: SharedPB.AcademicYear,
 ): number => {
   return pbAcademicYear.value;
 };
 
 export const toPBAcademicYear = (
-  academicYear: number
+  academicYear: number,
 ): SharedPB.AcademicYear => {
   return new SharedPB.AcademicYear({ value: academicYear });
 };
@@ -23,7 +23,7 @@ export const toPBUUID = (uuid: string): SharedPB.UUID => {
 };
 
 export const fromPBRFC3339FullDate = (
-  pbFullDate: SharedPB.RFC3339FullDate
+  pbFullDate: SharedPB.RFC3339FullDate,
 ): Dayjs => {
   return dayjs(pbFullDate.value);
 };
@@ -33,7 +33,7 @@ export const toPBRFC3339FullDate = (date: Dayjs): SharedPB.RFC3339FullDate => {
 };
 
 export const fromPBRFC3339DateTime = (
-  pbDateTime: SharedPB.RFC3339DateTime
+  pbDateTime: SharedPB.RFC3339DateTime,
 ): Dayjs => {
   return dayjs(pbDateTime.value);
 };

@@ -21,7 +21,7 @@ const setToCurrentModule = () => {
 };
 
 const schoolCalendarModuleToBaseModule = (
-  schoolCalendarModule: SchoolCalendarModule
+  schoolCalendarModule: SchoolCalendarModule,
 ): BaseModule => {
   if (isBaseModule(schoolCalendarModule)) return schoolCalendarModule;
 

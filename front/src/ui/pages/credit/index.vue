@@ -202,7 +202,7 @@ const [mode, toggleMode] = useStringToggle("default", "edit");
 /** year dropdown */
 const allYearOption = "すべての年度";
 const selectedYearOption = computed(() =>
-  year.value === 0 ? allYearOption : `${year.value}年度`
+  year.value === 0 ? allYearOption : `${year.value}年度`,
 );
 const yearOptions: string[] = [
   allYearOption,
@@ -227,7 +227,7 @@ const updateDisplayCreditTags = async () => {
     timetableUseCase
       .listRegisteredCourses(
         year.value == 0 ? undefined : year.value,
-        undefined
+        undefined,
       )
       .then((result) => {
         if (isResultError(result)) throw result;
@@ -243,16 +243,16 @@ const updateDisplayCreditTags = async () => {
     getDisplayCreditTags(
       registeredCourses,
       tags.sort((tagA, tagB) => tagA.order - tagB.order),
-      year.value === 0 ? academicYears : [year.value]
-    )
+      year.value === 0 ? academicYears : [year.value],
+    ),
   );
 
   totalCredits.value = creditToDisplay(
     registeredCourses.reduce(
       (totalCredits, registeredCourse) =>
         totalCredits + registeredCourse.credit,
-      0
-    )
+      0,
+    ),
   );
 };
 

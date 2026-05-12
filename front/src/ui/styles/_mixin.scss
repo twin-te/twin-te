@@ -75,12 +75,14 @@
 }
 @mixin button-active($negative-shadow-convex: 0 0 0 #00000000) {
   background: var(--primary-liner);
-  box-shadow: $negative-shadow-convex, $negative-shadow-convex,
+  box-shadow:
+    $negative-shadow-convex, $negative-shadow-convex,
     variable.$shadow-primary-concave;
 }
 @mixin button-active-danger($negative-shadow-convex: 0 0 0 #00000000) {
   background: variable.getColor(--color-danger);
-  box-shadow: $negative-shadow-convex, $negative-shadow-convex,
+  box-shadow:
+    $negative-shadow-convex, $negative-shadow-convex,
     variable.$shadow-danger-concave;
 }
 @mixin button-inactive($negative-shadow-concave: inset 0 0 0 #00000000) {

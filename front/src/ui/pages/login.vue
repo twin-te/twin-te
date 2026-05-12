@@ -96,15 +96,13 @@ function handlePageShow(event) {
   }
 }
 
-onMounted(()=>{
-  window.addEventListener('pageshow', handlePageShow);
+onMounted(() => {
+  window.addEventListener("pageshow", handlePageShow);
 });
 
-onUnmounted(()=>{
-  window.removeEventListener('pageshow', handlePageShow);
-})
-
-
+onUnmounted(() => {
+  window.removeEventListener("pageshow", handlePageShow);
+});
 </script>
 
 <style lang="scss" scoped>

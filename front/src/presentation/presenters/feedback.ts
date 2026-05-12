@@ -16,9 +16,9 @@ export const feedbackTypeMap: Record<FeedbackType, DisplayFeedbackType> = {
 };
 
 export const displayToFeedbackType = (
-  display: DisplayFeedbackType
+  display: DisplayFeedbackType,
 ): FeedbackType => {
   return feedbackTypes.find(
-    (feedbackType) => feedbackTypeMap[feedbackType] === display
+    (feedbackType) => feedbackTypeMap[feedbackType] === display,
   ) as FeedbackType;
 };

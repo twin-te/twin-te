@@ -16,7 +16,7 @@ import { Ref, ref } from "vue";
 export const useStringToggle = <V1 extends string, V2 extends string>(
   v1: V1,
   v2: V2,
-  initial?: V1 | V2
+  initial?: V1 | V2,
 ): [Ref<V1 | V2>, (v?: V1 | V2) => void] => {
   const v = ref(initial ?? v1) as Ref<V1 | V2>;
   const toggle = (value?: V1 | V2) => {

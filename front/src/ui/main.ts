@@ -40,6 +40,6 @@ app
       vueRouter: router,
       enabled: import.meta.env.PROD,
       debug: import.meta.env.DEV,
-    })
+    }),
   )
   .mount("#app");

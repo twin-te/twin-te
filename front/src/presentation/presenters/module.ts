@@ -52,7 +52,7 @@ export const moduleMap: Record<Module, DisplayModule> = {
 
 export const displayToBaseModule = (display: DisplayBaseModule): BaseModule => {
   return baseModules.find(
-    (module) => baseModuleMap[module] === display
+    (module) => baseModuleMap[module] === display,
   ) as BaseModule;
 };
 

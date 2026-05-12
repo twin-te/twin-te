@@ -245,7 +245,7 @@ const onIcalToggle = async () => {
     } else if (result instanceof NetworkError) {
       displayToast(
         "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
-        { type: "danger" }
+        { type: "danger" },
       );
     } else if (result instanceof InternalServerError) {
       displayToast("サーバーエラーが発生しました。", { type: "danger" });
@@ -257,7 +257,7 @@ const onIcalToggle = async () => {
     } else if (result instanceof NetworkError) {
       displayToast(
         "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
-        { type: "danger" }
+        { type: "danger" },
       );
     } else if (result instanceof InternalServerError) {
       displayToast("サーバーエラーが発生しました。", { type: "danger" });
@@ -291,7 +291,7 @@ const yearOptions: string[] = [
 const selectedYearOption = computed<string>(() =>
   setting.value.displayYear === 0
     ? autoOption
-    : `${setting.value.displayYear}年度`
+    : `${setting.value.displayYear}年度`,
 );
 
 const updateSelectedYearOption = async (option: string) => {
@@ -326,7 +326,7 @@ const confirmDeleteAccount = async () => {
       "アカウントの削除に成功しました。今までのご利用、誠にありがとうございました。",
       {
         type: "primary",
-      }
+      },
     );
     router.push("/login");
   } else {
@@ -335,13 +335,13 @@ const confirmDeleteAccount = async () => {
     if (error instanceof UnauthenticatedError) {
       displayToast(
         "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。",
-        { type: "danger" }
+        { type: "danger" },
       );
       router.push("/login");
     } else if (error instanceof NetworkError) {
       displayToast(
         "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
-        { type: "danger" }
+        { type: "danger" },
       );
     } else if (error instanceof InternalServerError) {
       displayToast("サーバーエラーが発生しました。", { type: "danger" });

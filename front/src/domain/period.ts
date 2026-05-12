@@ -17,7 +17,7 @@ export const isDaytimePeriod = (period: unknown): period is DaytimePeriod => {
 };
 
 export const isNighttimePeriod = (
-  period: unknown
+  period: unknown,
 ): period is NighttimePeriod => {
   return isContained(period, nighttimePeriods);
 };

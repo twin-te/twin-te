@@ -59,7 +59,7 @@ export default defineComponent({
     const updateModule = (
       index: number,
       schedule: EditableSchedule,
-      module: EditableModule
+      module: EditableModule,
     ) => {
       emit("update:schedules", index, { ...schedule, module });
     };
@@ -67,7 +67,7 @@ export default defineComponent({
     const updateDay = (
       index: number,
       schedule: EditableSchedule,
-      day: EditableDay
+      day: EditableDay,
     ) => {
       if (isDisplaySpecialDay(day))
         emit("update:schedules", index, { module: schedule.module, day });
@@ -82,7 +82,7 @@ export default defineComponent({
     const updatePeriod = (
       index: number,
       schedule: EditableSchedule,
-      period: EditablePeriod
+      period: EditablePeriod,
     ) => {
       if ("period" in schedule)
         emit("update:schedules", index, { ...schedule, period });

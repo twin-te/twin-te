@@ -123,7 +123,7 @@ type LoadedResult = {
 };
 const loadedResults = reactive<LoadedResult[]>([]);
 const selectedResults = computed(() =>
-  loadedResults.filter(({ selected }) => selected)
+  loadedResults.filter(({ selected }) => selected),
 );
 
 const onClickCard = (courseId: string) => {
@@ -176,7 +176,7 @@ const readCSV = async (file: File): Promise<CSV> => {
               line.map((v) => ({
                 code: v.split(",")[2],
                 year: Number(v.split(",")[9]),
-              }))
+              })),
             ),
           ],
         });
@@ -230,18 +230,18 @@ const loadCourses = async (file: File) => {
       schedules: course.schedules,
       selected: true,
       expanded: false,
-    }))
+    })),
   );
 
   const missingCodes = codes.filter(
-    (code) => result.find((course) => course.code === code) == undefined
+    (code) => result.find((course) => course.code === code) == undefined,
   );
   if (missingCodes.length > 0) {
     displayToast(
       `以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
-        "  "
+        "  ",
       )}`,
-      { displayPeriod: 0 }
+      { displayPeriod: 0 },
     );
   }
 };
@@ -255,9 +255,9 @@ const addCourses = async (warning = true) => {
         course,
         result: await timetableUseCase.checkScheduleDuplicate(
           year.value,
-          schedules
+          schedules,
         ),
-      }))
+      })),
     )
   ).reduce<DisplayCourse[]>((ret, { course, result }) => {
     if (isResultError(result)) throw result;

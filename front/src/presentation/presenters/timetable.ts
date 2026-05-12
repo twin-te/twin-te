@@ -16,14 +16,14 @@ export const getDisplayTimetable = <
   M extends Module,
   ND extends NormalDay,
   SD extends SpecialDay,
-  P extends Period
+  P extends Period,
 >(
   courses: RegisteredCourse[],
   tags: Tag[],
   targetModules: M[],
   targetNormalDays: ND[],
   targetSpecialDays: SD[],
-  targetPeriods: P[]
+  targetPeriods: P[],
 ): DisplayTimetable<M, ND, SD, P> => {
   const courseIdToSchedules = courses.reduce<
     Record<
@@ -46,7 +46,7 @@ export const getDisplayTimetable = <
         isContained(schedule.period, targetPeriods)
       ) {
         map[course.id]["normal"].push(
-          schedule as { module: M; day: ND; period: P }
+          schedule as { module: M; day: ND; period: P },
         );
       }
 
@@ -62,17 +62,14 @@ export const getDisplayTimetable = <
     return map;
   }, {});
 
-  const diaplayNormalTimetable: DiaplayNormalTimetable<
-    M,
-    ND,
-    P
-  > = initializeObject(
-    targetModules,
-    initializeObject(targetNormalDays, initializeObject(targetPeriods, []))
-  );
+  const diaplayNormalTimetable: DiaplayNormalTimetable<M, ND, P> =
+    initializeObject(
+      targetModules,
+      initializeObject(targetNormalDays, initializeObject(targetPeriods, [])),
+    );
   const displaySpecialTimetable: DisplaySpecialTimetable<SD> = initializeObject(
     [...targetSpecialDays, "Others"],
-    []
+    [],
   );
 
   courses.forEach((course) => {
@@ -89,18 +86,18 @@ export const getDisplayTimetable = <
                     (schedule) =>
                       schedule.module === module &&
                       schedule.day === day &&
-                      schedule.period === period
-                  ).length > 0
+                      schedule.period === period,
+                  ).length > 0,
             ),
           },
-          tags
+          tags,
         );
         diaplayNormalTimetable[module][day][period].push(displayCourse);
-      }
+      },
     );
 
     removeDuplicate(
-      courseIdToSchedules[course.id]["special"].map(({ day }) => day)
+      courseIdToSchedules[course.id]["special"].map(({ day }) => day),
     ).forEach((day) => {
       const displayCourse = registeredCourseToDisplay(
         {
@@ -109,10 +106,10 @@ export const getDisplayTimetable = <
             ({ schedules }) =>
               schedules
                 .filter(isSpecialSchedule)
-                .filter((schedule) => schedule.day === day).length > 0
+                .filter((schedule) => schedule.day === day).length > 0,
           ),
         },
-        tags
+        tags,
       );
       displaySpecialTimetable[day].push(displayCourse);
     });

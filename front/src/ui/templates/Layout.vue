@@ -14,13 +14,8 @@ const { isVisibleSidebar, closeSidebar } = useSidebar();
 const { toasts, deleteToast } = useToast();
 
 /** welcome modal */
-const [
-  isVisibleWelcomeModal,
-  ,
-  closeWelcomeModal,
-  ,
-  setWelcomeModal,
-] = useSwitch(isAuthenticated.value);
+const [isVisibleWelcomeModal, , closeWelcomeModal, , setWelcomeModal] =
+  useSwitch(isAuthenticated.value);
 watch(isAuthenticated, () => setWelcomeModal(!isAuthenticated.value), {
   immediate: true,
 });

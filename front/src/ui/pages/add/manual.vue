@@ -175,9 +175,9 @@ const instructors = ref([]);
 const targetSchedules = computed(() =>
   sortSchedules(
     removeDuplicateSchedules(
-      displayToSchedules(editableSchedules.filter(isDisplaySchedule))
-    )
-  )
+      displayToSchedules(editableSchedules.filter(isDisplaySchedule)),
+    ),
+  ),
 );
 
 const rooms = ref<Room[]>([]);
@@ -188,7 +188,7 @@ const checkboxContents = reactive(
     key: method,
     label: methodMap[method],
     checked: false,
-  }))
+  })),
 );
 
 /** schedule editor */
@@ -215,7 +215,7 @@ const addCourse = async (warning = true) => {
   if (!editableSchedules.every(isDisplaySchedule)) return;
 
   const schedules = sortSchedules(
-    removeDuplicateSchedules(displayToSchedules(editableSchedules))
+    removeDuplicateSchedules(displayToSchedules(editableSchedules)),
   );
   const methods = checkboxContents
     .filter(({ checked }) => checked)
@@ -248,11 +248,8 @@ const addCourse = async (warning = true) => {
 };
 
 /** duplicate modal */
-const [
-  isDuplicateModalVisible,
-  openDuplicateModal,
-  closeDuplicateModal,
-] = useSwitch(false);
+const [isDuplicateModalVisible, openDuplicateModal, closeDuplicateModal] =
+  useSwitch(false);
 
 const duplicateScheduleText = ref("");
 </script>

@@ -128,7 +128,7 @@ if (typeof route.query.codes !== "string") {
 const codes = computed(() =>
   typeof route.query.codes === "string"
     ? route.query.codes.split(",").filter((code) => code)
-    : []
+    : [],
 );
 
 /** result */
@@ -139,16 +139,16 @@ const result = await timetableUseCase.listCoursesByCodes({
 if (isResultError(result)) throw result;
 
 const registered = await timetableUseCase.listRegisteredCourses(
-  appliedYear.value
+  appliedYear.value,
 );
 if (isResultError(registered)) throw registered;
 
 const registeredSet = new Set(
-  registered.map((course) => `${course.year}_${course.code}`)
+  registered.map((course) => `${course.year}_${course.code}`),
 );
 
 const duplicatedResults = result.filter((course) =>
-  registeredSet.has(`${course.year}_${course.code}`)
+  registeredSet.has(`${course.year}_${course.code}`),
 );
 
 if (duplicatedResults.length > 0) {
@@ -157,7 +157,7 @@ if (duplicatedResults.length > 0) {
     .join("\n");
   displayToast(
     `登録されていない講義のみを表示しています。\n※以下の科目番号は既に登録されています。\n${coursesText}`,
-    { displayPeriod: 0 }
+    { displayPeriod: 0 },
   );
 }
 
@@ -165,7 +165,7 @@ const isCourseNotDuplicated = (course: Course) =>
   duplicatedResults.find(
     (duplicatedCourse) =>
       course.code === duplicatedCourse.code &&
-      course.year === duplicatedCourse.year
+      course.year === duplicatedCourse.year,
   ) === undefined;
 
 const courseResults = reactive(
@@ -174,22 +174,22 @@ const courseResults = reactive(
     schedules: course.schedules,
     selected: true,
     expanded: false,
-  }))
+  })),
 );
 
 const selectedCourseResults = computed(() =>
-  courseResults.filter(({ selected }) => selected)
+  courseResults.filter(({ selected }) => selected),
 );
 
 const missingCodes = codes.value.filter(
-  (code) => result.find((course) => course.code === code) == undefined
+  (code) => result.find((course) => course.code === code) == undefined,
 );
 if (missingCodes.length > 0) {
   displayToast(
     `以下の科目番号はシラバスに存在しませんでした。存在する講義のみを表示しています。\n${missingCodes.join(
-      "  "
+      "  ",
     )}`,
-    { displayPeriod: 0 }
+    { displayPeriod: 0 },
   );
 }
 
@@ -202,9 +202,9 @@ const addCourses = async (warning = true) => {
         course,
         result: await timetableUseCase.checkScheduleDuplicate(
           appliedYear.value,
-          schedules
+          schedules,
         ),
-      }))
+      })),
     )
   ).reduce<DisplayCourse[]>((ret, { course, result }) => {
     if (isResultError(result)) throw result;

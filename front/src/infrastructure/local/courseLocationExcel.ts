@@ -2,7 +2,7 @@ import * as XLSX from "xlsx";
 import { CourseLocationInfo } from "~/domain/courseLocation";
 
 export const getKdbClassroom = async (
-  file: File
+  file: File,
 ): Promise<CourseLocationInfo> => {
   const book = XLSX.read(await file.arrayBuffer());
   const sheet = book.Sheets[book.SheetNames[0]];
@@ -30,17 +30,20 @@ export const getKdbClassroom = async (
         it["教室"] &&
         it["科目番号"] &&
         it["教室"].trim() !== "" &&
-        it["科目番号"].trim() !== ""
+        it["科目番号"].trim() !== "",
     )
     .map((it) => ({
       courseId: it["科目番号"],
       classroom: it["教室"].split(/[\n\r]+/).join(","),
     }));
 
-  const courseIdToClassroom = records.reduce((acc, item) => {
-    acc[item.courseId] = item.classroom;
-    return acc;
-  }, {} as { [key: string]: string });
+  const courseIdToClassroom = records.reduce(
+    (acc, item) => {
+      acc[item.courseId] = item.classroom;
+      return acc;
+    },
+    {} as { [key: string]: string },
+  );
 
   return {
     uploadAt: new Date(),

@@ -234,7 +234,7 @@ const { id } = route.params as { id: string };
 
 /** display course */
 const displayCourse = ref<DisplayRegisteredCourse>(
-  {} as DisplayRegisteredCourse
+  {} as DisplayRegisteredCourse,
 );
 
 const updateView = async () => {
@@ -257,7 +257,7 @@ await updateView();
 
 const updateCourse = (
   id: string,
-  data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
+  data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>,
 ) => {
   return timetableUseCase.updateRegisteredCourse(id, data).then((result) => {
     if (isResultError(result)) throw result;
@@ -276,7 +276,7 @@ const updateMemo = async () => {
 
 const updateCounter = async (
   key: Extract<keyof RegisteredCourse, "attendance" | "late" | "absence">,
-  diff: number
+  diff: number,
 ) => {
   const newValue = displayCourse.value[key] + diff;
   if (newValue < 0) return;
@@ -349,7 +349,7 @@ const popupContents: {
   {
     onClick: () =>
       openUrl(
-        getSyllabusUrl(displayCourse.value.year, displayCourse.value.code)
+        getSyllabusUrl(displayCourse.value.year, displayCourse.value.code),
       ),
     link: true,
     value: "シラバス",

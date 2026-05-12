@@ -436,7 +436,7 @@ describe(`${schedulesToFullString.name} - full format - basic`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春C 月1 火2 / 秋ABC 月1 火2"
+      "春C 月1 火2 / 秋ABC 月1 火2",
     );
   });
 
@@ -1118,7 +1118,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春AB 水5,6 / 秋AB 水5,6 / 秋C 集中"
+      "春AB 水5,6 / 秋AB 水5,6 / 秋C 集中",
     );
   });
 
@@ -1351,7 +1351,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春AB 金6 / 夏休 集中 / 秋AB 金6"
+      "春AB 金6 / 夏休 集中 / 秋AB 金6",
     );
   });
 
@@ -1539,7 +1539,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春B 木5,6 / 春C 応談 / 夏休 応談"
+      "春B 木5,6 / 春C 応談 / 夏休 応談",
     );
   });
 
@@ -1599,7 +1599,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春AB 金3 / 春ABC 応談 / 秋AB 火3"
+      "春AB 金3 / 春ABC 応談 / 秋AB 火3",
     );
   });
 
@@ -2082,7 +2082,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春ABC 水3,4 金5,6 / 春C 集中"
+      "春ABC 水3,4 金5,6 / 春C 集中",
     );
   });
 
@@ -2110,7 +2110,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "夏休 集中 / 秋ABC 集中 / 春休 集中"
+      "夏休 集中 / 秋ABC 集中 / 春休 集中",
     );
   });
 
@@ -2158,7 +2158,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "春A 火3,4 / 春B 火3-5 / 春C 火2-4"
+      "春A 火3,4 / 春B 火3-5 / 春C 火2-4",
     );
   });
 
@@ -2337,7 +2337,7 @@ describe(`${schedulesToFullString.name} - full format - combination`, () => {
       },
     ];
     expect(schedulesToFullString(schedules)).toBe(
-      "秋A 水4,5 金5,6 / 秋BC 水4,5 金3,4 / 秋C 集中"
+      "秋A 水4,5 金5,6 / 秋BC 水4,5 金3,4 / 秋C 集中",
     );
   });
 

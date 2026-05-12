@@ -22,7 +22,7 @@ export interface IAnnouncementUseCase {
   >;
 
   readAnnouncements(
-    ids: string[]
+    ids: string[],
   ): Promise<null | UnauthenticatedError | NetworkError | InternalServerError>;
 }
 
@@ -43,7 +43,7 @@ export class AnnouncementUseCase implements IAnnouncementUseCase {
   }
 
   async readAnnouncements(
-    ids: string[]
+    ids: string[],
   ): Promise<null | UnauthenticatedError | NetworkError | InternalServerError> {
     return this.#client
       .readAnnouncements({ ids: ids.map(toPBUUID) })

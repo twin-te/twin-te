@@ -10,7 +10,7 @@ const deleteToast = (id: string) => {
 
 const displayToast = (
   text: string,
-  option?: { displayPeriod?: number; type?: ToastType }
+  option?: { displayPeriod?: number; type?: ToastType },
 ) => {
   const id = createId();
   const displayPeriod = option?.displayPeriod ?? text.length * 240; // 250 characters per minute reading speed

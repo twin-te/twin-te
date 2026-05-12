@@ -15,7 +15,7 @@ const validYearUpper = currentAcademicYear + MAX_FUTURE_YEARS;
 
 export const academicYears: number[] = _.range(
   initialAcademicYear,
-  validYearUpper + 1
+  validYearUpper + 1,
 );
 
 export const validateAcademicYear = (year: number): boolean => {

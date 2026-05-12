@@ -70,7 +70,7 @@ const selectedTag: Tag | undefined = await timetableUseCase
   });
 
 const courseIdToState = reactive<Record<string, CreditCourseListContentState>>(
-  {}
+  {},
 );
 
 const totalCredits = ref<string>("");
@@ -103,7 +103,7 @@ const updateView = async (init = false) => {
     timetableUseCase
       .listRegisteredCourses(
         year.value === 0 ? undefined : year.value,
-        selectedTag?.id
+        selectedTag?.id,
       )
       .then((result) => {
         if (isResultError(result)) throw result;
@@ -141,7 +141,7 @@ const updateView = async (init = false) => {
   totalCredits.value = creditToDisplay(
     registeredCourses.reduce((totalCredits, registeredCourse) => {
       return totalCredits + registeredCourse.credit;
-    }, 0)
+    }, 0),
   );
 
   if (init) {
