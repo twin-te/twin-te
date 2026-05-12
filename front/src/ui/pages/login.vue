@@ -90,29 +90,17 @@ export default defineComponent({
   },
 });
 
-let isNeedInit = true;
-function initPage() {
-  if (!isNeedInit) return;
-  isNeedInit = false;
-  console.log('page init');
-}
-function handlePageHide() {
-  isNeedInit = true;
-}
-
-function handlePageShow() {
-  initPage();
+function handlePageShow(event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
 }
 
 onMounted(()=>{
-  window.addEventListener('pagehide', handlePageHide);
   window.addEventListener('pageshow', handlePageShow);
-
-  initPage();
 });
 
 onUnmounted(()=>{
-  window.removeEventListener('pagehide', handlePageHide);
   window.removeEventListener('pageshow', handlePageShow);
 })
 
