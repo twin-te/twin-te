@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Provider } from "~/domain/user";
 import GrayFilter from "~/ui/components/GrayFilter.vue";
@@ -89,6 +89,34 @@ export default defineComponent({
     return { router, setting, clicked, login };
   },
 });
+
+let isNeedInit = true;
+function initPage() {
+  if (!isNeedInit) return;
+  isNeedInit = false;
+  console.log('page init');
+}
+function handlePageHide() {
+  isNeedInit = true;
+}
+
+function handlePageShow() {
+  initPage();
+}
+
+onMounted(()=>{
+  window.addEventListener('pagehide', handlePageHide);
+  window.addEventListener('pageshow', handlePageShow);
+
+  initPage();
+});
+
+onUnmounted(()=>{
+  window.removeEventListener('pagehide', handlePageHide);
+  window.removeEventListener('pageshow', handlePageShow);
+})
+
+
 </script>
 
 <style lang="scss" scoped>
