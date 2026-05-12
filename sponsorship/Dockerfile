@@ -3,7 +3,7 @@ WORKDIR /usr/src/twin-te/sponsorship
 
 RUN npm install -g bun@v1.1.22
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lockb bunfig.toml ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -16,7 +16,7 @@ WORKDIR /app
 
 RUN npm install -g bun@v1.1.22
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lockb bunfig.toml ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -43,7 +43,7 @@ WORKDIR /app
 
 RUN npm install -g bun@v1.1.22
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lockb bunfig.toml ./
 RUN bun install --frozen-lockfile
 
 COPY . .
