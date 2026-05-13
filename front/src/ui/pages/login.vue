@@ -86,23 +86,26 @@ export default defineComponent({
       clicked.value = true;
       redirectToUrl(getLoginUrl(provider, redirectUrl));
     };
+    
+    function handlePageShow(event) {
+      if (event.persisted) {
+        console.log('pageshow', event.persisted);
+        window.location.reload();
+      }
+    }
+
+    onMounted(() => {
+      window.addEventListener("pageshow", handlePageShow);
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener("pageshow", handlePageShow);
+    });
+    
     return { router, setting, clicked, login };
   },
 });
 
-function handlePageShow(event) {
-  if (event.persisted) {
-    window.location.reload();
-  }
-}
-
-onMounted(() => {
-  window.addEventListener("pageshow", handlePageShow);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("pageshow", handlePageShow);
-});
 </script>
 
 <style lang="scss" scoped>
