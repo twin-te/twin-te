@@ -15,7 +15,7 @@
     <section class="main">
       <ToggleButton
         class="main__toggle"
-        :labels="{ left: '通常', right: '特殊' }"
+        :labels="{ left: '通常ああああ', right: '特殊' }"
         :whichSelected="courseType === 'Normal' ? 'left' : 'right'"
         :onClickToggleButton="toggleCourseType"
       />
