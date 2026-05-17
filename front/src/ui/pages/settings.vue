@@ -106,6 +106,16 @@ declare global {
             <p class="ical-description">
               以下のURLをGoogleカレンダーやAppleのカレンダーアプリなどに登録すると、Twin:teの時間割が自動的に同期されます。
             </p>
+            <Button
+              v-if="isMobile()"
+              class="ical-register-button"
+              size="small"
+              layout="fill"
+              color="primary"
+              :pauseActiveStyle="false"
+              @click="openIcalUrl"
+              >登録する</Button
+            >
             <div class="ical-url-row">
               <input
                 v-model="icalUrl"
@@ -209,7 +219,7 @@ import { isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
-import { getLogoutUrl, redirectToUrl } from "../url";
+import { getLogoutUrl, openUrl, redirectToUrl } from "../url";
 
 const router = useRouter();
 const { displayToast } = useToast();
@@ -273,6 +283,11 @@ const copyIcalUrl = async () => {
   } catch {
     displayToast("コピーに失敗しました", { type: "danger" });
   }
+};
+
+const openIcalUrl = () => {
+  if (!icalUrl.value) return;
+  openUrl(icalUrl.value);
 };
 
 /** logout */
@@ -406,6 +421,9 @@ const confirmDeleteAccount = async () => {
         line-height: $single-line;
         color: getColor(--color-text-sub);
         font-weight: 400;
+      }
+      .ical-register-button {
+        width: 100%;
       }
       .ical-url-row {
         display: flex;
