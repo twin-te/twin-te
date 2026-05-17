@@ -106,34 +106,71 @@ declare global {
             <p class="ical-description">
               以下のURLをGoogleカレンダーやAppleのカレンダーアプリなどに登録すると、Twin:teの時間割が自動的に同期されます。
             </p>
-            <div v-if="isMobile()" class="ical-register-buttons">
+            <div ref="registerRef" class="ical-register">
               <Button
-                class="ical-register-button"
-                size="small"
+                class="ical-register__toggle"
+                size="medium"
                 layout="fill"
                 color="primary"
                 :pauseActiveStyle="false"
-                @click="openGoogleCalendar"
-                >Googleカレンダーに登録</Button
+                :state="isRegisterMenuOpen ? 'active' : 'default'"
+                @click="toggleRegisterMenu"
               >
-              <Button
-                class="ical-register-button"
-                size="small"
-                layout="fill"
-                color="primary"
-                :pauseActiveStyle="false"
-                @click="openAppleCalendar"
-                >Appleカレンダーに登録</Button
+                <span class="material-icons ical-register__toggle-icon"
+                  >event</span
+                >
+                <span class="ical-register__toggle-label">登録する</span>
+                <span class="material-icons ical-register__toggle-chevron">{{
+                  isRegisterMenuOpen ? "expand_less" : "expand_more"
+                }}</span>
+              </Button>
+              <ul
+                v-if="isRegisterMenuOpen"
+                :class="[
+                  'ical-register__menu',
+                  `ical-register__menu--${menuDirection}`,
+                ]"
               >
-              <Button
-                class="ical-register-button"
-                size="small"
-                layout="fill"
-                color="primary"
-                :pauseActiveStyle="false"
-                @click="openOutlookCalendar"
-                >Outlookカレンダーに登録</Button
-              >
+                <li>
+                  <button
+                    class="ical-register__menu-item"
+                    @click="openGoogleCalendar"
+                  >
+                    <span class="ical-register__menu-title"
+                      >Googleカレンダー</span
+                    >
+                  </button>
+                </li>
+                <li>
+                  <button
+                    class="ical-register__menu-item"
+                    @click="openAppleCalendar"
+                  >
+                    <span class="ical-register__menu-title"
+                      >Appleカレンダー</span
+                    >
+                    <span class="ical-register__menu-desc">iOS / macOS</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    class="ical-register__menu-item"
+                    @click="openOutlookCalendar"
+                  >
+                    <span class="ical-register__menu-title">Outlook</span>
+                    <span class="ical-register__menu-desc">Microsoft 365</span>
+                  </button>
+                </li>
+                <li>
+                  <button
+                    class="ical-register__menu-item"
+                    @click="openIcsFile"
+                  >
+                    <span class="ical-register__menu-title">.icsファイル</span>
+                    <span class="ical-register__menu-desc">手動インポート</span>
+                  </button>
+                </li>
+              </ul>
             </div>
             <div class="ical-url-row">
               <input
@@ -304,18 +341,39 @@ const copyIcalUrl = async () => {
   }
 };
 
+const isRegisterMenuOpen = ref(false);
+const registerRef = ref<HTMLDivElement | null>(null);
+const menuDirection = ref<"down" | "up">("down");
+const MENU_ESTIMATED_HEIGHT = 280;
+const toggleRegisterMenu = () => {
+  if (!isRegisterMenuOpen.value && registerRef.value) {
+    const rect = registerRef.value.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    menuDirection.value =
+      spaceBelow < MENU_ESTIMATED_HEIGHT && rect.top > spaceBelow
+        ? "up"
+        : "down";
+  }
+  isRegisterMenuOpen.value = !isRegisterMenuOpen.value;
+};
+const closeRegisterMenu = () => {
+  isRegisterMenuOpen.value = false;
+};
+
 const openGoogleCalendar = () => {
   if (!icalUrl.value) return;
   const url = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
     icalUrl.value
   )}`;
   window.open(url, "_blank");
+  closeRegisterMenu();
 };
 
 const openAppleCalendar = () => {
   if (!icalUrl.value) return;
   const url = icalUrl.value.replace(/^https?:\/\//, "webcal://");
   window.open(url, "_blank");
+  closeRegisterMenu();
 };
 
 const openOutlookCalendar = () => {
@@ -324,6 +382,13 @@ const openOutlookCalendar = () => {
     "Twin:te"
   )}&url=${encodeURIComponent(icalUrl.value)}`;
   window.open(url, "_blank");
+  closeRegisterMenu();
+};
+
+const openIcsFile = () => {
+  if (!icalUrl.value) return;
+  window.open(icalUrl.value, "_blank");
+  closeRegisterMenu();
 };
 
 /** logout */
@@ -458,13 +523,84 @@ const confirmDeleteAccount = async () => {
         color: getColor(--color-text-sub);
         font-weight: 400;
       }
-      .ical-register-buttons {
+      .ical-register {
+        width: 100%;
+        position: relative;
+        margin-bottom: $spacing-3;
+      }
+      .ical-register__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-2;
+        width: 100%;
+        position: relative;
+      }
+      .ical-register__toggle-icon,
+      .ical-register__toggle-chevron {
+        font-size: $font-large;
+        line-height: 1;
+        pointer-events: none;
+      }
+      .ical-register__toggle-label {
+        pointer-events: none;
+      }
+      .ical-register__toggle-chevron {
+        position: absolute;
+        right: $spacing-4;
+      }
+      .ical-register__menu {
+        list-style: none;
+        margin: 0;
+        padding: $spacing-2 0;
         display: flex;
         flex-direction: column;
-        gap: 0.8rem;
+        background: getColor(--color-white);
+        border-radius: $radius-3;
+        box-shadow: $shadow-convex;
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 10;
       }
-      .ical-register-button {
+      .ical-register__menu--down {
+        top: calc(100% + #{$spacing-2});
+      }
+      .ical-register__menu--up {
+        bottom: calc(100% + #{$spacing-2});
+      }
+      .ical-register__menu-item {
+        @include button-cursor;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
         width: 100%;
+        padding: $spacing-3 $spacing-5;
+        background: transparent;
+        border: none;
+        text-align: left;
+        transition: background 0.18s ease;
+        &:hover {
+          background: getColor(--color-base);
+        }
+        &:active {
+          background: getColor(--color-base);
+          opacity: 0.85;
+        }
+      }
+      .ical-register__menu-title {
+        font-size: $font-medium;
+        font-weight: 700;
+        color: getColor(--color-text-main);
+        pointer-events: none;
+      }
+      .ical-register__menu-desc {
+        font-size: $font-small;
+        color: getColor(--color-text-sub);
+        font-weight: 400;
+        pointer-events: none;
       }
       .ical-url-row {
         display: flex;
