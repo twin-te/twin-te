@@ -106,16 +106,35 @@ declare global {
             <p class="ical-description">
               以下のURLをGoogleカレンダーやAppleのカレンダーアプリなどに登録すると、Twin:teの時間割が自動的に同期されます。
             </p>
-            <Button
-              v-if="isMobile()"
-              class="ical-register-button"
-              size="small"
-              layout="fill"
-              color="primary"
-              :pauseActiveStyle="false"
-              @click="openIcalUrl"
-              >登録する</Button
-            >
+            <div v-if="isMobile()" class="ical-register-buttons">
+              <Button
+                class="ical-register-button"
+                size="small"
+                layout="fill"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="openGoogleCalendar"
+                >Googleカレンダーに登録</Button
+              >
+              <Button
+                class="ical-register-button"
+                size="small"
+                layout="fill"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="openAppleCalendar"
+                >Appleカレンダーに登録</Button
+              >
+              <Button
+                class="ical-register-button"
+                size="small"
+                layout="fill"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="openOutlookCalendar"
+                >Outlookカレンダーに登録</Button
+              >
+            </div>
             <div class="ical-url-row">
               <input
                 v-model="icalUrl"
@@ -219,7 +238,7 @@ import { isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
-import { getLogoutUrl, openUrl, redirectToUrl } from "../url";
+import { getLogoutUrl, redirectToUrl } from "../url";
 
 const router = useRouter();
 const { displayToast } = useToast();
@@ -285,9 +304,26 @@ const copyIcalUrl = async () => {
   }
 };
 
-const openIcalUrl = () => {
+const openGoogleCalendar = () => {
   if (!icalUrl.value) return;
-  openUrl(icalUrl.value);
+  const url = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
+    icalUrl.value
+  )}`;
+  window.open(url, "_blank");
+};
+
+const openAppleCalendar = () => {
+  if (!icalUrl.value) return;
+  const url = icalUrl.value.replace(/^https?:\/\//, "webcal://");
+  window.open(url, "_blank");
+};
+
+const openOutlookCalendar = () => {
+  if (!icalUrl.value) return;
+  const url = `https://outlook.office.com/calendar/addcalendar?name=${encodeURIComponent(
+    "Twin:te"
+  )}&url=${encodeURIComponent(icalUrl.value)}`;
+  window.open(url, "_blank");
 };
 
 /** logout */
@@ -421,6 +457,11 @@ const confirmDeleteAccount = async () => {
         line-height: $single-line;
         color: getColor(--color-text-sub);
         font-weight: 400;
+      }
+      .ical-register-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
       }
       .ical-register-button {
         width: 100%;
