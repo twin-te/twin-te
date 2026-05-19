@@ -52,6 +52,10 @@ func getAppleSocialID(ctx context.Context, code string) (socialID authdomain.Soc
 		return "", errors.New("failed to retrieve id token for apple")
 	}
 
+	return verifyAppleIDToken(ctx, idTokenString)
+}
+
+func verifyAppleIDToken(ctx context.Context, idTokenString string) (socialID authdomain.SocialID, err error) {
 	// cf. https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user#3383769
 	idToken, err := jwt.Parse(
 		idTokenString,
