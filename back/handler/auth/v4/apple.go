@@ -17,6 +17,8 @@ import (
 	"io"
 	"math/big"
 	"net/http"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -65,13 +67,15 @@ func verifyAppleIDToken(ctx context.Context, idTokenString string) (socialID aut
 			}
 			return getAppleRSAPublicKey(ctx, t.Header["kid"].(string))
 		},
-		jwt.WithAudience(appenv.AUTH_APPLE_CLIENT_ID),
 		jwt.WithExpirationRequired(),
 		jwt.WithIssuer("https://appleid.apple.com"),
 		jwt.WithValidMethods([]string{"RS256"}),
 	)
 	if err != nil {
 		return
+	}
+	if err := validateAppleAudience(idToken.Claims); err != nil {
+		return "", err
 	}
 
 	sub, err := idToken.Claims.GetSubject()
@@ -80,6 +84,19 @@ func verifyAppleIDToken(ctx context.Context, idTokenString string) (socialID aut
 	}
 
 	return authdomain.ParseSocialID(sub)
+}
+
+func validateAppleAudience(claims jwt.Claims) error {
+	audiences, err := claims.GetAudience()
+	if err != nil {
+		return err
+	}
+	for _, audience := range audiences {
+		if slices.Contains(appenv.AUTH_APPLE_AUDIENCES, audience) {
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid apple token audience: %s", strings.Join(audiences, ","))
 }
 
 // getAppleRSAPublicKey returns apple's public key to verify the ID token signature.
