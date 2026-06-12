@@ -155,37 +155,14 @@ func (h *impl) signUpOrLoginWithAuthentication(
 }
 
 type idTokenCredential struct {
-	Token       string `json:"token"`
-	RedirectURL string `json:"redirect_url"`
+	Token       string `query:"token" form:"token" json:"token"`
+	RedirectURL string `query:"redirect_url" form:"redirect_url" json:"redirect_url"`
 }
 
 func getIDTokenCredential(c echo.Context) (*idTokenCredential, error) {
-	if c.Request().Method == http.MethodGet {
-		credential := &idTokenCredential{
-			Token:       c.QueryParam("token"),
-			RedirectURL: c.QueryParam("redirect_url"),
-		}
-		if credential.Token == "" {
-			return nil, echo.NewHTTPError(http.StatusBadRequest, "token is required")
-		}
-		return credential, nil
-	}
-
-	credential := &idTokenCredential{
-		Token:       c.FormValue("token"),
-		RedirectURL: c.FormValue("redirect_url"),
-	}
-	if credential.Token == "" || credential.RedirectURL == "" {
-		jsonCredential := &idTokenCredential{}
-		if err := c.Bind(jsonCredential); err != nil && credential.Token == "" {
-			return nil, err
-		}
-		if credential.Token == "" {
-			credential.Token = jsonCredential.Token
-		}
-		if credential.RedirectURL == "" {
-			credential.RedirectURL = jsonCredential.RedirectURL
-		}
+	credential := &idTokenCredential{}
+	if err := c.Bind(credential); err != nil {
+		return nil, err
 	}
 	if credential.Token == "" {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "token is required")
