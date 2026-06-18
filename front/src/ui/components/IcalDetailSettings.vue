@@ -1,8 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
+import { IcalSubscriptionMode } from "~/domain/calendar";
 import Button from "./Button.vue";
 import Tag from "./Tag.vue";
-import { IcalSubscriptionMode } from "~/domain/calendar";
 
 export type IcalDetailSettingsValue = {
   mode: IcalSubscriptionMode;
