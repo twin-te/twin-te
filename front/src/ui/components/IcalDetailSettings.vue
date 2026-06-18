@@ -16,9 +16,17 @@ type Behavior = {
 };
 
 const behaviors: Behavior[] = [
-  { mode: "sync", title: "そのまま", description: "通常の予定として表示されます" },
+  {
+    mode: "sync",
+    title: "そのまま",
+    description: "通常の予定として表示されます",
+  },
   { mode: "exclude", title: "入れない", description: "予定を表示しません" },
-  { mode: "transparent", title: "予定なし", description: "空き時間として表示されます" },
+  {
+    mode: "transparent",
+    title: "予定なし",
+    description: "空き時間として表示されます",
+  },
 ];
 
 export default defineComponent({
