@@ -1,7 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { IcalSubscriptionMode } from "~/domain/calendar";
+import Button from "./Button.vue";
 import Tag from "./Tag.vue";
+import { IcalSubscriptionMode } from "~/domain/calendar";
 
 export type IcalDetailSettingsValue = {
   mode: IcalSubscriptionMode;
@@ -22,7 +23,7 @@ const behaviors: Behavior[] = [
 
 export default defineComponent({
   name: "IcalDetailSettings",
-  components: { Tag },
+  components: { Tag, Button },
   props: {
     modelValue: {
       type: Object as PropType<IcalDetailSettingsValue>,
@@ -33,10 +34,11 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "create-tag"],
   setup(props, { emit }) {
     const selectedTagIds = computed(() => props.modelValue.targetTagIds);
     const mode = computed(() => props.modelValue.mode);
+    const hasNoTags = computed(() => props.tags.length === 0);
 
     const isTagSelected = (id: string) => selectedTagIds.value.includes(id);
 
@@ -48,13 +50,21 @@ export default defineComponent({
     };
 
     const onSelectMode = (next: IcalSubscriptionMode) => {
+      if (hasNoTags.value) return;
       emit("update:modelValue", {
         mode: next,
         targetTagIds: selectedTagIds.value,
       });
     };
 
-    return { behaviors, mode, isTagSelected, onClickTag, onSelectMode };
+    return {
+      behaviors,
+      mode,
+      hasNoTags,
+      isTagSelected,
+      onClickTag,
+      onSelectMode,
+    };
   },
 });
 </script>
@@ -67,9 +77,18 @@ export default defineComponent({
 
     <section class="ical-detail-settings__section">
       <h3 class="ical-detail-settings__heading">対象のタグ</h3>
-      <p v-if="tags.length === 0" class="ical-detail-settings__empty">
-        タグがまだありません。授業にタグを付けると、ここで選べるようになります。
-      </p>
+      <div v-if="hasNoTags" class="ical-detail-settings__empty">
+        <p class="ical-detail-settings__empty-text">
+          タグがまだありません。授業にタグを付けると、ここで選べるようになります。
+        </p>
+        <Button
+          size="medium"
+          layout="fill"
+          color="primary"
+          @click="$emit('create-tag')"
+          >タグを作成</Button
+        >
+      </div>
       <div v-else class="ical-detail-settings__tags">
         <Tag
           v-for="tag in tags"
@@ -88,9 +107,11 @@ export default defineComponent({
           v-for="behavior in behaviors"
           :key="behavior.mode"
           type="button"
+          :disabled="hasNoTags"
           :class="{
             card: true,
             '--selected': mode === behavior.mode,
+            '--disabled': hasNoTags,
           }"
           @click="() => onSelectMode(behavior.mode)"
         >
@@ -152,6 +173,12 @@ export default defineComponent({
   }
 
   &__empty {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__empty-text {
     @include text-discription;
     color: getColor(--color-text-sub);
     line-height: $single-line;
@@ -196,6 +223,12 @@ export default defineComponent({
   &.--selected {
     box-shadow: $shadow-primary-concave;
     outline: 0.2rem solid getColor(--color-primary);
+  }
+
+  &.--disabled {
+    opacity: 0.5;
+    box-shadow: none;
+    cursor: not-allowed;
   }
 
   &__check {

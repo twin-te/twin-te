@@ -13,7 +13,11 @@
     </PageHeader>
     <div class="main">
       <div class="main__contents">
-        <IcalDetailSettings v-model="value" :tags="tags" />
+        <IcalDetailSettings
+          v-model="value"
+          :tags="tags"
+          @create-tag="onCreateTag"
+        />
       </div>
       <div class="main__footer">
         <Button
@@ -21,6 +25,7 @@
           layout="fill"
           color="primary"
           :pauseActiveStyle="false"
+          :state="tags.length === 0 ? 'disabled' : 'default'"
           @click="onSave"
           >保存する</Button
         >
@@ -56,6 +61,10 @@ const { displayToast } = useToast();
 const { tags, value, load, save } = useIcalDetailSettings();
 
 onMounted(load);
+
+const onCreateTag = () => {
+  router.push("/credit");
+};
 
 const onSave = async () => {
   const result = await save();

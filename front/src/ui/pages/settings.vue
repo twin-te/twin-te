@@ -209,7 +209,11 @@ declare global {
     >
       <template #title>詳細設定</template>
       <template #contents>
-        <IcalDetailSettings v-model="icalDetail" :tags="icalTags" />
+        <IcalDetailSettings
+          v-model="icalDetail"
+          :tags="icalTags"
+          @create-tag="onCreateTag"
+        />
       </template>
       <template #button>
         <Button
@@ -223,6 +227,7 @@ declare global {
           size="medium"
           layout="fill"
           color="primary"
+          :state="icalTags.length === 0 ? 'disabled' : 'default'"
           @click="onSaveIcalDetail"
           >保存する</Button
         >
@@ -348,6 +353,11 @@ const openIcalDetail = async () => {
   } else {
     router.push("/settings/ical");
   }
+};
+
+const onCreateTag = () => {
+  closeIcalDetailModal();
+  router.push("/credit");
 };
 
 const onSaveIcalDetail = async () => {
