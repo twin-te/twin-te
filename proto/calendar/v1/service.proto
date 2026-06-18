@@ -2,9 +2,21 @@ syntax = "proto3";
 package calendar.v1;
 
 import "shared/option.proto";
+import "shared/type.proto";
 
 option go_package = "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/calendar/v1;calendarv1";
 option java_package = "net.twinte.api.calendar.v1";
+
+// IcalSubscriptionMode は target_tag_ids が付与されたコースを iCal フィードでどう出力するかを制御する。
+enum IcalSubscriptionMode {
+  ICAL_SUBSCRIPTION_MODE_UNSPECIFIED = 0;
+  // SYNC はすべてのコースを通常出力する。target_tag_ids は空でなければならない。
+  ICAL_SUBSCRIPTION_MODE_SYNC = 1;
+  // EXCLUDE は target_tag_ids のいずれかのタグを持つコースを出力しない。
+  ICAL_SUBSCRIPTION_MODE_EXCLUDE = 2;
+  // TRANSPARENT は target_tag_ids のいずれかのタグを持つコースに TRANSP:TRANSPARENT を付与する。
+  ICAL_SUBSCRIPTION_MODE_TRANSPARENT = 3;
+}
 
 // The following error codes are not stated explicitly in the each rpc, but may be returned.
 //   - shared.InvalidArgument
@@ -32,12 +44,22 @@ service CalendarService {
       error_codes: []
     };
   }
+
+  rpc UpdateIcalSubscription(UpdateIcalSubscriptionRequest) returns (UpdateIcalSubscriptionResponse) {
+    option (shared.twinte) = {
+      authentication: REQURED
+      error_codes: []
+    };
+  }
 }
 
 message GetIcalSubscriptionUrlRequest {}
 
 message GetIcalSubscriptionUrlResponse {
   optional string url = 1;
+  // mode と target_tag_ids は現在の設定を表す。url が設定されているときのみ意味を持つ。
+  IcalSubscriptionMode mode = 2;
+  repeated shared.UUID target_tag_ids = 3;
 }
 
 message EnableIcalSubscriptionRequest {}
@@ -49,3 +71,10 @@ message EnableIcalSubscriptionResponse {
 message DisableIcalSubscriptionRequest {}
 
 message DisableIcalSubscriptionResponse {}
+
+message UpdateIcalSubscriptionRequest {
+  IcalSubscriptionMode mode = 1;
+  repeated shared.UUID target_tag_ids = 2;
+}
+
+message UpdateIcalSubscriptionResponse {}

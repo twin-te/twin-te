@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/twin-te/twin-te/back/appenv"
 	calendardomain "github.com/twin-te/twin-te/back/module/calendar/domain"
+	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 	timetableappdto "github.com/twin-te/twin-te/back/module/timetable/appdto"
 )
 
@@ -50,7 +51,7 @@ func (w *errWriter) write(format string, a ...any) {
 	_, w.err = fmt.Fprintf(w.w, format+"\r\n", a...)
 }
 
-func (uc *impl) writeICalendar(writer io.Writer, modules []calendardomain.SchoolCalendarModule, courses []*timetableappdto.RegisteredCourse, isRdateSupported bool) error {
+func (uc *impl) writeICalendar(writer io.Writer, modules []calendardomain.SchoolCalendarModule, courses []*timetableappdto.RegisteredCourse, transparentCourseIDs map[idtype.RegisteredCourseID]struct{}, isRdateSupported bool) error {
 	w := &errWriter{w: writer}
 
 	w.write("BEGIN:VCALENDAR")
@@ -70,9 +71,10 @@ func (uc *impl) writeICalendar(writer io.Writer, modules []calendardomain.School
 	w.write("END:VTIMEZONE")
 
 	for _, c := range courses {
+		_, transparent := transparentCourseIDs[c.ID]
 		ss := calendardomain.GetSchedules(modules, c.Schedules)
 		for _, s := range ss {
-			writeCalendarEvent(w, c, s, isRdateSupported)
+			writeCalendarEvent(w, c, s, transparent, isRdateSupported)
 		}
 	}
 
@@ -97,11 +99,15 @@ func buildDescription(c *timetableappdto.RegisteredCourse) string {
 	return url
 }
 
-func writeCalendarEvent(w *errWriter, c *timetableappdto.RegisteredCourse, s calendardomain.Schedule, isRdateSupported bool) {
+func writeCalendarEvent(w *errWriter, c *timetableappdto.RegisteredCourse, s calendardomain.Schedule, transparent bool, isRdateSupported bool) {
 	w.write("BEGIN:VEVENT")
 
 	w.write("DTSTAMP:%s", icsDtstamp())
 	w.write("UID:%s", generateUID(c, s))
+
+	if transparent {
+		w.write("TRANSP:TRANSPARENT")
+	}
 
 	w.write("SUMMARY:%s", icsTextEscaper.Replace(c.Name.String()))
 	w.write("LOCATION:%s", icsTextEscaper.Replace(s.Location))
@@ -133,6 +139,10 @@ func writeCalendarEvent(w *errWriter, c *timetableappdto.RegisteredCourse, s cal
 
 			w.write("UID:%s", generateUID(c, newSchedule))
 			w.write("DTSTAMP:%s", icsDtstamp())
+
+			if transparent {
+				w.write("TRANSP:TRANSPARENT")
+			}
 
 			w.write("SUMMARY:%s", icsTextEscaper.Replace(c.Name.String()))
 			w.write("LOCATION:%s", icsTextEscaper.Replace(s.Location))

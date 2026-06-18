@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/samber/mo"
+	calendardomain "github.com/twin-te/twin-te/back/module/calendar/domain"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -25,18 +26,24 @@ type UseCase interface {
 	// [Authentication] not required
 	ExportTimetableToICalByIcalSubscriptionID(ctx context.Context, id idtype.IcalSubscriptionID, year shareddomain.AcademicYear, tagIDs []idtype.TagID, isRdateSupported bool) ([]byte, error)
 
-	// FindIcalSubscriptionID returns the iCal subscription ID if the user has enabled it.
+	// FindIcalSubscription はユーザーが連携を有効化していれば iCal 連携（id, mode, 対象タグ ID）を返す。
 	//
 	// [Authentication] required
-	FindIcalSubscriptionID(ctx context.Context) (mo.Option[idtype.IcalSubscriptionID], error)
+	FindIcalSubscription(ctx context.Context) (mo.Option[*calendardomain.IcalSubscription], error)
 
-	// EnableIcalSubscription creates or returns the iCal subscription ID for the user.
+	// EnableIcalSubscription はユーザーの iCal 連携 ID を作成または既存のものを返す。
+	// 新規作成時のモードは SYNC、対象タグは空がデフォルト。
 	//
 	// [Authentication] required
 	EnableIcalSubscription(ctx context.Context) (idtype.IcalSubscriptionID, error)
 
-	// DisableIcalSubscription removes the public iCal URL for the user.
+	// DisableIcalSubscription はユーザーの公開 iCal URL を削除する。
 	//
 	// [Authentication] required
 	DisableIcalSubscription(ctx context.Context) error
+
+	// UpdateIcalSubscription はユーザーの iCal 連携のモードと対象タグ ID を上書きする。
+	//
+	// [Authentication] required
+	UpdateIcalSubscription(ctx context.Context, mode calendardomain.IcalSubscriptionMode, targetTagIDs []idtype.TagID) error
 }

@@ -7,7 +7,7 @@
 package calendarv1
 
 import (
-	_ "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpb"
+	sharedpb "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/sharedpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -21,6 +21,62 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+// IcalSubscriptionMode は target_tag_ids が付与されたコースを iCal フィードでどう出力するかを制御する。
+type IcalSubscriptionMode int32
+
+const (
+	IcalSubscriptionMode_ICAL_SUBSCRIPTION_MODE_UNSPECIFIED IcalSubscriptionMode = 0
+	// SYNC はすべてのコースを通常出力する。target_tag_ids は空でなければならない。
+	IcalSubscriptionMode_ICAL_SUBSCRIPTION_MODE_SYNC IcalSubscriptionMode = 1
+	// EXCLUDE は target_tag_ids のいずれかのタグを持つコースを出力しない。
+	IcalSubscriptionMode_ICAL_SUBSCRIPTION_MODE_EXCLUDE IcalSubscriptionMode = 2
+	// TRANSPARENT は target_tag_ids のいずれかのタグを持つコースに TRANSP:TRANSPARENT を付与する。
+	IcalSubscriptionMode_ICAL_SUBSCRIPTION_MODE_TRANSPARENT IcalSubscriptionMode = 3
+)
+
+// Enum value maps for IcalSubscriptionMode.
+var (
+	IcalSubscriptionMode_name = map[int32]string{
+		0: "ICAL_SUBSCRIPTION_MODE_UNSPECIFIED",
+		1: "ICAL_SUBSCRIPTION_MODE_SYNC",
+		2: "ICAL_SUBSCRIPTION_MODE_EXCLUDE",
+		3: "ICAL_SUBSCRIPTION_MODE_TRANSPARENT",
+	}
+	IcalSubscriptionMode_value = map[string]int32{
+		"ICAL_SUBSCRIPTION_MODE_UNSPECIFIED": 0,
+		"ICAL_SUBSCRIPTION_MODE_SYNC":        1,
+		"ICAL_SUBSCRIPTION_MODE_EXCLUDE":     2,
+		"ICAL_SUBSCRIPTION_MODE_TRANSPARENT": 3,
+	}
+)
+
+func (x IcalSubscriptionMode) Enum() *IcalSubscriptionMode {
+	p := new(IcalSubscriptionMode)
+	*p = x
+	return p
+}
+
+func (x IcalSubscriptionMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IcalSubscriptionMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_calendar_v1_service_proto_enumTypes[0].Descriptor()
+}
+
+func (IcalSubscriptionMode) Type() protoreflect.EnumType {
+	return &file_calendar_v1_service_proto_enumTypes[0]
+}
+
+func (x IcalSubscriptionMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use IcalSubscriptionMode.Descriptor instead.
+func (IcalSubscriptionMode) EnumDescriptor() ([]byte, []int) {
+	return file_calendar_v1_service_proto_rawDescGZIP(), []int{0}
+}
 
 type GetIcalSubscriptionUrlRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -59,8 +115,11 @@ func (*GetIcalSubscriptionUrlRequest) Descriptor() ([]byte, []int) {
 }
 
 type GetIcalSubscriptionUrlResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Url           *string                `protobuf:"bytes,1,opt,name=url,proto3,oneof" json:"url,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Url   *string                `protobuf:"bytes,1,opt,name=url,proto3,oneof" json:"url,omitempty"`
+	// mode と target_tag_ids は現在の設定を表す。url が設定されているときのみ意味を持つ。
+	Mode          IcalSubscriptionMode `protobuf:"varint,2,opt,name=mode,proto3,enum=calendar.v1.IcalSubscriptionMode" json:"mode,omitempty"`
+	TargetTagIds  []*sharedpb.UUID     `protobuf:"bytes,3,rep,name=target_tag_ids,json=targetTagIds,proto3" json:"target_tag_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -100,6 +159,20 @@ func (x *GetIcalSubscriptionUrlResponse) GetUrl() string {
 		return *x.Url
 	}
 	return ""
+}
+
+func (x *GetIcalSubscriptionUrlResponse) GetMode() IcalSubscriptionMode {
+	if x != nil {
+		return x.Mode
+	}
+	return IcalSubscriptionMode_ICAL_SUBSCRIPTION_MODE_UNSPECIFIED
+}
+
+func (x *GetIcalSubscriptionUrlResponse) GetTargetTagIds() []*sharedpb.UUID {
+	if x != nil {
+		return x.TargetTagIds
+	}
+	return nil
 }
 
 type EnableIcalSubscriptionRequest struct {
@@ -254,24 +327,124 @@ func (*DisableIcalSubscriptionResponse) Descriptor() ([]byte, []int) {
 	return file_calendar_v1_service_proto_rawDescGZIP(), []int{5}
 }
 
+type UpdateIcalSubscriptionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mode          IcalSubscriptionMode   `protobuf:"varint,1,opt,name=mode,proto3,enum=calendar.v1.IcalSubscriptionMode" json:"mode,omitempty"`
+	TargetTagIds  []*sharedpb.UUID       `protobuf:"bytes,2,rep,name=target_tag_ids,json=targetTagIds,proto3" json:"target_tag_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateIcalSubscriptionRequest) Reset() {
+	*x = UpdateIcalSubscriptionRequest{}
+	mi := &file_calendar_v1_service_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateIcalSubscriptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateIcalSubscriptionRequest) ProtoMessage() {}
+
+func (x *UpdateIcalSubscriptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_calendar_v1_service_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateIcalSubscriptionRequest.ProtoReflect.Descriptor instead.
+func (*UpdateIcalSubscriptionRequest) Descriptor() ([]byte, []int) {
+	return file_calendar_v1_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UpdateIcalSubscriptionRequest) GetMode() IcalSubscriptionMode {
+	if x != nil {
+		return x.Mode
+	}
+	return IcalSubscriptionMode_ICAL_SUBSCRIPTION_MODE_UNSPECIFIED
+}
+
+func (x *UpdateIcalSubscriptionRequest) GetTargetTagIds() []*sharedpb.UUID {
+	if x != nil {
+		return x.TargetTagIds
+	}
+	return nil
+}
+
+type UpdateIcalSubscriptionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateIcalSubscriptionResponse) Reset() {
+	*x = UpdateIcalSubscriptionResponse{}
+	mi := &file_calendar_v1_service_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateIcalSubscriptionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateIcalSubscriptionResponse) ProtoMessage() {}
+
+func (x *UpdateIcalSubscriptionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_calendar_v1_service_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateIcalSubscriptionResponse.ProtoReflect.Descriptor instead.
+func (*UpdateIcalSubscriptionResponse) Descriptor() ([]byte, []int) {
+	return file_calendar_v1_service_proto_rawDescGZIP(), []int{7}
+}
+
 var File_calendar_v1_service_proto protoreflect.FileDescriptor
 
 const file_calendar_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x19calendar/v1/service.proto\x12\vcalendar.v1\x1a\x13shared/option.proto\"\x1f\n" +
-	"\x1dGetIcalSubscriptionUrlRequest\"?\n" +
+	"\x19calendar/v1/service.proto\x12\vcalendar.v1\x1a\x13shared/option.proto\x1a\x11shared/type.proto\"\x1f\n" +
+	"\x1dGetIcalSubscriptionUrlRequest\"\xaa\x01\n" +
 	"\x1eGetIcalSubscriptionUrlResponse\x12\x15\n" +
-	"\x03url\x18\x01 \x01(\tH\x00R\x03url\x88\x01\x01B\x06\n" +
+	"\x03url\x18\x01 \x01(\tH\x00R\x03url\x88\x01\x01\x125\n" +
+	"\x04mode\x18\x02 \x01(\x0e2!.calendar.v1.IcalSubscriptionModeR\x04mode\x122\n" +
+	"\x0etarget_tag_ids\x18\x03 \x03(\v2\f.shared.UUIDR\ftargetTagIdsB\x06\n" +
 	"\x04_url\"\x1f\n" +
 	"\x1dEnableIcalSubscriptionRequest\"2\n" +
 	"\x1eEnableIcalSubscriptionResponse\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\" \n" +
 	"\x1eDisableIcalSubscriptionRequest\"!\n" +
-	"\x1fDisableIcalSubscriptionResponse2\x88\x03\n" +
+	"\x1fDisableIcalSubscriptionResponse\"\x8a\x01\n" +
+	"\x1dUpdateIcalSubscriptionRequest\x125\n" +
+	"\x04mode\x18\x01 \x01(\x0e2!.calendar.v1.IcalSubscriptionModeR\x04mode\x122\n" +
+	"\x0etarget_tag_ids\x18\x02 \x03(\v2\f.shared.UUIDR\ftargetTagIds\" \n" +
+	"\x1eUpdateIcalSubscriptionResponse*\xab\x01\n" +
+	"\x14IcalSubscriptionMode\x12&\n" +
+	"\"ICAL_SUBSCRIPTION_MODE_UNSPECIFIED\x10\x00\x12\x1f\n" +
+	"\x1bICAL_SUBSCRIPTION_MODE_SYNC\x10\x01\x12\"\n" +
+	"\x1eICAL_SUBSCRIPTION_MODE_EXCLUDE\x10\x02\x12&\n" +
+	"\"ICAL_SUBSCRIPTION_MODE_TRANSPARENT\x10\x032\x83\x04\n" +
 	"\x0fCalendarService\x12|\n" +
 	"\x16GetIcalSubscriptionUrl\x12*.calendar.v1.GetIcalSubscriptionUrlRequest\x1a+.calendar.v1.GetIcalSubscriptionUrlResponse\"\t\x82\xb5\x18\x02\b\x03\x90\x02\x01\x12y\n" +
 	"\x16EnableIcalSubscription\x12*.calendar.v1.EnableIcalSubscriptionRequest\x1a+.calendar.v1.EnableIcalSubscriptionResponse\"\x06\x82\xb5\x18\x02\b\x03\x12|\n" +
-	"\x17DisableIcalSubscription\x12+.calendar.v1.DisableIcalSubscriptionRequest\x1a,.calendar.v1.DisableIcalSubscriptionResponse\"\x06\x82\xb5\x18\x02\b\x03Bj\n" +
+	"\x17DisableIcalSubscription\x12+.calendar.v1.DisableIcalSubscriptionRequest\x1a,.calendar.v1.DisableIcalSubscriptionResponse\"\x06\x82\xb5\x18\x02\b\x03\x12y\n" +
+	"\x16UpdateIcalSubscription\x12*.calendar.v1.UpdateIcalSubscriptionRequest\x1a+.calendar.v1.UpdateIcalSubscriptionResponse\"\x06\x82\xb5\x18\x02\b\x03Bj\n" +
 	"\x1anet.twinte.api.calendar.v1ZLgithub.com/twin-te/twin-te/back/handler/api/v4/rpcgen/calendar/v1;calendarv1b\x06proto3"
 
 var (
@@ -286,27 +459,38 @@ func file_calendar_v1_service_proto_rawDescGZIP() []byte {
 	return file_calendar_v1_service_proto_rawDescData
 }
 
-var file_calendar_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_calendar_v1_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_calendar_v1_service_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_calendar_v1_service_proto_goTypes = []any{
-	(*GetIcalSubscriptionUrlRequest)(nil),   // 0: calendar.v1.GetIcalSubscriptionUrlRequest
-	(*GetIcalSubscriptionUrlResponse)(nil),  // 1: calendar.v1.GetIcalSubscriptionUrlResponse
-	(*EnableIcalSubscriptionRequest)(nil),   // 2: calendar.v1.EnableIcalSubscriptionRequest
-	(*EnableIcalSubscriptionResponse)(nil),  // 3: calendar.v1.EnableIcalSubscriptionResponse
-	(*DisableIcalSubscriptionRequest)(nil),  // 4: calendar.v1.DisableIcalSubscriptionRequest
-	(*DisableIcalSubscriptionResponse)(nil), // 5: calendar.v1.DisableIcalSubscriptionResponse
+	(IcalSubscriptionMode)(0),               // 0: calendar.v1.IcalSubscriptionMode
+	(*GetIcalSubscriptionUrlRequest)(nil),   // 1: calendar.v1.GetIcalSubscriptionUrlRequest
+	(*GetIcalSubscriptionUrlResponse)(nil),  // 2: calendar.v1.GetIcalSubscriptionUrlResponse
+	(*EnableIcalSubscriptionRequest)(nil),   // 3: calendar.v1.EnableIcalSubscriptionRequest
+	(*EnableIcalSubscriptionResponse)(nil),  // 4: calendar.v1.EnableIcalSubscriptionResponse
+	(*DisableIcalSubscriptionRequest)(nil),  // 5: calendar.v1.DisableIcalSubscriptionRequest
+	(*DisableIcalSubscriptionResponse)(nil), // 6: calendar.v1.DisableIcalSubscriptionResponse
+	(*UpdateIcalSubscriptionRequest)(nil),   // 7: calendar.v1.UpdateIcalSubscriptionRequest
+	(*UpdateIcalSubscriptionResponse)(nil),  // 8: calendar.v1.UpdateIcalSubscriptionResponse
+	(*sharedpb.UUID)(nil),                   // 9: shared.UUID
 }
 var file_calendar_v1_service_proto_depIdxs = []int32{
-	0, // 0: calendar.v1.CalendarService.GetIcalSubscriptionUrl:input_type -> calendar.v1.GetIcalSubscriptionUrlRequest
-	2, // 1: calendar.v1.CalendarService.EnableIcalSubscription:input_type -> calendar.v1.EnableIcalSubscriptionRequest
-	4, // 2: calendar.v1.CalendarService.DisableIcalSubscription:input_type -> calendar.v1.DisableIcalSubscriptionRequest
-	1, // 3: calendar.v1.CalendarService.GetIcalSubscriptionUrl:output_type -> calendar.v1.GetIcalSubscriptionUrlResponse
-	3, // 4: calendar.v1.CalendarService.EnableIcalSubscription:output_type -> calendar.v1.EnableIcalSubscriptionResponse
-	5, // 5: calendar.v1.CalendarService.DisableIcalSubscription:output_type -> calendar.v1.DisableIcalSubscriptionResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: calendar.v1.GetIcalSubscriptionUrlResponse.mode:type_name -> calendar.v1.IcalSubscriptionMode
+	9, // 1: calendar.v1.GetIcalSubscriptionUrlResponse.target_tag_ids:type_name -> shared.UUID
+	0, // 2: calendar.v1.UpdateIcalSubscriptionRequest.mode:type_name -> calendar.v1.IcalSubscriptionMode
+	9, // 3: calendar.v1.UpdateIcalSubscriptionRequest.target_tag_ids:type_name -> shared.UUID
+	1, // 4: calendar.v1.CalendarService.GetIcalSubscriptionUrl:input_type -> calendar.v1.GetIcalSubscriptionUrlRequest
+	3, // 5: calendar.v1.CalendarService.EnableIcalSubscription:input_type -> calendar.v1.EnableIcalSubscriptionRequest
+	5, // 6: calendar.v1.CalendarService.DisableIcalSubscription:input_type -> calendar.v1.DisableIcalSubscriptionRequest
+	7, // 7: calendar.v1.CalendarService.UpdateIcalSubscription:input_type -> calendar.v1.UpdateIcalSubscriptionRequest
+	2, // 8: calendar.v1.CalendarService.GetIcalSubscriptionUrl:output_type -> calendar.v1.GetIcalSubscriptionUrlResponse
+	4, // 9: calendar.v1.CalendarService.EnableIcalSubscription:output_type -> calendar.v1.EnableIcalSubscriptionResponse
+	6, // 10: calendar.v1.CalendarService.DisableIcalSubscription:output_type -> calendar.v1.DisableIcalSubscriptionResponse
+	8, // 11: calendar.v1.CalendarService.UpdateIcalSubscription:output_type -> calendar.v1.UpdateIcalSubscriptionResponse
+	8, // [8:12] is the sub-list for method output_type
+	4, // [4:8] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_calendar_v1_service_proto_init() }
@@ -320,13 +504,14 @@ func file_calendar_v1_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_calendar_v1_service_proto_rawDesc), len(file_calendar_v1_service_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   6,
+			NumEnums:      1,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_calendar_v1_service_proto_goTypes,
 		DependencyIndexes: file_calendar_v1_service_proto_depIdxs,
+		EnumInfos:         file_calendar_v1_service_proto_enumTypes,
 		MessageInfos:      file_calendar_v1_service_proto_msgTypes,
 	}.Build()
 	File_calendar_v1_service_proto = out.File

@@ -42,6 +42,9 @@ const (
 	// CalendarServiceDisableIcalSubscriptionProcedure is the fully-qualified name of the
 	// CalendarService's DisableIcalSubscription RPC.
 	CalendarServiceDisableIcalSubscriptionProcedure = "/calendar.v1.CalendarService/DisableIcalSubscription"
+	// CalendarServiceUpdateIcalSubscriptionProcedure is the fully-qualified name of the
+	// CalendarService's UpdateIcalSubscription RPC.
+	CalendarServiceUpdateIcalSubscriptionProcedure = "/calendar.v1.CalendarService/UpdateIcalSubscription"
 )
 
 // CalendarServiceClient is a client for the calendar.v1.CalendarService service.
@@ -49,6 +52,7 @@ type CalendarServiceClient interface {
 	GetIcalSubscriptionUrl(context.Context, *connect_go.Request[v1.GetIcalSubscriptionUrlRequest]) (*connect_go.Response[v1.GetIcalSubscriptionUrlResponse], error)
 	EnableIcalSubscription(context.Context, *connect_go.Request[v1.EnableIcalSubscriptionRequest]) (*connect_go.Response[v1.EnableIcalSubscriptionResponse], error)
 	DisableIcalSubscription(context.Context, *connect_go.Request[v1.DisableIcalSubscriptionRequest]) (*connect_go.Response[v1.DisableIcalSubscriptionResponse], error)
+	UpdateIcalSubscription(context.Context, *connect_go.Request[v1.UpdateIcalSubscriptionRequest]) (*connect_go.Response[v1.UpdateIcalSubscriptionResponse], error)
 }
 
 // NewCalendarServiceClient constructs a client for the calendar.v1.CalendarService service. By
@@ -77,6 +81,11 @@ func NewCalendarServiceClient(httpClient connect_go.HTTPClient, baseURL string, 
 			baseURL+CalendarServiceDisableIcalSubscriptionProcedure,
 			opts...,
 		),
+		updateIcalSubscription: connect_go.NewClient[v1.UpdateIcalSubscriptionRequest, v1.UpdateIcalSubscriptionResponse](
+			httpClient,
+			baseURL+CalendarServiceUpdateIcalSubscriptionProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -85,6 +94,7 @@ type calendarServiceClient struct {
 	getIcalSubscriptionUrl  *connect_go.Client[v1.GetIcalSubscriptionUrlRequest, v1.GetIcalSubscriptionUrlResponse]
 	enableIcalSubscription  *connect_go.Client[v1.EnableIcalSubscriptionRequest, v1.EnableIcalSubscriptionResponse]
 	disableIcalSubscription *connect_go.Client[v1.DisableIcalSubscriptionRequest, v1.DisableIcalSubscriptionResponse]
+	updateIcalSubscription  *connect_go.Client[v1.UpdateIcalSubscriptionRequest, v1.UpdateIcalSubscriptionResponse]
 }
 
 // GetIcalSubscriptionUrl calls calendar.v1.CalendarService.GetIcalSubscriptionUrl.
@@ -102,11 +112,17 @@ func (c *calendarServiceClient) DisableIcalSubscription(ctx context.Context, req
 	return c.disableIcalSubscription.CallUnary(ctx, req)
 }
 
+// UpdateIcalSubscription calls calendar.v1.CalendarService.UpdateIcalSubscription.
+func (c *calendarServiceClient) UpdateIcalSubscription(ctx context.Context, req *connect_go.Request[v1.UpdateIcalSubscriptionRequest]) (*connect_go.Response[v1.UpdateIcalSubscriptionResponse], error) {
+	return c.updateIcalSubscription.CallUnary(ctx, req)
+}
+
 // CalendarServiceHandler is an implementation of the calendar.v1.CalendarService service.
 type CalendarServiceHandler interface {
 	GetIcalSubscriptionUrl(context.Context, *connect_go.Request[v1.GetIcalSubscriptionUrlRequest]) (*connect_go.Response[v1.GetIcalSubscriptionUrlResponse], error)
 	EnableIcalSubscription(context.Context, *connect_go.Request[v1.EnableIcalSubscriptionRequest]) (*connect_go.Response[v1.EnableIcalSubscriptionResponse], error)
 	DisableIcalSubscription(context.Context, *connect_go.Request[v1.DisableIcalSubscriptionRequest]) (*connect_go.Response[v1.DisableIcalSubscriptionResponse], error)
+	UpdateIcalSubscription(context.Context, *connect_go.Request[v1.UpdateIcalSubscriptionRequest]) (*connect_go.Response[v1.UpdateIcalSubscriptionResponse], error)
 }
 
 // NewCalendarServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -131,6 +147,11 @@ func NewCalendarServiceHandler(svc CalendarServiceHandler, opts ...connect_go.Ha
 		svc.DisableIcalSubscription,
 		opts...,
 	)
+	calendarServiceUpdateIcalSubscriptionHandler := connect_go.NewUnaryHandler(
+		CalendarServiceUpdateIcalSubscriptionProcedure,
+		svc.UpdateIcalSubscription,
+		opts...,
+	)
 	return "/calendar.v1.CalendarService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CalendarServiceGetIcalSubscriptionUrlProcedure:
@@ -139,6 +160,8 @@ func NewCalendarServiceHandler(svc CalendarServiceHandler, opts ...connect_go.Ha
 			calendarServiceEnableIcalSubscriptionHandler.ServeHTTP(w, r)
 		case CalendarServiceDisableIcalSubscriptionProcedure:
 			calendarServiceDisableIcalSubscriptionHandler.ServeHTTP(w, r)
+		case CalendarServiceUpdateIcalSubscriptionProcedure:
+			calendarServiceUpdateIcalSubscriptionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -158,4 +181,8 @@ func (UnimplementedCalendarServiceHandler) EnableIcalSubscription(context.Contex
 
 func (UnimplementedCalendarServiceHandler) DisableIcalSubscription(context.Context, *connect_go.Request[v1.DisableIcalSubscriptionRequest]) (*connect_go.Response[v1.DisableIcalSubscriptionResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("calendar.v1.CalendarService.DisableIcalSubscription is not implemented"))
+}
+
+func (UnimplementedCalendarServiceHandler) UpdateIcalSubscription(context.Context, *connect_go.Request[v1.UpdateIcalSubscriptionRequest]) (*connect_go.Response[v1.UpdateIcalSubscriptionResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("calendar.v1.CalendarService.UpdateIcalSubscription is not implemented"))
 }
