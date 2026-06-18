@@ -5,6 +5,47 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
+import { UUID } from "../../shared/type_pb.js";
+
+/**
+ * IcalSubscriptionMode は target_tag_ids が付与されたコースを iCal フィードでどう出力するかを制御する。
+ *
+ * @generated from enum calendar.v1.IcalSubscriptionMode
+ */
+export enum IcalSubscriptionMode {
+  /**
+   * @generated from enum value: ICAL_SUBSCRIPTION_MODE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * SYNC はすべてのコースを通常出力する。target_tag_ids は空でなければならない。
+   *
+   * @generated from enum value: ICAL_SUBSCRIPTION_MODE_SYNC = 1;
+   */
+  SYNC = 1,
+
+  /**
+   * EXCLUDE は target_tag_ids のいずれかのタグを持つコースを出力しない。
+   *
+   * @generated from enum value: ICAL_SUBSCRIPTION_MODE_EXCLUDE = 2;
+   */
+  EXCLUDE = 2,
+
+  /**
+   * TRANSPARENT は target_tag_ids のいずれかのタグを持つコースに TRANSP:TRANSPARENT を付与する。
+   *
+   * @generated from enum value: ICAL_SUBSCRIPTION_MODE_TRANSPARENT = 3;
+   */
+  TRANSPARENT = 3,
+}
+// Retrieve enum metadata with: proto3.getEnumType(IcalSubscriptionMode)
+proto3.util.setEnumType(IcalSubscriptionMode, "calendar.v1.IcalSubscriptionMode", [
+  { no: 0, name: "ICAL_SUBSCRIPTION_MODE_UNSPECIFIED" },
+  { no: 1, name: "ICAL_SUBSCRIPTION_MODE_SYNC" },
+  { no: 2, name: "ICAL_SUBSCRIPTION_MODE_EXCLUDE" },
+  { no: 3, name: "ICAL_SUBSCRIPTION_MODE_TRANSPARENT" },
+]);
 
 /**
  * @generated from message calendar.v1.GetIcalSubscriptionUrlRequest
@@ -46,6 +87,18 @@ export class GetIcalSubscriptionUrlResponse extends Message<GetIcalSubscriptionU
    */
   url?: string;
 
+  /**
+   * mode と target_tag_ids は現在の設定を表す。url が設定されているときのみ意味を持つ。
+   *
+   * @generated from field: calendar.v1.IcalSubscriptionMode mode = 2;
+   */
+  mode = IcalSubscriptionMode.UNSPECIFIED;
+
+  /**
+   * @generated from field: repeated shared.UUID target_tag_ids = 3;
+   */
+  targetTagIds: UUID[] = [];
+
   constructor(data?: PartialMessage<GetIcalSubscriptionUrlResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -55,6 +108,8 @@ export class GetIcalSubscriptionUrlResponse extends Message<GetIcalSubscriptionU
   static readonly typeName = "calendar.v1.GetIcalSubscriptionUrlResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 2, name: "mode", kind: "enum", T: proto3.getEnumType(IcalSubscriptionMode) },
+    { no: 3, name: "target_tag_ids", kind: "message", T: UUID, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetIcalSubscriptionUrlResponse {
@@ -201,6 +256,80 @@ export class DisableIcalSubscriptionResponse extends Message<DisableIcalSubscrip
 
   static equals(a: DisableIcalSubscriptionResponse | PlainMessage<DisableIcalSubscriptionResponse> | undefined, b: DisableIcalSubscriptionResponse | PlainMessage<DisableIcalSubscriptionResponse> | undefined): boolean {
     return proto3.util.equals(DisableIcalSubscriptionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message calendar.v1.UpdateIcalSubscriptionRequest
+ */
+export class UpdateIcalSubscriptionRequest extends Message<UpdateIcalSubscriptionRequest> {
+  /**
+   * @generated from field: calendar.v1.IcalSubscriptionMode mode = 1;
+   */
+  mode = IcalSubscriptionMode.UNSPECIFIED;
+
+  /**
+   * @generated from field: repeated shared.UUID target_tag_ids = 2;
+   */
+  targetTagIds: UUID[] = [];
+
+  constructor(data?: PartialMessage<UpdateIcalSubscriptionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "calendar.v1.UpdateIcalSubscriptionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "mode", kind: "enum", T: proto3.getEnumType(IcalSubscriptionMode) },
+    { no: 2, name: "target_tag_ids", kind: "message", T: UUID, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateIcalSubscriptionRequest {
+    return new UpdateIcalSubscriptionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateIcalSubscriptionRequest {
+    return new UpdateIcalSubscriptionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateIcalSubscriptionRequest {
+    return new UpdateIcalSubscriptionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateIcalSubscriptionRequest | PlainMessage<UpdateIcalSubscriptionRequest> | undefined, b: UpdateIcalSubscriptionRequest | PlainMessage<UpdateIcalSubscriptionRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateIcalSubscriptionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message calendar.v1.UpdateIcalSubscriptionResponse
+ */
+export class UpdateIcalSubscriptionResponse extends Message<UpdateIcalSubscriptionResponse> {
+  constructor(data?: PartialMessage<UpdateIcalSubscriptionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "calendar.v1.UpdateIcalSubscriptionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateIcalSubscriptionResponse {
+    return new UpdateIcalSubscriptionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateIcalSubscriptionResponse {
+    return new UpdateIcalSubscriptionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateIcalSubscriptionResponse {
+    return new UpdateIcalSubscriptionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateIcalSubscriptionResponse | PlainMessage<UpdateIcalSubscriptionResponse> | undefined, b: UpdateIcalSubscriptionResponse | PlainMessage<UpdateIcalSubscriptionResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateIcalSubscriptionResponse, a, b);
   }
 }
 
