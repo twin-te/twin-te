@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { DisableIcalSubscriptionRequest, DisableIcalSubscriptionResponse, EnableIcalSubscriptionRequest, EnableIcalSubscriptionResponse, GetIcalSubscriptionUrlRequest, GetIcalSubscriptionUrlResponse } from "./service_pb.js";
+import { DisableIcalSubscriptionRequest, DisableIcalSubscriptionResponse, EnableIcalSubscriptionRequest, EnableIcalSubscriptionResponse, GetIcalSubscriptionUrlRequest, GetIcalSubscriptionUrlResponse, UpdateIcalSubscriptionRequest, UpdateIcalSubscriptionResponse } from "./service_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -43,6 +43,15 @@ export const CalendarService = {
       name: "DisableIcalSubscription",
       I: DisableIcalSubscriptionRequest,
       O: DisableIcalSubscriptionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc calendar.v1.CalendarService.UpdateIcalSubscription
+     */
+    updateIcalSubscription: {
+      name: "UpdateIcalSubscription",
+      I: UpdateIcalSubscriptionRequest,
+      O: UpdateIcalSubscriptionResponse,
       kind: MethodKind.Unary,
     },
   }

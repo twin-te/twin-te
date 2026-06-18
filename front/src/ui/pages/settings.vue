@@ -132,6 +132,22 @@ declare global {
                 <li>一度機能を無効にするとURLが変更されます。</li>
               </ul>
             </div>
+            <div class="ical-advanced">
+              <div class="ical-advanced__text">
+                <p class="ical-advanced__title">タグごとの表示設定</p>
+                <p class="ical-advanced__desc">
+                  特定のタグの授業を隠す・予定なし扱いにできます。
+                </p>
+              </div>
+              <Button
+                class="button"
+                size="small"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="openIcalDetail"
+                >詳細設定</Button
+              >
+            </div>
           </div>
         </div>
         <div v-if="isAuthenticated" class="main__content--account">
@@ -185,10 +201,43 @@ declare global {
         >
       </template>
     </Modal>
+    <Modal
+      v-if="isIcalDetailModalVisible"
+      size="large"
+      class="ical-detail-modal"
+      @click="closeIcalDetailModal"
+    >
+      <template #title>詳細設定</template>
+      <template #contents>
+        <IcalDetailSettings
+          v-model="icalDetail"
+          :tags="icalTags"
+          @create-tag="onCreateTag"
+        />
+      </template>
+      <template #button>
+        <Button
+          size="medium"
+          layout="fill"
+          color="base"
+          @click="closeIcalDetailModal"
+          >キャンセル</Button
+        >
+        <Button
+          size="medium"
+          layout="fill"
+          color="primary"
+          :state="icalTags.length === 0 ? 'disabled' : 'default'"
+          @click="onSaveIcalDetail"
+          >保存する</Button
+        >
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useMediaQuery } from "@vueuse/core";
 import { useHead } from "@vueuse/head";
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -200,10 +249,12 @@ import {
 } from "~/domain/error";
 import { academicYears } from "~/domain/year";
 import Dropdown from "~/ui/components/Dropdown.vue";
+import IcalDetailSettings from "~/ui/components/IcalDetailSettings.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
+import { useIcalDetailSettings } from "~/ui/hooks/useIcalDetailSettings";
 import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
@@ -272,6 +323,61 @@ const copyIcalUrl = async () => {
     displayToast("URLをコピーしました", { type: "primary" });
   } catch {
     displayToast("コピーに失敗しました", { type: "danger" });
+  }
+};
+
+/** ical detail settings (タグごとの表示設定) */
+const {
+  tags: icalTags,
+  value: icalDetail,
+  load: loadIcalDetail,
+  save: saveIcalDetail,
+} = useIcalDetailSettings();
+
+// PC ではモーダル、SP ではサブページで詳細設定を出す。
+// Modal が PC レイアウトに切り替わる large-screen の条件に合わせる。
+const isLargeScreen = useMediaQuery(
+  "(min-height: 860px), (orientation: landscape)"
+);
+
+const [
+  isIcalDetailModalVisible,
+  openIcalDetailModal,
+  closeIcalDetailModal,
+] = useSwitch(false);
+
+const openIcalDetail = async () => {
+  if (isLargeScreen.value) {
+    await loadIcalDetail();
+    openIcalDetailModal();
+  } else {
+    router.push("/settings/ical");
+  }
+};
+
+const onCreateTag = () => {
+  closeIcalDetailModal();
+  router.push("/credit");
+};
+
+const onSaveIcalDetail = async () => {
+  const result = await saveIcalDetail();
+  if (!isResultError(result)) {
+    closeIcalDetailModal();
+    displayToast("表示設定を保存しました", { type: "primary" });
+  } else if (result instanceof UnauthenticatedError) {
+    displayToast(
+      "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。",
+      { type: "danger" }
+    );
+    router.push("/login");
+  } else if (result instanceof NetworkError) {
+    displayToast(
+      "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
+      { type: "danger" }
+    );
+  } else if (result instanceof InternalServerError) {
+    displayToast("サーバーエラーが発生しました。", { type: "danger" });
   }
 };
 
@@ -356,6 +462,21 @@ const confirmDeleteAccount = async () => {
   @include max-width;
 }
 
+.ical-detail-modal {
+  :deep(.modal--large) {
+    @include large-screen {
+      width: 64rem;
+    }
+  }
+  :deep(.modal__button) {
+    gap: $spacing-4;
+  }
+  :deep(.modal__contents) {
+    padding: 0 1.2rem 1rem;
+    margin: 0 -1.2rem;
+  }
+}
+
 .main {
   margin-top: $spacing-5;
   &__contents {
@@ -425,6 +546,30 @@ const confirmDeleteAccount = async () => {
           list-style: disc inside;
           margin-bottom: 0.8rem;
           font-weight: 400;
+        }
+      }
+      .ical-advanced {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        margin-top: 0.4rem;
+        &__text {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+        }
+        &__title {
+          font-weight: 500;
+          color: getColor(--color-text-main);
+        }
+        &__desc {
+          font-size: $font-small;
+          font-weight: 400;
+          color: getColor(--color-text-sub);
+        }
+        & .button {
+          margin: 0 0 0 auto;
+          flex-shrink: 0;
         }
       }
     }

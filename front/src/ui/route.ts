@@ -19,6 +19,7 @@ const Import = () => import("./pages/import.vue");
 const Login = () => import("./pages/login.vue");
 const News = () => import("./pages/news.vue");
 const Settings = () => import("./pages/settings.vue");
+const IcalSettings = () => import("./pages/settings/ical.vue");
 const ImportRoom = () => import("./pages/import-room/index.vue");
 const ImportRoomExcel = () => import("./pages/import-room/excel.vue");
 
@@ -35,6 +36,7 @@ const routes: RouteRecordRaw[] = [
     meta: { hasSidebar: false, hasWelcomeModal: false },
   },
   { path: "/settings", component: Settings },
+  { path: "/settings/ical", component: IcalSettings },
   { path: "/add", component: Add },
   { path: "/add/search", component: Search },
   { path: "/add/csv", component: CSV },
