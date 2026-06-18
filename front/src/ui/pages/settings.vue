@@ -162,10 +162,7 @@ declare global {
                   </button>
                 </li>
                 <li>
-                  <button
-                    class="ical-register__menu-item"
-                    @click="openIcsFile"
-                  >
+                  <button class="ical-register__menu-item" @click="openIcsFile">
                     <span class="ical-register__menu-title">.icsファイル</span>
                     <span class="ical-register__menu-desc">手動インポート</span>
                   </button>
