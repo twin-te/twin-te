@@ -452,6 +452,21 @@ const confirmDeleteAccount = async () => {
   @include max-width;
 }
 
+.ical-detail-modal {
+  :deep(.modal--large) {
+    @include large-screen {
+      width: 64rem;
+    }
+  }
+  :deep(.modal__button) {
+    gap: $spacing-4;
+  }
+  :deep(.modal__contents) {
+    padding: 0 1.2rem 1rem;
+    margin: 0 -1.2rem;
+  }
+}
+
 .main {
   margin-top: $spacing-5;
   &__contents {
@@ -528,8 +543,6 @@ const confirmDeleteAccount = async () => {
         align-items: center;
         gap: 1.2rem;
         margin-top: 0.4rem;
-        padding-top: 1.6rem;
-        border-top: 0.1rem solid getColor(--color-unselected);
         &__text {
           display: flex;
           flex-direction: column;
@@ -546,6 +559,7 @@ const confirmDeleteAccount = async () => {
         }
         & .button {
           margin: 0 0 0 auto;
+          flex-shrink: 0;
         }
       }
     }

@@ -83,19 +83,30 @@ const onSave = async () => {
 @import "~/ui/styles";
 .ical-settings {
   @include max-width;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .main {
   margin-top: $spacing-5;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: calc(100% + 2rem);
+  padding: 0 1rem 100px;
+  margin-left: -1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
   &__contents {
-    height: calc(#{$vh} - 14rem);
     overflow-y: auto;
-    padding: 0 1.2rem;
+    padding: 0 1.2rem 1rem;
     margin: 0 -1.2rem;
   }
   &__footer {
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 3rem);
     flex-shrink: 0;
     display: flex;
     padding: $spacing-4 0;

@@ -15,9 +15,9 @@ type Behavior = {
 };
 
 const behaviors: Behavior[] = [
-  { mode: "sync", title: "そのまま", description: "ふつうに表示" },
-  { mode: "exclude", title: "入れない", description: "カレンダーから消す" },
-  { mode: "transparent", title: "予定なし", description: "時間を空けておく" },
+  { mode: "sync", title: "そのまま", description: "通常の予定として表示されます" },
+  { mode: "exclude", title: "入れない", description: "予定を表示しません" },
+  { mode: "transparent", title: "予定なし", description: "空き時間として表示されます" },
 ];
 
 export default defineComponent({
@@ -218,7 +218,6 @@ export default defineComponent({
     padding: 0.6rem;
     border-radius: $radius-2;
     background: getColor(--color-base);
-    box-shadow: $shadow-primary-concave;
   }
 
   &__cell {
@@ -259,7 +258,7 @@ export default defineComponent({
   &__labels {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.5rem;
   }
 
   &__title {
