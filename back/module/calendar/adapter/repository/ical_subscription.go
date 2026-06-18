@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/samber/mo"
+	"github.com/twin-te/twin-te/back/base"
 	dbhelper "github.com/twin-te/twin-te/back/db/helper"
 	calendardbmodel "github.com/twin-te/twin-te/back/module/calendar/dbmodel"
 	calendardomain "github.com/twin-te/twin-te/back/module/calendar/domain"
@@ -13,27 +14,31 @@ import (
 )
 
 func (r *impl) FindIcalSubscriptionByID(ctx context.Context, id idtype.IcalSubscriptionID, lock sharedport.Lock) (mo.Option[*calendardomain.IcalSubscription], error) {
-	db := r.db.WithContext(ctx).Preload("TargetTags").Where("id = ?", id.String())
-	db = dbhelper.ApplyLock(db, lock)
-	return takeIcalSubscription(db)
+	dbSub := new(calendardbmodel.IcalSubscription)
+	
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = dbhelper.ApplyLock(tx.Preload("TargetTags").Where("id = ?", id.String()), lock)
+		return tx.Take(dbSub).Error
+	}, true)
+	if err != nil {
+		return dbhelper.ConvertErrRecordNotFound[*calendardomain.IcalSubscription](err)
+	}
+
+	return base.SomeWithErr(calendardbmodel.FromDBIcalSubscription(dbSub))
 }
 
 func (r *impl) FindIcalSubscriptionByUserID(ctx context.Context, userID idtype.UserID, lock sharedport.Lock) (mo.Option[*calendardomain.IcalSubscription], error) {
-	db := r.db.WithContext(ctx).Preload("TargetTags").Where("user_id = ?", userID.String())
-	db = dbhelper.ApplyLock(db, lock)
-	return takeIcalSubscription(db)
-}
-
-func takeIcalSubscription(db *gorm.DB) (mo.Option[*calendardomain.IcalSubscription], error) {
 	dbSub := new(calendardbmodel.IcalSubscription)
-	if err := db.Take(dbSub).Error; err != nil {
+
+	err := r.transaction(ctx, func(tx *gorm.DB) error {
+		tx = dbhelper.ApplyLock(tx.Preload("TargetTags").Where("user_id = ?", userID.String()), lock)
+		return tx.Take(dbSub).Error
+	}, true)
+	if err != nil {
 		return dbhelper.ConvertErrRecordNotFound[*calendardomain.IcalSubscription](err)
 	}
-	sub, err := calendardbmodel.FromDBIcalSubscription(dbSub)
-	if err != nil {
-		return mo.None[*calendardomain.IcalSubscription](), err
-	}
-	return mo.Some(sub), nil
+
+	return base.SomeWithErr(calendardbmodel.FromDBIcalSubscription(dbSub))
 }
 
 func (r *impl) CreateIcalSubscription(ctx context.Context, s *calendardomain.IcalSubscription) error {
