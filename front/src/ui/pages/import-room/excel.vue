@@ -244,7 +244,7 @@ async function upload() {
         <div class="download-info">
           <h6>Excel ファイルのダウンロード方法</h6>
           Excel ファイルは筑波大学関係者限定で配布されています。
-          以下のリンクから、<code>kdb_ja_学群.xlsx</code>
+          以下のリンクから、<code>kdb_ja.xlsx</code>
           ファイルをダウンロードしてください。<br />
           <a href="https://bit.ly/UT-classroominfo" target="_blank">
             授業場所 Excel ファイルのダウンロードはこちら（要認証）
