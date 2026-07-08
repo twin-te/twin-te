@@ -253,7 +253,7 @@ declare global {
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import {
   InternalServerError,
@@ -356,6 +356,24 @@ const toggleRegisterMenu = () => {
 const closeRegisterMenu = () => {
   isRegisterMenuOpen.value = false;
 };
+
+const handleOutsideClick = (event: MouseEvent) => {
+  if (registerRef.value && !registerRef.value.contains(event.target as Node)) {
+    closeRegisterMenu();
+  }
+};
+
+watch(isRegisterMenuOpen, (open) => {
+  if (open) {
+    document.addEventListener("click", handleOutsideClick);
+  } else {
+    document.removeEventListener("click", handleOutsideClick);
+  }
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleOutsideClick);
+});
 
 const openGoogleCalendar = () => {
   if (!icalUrl.value) return;
