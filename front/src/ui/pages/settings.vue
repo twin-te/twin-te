@@ -359,8 +359,9 @@ const closeRegisterMenu = () => {
 
 const openGoogleCalendar = () => {
   if (!icalUrl.value) return;
+  const webcalUrl = icalUrl.value.replace(/^https?:\/\//, "webcal://");
   const url = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
-    icalUrl.value
+    webcalUrl
   )}`;
   window.open(url, "_blank");
   closeRegisterMenu();
