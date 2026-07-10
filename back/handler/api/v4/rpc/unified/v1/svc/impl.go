@@ -6,13 +6,12 @@ import (
 	"github.com/bufbuild/connect-go"
 	"github.com/twin-te/twin-te/back/base"
 	schoolcalendarv1conv "github.com/twin-te/twin-te/back/handler/api/v4/rpc/schoolcalendar/v1/conv"
+	sharedconv "github.com/twin-te/twin-te/back/handler/api/v4/rpc/shared/conv"
+	timetablev1conv "github.com/twin-te/twin-te/back/handler/api/v4/rpc/timetable/v1/conv"
 	unifiedv1 "github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/unified/v1"
 	"github.com/twin-te/twin-te/back/handler/api/v4/rpcgen/unified/v1/unifiedv1connect"
-	sharedconv "github.com/twin-te/twin-te/back/handler/api/v4/rpc/shared/conv"
 	unifiedmodule "github.com/twin-te/twin-te/back/module/unified"
-	timetablev1conv "github.com/twin-te/twin-te/back/handler/api/v4/rpc/timetable/v1/conv"
 )
-
 
 var _ unifiedv1connect.UnifiedServiceHandler = (*impl)(nil)
 
@@ -30,7 +29,7 @@ func (svc *impl) GetByDate(ctx context.Context, req *connect.Request[unifiedv1.G
 	if err != nil {
 		return
 	}
-	
+
 	pbEvents, err := base.MapWithErr(events, schoolcalendarv1conv.ToPBEvent)
 	if err != nil {
 		return
@@ -45,10 +44,10 @@ func (svc *impl) GetByDate(ctx context.Context, req *connect.Request[unifiedv1.G
 	if err != nil {
 		return
 	}
-	
+
 	res = connect.NewResponse(&unifiedv1.GetByDateResponse{
-		Events: pbEvents,
-		Module: pbModule,
+		Events:            pbEvents,
+		Module:            pbModule,
 		RegisteredCourses: pbRegisteredCourses,
 	})
 

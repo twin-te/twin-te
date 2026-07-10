@@ -7,9 +7,9 @@ import (
 )
 
 type IcalSubscription struct {
-	ID        string
-	UserID    string
-	
+	ID     string
+	UserID string
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
