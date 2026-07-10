@@ -22,9 +22,9 @@ import (
 var _ http.Handler = (*impl)(nil)
 
 type impl struct {
-	authv4Handler         http.Handler
+	authv4Handler     http.Handler
 	calendarv1Handler http.Handler
-	apiv4RPCHandler       http.Handler
+	apiv4RPCHandler   http.Handler
 }
 
 func (h *impl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -80,9 +80,9 @@ func New(
 	}).Handler(apiv4RPCHandler)
 
 	h := &impl{
-		authv4Handler:         authv4Handler,
+		authv4Handler:     authv4Handler,
 		calendarv1Handler: calendarv1Handler,
-		apiv4RPCHandler:       apiv4RPCHandler,
+		apiv4RPCHandler:   apiv4RPCHandler,
 	}
 
 	return h

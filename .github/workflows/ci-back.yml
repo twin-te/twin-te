@@ -19,6 +19,12 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
+      - name: Check gofmt
+        run: test $(gofmt -l . | wc -l) -eq 0
+
+      - name: Vet
+        run: go vet ./...
+
       - name: Build
         run: go build -v ./...
 
