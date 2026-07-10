@@ -37,10 +37,10 @@ docker compose run --rm db-migration bash -c 'make migrate-up db_url=${TEST_DB_U
 次に [KdB](https://kdb.tsukuba.ac.jp/) から最新の講義情報を取得します。
 
 ```sh
-docker compose run -u root --rm parser uv run ./download_and_parse.py --year 2025 --output-path kdb_2025.json
-mv ./parser/kdb_2025.json ./back/kdb_2025.json
-docker compose run -u root --rm back go run . update-courses-based-on-kdb --year 2025 --kdb-json-file-path kdb_2025.json
-rm ./back/kdb_2025.json
+docker compose run -u root --rm parser uv run ./download_and_parse.py --year 2026 --output-path kdb_2026.json
+mv ./parser/kdb_2026.json ./back/kdb_2026.json
+docker compose run -u root --rm back go run . update-courses-based-on-kdb --year 2026 --kdb-json-file-path kdb_2026.json
+rm ./back/kdb_2026.json
 ```
 
 アプリケーションを立ち上げます。
@@ -105,7 +105,7 @@ parserを実行するには以下のコマンドを実行します。
 ```sh
 cd parser
 uv sync --locked
-uv run download_and_parse.py --year 2025 --output-path kdb_2025.json
+uv run download_and_parse.py --year 2026 --output-path kdb_2026.json
 ```
 
 backを実行するには以下のコマンドを実行します。
@@ -118,7 +118,7 @@ cp .env .env.local // please edit .env.local file
 set -a; source .env.local; set +a;
 
 # update courses based on kdb
-go run .  update-courses-based-on-kdb --year 2025 --kdb-json-file-path ../parser/kdb_2025.json
+go run .  update-courses-based-on-kdb --year 2026 --kdb-json-file-path ../parser/kdb_2026.json
 
 # hot reload
 go install github.com/air-verse/air@latest
