@@ -1,7 +1,6 @@
 package donationdomain_test
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -50,13 +49,7 @@ func TestConstructPaymentHistory(t *testing.T) {
 	})
 
 	t.Run("fn returns error", func(t *testing.T) {
-		wantErr := errors.New("boom")
-		_, err := donationdomain.ConstructPaymentHistory(func(ph *donationdomain.PaymentHistory) error {
-			return wantErr
-		})
-		if !errors.Is(err, wantErr) {
-			t.Errorf("err = %v, want %v", err, wantErr)
-		}
+		assertConstructFnError(t, donationdomain.ConstructPaymentHistory)
 	})
 
 	tests := []struct {
@@ -95,15 +88,5 @@ func TestConstructPaymentHistory(t *testing.T) {
 			ph.Amount = 100
 		}},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := donationdomain.ConstructPaymentHistory(func(ph *donationdomain.PaymentHistory) error {
-				tt.fn(ph)
-				return nil
-			})
-			if err == nil {
-				t.Error("expected error, got nil")
-			}
-		})
-	}
+	assertConstructMissingFields(t, donationdomain.ConstructPaymentHistory, tests)
 }

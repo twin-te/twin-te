@@ -152,8 +152,17 @@ func TestGetSchedules_ExceptionsBetweenModules(t *testing.T) {
 	if len(got) != 1 {
 		t.Fatalf("len(got) = %v, want 1", len(got))
 	}
-	if len(got[0].Exceptions) == 0 {
-		t.Errorf("expected exceptions from gap between modules, got none")
+	wantExceptionDates := []civil.Date{
+		{Year: 2026, Month: 5, Day: 4},
+		{Year: 2026, Month: 5, Day: 11},
+	}
+	if len(got[0].Exceptions) != len(wantExceptionDates) {
+		t.Fatalf("len(Exceptions) = %v, want %v", len(got[0].Exceptions), len(wantExceptionDates))
+	}
+	for i, want := range wantExceptionDates {
+		if got[0].Exceptions[i].Date != want {
+			t.Errorf("Exceptions[%d].Date = %v, want %v", i, got[0].Exceptions[i].Date, want)
+		}
 	}
 }
 

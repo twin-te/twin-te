@@ -1,7 +1,6 @@
 package donationdomain_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/samber/mo"
@@ -181,13 +180,7 @@ func TestConstructPaymentUser(t *testing.T) {
 	})
 
 	t.Run("fn returns error", func(t *testing.T) {
-		wantErr := errors.New("boom")
-		_, err := donationdomain.ConstructPaymentUser(func(pu *donationdomain.PaymentUser) error {
-			return wantErr
-		})
-		if !errors.Is(err, wantErr) {
-			t.Errorf("err = %v, want %v", err, wantErr)
-		}
+		assertConstructFnError(t, donationdomain.ConstructPaymentUser)
 	})
 
 	tests := []struct {
@@ -201,15 +194,5 @@ func TestConstructPaymentUser(t *testing.T) {
 			pu.ID = id
 		}},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := donationdomain.ConstructPaymentUser(func(pu *donationdomain.PaymentUser) error {
-				tt.fn(pu)
-				return nil
-			})
-			if err == nil {
-				t.Error("expected error, got nil")
-			}
-		})
-	}
+	assertConstructMissingFields(t, donationdomain.ConstructPaymentUser, tests)
 }

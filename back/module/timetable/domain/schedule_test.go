@@ -1,6 +1,7 @@
 package timetabledomain_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -254,11 +255,12 @@ func TestConstructSchedule(t *testing.T) {
 	})
 
 	t.Run("fn returns error", func(t *testing.T) {
+		wantErr := errors.New("boom")
 		_, err := timetabledomain.ConstructSchedule(func() (timetabledomain.Schedule, error) {
-			return timetabledomain.Schedule{}, errBoom
+			return timetabledomain.Schedule{}, wantErr
 		})
-		if err == nil {
-			t.Error("expected error, got nil")
+		if !errors.Is(err, wantErr) {
+			t.Errorf("err = %v, want %v", err, wantErr)
 		}
 	})
 
@@ -323,9 +325,3 @@ func TestParseSchedule(t *testing.T) {
 		}
 	})
 }
-
-var errBoom = &boomErr{}
-
-type boomErr struct{}
-
-func (e *boomErr) Error() string { return "boom" }

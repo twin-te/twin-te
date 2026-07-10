@@ -1,7 +1,6 @@
 package donationdomain_test
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -47,13 +46,7 @@ func TestConstructSubscriptionPlan(t *testing.T) {
 	})
 
 	t.Run("fn returns error", func(t *testing.T) {
-		wantErr := errors.New("boom")
-		_, err := donationdomain.ConstructSubscriptionPlan(func(sp *donationdomain.SubscriptionPlan) error {
-			return wantErr
-		})
-		if !errors.Is(err, wantErr) {
-			t.Errorf("err = %v, want %v", err, wantErr)
-		}
+		assertConstructFnError(t, donationdomain.ConstructSubscriptionPlan)
 	})
 
 	tests := []struct {
@@ -74,17 +67,7 @@ func TestConstructSubscriptionPlan(t *testing.T) {
 			sp.Amount = 0
 		}},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := donationdomain.ConstructSubscriptionPlan(func(sp *donationdomain.SubscriptionPlan) error {
-				tt.fn(sp)
-				return nil
-			})
-			if err == nil {
-				t.Error("expected error, got nil")
-			}
-		})
-	}
+	assertConstructMissingFields(t, donationdomain.ConstructSubscriptionPlan, tests)
 }
 
 func TestConstructSubscription(t *testing.T) {
@@ -112,13 +95,7 @@ func TestConstructSubscription(t *testing.T) {
 	})
 
 	t.Run("fn returns error", func(t *testing.T) {
-		wantErr := errors.New("boom")
-		_, err := donationdomain.ConstructSubscription(func(s *donationdomain.Subscription) error {
-			return wantErr
-		})
-		if !errors.Is(err, wantErr) {
-			t.Errorf("err = %v, want %v", err, wantErr)
-		}
+		assertConstructFnError(t, donationdomain.ConstructSubscription)
 	})
 
 	tests := []struct {
@@ -146,15 +123,5 @@ func TestConstructSubscription(t *testing.T) {
 			s.PlanID = planID
 		}},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			_, err := donationdomain.ConstructSubscription(func(s *donationdomain.Subscription) error {
-				tt.fn(s)
-				return nil
-			})
-			if err == nil {
-				t.Error("expected error, got nil")
-			}
-		})
-	}
+	assertConstructMissingFields(t, donationdomain.ConstructSubscription, tests)
 }
