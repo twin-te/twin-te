@@ -1,8 +1,11 @@
 package authfactory
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"time"
 
+	"github.com/google/uuid"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
 	authport "github.com/twin-te/twin-te/back/module/auth/port"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -29,6 +32,19 @@ func (f *impl) NewSession(userID idtype.UserID) (*authdomain.Session, error) {
 		s.ExpiredAt = f.nowFunc().Add(authdomain.SessionLifeTime)
 		return nil
 	})
+}
+
+func (f *impl) NewAuthChallenge(provider authdomain.Provider) (*authdomain.AuthChallenge, error) {
+	nonceBytes := make([]byte, 32)
+	if _, err := rand.Read(nonceBytes); err != nil {
+		return nil, err
+	}
+	return &authdomain.AuthChallenge{
+		ID:        uuid.NewString(),
+		Provider:  provider,
+		Nonce:     base64.RawURLEncoding.EncodeToString(nonceBytes),
+		ExpiredAt: f.nowFunc().Add(authdomain.AuthChallengeLifeTime),
+	}, nil
 }
 
 func New(nowFunc func() time.Time) *impl {

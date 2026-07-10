@@ -23,6 +23,13 @@ type Repository interface {
 	ListSessions(ctx context.Context, filter SessionFilter, limitOffset sharedport.LimitOffset, lock sharedport.Lock) ([]*authdomain.Session, error)
 	CreateSessions(ctx context.Context, sessions ...*authdomain.Session) error
 	DeleteSessions(ctx context.Context, filter SessionFilter) (rowsAffected int, err error)
+
+	CreateAuthChallenge(ctx context.Context, challenge *authdomain.AuthChallenge) error
+	ConsumeAuthChallenge(ctx context.Context, id string, provider authdomain.Provider, now time.Time) (mo.Option[*authdomain.AuthChallenge], error)
+
+	FindAppleCredential(ctx context.Context, userID idtype.UserID) (mo.Option[*authdomain.AppleCredential], error)
+	SaveAppleCredential(ctx context.Context, credential *authdomain.AppleCredential) error
+	DeleteAppleCredential(ctx context.Context, userID idtype.UserID) error
 }
 
 type UserFilter struct {

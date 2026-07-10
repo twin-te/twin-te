@@ -112,14 +112,12 @@ func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomai
 }
 
 func (uc *impl) Logout(ctx context.Context) error {
-	userID, err := uc.a.Authenticate(ctx)
+	sessionID, err := uc.a.AuthenticateSession(ctx)
 	if err != nil {
 		return err
 	}
 
-	_, err = uc.r.DeleteSessions(ctx, authport.SessionFilter{
-		UserID: mo.Some(userID),
-	})
+	_, err = uc.r.DeleteSessions(ctx, authport.SessionFilter{ID: mo.Some(sessionID)})
 	return err
 }
 
@@ -127,6 +125,21 @@ func (uc *impl) DeleteAccount(ctx context.Context) error {
 	userID, err := uc.a.Authenticate(ctx)
 	if err != nil {
 		return err
+	}
+
+	if uc.appleCredentialRevoker != nil {
+		credential, err := uc.r.FindAppleCredential(ctx, userID)
+		if err != nil {
+			return err
+		}
+		if value, ok := credential.Get(); ok {
+			if err := uc.appleCredentialRevoker.Revoke(ctx, value.ClientID, value.RefreshToken); err != nil {
+				return err
+			}
+			if err := uc.r.DeleteAppleCredential(ctx, userID); err != nil {
+				return err
+			}
+		}
 	}
 
 	_, err = uc.r.DeleteUsers(ctx, authport.UserFilter{ID: mo.Some(userID)})

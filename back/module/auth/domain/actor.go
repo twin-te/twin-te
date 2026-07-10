@@ -29,6 +29,7 @@ var _ Actor = (*AuthNUser)(nil)
 // AuthNUser represents the authenticated user.
 type AuthNUser struct {
 	UserID      idtype.UserID
+	SessionID   idtype.SessionID
 	Permissions []Permission
 }
 
@@ -44,6 +45,6 @@ func NewUnknown(permissions ...Permission) *Unknown {
 	return &Unknown{Permissions: permissions}
 }
 
-func NewAuthNUser(userID idtype.UserID, permissions ...Permission) *AuthNUser {
-	return &AuthNUser{UserID: userID, Permissions: permissions}
+func NewAuthNUser(userID idtype.UserID, sessionID idtype.SessionID, permissions ...Permission) *AuthNUser {
+	return &AuthNUser{UserID: userID, SessionID: sessionID, Permissions: permissions}
 }

@@ -39,6 +39,8 @@ func New(
 	e.GET("/:provider", h.handleOAuth2)
 	e.GET("/:provider/callback", h.handleOAuth2Callback)
 	e.GET("/logout", h.handleLogout)
+	e.POST("/logout", h.handleLogout)
+	e.POST("/:provider/challenge", h.handleCreateAuthChallenge)
 	e.GET("/google/idToken", h.handleIDTokenGoogle)
 	e.POST("/google/idToken", h.handleIDTokenGoogle)
 	e.POST("/apple/idToken", h.handleIDTokenApple)

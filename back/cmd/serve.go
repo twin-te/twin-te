@@ -18,6 +18,7 @@ import (
 	announcementusecase "github.com/twin-te/twin-te/back/module/announcement/usecase"
 	"github.com/twin-te/twin-te/back/module/auth/accesscontroller"
 	authfactory "github.com/twin-te/twin-te/back/module/auth/adapter/factory"
+	authintegrator "github.com/twin-te/twin-te/back/module/auth/adapter/integrator"
 	authrepository "github.com/twin-te/twin-te/back/module/auth/adapter/repository"
 	authusecase "github.com/twin-te/twin-te/back/module/auth/usecase"
 	calendarrepository "github.com/twin-te/twin-te/back/module/calendar/adapter/repository"
@@ -64,7 +65,8 @@ var serveCmd = &cobra.Command{
 		authFactory := authfactory.New(nowFunc)
 		authRepository := authrepository.New(db)
 		accessController := accesscontroller.New(authRepository)
-		authUseCase := authusecase.New(accessController, authFactory, authRepository)
+		appleCredentialRevoker := authintegrator.NewAppleCredentialRevoker()
+		authUseCase := authusecase.New(accessController, authFactory, authRepository, appleCredentialRevoker)
 
 		announcementFactory := announcementfactory.New(nowFunc)
 		announcementRepository := announcementrepository.New(db)

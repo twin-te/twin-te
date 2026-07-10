@@ -8,4 +8,5 @@ import (
 type Factory interface {
 	NewUser(authentication authdomain.UserAuthentication) (*authdomain.User, error)
 	NewSession(userID idtype.UserID) (*authdomain.Session, error)
+	NewAuthChallenge(provider authdomain.Provider) (*authdomain.AuthChallenge, error)
 }

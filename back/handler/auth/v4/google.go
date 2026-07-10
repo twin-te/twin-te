@@ -2,6 +2,7 @@ package authv4
 
 import (
 	"context"
+	"crypto/subtle"
 	"fmt"
 
 	"github.com/twin-te/twin-te/back/appenv"
@@ -47,10 +48,16 @@ func getGoogleSocialID(ctx context.Context, code string) (socialID authdomain.So
 	return authdomain.ParseSocialID(tokenInfo.UserId)
 }
 
-func verifyGoogleIDToken(ctx context.Context, idToken string) (socialID authdomain.SocialID, err error) {
+func verifyGoogleIDToken(ctx context.Context, idToken string, expectedNonce string) (socialID authdomain.SocialID, err error) {
 	payload, err := googleapisidtoken.Validate(ctx, idToken, googleOAuth2Config.ClientID)
 	if err != nil {
 		return
+	}
+	if expectedNonce != "" {
+		nonce, ok := payload.Claims["nonce"].(string)
+		if !ok || subtle.ConstantTimeCompare([]byte(nonce), []byte(expectedNonce)) != 1 {
+			return "", fmt.Errorf("invalid google token nonce")
+		}
 	}
 	return authdomain.ParseSocialID(payload.Subject)
 }

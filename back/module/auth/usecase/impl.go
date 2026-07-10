@@ -8,11 +8,26 @@ import (
 var _ authmodule.UseCase = (*impl)(nil)
 
 type impl struct {
-	a authmodule.AccessController
-	f authport.Factory
-	r authport.Repository
+	a                      authmodule.AccessController
+	f                      authport.Factory
+	r                      authport.Repository
+	appleCredentialRevoker authport.AppleCredentialRevoker
 }
 
-func New(a authmodule.AccessController, f authport.Factory, r authport.Repository) *impl {
-	return &impl{a, f, r}
+func New(
+	a authmodule.AccessController,
+	f authport.Factory,
+	r authport.Repository,
+	appleCredentialRevokers ...authport.AppleCredentialRevoker,
+) *impl {
+	var appleCredentialRevoker authport.AppleCredentialRevoker
+	if len(appleCredentialRevokers) != 0 {
+		appleCredentialRevoker = appleCredentialRevokers[0]
+	}
+	return &impl{
+		a:                      a,
+		f:                      f,
+		r:                      r,
+		appleCredentialRevoker: appleCredentialRevoker,
+	}
 }

@@ -53,7 +53,18 @@ func (a *impl) WithActor(ctx context.Context, id mo.Option[idtype.SessionID]) (c
 		return appctx.SetActor(ctx, authdomain.NewUnknown()), nil
 	}
 
-	return appctx.SetActor(ctx, authdomain.NewAuthNUser(user.ID)), nil
+	return appctx.SetActor(ctx, authdomain.NewAuthNUser(user.ID, session.ID)), nil
+}
+
+func (a *impl) AuthenticateSession(ctx context.Context) (idtype.SessionID, error) {
+	actor, ok := appctx.GetActor(ctx)
+	if !ok {
+		return idtype.SessionID{}, fmt.Errorf("failed to retrieve actor from the context")
+	}
+	if authNUser, ok := actor.AuthNUser(); ok {
+		return authNUser.SessionID, nil
+	}
+	return idtype.SessionID{}, apperr.New(sharederr.CodeUnauthenticated, "")
 }
 
 func (a *impl) Authenticate(ctx context.Context) (idtype.UserID, error) {

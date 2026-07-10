@@ -17,6 +17,7 @@ type AccessController interface {
 	// [Error Code]
 	//   - shared.Unauthenticated
 	Authenticate(ctx context.Context) (idtype.UserID, error)
+	AuthenticateSession(ctx context.Context) (idtype.SessionID, error)
 
 	// Authorize verifies that the actor has the given permission.
 	//
@@ -32,6 +33,10 @@ type AccessController interface {
 //   - shared.Unauthenticated
 //   - shared.Unauthorized
 type UseCase interface {
+	CreateAuthChallenge(ctx context.Context, provider authdomain.Provider) (*authdomain.AuthChallenge, error)
+	ConsumeAuthChallenge(ctx context.Context, id string, provider authdomain.Provider) (*authdomain.AuthChallenge, error)
+	SaveAppleCredential(ctx context.Context, credential *authdomain.AppleCredential) error
+
 	// SignUpOrLogin creates a new user, if the user identified by the given authentication information does not exist.
 	// Next, a new session will be created.
 	//
@@ -60,7 +65,7 @@ type UseCase interface {
 	//   - auth.UserHasAtLeastOneAuthentication
 	DeleteUserAuthentication(ctx context.Context, provider authdomain.Provider) error
 
-	// Logout deletes all sessions associated with the user.
+	// Logout deletes the current session.
 	//
 	// [Authentication] required
 	Logout(ctx context.Context) error
