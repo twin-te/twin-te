@@ -508,17 +508,26 @@ const confirmDeleteAccount = async () => {
       }
       .ical-register__select {
         @include button-cursor;
+        @include button-inactive;
         appearance: none;
         -webkit-appearance: none;
         height: 2.8rem;
-        padding: 0 3rem 0 3rem;
+        line-height: 2.8rem;
+        // Button--small の padding($spacing-4) + アイコン($font-medium) + gap($spacing-2)
+        padding: 0 calc(#{$spacing-4} + #{$font-medium} + #{$spacing-2}) 0
+          calc(#{$spacing-4} + #{$font-medium} + #{$spacing-2});
         font-size: $font-small;
-        font-weight: 500;
         color: getColor(--color-white);
         background: var(--primary-liner);
         border: none;
         border-radius: $radius-button;
-        box-shadow: $shadow-convex;
+        transition: $transition-box-shadow;
+        &:hover {
+          @include button-hover;
+        }
+        &:active {
+          @include button-active;
+        }
         &:focus {
           outline: none;
         }
@@ -538,10 +547,10 @@ const confirmDeleteAccount = async () => {
         pointer-events: none;
       }
       .ical-register__icon {
-        left: $spacing-2;
+        left: $spacing-4;
       }
       .ical-register__chevron {
-        right: $spacing-2;
+        right: $spacing-4;
       }
       .ical-url-text {
         width: 100%;
