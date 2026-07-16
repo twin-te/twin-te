@@ -128,9 +128,28 @@ declare global {
                   </option>
                   <option v-if="canRegisterApple" value="apple">
                     Appleカレンダー
+                    <span
+                      v-if="supportsBaseSelect"
+                      class="ical-register__option-desc"
+                      >iOS / macOS</span
+                    >
                   </option>
-                  <option value="outlook">Outlook</option>
-                  <option value="ics">.icsファイル</option>
+                  <option value="outlook">
+                    Outlook
+                    <span
+                      v-if="supportsBaseSelect"
+                      class="ical-register__option-desc"
+                      >Microsoft 365</span
+                    >
+                  </option>
+                  <option value="ics">
+                    .icsファイル
+                    <span
+                      v-if="supportsBaseSelect"
+                      class="ical-register__option-desc"
+                      >手動インポート</span
+                    >
+                  </option>
                 </select>
                 <span class="material-icons ical-register__chevron"
                   >expand_more</span
@@ -339,6 +358,15 @@ const openOutlookCalendar = createRegisterHandler(
 const openIcsFile = createRegisterHandler((url) => url);
 
 /**
+ * Customizable Select (appearance: base-select) に対応したブラウザでは、
+ * 選択肢に説明文を追加したリッチなプルダウンを表示する。
+ * 非対応ブラウザではネイティブのプルダウン（タイトルのみ）にフォールバックする。
+ * https://ics.media/entry/250307/
+ */
+const supportsBaseSelect =
+  typeof CSS !== "undefined" && CSS.supports("appearance", "base-select");
+
+/**
  * The register control behaves like a button: selecting an option opens the
  * corresponding registration URL and then resets the value back to the
  * placeholder so the same option can be selected again.
@@ -511,6 +539,8 @@ const confirmDeleteAccount = async () => {
         @include button-inactive;
         appearance: none;
         -webkit-appearance: none;
+        // 対応ブラウザではカスタマイズ可能モードに切り替える（非対応は上の none にフォールバック）
+        appearance: base-select;
         height: 2.8rem;
         line-height: 2.8rem;
         // Button--small の padding($spacing-4) + アイコン($font-medium) + gap($spacing-2)
@@ -535,6 +565,55 @@ const confirmDeleteAccount = async () => {
           color: getColor(--color-text-main);
           background: getColor(--color-white);
         }
+        // Customizable Select 対応ブラウザでは、プルダウン自体を旧メニューのデザインで表示する
+        &::picker-icon {
+          display: none; // シェブロンは自前の span で表示している
+        }
+        &::picker(select) {
+          appearance: base-select;
+          margin: $spacing-2 0;
+          padding: $spacing-2 0;
+          width: 30rem;
+          max-width: calc(100vw - 1.6rem);
+          background: getColor(--color-white);
+          border: none;
+          border-radius: $radius-3;
+          box-shadow: $shadow-convex;
+          // ボタンの右端に揃えて開く（旧メニューの right: 0 相当）
+          position-area: block-end span-inline-start;
+        }
+        @supports (appearance: base-select) {
+          option {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+            padding: $spacing-3 $spacing-5;
+            font-size: $font-medium;
+            font-weight: 700;
+            transition: background 0.18s ease;
+            &:hover,
+            &:focus-visible {
+              background: getColor(--color-base);
+              outline: none;
+            }
+            &:active {
+              background: getColor(--color-base);
+              opacity: 0.85;
+            }
+            &::checkmark {
+              display: none;
+            }
+            &[disabled] {
+              display: none; // プレースホルダー（登録）はリストに表示しない
+            }
+          }
+        }
+      }
+      .ical-register__option-desc {
+        font-size: $font-small;
+        font-weight: 400;
+        color: getColor(--color-text-sub);
       }
       .ical-register__icon,
       .ical-register__chevron {
