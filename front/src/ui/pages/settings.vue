@@ -440,12 +440,14 @@ const toWebcalUrl = (url: string) => url.replace(/^https?:\/\//, "webcal://");
  * `buildUrl` receives the current ical URL and returns the URL to open;
  * `enabled` optionally guards whether the registration is allowed.
  */
-const createRegisterHandler =
-  (buildUrl: (icalUrl: string) => string, enabled?: () => boolean) => () => {
-    if (!icalUrl.value || (enabled && !enabled())) return;
-    window.open(buildUrl(icalUrl.value), "_blank");
-    closeRegisterMenu();
-  };
+const createRegisterHandler = (
+  buildUrl: (icalUrl: string) => string,
+  enabled?: () => boolean
+) => () => {
+  if (!icalUrl.value || (enabled && !enabled())) return;
+  window.open(buildUrl(icalUrl.value), "_blank");
+  closeRegisterMenu();
+};
 
 const openGoogleCalendar = createRegisterHandler(
   (url) =>
