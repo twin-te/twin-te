@@ -166,7 +166,7 @@ declare global {
                       </span>
                     </button>
                   </li>
-                  <li>
+                  <li v-if="canRegisterApple">
                     <button
                       class="ical-register__menu-item"
                       @click="openAppleCalendar"
@@ -302,7 +302,7 @@ import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { isiOS, isMobile } from "~/ui/ua";
+import { isAndroid, isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
@@ -430,37 +430,41 @@ onBeforeUnmount(() => {
 /** Google Calendar cannot subscribe to a URL from its mobile app, so only allow it on PC. */
 const canRegisterGoogle = computed(() => !isMobile());
 
-const openGoogleCalendar = () => {
-  if (!icalUrl.value || !canRegisterGoogle.value) return;
-  const webcalUrl = icalUrl.value.replace(/^https?:\/\//, "webcal://");
-  const url = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
-    webcalUrl
-  )}`;
-  window.open(url, "_blank");
-  closeRegisterMenu();
-};
+/** Apple Calendar (webcal) cannot be used on the Android app, so hide it there. */
+const canRegisterApple = computed(() => !isAndroid());
 
-const openAppleCalendar = () => {
-  if (!icalUrl.value) return;
-  const url = icalUrl.value.replace(/^https?:\/\//, "webcal://");
-  window.open(url, "_blank");
-  closeRegisterMenu();
-};
+const toWebcalUrl = (url: string) => url.replace(/^https?:\/\//, "webcal://");
 
-const openOutlookCalendar = () => {
-  if (!icalUrl.value) return;
-  const url = `https://outlook.office.com/calendar/addcalendar?name=${encodeURIComponent(
-    "Twin:te"
-  )}&url=${encodeURIComponent(icalUrl.value)}`;
-  window.open(url, "_blank");
-  closeRegisterMenu();
-};
+/**
+ * Build a click handler that opens a calendar registration URL in a new tab.
+ * `buildUrl` receives the current ical URL and returns the URL to open;
+ * `enabled` optionally guards whether the registration is allowed.
+ */
+const createRegisterHandler =
+  (buildUrl: (icalUrl: string) => string, enabled?: () => boolean) => () => {
+    if (!icalUrl.value || (enabled && !enabled())) return;
+    window.open(buildUrl(icalUrl.value), "_blank");
+    closeRegisterMenu();
+  };
 
-const openIcsFile = () => {
-  if (!icalUrl.value) return;
-  window.open(icalUrl.value, "_blank");
-  closeRegisterMenu();
-};
+const openGoogleCalendar = createRegisterHandler(
+  (url) =>
+    `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
+      toWebcalUrl(url)
+    )}`,
+  () => canRegisterGoogle.value
+);
+
+const openAppleCalendar = createRegisterHandler((url) => toWebcalUrl(url));
+
+const openOutlookCalendar = createRegisterHandler(
+  (url) =>
+    `https://outlook.office.com/calendar/addcalendar?name=${encodeURIComponent(
+      "Twin:te"
+    )}&url=${encodeURIComponent(url)}`
+);
+
+const openIcsFile = createRegisterHandler((url) => url);
 
 /** logout */
 const logout = () => {
