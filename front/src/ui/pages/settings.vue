@@ -427,8 +427,8 @@ onBeforeUnmount(() => {
   document.removeEventListener("click", handleOutsideClick);
 });
 
-/** Google Calendar cannot subscribe to a URL from its mobile app, so only allow it on PC. */
-const canRegisterGoogle = computed(() => !isMobile());
+/** Google Calendar cannot subscribe to a URL from the iOS app, so hide it there. */
+const canRegisterGoogle = computed(() => !isiOS());
 
 /** Apple Calendar (webcal) cannot be used on the Android app, so hide it there. */
 const canRegisterApple = computed(() => !isAndroid());
