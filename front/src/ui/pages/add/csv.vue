@@ -244,8 +244,8 @@ const loadCourses = async (file: File) => {
     );
   }
 
-const isCourseNotDuplicated = (course: Course) =>
-  !registeredSet.has(`${course.year}_${course.code}`);
+  const isCourseNotDuplicated = (course: Course) =>
+    !registeredSet.has(`${course.year}_${course.code}`);
 
   loadedResults.splice(
     0,
