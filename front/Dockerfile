@@ -1,8 +1,8 @@
 ARG BUN_VERSION=1.1.22
-FROM oven/bun:${BUN_VERSION}-slim AS local
+FROM oven/bun:${BUN_VERSION}-slim@sha256:e7193c51f94a36975237f40faa0b47a13973f365d27d95f64abd8383a563e8d0 AS local
 WORKDIR /usr/src/twin-te/front
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lockb bunfig.toml ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -10,27 +10,29 @@ ENV NODE_ENV development
 EXPOSE 5173
 CMD ["bun", "run", "vite", "--host", "0.0.0.0", "--port", "5173"]
 
-FROM oven/bun:${BUN_VERSION}-slim AS staging-builder
+FROM oven/bun:${BUN_VERSION}-slim@sha256:e7193c51f94a36975237f40faa0b47a13973f365d27d95f64abd8383a563e8d0 AS staging-builder
 WORKDIR /app
 
 RUN --mount=type=cache,target=~/.bun/install/cache \
   --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=bun.lockb,target=bun.lockb \
+  --mount=type=bind,source=bunfig.toml,target=bunfig.toml \
   bun install --frozen-lockfile
 
 COPY . .
 RUN bun run build:staging
 
-FROM nginx AS staging-deploy
+FROM nginx@sha256:1881968aff6f7cdcc4b888c00a11f4ce241ad7ec957e0cb4a9e19e93a3ff87ea AS staging-deploy
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=staging-builder /app/dist /usr/share/nginx/html
 
-FROM oven/bun:${BUN_VERSION}-slim AS production-builder
+FROM oven/bun:${BUN_VERSION}-slim@sha256:e7193c51f94a36975237f40faa0b47a13973f365d27d95f64abd8383a563e8d0 AS production-builder
 WORKDIR /app
 
 RUN --mount=type=cache,target=~/.bun/install/cache \
   --mount=type=bind,source=package.json,target=package.json \
   --mount=type=bind,source=bun.lockb,target=bun.lockb \
+  --mount=type=bind,source=bunfig.toml,target=bunfig.toml \
   bun install --frozen-lockfile
 
 COPY . .
@@ -41,6 +43,6 @@ RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN \
   SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) \
   bun run build:production
 
-FROM nginx AS production-deploy
+FROM nginx@sha256:1881968aff6f7cdcc4b888c00a11f4ce241ad7ec957e0cb4a9e19e93a3ff87ea AS production-deploy
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=production-builder /app/dist /usr/share/nginx/html
