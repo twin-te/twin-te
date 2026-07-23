@@ -68,6 +68,10 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 		return !alreadyRegisteredCourseIDs[codeToCourse[code].ID]
 	})
 
+	if len(newCodes) == 0 {
+		return []*timetableappdto.RegisteredCourse{}, nil
+	}
+
 	registeredCourses, err := base.MapWithErr(newCodes, func(code timetabledomain.Code) (*timetabledomain.RegisteredCourse, error) {
 		return uc.f.NewRegisteredCourseFromCourse(userID, codeToCourse[code])
 	})
