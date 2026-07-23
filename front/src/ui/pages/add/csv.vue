@@ -230,9 +230,10 @@ const loadCourses = async (file: File) => {
     registered.map((course) => `${course.year}_${course.code}`)
   );
 
-  const duplicatedResults = result.filter((course) =>
-    registeredSet.has(`${course.year}_${course.code}`)
-  );
+  const isCourseDuplicated = (course: Course) =>
+    registeredSet.has(`${course.year}_${course.code}`);
+
+  const duplicatedResults = result.filter(isCourseDuplicated);
 
   if (duplicatedResults.length > 0) {
     const coursesText = duplicatedResults
@@ -244,18 +245,17 @@ const loadCourses = async (file: File) => {
     );
   }
 
-  const isCourseNotDuplicated = (course: Course) =>
-    !registeredSet.has(`${course.year}_${course.code}`);
-
   loadedResults.splice(
     0,
     loadedResults.length,
-    ...result.filter(isCourseNotDuplicated).map((course) => ({
-      course: courseToDisplay(course),
-      schedules: course.schedules,
-      selected: true,
-      expanded: false,
-    }))
+    ...result
+      .filter((course) => !isCourseDuplicated(course))
+      .map((course) => ({
+        course: courseToDisplay(course),
+        schedules: course.schedules,
+        selected: true,
+        expanded: false,
+      }))
   );
 
   const missingCodes = codes.filter(
