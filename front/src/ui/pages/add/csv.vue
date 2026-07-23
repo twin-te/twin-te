@@ -49,9 +49,9 @@
     </div>
   </div>
   <Modal
-    v-if="duplicateCourses.length > 0"
+    v-if="conflictedCourses.length > 0"
     class="duplication-modal"
-    @click="duplicateCourses = []"
+    @click="conflictedCourses = []"
   >
     <template #title>開講時限が重複しています</template>
     <template #contents>
@@ -60,7 +60,7 @@
       </p>
       <div class="modal__courses">
         <div
-          v-for="course in duplicateCourses"
+          v-for="course in conflictedCourses"
           :key="course.id"
           class="duplicated-course"
         >
@@ -78,7 +78,7 @@
         size="medium"
         layout="fill"
         color="base"
-        @click="duplicateCourses = []"
+        @click="conflictedCourses = []"
         >キャンセル</Button
       >
       <Button
@@ -95,6 +95,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { Course } from "~/domain/course";
 import { isResultError } from "~/domain/error";
 import { courseToDisplay } from "~/presentation/presenters/course";
 import Button from "~/ui/components/Button.vue";
@@ -222,15 +223,39 @@ const loadCourses = async (file: File) => {
   });
   if (isResultError(result)) throw result;
 
+  const registered = await timetableUseCase.listRegisteredCourses(year.value);
+  if (isResultError(registered)) throw registered;
+
+  const registeredSet = new Set(
+    registered.map((course) => `${course.year}_${course.code}`)
+  );
+
+  const isCourseDuplicated = (course: Course) =>
+    registeredSet.has(`${course.year}_${course.code}`);
+
+  const duplicatedResults = result.filter(isCourseDuplicated);
+
+  if (duplicatedResults.length > 0) {
+    const coursesText = duplicatedResults
+      .map((course) => `${course.code}「${course.name}」`)
+      .join("\n");
+    displayToast(
+      `登録されていない講義のみを表示しています。\n※以下の科目番号は既に登録されています。\n${coursesText}`,
+      { displayPeriod: 0 }
+    );
+  }
+
   loadedResults.splice(
     0,
     loadedResults.length,
-    ...result.map((course) => ({
-      course: courseToDisplay(course),
-      schedules: course.schedules,
-      selected: true,
-      expanded: false,
-    }))
+    ...result
+      .filter((course) => !isCourseDuplicated(course))
+      .map((course) => ({
+        course: courseToDisplay(course),
+        schedules: course.schedules,
+        selected: true,
+        expanded: false,
+      }))
   );
 
   const missingCodes = codes.filter(
@@ -249,7 +274,7 @@ const loadCourses = async (file: File) => {
 const addCourses = async (warning = true) => {
   if (buttonState.value === "disabled") return;
 
-  duplicateCourses.value = (
+  conflictedCourses.value = (
     await Promise.all(
       selectedResults.value.map(async ({ course, schedules }) => ({
         course,
@@ -265,7 +290,7 @@ const addCourses = async (warning = true) => {
     return ret;
   }, []);
 
-  if (warning && duplicateCourses.value.length > 0) return;
+  if (warning && conflictedCourses.value.length > 0) return;
   await timetableUseCase.addCoursesByCodes({
     year: year.value,
     codes: selectedResults.value.map(({ course }) => course.code),
@@ -274,7 +299,7 @@ const addCourses = async (warning = true) => {
 };
 
 /** duplicate modal */
-const duplicateCourses = ref<DisplayCourse[]>([]);
+const conflictedCourses = ref<DisplayCourse[]>([]);
 
 const buttonState = computed(() => {
   if (loadedResults.some(({ selected }) => selected)) return "default";
