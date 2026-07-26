@@ -40,7 +40,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Card :width="width">
+  <Card :width="width" @click="emitClickEvent">
     <div class="card-add">
       <div class="card-add__icon">
         <DecoratedIcon :iconName="iconName"></DecoratedIcon>
@@ -62,6 +62,11 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @import "~/ui/styles";
+
+.card,
+.card * {
+  @include button-cursor;
+}
 
 .card-add {
   display: grid;
