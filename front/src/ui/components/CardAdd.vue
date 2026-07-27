@@ -5,12 +5,12 @@ import DecoratedIcon from "./DecoratedIcon.vue";
 import IconButton from "./IconButton.vue";
 
 type Props = {
-  iconName: string,
-  heading: String,
-  text: String,
-  width: String,
-  disabled: Boolean
-}
+  iconName: string;
+  heading: string;
+  text: string;
+  width: string;
+  disabled: boolean;
+};
 
 export default defineComponent({
   components: { Card, DecoratedIcon, IconButton },
