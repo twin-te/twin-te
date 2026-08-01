@@ -39,7 +39,7 @@ export default defineComponent({
   emits: ["click-next-button"],
   setup(props: Props, { emit }) {
     const emitClickEvent = (e: MouseEvent) => {
-      if (props.disabled === true) return;
+      if (props.disabled) return;
       emit("click-next-button", e);
     };
     return { emitClickEvent };
