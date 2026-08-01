@@ -4,6 +4,14 @@ import Card from "./Card.vue";
 import DecoratedIcon from "./DecoratedIcon.vue";
 import IconButton from "./IconButton.vue";
 
+type Props = {
+  iconName: string;
+  heading: string;
+  text: string;
+  width: string;
+  disabled: boolean;
+};
+
 export default defineComponent({
   components: { Card, DecoratedIcon, IconButton },
   props: {
@@ -29,18 +37,25 @@ export default defineComponent({
     },
   },
   emits: ["click-next-button"],
-  setup(_, { emit }) {
+  setup(props: Props, { emit }) {
     const emitClickEvent = (e: MouseEvent) => {
+      if (props.disabled) return;
       emit("click-next-button", e);
     };
-
     return { emitClickEvent };
   },
 });
 </script>
 
 <template>
-  <Card :width="width">
+  <Card
+    :class="{
+      card: true,
+      '--disabled': disabled,
+    }"
+    :width="width"
+    @click="emitClickEvent"
+  >
     <div class="card-add">
       <div class="card-add__icon">
         <DecoratedIcon :iconName="iconName"></DecoratedIcon>
@@ -53,7 +68,6 @@ export default defineComponent({
           color="normal"
           iconName="arrow_forward"
           :state="disabled ? 'disabled' : 'default'"
-          @click="emitClickEvent"
         ></IconButton>
       </div>
     </div>
@@ -62,6 +76,19 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @import "~/ui/styles";
+
+.card {
+  &,
+  * {
+    @include button-cursor;
+  }
+  &.--disabled {
+    &,
+    * {
+      @include button-cursor(false);
+    }
+  }
+}
 
 .card-add {
   display: grid;
