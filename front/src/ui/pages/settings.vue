@@ -171,7 +171,7 @@ declare global {
     </div>
     <Modal
       v-if="isCalendarRegisterModalVisible"
-      size="small"
+      size="auto"
       class="calendar-register-modal"
       @click="closeCalendarRegisterModal"
     >
