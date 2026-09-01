@@ -113,96 +113,18 @@ declare global {
               class="ical-url-text"
             />
             <div class="ical-actions">
-              <div ref="registerRef" class="ical-register">
-                <Button
-                  class="ical-register__toggle"
-                  size="small"
-                  color="primary"
-                  :pauseActiveStyle="false"
-                  :state="isRegisterMenuOpen ? 'active' : 'default'"
-                  @click="toggleRegisterMenu"
+              <Button
+                class="ical-register-button"
+                size="small"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="openCalendarRegisterModal"
+              >
+                <span class="material-icons ical-register-button__icon"
+                  >calendar_today</span
                 >
-                  <span class="material-icons ical-register__toggle-icon"
-                    >calendar_today</span
-                  >
-                  <span class="ical-register__toggle-label">登録</span>
-                  <span class="material-icons ical-register__toggle-chevron">{{
-                    isRegisterMenuOpen ? "expand_less" : "expand_more"
-                  }}</span>
-                </Button>
-                <ul
-                  v-if="isRegisterMenuOpen"
-                  ref="menuRef"
-                  :class="[
-                    'ical-register__menu',
-                    `ical-register__menu--${menuDirection}`,
-                  ]"
-                  :style="
-                    menuShiftX
-                      ? { transform: `translateX(${menuShiftX}px)` }
-                      : undefined
-                  "
-                >
-                  <li>
-                    <button
-                      class="ical-register__menu-item"
-                      :class="{
-                        'ical-register__menu-item--disabled': !canRegisterGoogle,
-                      }"
-                      :disabled="!canRegisterGoogle"
-                      @click="openGoogleCalendar"
-                    >
-                      <span class="ical-register__menu-title"
-                        >Googleカレンダー</span
-                      >
-                      <span
-                        v-if="!canRegisterGoogle"
-                        class="ical-register__menu-note"
-                      >
-                        <span
-                          class="material-icons ical-register__menu-note-icon"
-                          >desktop_windows</span
-                        >PCで操作してください
-                      </span>
-                    </button>
-                  </li>
-                  <li v-if="canRegisterApple">
-                    <button
-                      class="ical-register__menu-item"
-                      @click="openAppleCalendar"
-                    >
-                      <span class="ical-register__menu-title"
-                        >Appleカレンダー</span
-                      >
-                      <span class="ical-register__menu-desc">iOS / macOS</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="ical-register__menu-item"
-                      @click="openOutlookCalendar"
-                    >
-                      <span class="ical-register__menu-title">Outlook</span>
-                      <span class="ical-register__menu-desc"
-                        >Microsoft 365</span
-                      >
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      class="ical-register__menu-item"
-                      @click="openIcsFile"
-                    >
-                      <span class="ical-register__menu-title"
-                        >.icsファイル</span
-                      >
-                      <span class="ical-register__menu-desc"
-                        >手動インポート</span
-                      >
-                    </button>
-                  </li>
-                </ul>
-              </div>
+                <span class="ical-register-button__label">登録</span>
+              </Button>
               <Button
                 class="button"
                 size="small"
@@ -248,6 +170,49 @@ declare global {
       </div>
     </div>
     <Modal
+      v-if="isCalendarRegisterModalVisible"
+      size="small"
+      class="calendar-register-modal"
+      @click="closeCalendarRegisterModal"
+    >
+      <template #title>カレンダーに登録</template>
+      <template #contents>
+        <ul class="register-targets">
+          <li v-for="target in registerTargets" :key="target.id">
+            <button
+              class="register-targets__item"
+              :class="{
+                'register-targets__item--disabled': !target.isAvailable,
+              }"
+              :disabled="!target.isAvailable"
+              @click="target.open"
+            >
+              <span class="register-targets__title">{{ target.title }}</span>
+              <span v-if="target.note" class="register-targets__note">
+                <span class="material-icons register-targets__note-icon"
+                  >desktop_windows</span
+                >{{ target.note }}
+              </span>
+              <span
+                v-else-if="target.description"
+                class="register-targets__desc"
+                >{{ target.description }}</span
+              >
+            </button>
+          </li>
+        </ul>
+      </template>
+      <template #button>
+        <Button
+          size="medium"
+          layout="fill"
+          color="base"
+          @click="closeCalendarRegisterModal"
+          >閉じる</Button
+        >
+      </template>
+    </Modal>
+    <Modal
       v-if="isAccountDeletionModalVisible"
       class="account-delete-modal"
       @click="closeAccountDeletionModal"
@@ -280,14 +245,7 @@ declare global {
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
-import {
-  computed,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-} from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import {
   InternalServerError,
@@ -372,60 +330,11 @@ const copyIcalUrl = async () => {
   }
 };
 
-const isRegisterMenuOpen = ref(false);
-const registerRef = ref<HTMLDivElement | null>(null);
-const menuRef = ref<HTMLUListElement | null>(null);
-const menuDirection = ref<"down" | "up">("down");
-const menuShiftX = ref(0);
-const MENU_ESTIMATED_HEIGHT = 280;
-const MENU_VIEWPORT_MARGIN = 8;
-const toggleRegisterMenu = async () => {
-  if (isRegisterMenuOpen.value) {
-    isRegisterMenuOpen.value = false;
-    return;
-  }
-  if (registerRef.value) {
-    const rect = registerRef.value.getBoundingClientRect();
-    const spaceBelow = window.innerHeight - rect.bottom;
-    menuDirection.value =
-      spaceBelow < MENU_ESTIMATED_HEIGHT && rect.top > spaceBelow
-        ? "up"
-        : "down";
-  }
-  menuShiftX.value = 0;
-  isRegisterMenuOpen.value = true;
-  // Keep the menu inside the viewport, adjusting only when it would overflow.
-  await nextTick();
-  if (menuRef.value) {
-    const rect = menuRef.value.getBoundingClientRect();
-    if (rect.left < MENU_VIEWPORT_MARGIN) {
-      menuShiftX.value = MENU_VIEWPORT_MARGIN - rect.left;
-    } else if (rect.right > window.innerWidth - MENU_VIEWPORT_MARGIN) {
-      menuShiftX.value = window.innerWidth - MENU_VIEWPORT_MARGIN - rect.right;
-    }
-  }
-};
-const closeRegisterMenu = () => {
-  isRegisterMenuOpen.value = false;
-};
-
-const handleOutsideClick = (event: MouseEvent) => {
-  if (registerRef.value && !registerRef.value.contains(event.target as Node)) {
-    closeRegisterMenu();
-  }
-};
-
-watch(isRegisterMenuOpen, (open) => {
-  if (open) {
-    document.addEventListener("click", handleOutsideClick);
-  } else {
-    document.removeEventListener("click", handleOutsideClick);
-  }
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener("click", handleOutsideClick);
-});
+const [
+  isCalendarRegisterModalVisible,
+  openCalendarRegisterModal,
+  closeCalendarRegisterModal,
+] = useSwitch(false);
 
 /** Google Calendar cannot subscribe to a URL from the iOS app, so hide it there. */
 const canRegisterGoogle = computed(() => !isiOS());
@@ -446,7 +355,7 @@ const createRegisterHandler = (
 ) => () => {
   if (!icalUrl.value || (enabled && !enabled())) return;
   window.open(buildUrl(icalUrl.value), "_blank");
-  closeRegisterMenu();
+  closeCalendarRegisterModal();
 };
 
 const openGoogleCalendar = createRegisterHandler(
@@ -467,6 +376,52 @@ const openOutlookCalendar = createRegisterHandler(
 );
 
 const openIcsFile = createRegisterHandler((url) => url);
+
+type RegisterTarget = {
+  id: string;
+  title: string;
+  description?: string;
+  note?: string;
+  isAvailable: boolean;
+  open: () => void;
+};
+
+/** モーダルに並べる登録先。 */
+const registerTargets = computed<RegisterTarget[]>(() => [
+  {
+    id: "google",
+    title: "Googleカレンダー",
+    note: canRegisterGoogle.value ? undefined : "PCで操作してください",
+    isAvailable: canRegisterGoogle.value,
+    open: openGoogleCalendar,
+  },
+  // Apple Calendar (webcal) cannot be used on the Android app, so omit the item there.
+  ...(canRegisterApple.value
+    ? [
+        {
+          id: "apple",
+          title: "Appleカレンダー",
+          description: "iOS / macOS",
+          isAvailable: true,
+          open: openAppleCalendar,
+        },
+      ]
+    : []),
+  {
+    id: "outlook",
+    title: "Outlook",
+    description: "Microsoft 365",
+    isAvailable: true,
+    open: openOutlookCalendar,
+  },
+  {
+    id: "ics",
+    title: ".icsファイル",
+    description: "手動インポート",
+    isAvailable: true,
+    open: openIcsFile,
+  },
+]);
 
 /** logout */
 const logout = () => {
@@ -607,99 +562,19 @@ const confirmDeleteAccount = async () => {
         align-items: center;
         gap: $spacing-2;
       }
-      .ical-register {
-        position: relative;
-      }
-      .ical-register__toggle {
+      .ical-register-button {
         display: flex;
         align-items: center;
         gap: $spacing-2;
-        position: relative;
       }
-      .ical-register__toggle-icon,
-      .ical-register__toggle-chevron {
+      .ical-register-button__icon,
+      .ical-register-button__label {
+        // Button はクリック対象が button 要素のときだけ click を emit するため、
+        // 中身がイベントを奪わないようにする
+        pointer-events: none;
+      }
+      .ical-register-button__icon {
         font-size: $font-medium;
-        line-height: 1;
-        pointer-events: none;
-      }
-      .ical-register__toggle-label {
-        pointer-events: none;
-      }
-      .ical-register__menu {
-        list-style: none;
-        margin: 0;
-        padding: $spacing-2 0;
-        display: flex;
-        flex-direction: column;
-        background: getColor(--color-white);
-        border-radius: $radius-3;
-        box-shadow: $shadow-convex;
-        overflow: hidden;
-        position: absolute;
-        right: 0;
-        width: 30rem;
-        max-width: calc(100vw - 1.6rem);
-        z-index: 10;
-      }
-      .ical-register__menu--down {
-        top: calc(100% + #{$spacing-2});
-      }
-      .ical-register__menu--up {
-        bottom: calc(100% + #{$spacing-2});
-      }
-      .ical-register__menu-item {
-        @include button-cursor;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.2rem;
-        width: 100%;
-        padding: $spacing-3 $spacing-5;
-        background: transparent;
-        border: none;
-        text-align: left;
-        transition: background 0.18s ease;
-        &:hover {
-          background: getColor(--color-base);
-        }
-        &:active {
-          background: getColor(--color-base);
-          opacity: 0.85;
-        }
-        &--disabled {
-          cursor: not-allowed;
-          opacity: 0.55;
-          &:hover,
-          &:active {
-            background: transparent;
-            opacity: 0.55;
-          }
-        }
-      }
-      .ical-register__menu-title {
-        font-size: $font-medium;
-        font-weight: 700;
-        color: getColor(--color-text-main);
-        pointer-events: none;
-      }
-      .ical-register__menu-desc {
-        font-size: $font-small;
-        color: getColor(--color-text-sub);
-        font-weight: 400;
-        pointer-events: none;
-      }
-      .ical-register__menu-note {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        margin-top: 0.3rem;
-        font-size: $font-small;
-        color: getColor(--color-text-sub);
-        font-weight: 400;
-        pointer-events: none;
-      }
-      .ical-register__menu-note-icon {
-        font-size: $font-small;
         line-height: 1;
       }
       .ical-url-text {
@@ -746,6 +621,67 @@ const confirmDeleteAccount = async () => {
         }
       }
     }
+  }
+}
+.calendar-register-modal {
+  .register-targets {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .register-targets__item {
+    @include button-cursor;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    background: transparent;
+    border: none;
+    border-radius: $radius-2;
+    text-align: left;
+    transition: background 0.18s ease;
+    &:hover {
+      background: getColor(--color-base);
+    }
+    &:active {
+      background: getColor(--color-base);
+      opacity: 0.85;
+    }
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      &:hover,
+      &:active {
+        background: transparent;
+        opacity: 0.55;
+      }
+    }
+  }
+  .register-targets__title {
+    font-size: $font-medium;
+    font-weight: 700;
+    color: getColor(--color-text-main);
+  }
+  .register-targets__desc {
+    font-size: $font-small;
+    color: getColor(--color-text-sub);
+    font-weight: 400;
+  }
+  .register-targets__note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: $font-small;
+    color: getColor(--color-text-sub);
+    font-weight: 400;
+  }
+  .register-targets__note-icon {
+    font-size: $font-small;
+    line-height: 1;
   }
 }
 </style>
