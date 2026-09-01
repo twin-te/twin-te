@@ -3,7 +3,7 @@ ARG BUN_VERSION=1.4.0
 FROM oven/bun:${BUN_VERSION}-slim AS local
 WORKDIR /usr/src/twin-te/sponsorship
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -14,7 +14,7 @@ CMD ["bun", "run", "dev", "--hostname", "0.0.0.0", "--port", "3000"]
 FROM oven/bun:${BUN_VERSION}-slim AS staging-builder
 WORKDIR /app
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -37,7 +37,7 @@ CMD ["bun", "server.js"]
 FROM oven/bun:${BUN_VERSION}-slim AS production-builder
 WORKDIR /app
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 COPY . .
