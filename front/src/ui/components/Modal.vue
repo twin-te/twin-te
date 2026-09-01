@@ -9,10 +9,10 @@ export default defineComponent({
   },
   props: {
     size: {
-      type: String as PropType<"small" | "large">,
+      type: String as PropType<"small" | "large" | "auto">,
       default: "large",
       validator: function (value: string) {
-        return ["small", "large"].includes(value);
+        return ["small", "large", "auto"].includes(value);
       },
     },
   },
@@ -77,6 +77,21 @@ export default defineComponent({
     @include large-screen {
       width: 40rem;
       height: 30rem;
+    }
+  }
+  // 中身の高さに合わせる。画面を飛び出す場合のみ contents 内でスクロールする
+  &--auto {
+    // スマホ
+    width: 34rem;
+    // タブレット、PC、横向き
+    @include large-screen {
+      width: 40rem;
+    }
+    height: auto;
+    max-height: calc(#{$vh} - 6.4rem);
+    .modal__contents {
+      height: auto;
+      min-height: 0;
     }
   }
   &__title {
