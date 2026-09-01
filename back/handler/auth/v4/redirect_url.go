@@ -9,8 +9,7 @@ import (
 // getRedirectURLFromQuery returns redirect url retrieved from query.
 // If it is not found or it is invalid, default redirect url will be returned.
 func getRedirectURLFromQuery(c echo.Context) string {
-	redirectURL := c.QueryParam("redirect_url")
-	return lo.Ternary(isValidRedirectURL(redirectURL), redirectURL, appenv.AUTH_DEFAULT_REDIRECT_URL)
+	return getRedirectURL(c.QueryParam("redirect_url"))
 }
 
 // getRedirectURLFromCookie returns redirect url retrieved from cookie.
@@ -26,4 +25,8 @@ func getRedirectURLFromCookie(c echo.Context) string {
 
 func isValidRedirectURL(redirectURL string) bool {
 	return lo.Contains(appenv.AUTH_ALLOWED_REDIRECT_URLS, redirectURL)
+}
+
+func getRedirectURL(redirectURL string) string {
+	return lo.Ternary(isValidRedirectURL(redirectURL), redirectURL, appenv.AUTH_DEFAULT_REDIRECT_URL)
 }

@@ -41,3 +41,22 @@ func loadStringSlice(key string) []string {
 	value := lookupEnvOrPanic(key)
 	return strings.Split(value, ",")
 }
+
+func loadStringSliceOrDefault(key string, defaultValue []string) []string {
+	value, ok := os.LookupEnv(key)
+	if !ok {
+		return defaultValue
+	}
+	values := strings.Split(value, ",")
+	ret := make([]string, 0, len(values))
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value != "" {
+			ret = append(ret, value)
+		}
+	}
+	if len(ret) == 0 {
+		return defaultValue
+	}
+	return ret
+}
