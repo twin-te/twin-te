@@ -16,8 +16,6 @@ dependencies = [
     "requests==2.33.0",
     "sentry-sdk>=2.33.2",
     "six==1.17.0",
-    "soupsieve==2.7",
-    "typing-extensions==4.14.1",
     "tzdata==2025.2",
     "urllib3==2.7.0",
 ]
