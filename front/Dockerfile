@@ -1,8 +1,8 @@
-ARG BUN_VERSION=1.1.22
+ARG BUN_VERSION=1.4.0
 FROM oven/bun:${BUN_VERSION}-slim AS local
 WORKDIR /usr/src/twin-te/front
 
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
 COPY . .
@@ -15,7 +15,7 @@ WORKDIR /app
 
 RUN --mount=type=cache,target=~/.bun/install/cache \
   --mount=type=bind,source=package.json,target=package.json \
-  --mount=type=bind,source=bun.lockb,target=bun.lockb \
+  --mount=type=bind,source=bun.lock,target=bun.lock \
   bun install --frozen-lockfile
 
 COPY . .
@@ -30,7 +30,7 @@ WORKDIR /app
 
 RUN --mount=type=cache,target=~/.bun/install/cache \
   --mount=type=bind,source=package.json,target=package.json \
-  --mount=type=bind,source=bun.lockb,target=bun.lockb \
+  --mount=type=bind,source=bun.lock,target=bun.lock \
   bun install --frozen-lockfile
 
 COPY . .
