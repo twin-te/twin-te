@@ -29,4 +29,8 @@ jobs:
         run: go build -v ./...
 
       - name: Test
-        run: go test -v ./...
+        run: |
+          set -a
+          source .env
+          set +a
+          go test -v ./...
