@@ -122,22 +122,14 @@ declare global {
                 >コピー</Button
               >
             </div>
-            <div class="ical-tag-entry">
-              <TertiaryButton
-                class="ical-tag-entry__link"
-                color="primary"
-                @click="onClickIcalTagCustomize"
-              >
-                <template #icon>sell</template>
-                <template #text>対象のタグをカスタマイズ</template>
-              </TertiaryButton>
-              <span
-                v-if="issuedIcalTags.length > 0"
-                class="ical-tag-entry__label"
-                >対象:
-                {{ issuedIcalTags.map(({ name }) => name).join("・") }}</span
-              >
-            </div>
+            <TertiaryButton
+              class="ical-tag-link"
+              color="primary"
+              @click="onClickIcalTagCustomize"
+            >
+              <template #icon>sell</template>
+              <template #text>対象のタグをカスタマイズ</template>
+            </TertiaryButton>
             <div>
               <h5>注意事項</h5>
               <ul class="ical-cautions">
@@ -388,8 +380,6 @@ const onIcalToggle = async () => {
     const result = await calendarUseCase.disableIcalSubscription();
     if (!isResultError(result)) {
       icalUrl.value = null;
-      // The URLs issued with tags are no longer valid because the token has been revoked.
-      issuedIcalTagIds.value = [];
     } else if (result instanceof NetworkError) {
       displayToast(
         "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
@@ -483,7 +473,10 @@ const onClickIcalTagCustomize = async () => {
     registeredCourses,
     tags.sort((tagA, tagB) => tagA.order - tagB.order)
   );
-  selectedIcalTagIds.value = issuedIcalTags.value.map(({ id }) => id);
+  // Always start from the initial state, without the previous selection.
+  selectedIcalTagIds.value = [];
+  issuedIcalTagIds.value = [];
+  isIssuedIcalUrlCopied.value = false;
   icalTagModalStep.value = "select";
   openIcalTagModal();
 };
@@ -666,28 +659,17 @@ const confirmDeleteAccount = async () => {
         background: getColor(--color-background-sub);
         text-overflow: ellipsis;
       }
-      .ical-tag-entry {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: $spacing-2;
-        &__link {
-          &:hover,
-          &:active {
-            box-shadow: none;
-          }
-          &:hover :deep(.tertiary-button__text) {
-            text-decoration: underline;
-            text-underline-offset: 0.3rem;
-          }
-          :deep(.tertiary-button__icon) {
-            font-size: $font-large;
-          }
+      .ical-tag-link {
+        &:hover,
+        &:active {
+          box-shadow: none;
         }
-        &__label {
-          font-size: $font-small;
-          font-weight: 400;
-          color: getColor(--color-text-sub);
+        &:hover :deep(.tertiary-button__text) {
+          text-decoration: underline;
+          text-underline-offset: 0.3rem;
+        }
+        :deep(.tertiary-button__icon) {
+          font-size: $font-large;
         }
       }
       .ical-cautions {
