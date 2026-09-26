@@ -83,17 +83,17 @@
   },
   {
     "date": "2026-05-25",
-    "type": "Other",
+    "type": "Holiday",
     "description": "春Aモジュール後予備日"
   },
   {
     "date": "2026-06-30",
-    "type": "Other",
+    "type": "Holiday",
     "description": "春Bモジュール後予備日"
   },
   {
     "date": "2026-07-01",
-    "type": "Other",
+    "type": "Holiday",
     "description": "春Bモジュール後予備日"
   },
   {
@@ -119,7 +119,7 @@
   },
   {
     "date": "2026-08-07",
-    "type": "Other",
+    "type": "Holiday",
     "description": "春Cモジュール後予備日"
   },
   {
@@ -170,7 +170,7 @@
   },
   {
     "date": "2026-11-11",
-    "type": "Other",
+    "type": "Holiday",
     "description": "秋Aモジュール後予備日"
   },
   {
@@ -211,12 +211,12 @@
   },
   {
     "date": "2026-12-23",
-    "type": "Other",
+    "type": "Holiday",
     "description": "秋Bモジュール後予備日"
   },
   {
     "date": "2026-12-24",
-    "type": "Other",
+    "type": "Holiday",
     "description": "秋Bモジュール後予備日"
   },
   {
@@ -257,7 +257,7 @@
   },
   {
     "date": "2027-02-16",
-    "type": "Other",
+    "type": "Holiday",
     "description": "秋Cモジュール後予備日"
   },
   {
