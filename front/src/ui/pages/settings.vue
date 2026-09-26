@@ -122,6 +122,21 @@ declare global {
                 >コピー</Button
               >
             </div>
+            <div class="ical-tag-entry">
+              <TertiaryButton
+                class="ical-tag-entry__link"
+                color="primary"
+                @click="openIcalTagModal"
+              >
+                <template #icon>sell</template>
+                <template #text>対象のタグをカスタマイズ</template>
+              </TertiaryButton>
+              <span
+                v-if="issuedIcalTagNames.length > 0"
+                class="ical-tag-entry__label"
+                >対象: {{ issuedIcalTagNames.join("・") }}</span
+              >
+            </div>
             <div>
               <h5>注意事項</h5>
               <ul class="ical-cautions">
@@ -157,6 +172,14 @@ declare global {
         </div>
       </div>
     </div>
+    <IcalTagModal
+      v-if="icalUrl && isIcalTagModalVisible"
+      :url="icalUrl"
+      :tags="icalTagOptions"
+      :initialSelectedTagIds="issuedIcalTagIds"
+      @close="closeIcalTagModal"
+      @issue="onIssueIcalTagUrl"
+    />
     <Modal
       v-if="isAccountDeletionModalVisible"
       class="account-delete-modal"
@@ -198,15 +221,19 @@ import {
   NetworkError,
   UnauthenticatedError,
 } from "~/domain/error";
-import { academicYears } from "~/domain/year";
+import { academicYears, currentAcademicYear } from "~/domain/year";
 import Dropdown from "~/ui/components/Dropdown.vue";
+import IcalTagModal, {
+  type IcalTagOption,
+} from "~/ui/components/IcalTagModal.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
+import TertiaryButton from "~/ui/components/TertiaryButton.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
-import { authUseCase, calendarUseCase } from "~/usecases";
+import { authUseCase, calendarUseCase, timetableUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
 import { getLogoutUrl, redirectToUrl } from "../url";
@@ -242,6 +269,8 @@ const onIcalToggle = async () => {
     const result = await calendarUseCase.disableIcalSubscription();
     if (!isResultError(result)) {
       icalUrl.value = null;
+      // The URLs issued with tags are no longer valid because the token has been revoked.
+      issuedIcalTagIds.value = [];
     } else if (result instanceof NetworkError) {
       displayToast(
         "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
@@ -273,6 +302,52 @@ const copyIcalUrl = async () => {
   } catch {
     displayToast("コピーに失敗しました", { type: "danger" });
   }
+};
+
+/** ical subscription filtered by tags */
+const [isIcalTagModalVisible, openIcalTagModalSwitch, closeIcalTagModal] =
+  useSwitch(false);
+const icalTagOptions = ref<IcalTagOption[]>([]);
+const issuedIcalTagIds = ref<string[]>([]);
+
+const issuedIcalTagNames = computed(() =>
+  icalTagOptions.value
+    .filter((tag) => issuedIcalTagIds.value.includes(tag.id))
+    .map((tag) => tag.name)
+);
+
+const openIcalTagModal = async () => {
+  const [tags, registeredCourses] = await Promise.all([
+    timetableUseCase.listTags(),
+    // The subscription URL has no year parameter, so the server exports the courses of the current academic year.
+    timetableUseCase.listRegisteredCourses(currentAcademicYear),
+  ]);
+
+  if (isResultError(tags) || isResultError(registeredCourses)) {
+    const error = isResultError(tags) ? tags : registeredCourses;
+    displayToast(
+      error instanceof NetworkError
+        ? "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。"
+        : "タグの取得に失敗しました。",
+      { type: "danger" }
+    );
+    return;
+  }
+
+  icalTagOptions.value = tags
+    .sort((tagA, tagB) => tagA.order - tagB.order)
+    .map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      courseCount: registeredCourses.filter((registeredCourse) =>
+        registeredCourse.tagIds.includes(tag.id)
+      ).length,
+    }));
+  openIcalTagModalSwitch();
+};
+
+const onIssueIcalTagUrl = (tagIds: string[]) => {
+  issuedIcalTagIds.value = tagIds;
 };
 
 /** logout */
@@ -418,6 +493,30 @@ const confirmDeleteAccount = async () => {
         color: getColor(--color-text-main);
         background: getColor(--color-background-sub);
         text-overflow: ellipsis;
+      }
+      .ical-tag-entry {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: $spacing-2;
+        &__link {
+          &:hover,
+          &:active {
+            box-shadow: none;
+          }
+          &:hover :deep(.tertiary-button__text) {
+            text-decoration: underline;
+            text-underline-offset: 0.3rem;
+          }
+          :deep(.tertiary-button__icon) {
+            font-size: $font-large;
+          }
+        }
+        &__label {
+          font-size: $font-small;
+          font-weight: 400;
+          color: getColor(--color-text-sub);
+        }
       }
       .ical-cautions {
         margin-top: 0.8rem;
