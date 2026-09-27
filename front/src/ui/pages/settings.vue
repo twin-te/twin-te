@@ -134,6 +134,61 @@ declare global {
             </div>
           </div>
         </div>
+        <div
+          v-if="isAuthenticated && connectedProviders"
+          class="main__content--provider"
+        >
+          <p>ログイン方法</p>
+          <p class="provider-description">
+            連携したサービスのアカウントで、Twin:teにログインできます。
+          </p>
+          <ul class="provider-list">
+            <li
+              v-for="provider in providers"
+              :key="provider"
+              class="provider-list__item"
+            >
+              <span class="provider-list__name">
+                {{ providerMap[provider] }}
+              </span>
+              <span class="provider-list__status">
+                {{
+                  connectedProviders.includes(provider) ? "連携済み" : "未連携"
+                }}
+              </span>
+              <Button
+                v-if="connectedProviders.includes(provider)"
+                class="button"
+                size="small"
+                color="base"
+                :state="connectedProviders.length > 1 ? 'default' : 'disabled'"
+                :pauseActiveStyle="false"
+                @click="openDisconnectionModal(provider)"
+                >連携を解除</Button
+              >
+              <Button
+                v-else-if="canConnect"
+                class="button"
+                size="small"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="connect(provider)"
+                >連携する</Button
+              >
+            </li>
+          </ul>
+          <ul
+            v-if="connectedProviders.length === 1 || !canConnect"
+            class="provider-notes"
+          >
+            <li v-if="connectedProviders.length === 1">
+              ログイン方法が1つだけのときは、連携を解除できません。
+            </li>
+            <li v-if="!canConnect">
+              現在、Androidアプリでは連携を追加できません。ブラウザからご利用ください。
+            </li>
+          </ul>
+        </div>
         <div v-if="isAuthenticated" class="main__content--account">
           <p>アカウント情報</p>
           <div class="account-btns">
@@ -185,33 +240,66 @@ declare global {
         >
       </template>
     </Modal>
+    <Modal
+      v-if="providerToDisconnect"
+      class="provider-disconnect-modal"
+      @click="closeDisconnectionModal"
+    >
+      <template #title>連携を解除しますか？</template>
+      <template #contents>
+        <p class="modal__text">
+          再度連携するまで、{{
+            providerMap[providerToDisconnect]
+          }}のアカウントでTwin:teにログインできなくなります。
+        </p>
+      </template>
+      <template #button>
+        <Button
+          size="medium"
+          layout="fill"
+          color="base"
+          @click="closeDisconnectionModal"
+          >キャンセル</Button
+        >
+        <Button
+          size="medium"
+          layout="fill"
+          color="danger"
+          @click="confirmDisconnect"
+          >解除</Button
+        >
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   InternalServerError,
   isResultError,
   NetworkError,
   UnauthenticatedError,
 } from "~/domain/error";
+import { Provider } from "~/domain/user";
 import { academicYears } from "~/domain/year";
+import { providerMap } from "~/presentation/presenters/provider";
 import Dropdown from "~/ui/components/Dropdown.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { isiOS, isMobile } from "~/ui/ua";
+import { isAndroid, isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
-import { getLogoutUrl, redirectToUrl } from "../url";
+import { getConnectUrl, getLogoutUrl, redirectToUrl } from "../url";
 
 const router = useRouter();
+const route = useRoute();
 const { displayToast } = useToast();
 
 useHead({
@@ -272,6 +360,118 @@ const copyIcalUrl = async () => {
     displayToast("URLをコピーしました", { type: "primary" });
   } catch {
     displayToast("コピーに失敗しました", { type: "danger" });
+  }
+};
+
+/** login providers */
+const providers: Provider[] = ["apple", "twitter", "google"];
+
+const connectedProviders = ref<Provider[] | undefined>(undefined);
+
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    return;
+  }
+  const result = await authUseCase.getMe();
+  if (!isResultError(result)) {
+    connectedProviders.value = result.providers;
+  }
+});
+
+// The Android app ignores the redirect url of Google and always returns to the top page (twin-te/twin-te#482),
+// so connecting is not provided in the Android app until the app is updated.
+const canConnect = !isAndroid();
+
+const connect = (provider: Provider) => {
+  redirectToUrl(getConnectUrl(provider));
+};
+
+/** result of connecting a provider, which is passed as query by the back end */
+const getConnectResultMessage = (result: string): string | undefined => {
+  switch (result) {
+    case "connected":
+      return "連携しました。";
+    case "already_connected":
+      return "このアカウントは既に連携済みです。";
+  }
+  return undefined;
+};
+
+const getConnectErrorMessage = (error: string): string => {
+  switch (error) {
+    case "cancelled":
+      return "連携がキャンセルされました。";
+    case "unauthenticated":
+      return "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。";
+    case "already_used_by_another_user":
+      return "このアカウントは既に別のTwin:teアカウントに連携されているため、連携できません。";
+    case "provider_already_connected":
+      return "同じサービスの別のアカウントが既に連携されています。連携を解除してからお試しください。";
+  }
+  return "連携に失敗しました。お手数ですが、再度お試しください。";
+};
+
+onMounted(() => {
+  const connectResult = route.query.connect_result?.toString();
+  const connectError = route.query.connect_error?.toString();
+  if (connectResult === undefined && connectError === undefined) {
+    return;
+  }
+
+  if (connectError !== undefined) {
+    displayToast(getConnectErrorMessage(connectError), { type: "danger" });
+  } else if (connectResult !== undefined) {
+    const message = getConnectResultMessage(connectResult);
+    if (message) displayToast(message, { type: "primary" });
+  }
+
+  // prevent the message from being displayed again on reload
+  router.replace({
+    query: {
+      ...route.query,
+      connect_result: undefined,
+      connect_error: undefined,
+    },
+  });
+});
+
+/** disconnect provider */
+const providerToDisconnect = ref<Provider | undefined>(undefined);
+
+const openDisconnectionModal = (provider: Provider) => {
+  providerToDisconnect.value = provider;
+};
+
+const closeDisconnectionModal = () => {
+  providerToDisconnect.value = undefined;
+};
+
+const confirmDisconnect = async () => {
+  const provider = providerToDisconnect.value;
+  if (provider === undefined) return;
+
+  const result = await authUseCase.deleteUserAuthentication(provider);
+  if (!isResultError(result)) {
+    closeDisconnectionModal();
+    connectedProviders.value = connectedProviders.value?.filter(
+      (connectedProvider) => connectedProvider !== provider
+    );
+    displayToast(`${providerMap[provider]}との連携を解除しました。`, {
+      type: "primary",
+    });
+  } else if (result instanceof UnauthenticatedError) {
+    displayToast(
+      "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。",
+      { type: "danger" }
+    );
+    router.push("/login");
+  } else if (result instanceof NetworkError) {
+    displayToast(
+      "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
+      { type: "danger" }
+    );
+  } else if (result instanceof InternalServerError) {
+    displayToast("サーバーエラーが発生しました。", { type: "danger" });
   }
 };
 
@@ -424,6 +624,45 @@ const confirmDeleteAccount = async () => {
         li {
           list-style: disc inside;
           margin-bottom: 0.8rem;
+          font-weight: 400;
+        }
+      }
+    }
+    &--provider {
+      padding: 1.2rem 0;
+      color: getColor(--color-text-main);
+      font-weight: 500;
+      .provider-description {
+        margin-top: 0.8rem;
+        line-height: $single-line;
+        color: getColor(--color-text-sub);
+        font-weight: 400;
+      }
+      .provider-list {
+        margin-top: 0.8rem;
+        &__item {
+          display: flex;
+          align-items: center;
+          padding: 0.8rem 0;
+          & .button {
+            margin: 0 0 0 auto;
+          }
+        }
+        &__name {
+          width: 8rem;
+        }
+        &__status {
+          color: getColor(--color-text-sub);
+          font-weight: 400;
+        }
+      }
+      .provider-notes {
+        margin-top: 0.8rem;
+        li {
+          list-style: disc inside;
+          margin-bottom: 0.8rem;
+          line-height: $single-line;
+          color: getColor(--color-text-sub);
           font-weight: 400;
         }
       }
