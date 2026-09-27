@@ -530,7 +530,7 @@ export class TimetableUseCase implements ITimetableUseCase {
         instructors: data.instructors
           ? toPBInstructors(data.instructors)
           : undefined,
-        credit: data.credit ? toPBCredit(data.credit) : undefined,
+        credit: data.credit !== undefined ? toPBCredit(data.credit) : undefined,
         methods: data.methods
           ? new TimetableV1PB.CourseMethodList({
               values: data.methods.map(toPBCourseMethod),
