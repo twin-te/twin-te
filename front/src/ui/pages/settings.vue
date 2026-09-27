@@ -134,61 +134,92 @@ declare global {
             </div>
           </div>
         </div>
-        <div
-          v-if="isAuthenticated && connectedProviders"
-          class="main__content--provider"
-        >
-          <p>ログイン方法</p>
-          <p class="provider-description">
-            連携したサービスのアカウントで、Twin:teにログインできます。
-          </p>
-          <ul class="provider-list">
-            <li
-              v-for="provider in providers"
-              :key="provider"
-              class="provider-list__item"
+        <template v-if="isAuthenticated && connectedProviders">
+          <div class="main__content">
+            <p>ログイン方法</p>
+            <span class="provider-count"
+              >{{ connectedProviders.length }} /
+              {{ providers.length }} 連携中</span
             >
-              <span class="provider-list__name">
-                {{ providerMap[provider] }}
-              </span>
-              <span class="provider-list__status">
-                {{
-                  connectedProviders.includes(provider) ? "連携済み" : "未連携"
-                }}
-              </span>
-              <Button
-                v-if="connectedProviders.includes(provider)"
-                class="button"
-                size="small"
-                color="base"
-                :state="connectedProviders.length > 1 ? 'default' : 'disabled'"
-                :pauseActiveStyle="false"
-                @click="openDisconnectionModal(provider)"
-                >連携を解除</Button
+          </div>
+          <Card class="provider-card">
+            <div
+              v-for="(provider, index) in displayedProviders"
+              :key="provider"
+              class="provider"
+            >
+              <div v-if="index > 0" class="provider-card__divider"></div>
+              <div class="provider__row">
+                <div :class="['provider__mark', `provider__mark--${provider}`]">
+                  <img :src="providerMarkMap[provider]" alt="" />
+                </div>
+                <div class="provider__text">
+                  <span class="provider__name">{{
+                    providerMap[provider]
+                  }}</span>
+                  <span class="provider__status">{{
+                    connectedProviders.includes(provider)
+                      ? "連携済み"
+                      : "未連携"
+                  }}</span>
+                </div>
+                <div
+                  v-if="isLocked(provider)"
+                  class="provider__lock provider__lock--inline"
+                >
+                  <span class="material-icons">lock</span
+                  >ログイン方法が1つだけのため解除できません
+                </div>
+                <Button
+                  v-if="connectedProviders.includes(provider)"
+                  class="provider__button"
+                  size="small"
+                  color="base"
+                  :state="isLocked(provider) ? 'disabled' : 'default'"
+                  :pauseActiveStyle="false"
+                  @click="openDisconnectionModal(provider)"
+                >
+                  <span class="material-icons provider__button-icon--danger"
+                    >link_off</span
+                  ><span class="provider__button-label--danger">解除</span>
+                </Button>
+                <Button
+                  v-else-if="canConnect"
+                  class="provider__button"
+                  size="small"
+                  color="base"
+                  :pauseActiveStyle="false"
+                  @click="connect(provider)"
+                >
+                  <span class="material-icons provider__button-icon--liner"
+                    >add</span
+                  ><span class="provider__button-label--liner">接続</span>
+                </Button>
+              </div>
+              <div
+                v-if="isLocked(provider)"
+                class="provider__lock provider__lock--below"
               >
-              <Button
-                v-else-if="canConnect"
-                class="button"
-                size="small"
-                color="primary"
-                :pauseActiveStyle="false"
-                @click="connect(provider)"
-                >連携する</Button
-              >
-            </li>
-          </ul>
-          <ul
-            v-if="connectedProviders.length === 1 || !canConnect"
-            class="provider-notes"
-          >
-            <li v-if="connectedProviders.length === 1">
-              ログイン方法が1つだけのときは、連携を解除できません。
-            </li>
-            <li v-if="!canConnect">
-              現在、Androidアプリでは連携を追加できません。ブラウザからご利用ください。
-            </li>
-          </ul>
-        </div>
+                <span class="material-icons">lock</span
+                >ログイン方法が1つだけのため解除できません
+              </div>
+            </div>
+            <div v-if="!canConnect" class="provider">
+              <div class="provider-card__divider"></div>
+              <div class="provider__row">
+                <div class="provider__mark provider__mark--add">
+                  <span class="material-icons">add</span>
+                </div>
+                <div class="provider__text">
+                  <span class="provider__name">ログイン方法を追加</span>
+                  <span class="provider__status"
+                    >ブラウザ版の設定画面から追加できます</span
+                  >
+                </div>
+              </div>
+            </div>
+          </Card>
+        </template>
         <div v-if="isAuthenticated" class="main__content--account">
           <p>アカウント情報</p>
           <div class="account-btns">
@@ -243,14 +274,19 @@ declare global {
     <Modal
       v-if="providerToDisconnect"
       class="provider-disconnect-modal"
+      size="small"
       @click="closeDisconnectionModal"
     >
-      <template #title>連携を解除しますか？</template>
+      <template #title
+        >{{
+          providerMap[providerToDisconnect]
+        }}との連携を解除しますか？</template
+      >
       <template #contents>
         <p class="modal__text">
-          再度連携するまで、{{
+          解除すると、選択した{{
             providerMap[providerToDisconnect]
-          }}のアカウントでTwin:teにログインできなくなります。
+          }}アカウントではTwin:teにログインできなくなります。他のログイン方法を使って引き続きTwin:teを使用できます。
         </p>
       </template>
       <template #button>
@@ -286,6 +322,10 @@ import {
 import { Provider } from "~/domain/user";
 import { academicYears } from "~/domain/year";
 import { providerMap } from "~/presentation/presenters/provider";
+import logoX from "~/ui/assets/login-page/logo-x.png";
+import markAppleWhite from "~/ui/assets/login-page/mark-apple-white.svg";
+import markGoogle from "~/ui/assets/login-page/mark-google.svg";
+import Card from "~/ui/components/Card.vue";
 import Dropdown from "~/ui/components/Dropdown.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
@@ -364,7 +404,13 @@ const copyIcalUrl = async () => {
 };
 
 /** login providers */
-const providers: Provider[] = ["apple", "twitter", "google"];
+const providers: Provider[] = ["google", "apple", "twitter"];
+
+const providerMarkMap: Record<Provider, string> = {
+  google: markGoogle,
+  apple: markAppleWhite,
+  twitter: logoX,
+};
 
 const connectedProviders = ref<Provider[] | undefined>(undefined);
 
@@ -381,6 +427,20 @@ onMounted(async () => {
 // The Android app ignores the redirect url of Google and always returns to the top page (twin-te/twin-te#482),
 // so connecting is not provided in the Android app until the app is updated.
 const canConnect = !isAndroid();
+
+// Only the connected providers are displayed if connecting is not provided.
+const displayedProviders = computed<Provider[]>(() =>
+  canConnect
+    ? providers
+    : providers.filter((provider) =>
+        connectedProviders.value?.includes(provider)
+      )
+);
+
+// The last provider cannot be disconnected, since the user has at least one authentication.
+const isLocked = (provider: Provider): boolean =>
+  connectedProviders.value?.length === 1 &&
+  connectedProviders.value.includes(provider);
 
 const connect = (provider: Provider) => {
   redirectToUrl(getConnectUrl(provider));
@@ -556,6 +616,144 @@ const confirmDeleteAccount = async () => {
   @include max-width;
 }
 
+.provider-count {
+  margin-left: auto;
+  font-size: $font-small;
+  color: getColor(--color-text-sub);
+}
+
+.main .provider-card {
+  padding: $spacing-1 $spacing-5;
+  margin-bottom: $spacing-3;
+  &__divider {
+    height: 0.2rem;
+    border-radius: 0.2rem;
+    box-shadow: $shadow-concave;
+  }
+}
+
+.provider {
+  display: flex;
+  flex-direction: column;
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: 1.4rem 0;
+  }
+  &__mark {
+    @include center-flex;
+    flex-shrink: 0;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    box-shadow: $shadow-drop;
+    img {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    &--google {
+      background: #ffffff;
+    }
+    &--apple,
+    &--twitter {
+      background: #000000;
+    }
+    &--add {
+      background: var(--base-liner);
+      box-shadow: $shadow-convex;
+      .material-icons {
+        font-size: 2rem;
+        @include text-liner;
+      }
+    }
+  }
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+  }
+  &__name {
+    color: getColor(--color-text-main);
+    font-weight: 500;
+  }
+  &__status {
+    @include ellipsis;
+    font-size: $font-small;
+    font-weight: 400;
+    color: getColor(--color-text-sub);
+  }
+  &__lock {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    white-space: nowrap;
+    font-size: $font-small;
+    font-weight: 400;
+    color: getColor(--color-text-sub);
+    .material-icons {
+      font-size: 1.4rem;
+      color: getColor(--color-button-gray);
+    }
+    // The reason is displayed below the row in portrait, and in the row in landscape.
+    &--below {
+      margin: -0.6rem 0 1.4rem;
+      line-height: $multi-line;
+      @include landscape {
+        display: none;
+      }
+    }
+    &--inline {
+      display: none;
+      @include landscape {
+        display: flex;
+      }
+    }
+  }
+  &__row &__button {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.6rem;
+    height: 2.8rem;
+    padding: 0 1.4rem 0 1rem;
+    background: var(--base-liner);
+    .material-icons {
+      font-size: 1.8rem;
+    }
+    span {
+      // Button ignores the click whose target is not the button itself.
+      pointer-events: none;
+    }
+    &:active:not(.--disabled) span {
+      color: getColor(--color-white);
+      @include void-text-liner;
+    }
+  }
+  &__button-icon--danger,
+  &__button-label--danger {
+    color: getColor(--color-danger);
+  }
+  &__button-icon--liner,
+  &__button-label--liner {
+    @include text-liner;
+  }
+}
+
+.provider-disconnect-modal .modal {
+  .button {
+    width: calc(50% - 0.6rem);
+    &:first-child {
+      margin-right: 0.6rem;
+    }
+    &:last-child {
+      margin-left: 0.6rem;
+    }
+  }
+}
+
 .main {
   margin-top: $spacing-5;
   &__contents {
@@ -624,45 +822,6 @@ const confirmDeleteAccount = async () => {
         li {
           list-style: disc inside;
           margin-bottom: 0.8rem;
-          font-weight: 400;
-        }
-      }
-    }
-    &--provider {
-      padding: 1.2rem 0;
-      color: getColor(--color-text-main);
-      font-weight: 500;
-      .provider-description {
-        margin-top: 0.8rem;
-        line-height: $single-line;
-        color: getColor(--color-text-sub);
-        font-weight: 400;
-      }
-      .provider-list {
-        margin-top: 0.8rem;
-        &__item {
-          display: flex;
-          align-items: center;
-          padding: 0.8rem 0;
-          & .button {
-            margin: 0 0 0 auto;
-          }
-        }
-        &__name {
-          width: 8rem;
-        }
-        &__status {
-          color: getColor(--color-text-sub);
-          font-weight: 400;
-        }
-      }
-      .provider-notes {
-        margin-top: 0.8rem;
-        li {
-          list-style: disc inside;
-          margin-bottom: 0.8rem;
-          line-height: $single-line;
-          color: getColor(--color-text-sub);
           font-weight: 400;
         }
       }
