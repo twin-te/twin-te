@@ -37,6 +37,14 @@ func loadString(key string) string {
 	return lookupEnvOrPanic(key)
 }
 
+func loadStringOrDefault(key string, defaultValue string) string {
+	value, ok := os.LookupEnv(key)
+	if !ok || value == "" {
+		return defaultValue
+	}
+	return value
+}
+
 func loadStringSlice(key string) []string {
 	value := lookupEnvOrPanic(key)
 	return strings.Split(value, ",")

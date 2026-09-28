@@ -1,5 +1,7 @@
 package appenv
 
+import "strings"
+
 var (
 	// auth
 	SESSION_LIFE_TIME_DAYS int = loadInt("SESSION_LIFE_TIME_DAYS")
@@ -24,6 +26,9 @@ var (
 	AUTH_DEFAULT_REDIRECT_URL  string   = loadString("AUTH_DEFAULT_REDIRECT_URL")
 	AUTH_ALLOWED_REDIRECT_URLS []string = loadStringSlice("AUTH_ALLOWED_REDIRECT_URLS")
 
+	AUTH_CONNECT_REDIRECT_URL     string = loadStringOrDefault("AUTH_CONNECT_REDIRECT_URL", strings.TrimSuffix(AUTH_DEFAULT_REDIRECT_URL, "/")+"/settings")
+	AUTH_LOGIN_ERROR_REDIRECT_URL string = loadStringOrDefault("AUTH_LOGIN_ERROR_REDIRECT_URL", strings.TrimSuffix(AUTH_DEFAULT_REDIRECT_URL, "/")+"/login")
+
 	AUTH_GOOGLE_CLIENT_ID     string = loadString("AUTH_GOOGLE_CLIENT_ID")
 	AUTH_GOOGLE_CLIENT_SECRET string = loadString("AUTH_GOOGLE_CLIENT_SECRET")
 	AUTH_GOOGLE_CALLBACK_URL  string = loadString("AUTH_GOOGLE_CALLBACK_URL")
@@ -43,6 +48,7 @@ var (
 	COOKIE_SESSION_NAME           string = loadString("COOKIE_SESSION_NAME")
 	COOKIE_AUTH_STATE_NAME        string = loadString("COOKIE_AUTH_STATE_NAME")
 	COOKIE_AUTH_REDIRECT_URL_NAME string = loadString("COOKIE_AUTH_REDIRECT_URL_NAME")
+	COOKIE_AUTH_CONNECT_NAME      string = loadStringOrDefault("COOKIE_AUTH_CONNECT_NAME", "twinte_auth_connect")
 
 	// Sentry
 	SENTRY_DSN string = loadString("SENTRY_DSN")

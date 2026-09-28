@@ -48,6 +48,32 @@ func clearAuthRedirectURLFromCookie(c echo.Context) {
 	})
 }
 
+func setAuthConnectInCookie(c echo.Context) {
+	c.SetCookie(&http.Cookie{
+		Name:     appenv.COOKIE_AUTH_CONNECT_NAME,
+		Value:    "true",
+		Path:     "/",
+		MaxAge:   3 * 60,
+		Secure:   appenv.COOKIE_SECURE,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+}
+
+func clearAuthConnectFromCookie(c echo.Context) {
+	c.SetCookie(&http.Cookie{
+		Name:   appenv.COOKIE_AUTH_CONNECT_NAME,
+		Path:   "/",
+		MaxAge: -1,
+	})
+}
+
+// isConnectingFromCookie reports whether the current OAuth 2.0 flow was started from the connect endpoint.
+func isConnectingFromCookie(c echo.Context) bool {
+	_, err := c.Cookie(appenv.COOKIE_AUTH_CONNECT_NAME)
+	return err == nil
+}
+
 func setSessionInCookie(c echo.Context, session *authdomain.Session) {
 	c.SetCookie(&http.Cookie{
 		Name:     appenv.COOKIE_SESSION_NAME,
