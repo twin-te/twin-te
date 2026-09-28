@@ -14,7 +14,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Check if the event is push to master
         if: github.ref != 'refs/heads/master'
         run: |
@@ -61,7 +61,7 @@ jobs:
             tag: parser-prod
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Check if the event is push to master
         if: github.ref != 'refs/heads/master'
         run: |
@@ -90,7 +90,7 @@ jobs:
     environment: prod
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Check if the event is push to master
         if: github.ref != 'refs/heads/master'
         run: |
