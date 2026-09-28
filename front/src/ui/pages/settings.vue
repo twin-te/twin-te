@@ -106,13 +106,25 @@ declare global {
             <p class="ical-description">
               以下のURLをGoogleカレンダーやAppleのカレンダーアプリなどに登録すると、Twin:teの時間割が自動的に同期されます。
             </p>
-            <div class="ical-url-row">
-              <input
-                v-model="icalUrl"
-                type="text"
-                readonly
-                class="ical-url-input"
-              />
+            <input
+              v-model="icalUrl"
+              type="text"
+              readonly
+              class="ical-url-text"
+            />
+            <div class="ical-actions">
+              <Button
+                class="ical-register-button"
+                size="small"
+                color="primary"
+                :pauseActiveStyle="false"
+                @click="openCalendarRegisterModal"
+              >
+                <span class="material-icons ical-register-button__icon"
+                  >calendar_today</span
+                >
+                <span class="ical-register-button__label">登録</span>
+              </Button>
               <Button
                 class="button"
                 size="small"
@@ -122,9 +134,9 @@ declare global {
                 >コピー</Button
               >
             </div>
-            <div>
-              <h5>注意事項</h5>
-              <ul class="ical-cautions">
+            <div class="ical-cautions">
+              <p class="ical-cautions__title">注意事項</p>
+              <ul class="ical-cautions__list">
                 <li>
                   このURLを知っている人は誰でもあなたの時間割を閲覧できます。取り扱いにご注意ください。
                 </li>
@@ -157,6 +169,49 @@ declare global {
         </div>
       </div>
     </div>
+    <Modal
+      v-if="isCalendarRegisterModalVisible"
+      size="auto"
+      class="calendar-register-modal"
+      @click="closeCalendarRegisterModal"
+    >
+      <template #title>カレンダーに登録</template>
+      <template #contents>
+        <ul class="register-targets">
+          <li v-for="target in registerTargets" :key="target.id">
+            <button
+              class="register-targets__item"
+              :class="{
+                'register-targets__item--disabled': !target.isAvailable,
+              }"
+              :disabled="!target.isAvailable"
+              @click="target.open"
+            >
+              <span class="register-targets__title">{{ target.title }}</span>
+              <span v-if="target.note" class="register-targets__note">
+                <span class="material-icons register-targets__note-icon"
+                  >desktop_windows</span
+                >{{ target.note }}
+              </span>
+              <span
+                v-else-if="target.description"
+                class="register-targets__desc"
+                >{{ target.description }}</span
+              >
+            </button>
+          </li>
+        </ul>
+      </template>
+      <template #button>
+        <Button
+          size="medium"
+          layout="fill"
+          color="base"
+          @click="closeCalendarRegisterModal"
+          >閉じる</Button
+        >
+      </template>
+    </Modal>
     <Modal
       v-if="isAccountDeletionModalVisible"
       class="account-delete-modal"
@@ -205,7 +260,7 @@ import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { isiOS, isMobile } from "~/ui/ua";
+import { isAndroid, isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
@@ -274,6 +329,99 @@ const copyIcalUrl = async () => {
     displayToast("コピーに失敗しました", { type: "danger" });
   }
 };
+
+const [
+  isCalendarRegisterModalVisible,
+  openCalendarRegisterModal,
+  closeCalendarRegisterModal,
+] = useSwitch(false);
+
+/** Google Calendar cannot subscribe to a URL from the iOS app, so hide it there. */
+const canRegisterGoogle = computed(() => !isiOS());
+
+/** Apple Calendar (webcal) cannot be used on the Android app, so hide it there. */
+const canRegisterApple = computed(() => !isAndroid());
+
+const toWebcalUrl = (url: string) => url.replace(/^https?:\/\//, "webcal://");
+
+/**
+ * Build a click handler that opens a calendar registration URL in a new tab.
+ * `buildUrl` receives the current ical URL and returns the URL to open;
+ * `enabled` optionally guards whether the registration is allowed.
+ */
+const createRegisterHandler = (
+  buildUrl: (icalUrl: string) => string,
+  enabled?: () => boolean
+) => () => {
+  if (!icalUrl.value || (enabled && !enabled())) return;
+  window.open(buildUrl(icalUrl.value), "_blank");
+  closeCalendarRegisterModal();
+};
+
+const openGoogleCalendar = createRegisterHandler(
+  (url) =>
+    `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(
+      toWebcalUrl(url)
+    )}`,
+  () => canRegisterGoogle.value
+);
+
+const openAppleCalendar = createRegisterHandler((url) => toWebcalUrl(url));
+
+const openOutlookCalendar = createRegisterHandler(
+  (url) =>
+    `https://outlook.office.com/calendar/addcalendar?name=${encodeURIComponent(
+      "Twin:te"
+    )}&url=${encodeURIComponent(url)}`
+);
+
+const openIcsFile = createRegisterHandler((url) => url);
+
+type RegisterTarget = {
+  id: string;
+  title: string;
+  description?: string;
+  note?: string;
+  isAvailable: boolean;
+  open: () => void;
+};
+
+/** モーダルに並べる登録先。 */
+const registerTargets = computed<RegisterTarget[]>(() => [
+  {
+    id: "google",
+    title: "Googleカレンダー",
+    note: canRegisterGoogle.value ? undefined : "PCで操作してください",
+    isAvailable: canRegisterGoogle.value,
+    open: openGoogleCalendar,
+  },
+  // Apple Calendar (webcal) cannot be used on the Android app, so omit the item there.
+  ...(canRegisterApple.value
+    ? [
+        {
+          id: "apple",
+          title: "Appleカレンダー",
+          description: "iOS / macOS",
+          isAvailable: true,
+          open: openAppleCalendar,
+        },
+      ]
+    : []),
+  {
+    id: "outlook",
+    title: "Outlook",
+    description: "Microsoft 365",
+    isAvailable: true,
+    open: openOutlookCalendar,
+  },
+  {
+    id: "ics",
+    title: ".icsファイル",
+    description: "手動インポート",
+    isAvailable: true,
+    open: openIcsFile,
+  },
+]);
 
 /** logout */
 const logout = () => {
@@ -401,29 +549,59 @@ const confirmDeleteAccount = async () => {
         flex-direction: column;
         gap: 0.8rem;
         margin-top: 0.8rem;
+        width: 100%;
       }
       .ical-description {
         line-height: $single-line;
         color: getColor(--color-text-sub);
         font-weight: 400;
       }
-      .ical-url-row {
+      .ical-actions {
         display: flex;
-        gap: 1.6rem;
+        justify-content: flex-end;
         align-items: center;
+        gap: $spacing-2;
       }
-      .ical-url-input {
-        flex: 1;
-        width: 0;
+      .ical-register-button {
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+      }
+      .ical-register-button__icon,
+      .ical-register-button__label {
+        // Button はクリック対象が button 要素のときだけ click を emit するため、
+        // 中身がイベントを奪わないようにする
+        pointer-events: none;
+      }
+      .ical-register-button__icon {
+        font-size: $font-medium;
+        line-height: 1;
+      }
+      .ical-url-text {
+        width: 100%;
+        padding: 0;
+        border: none;
+        background: transparent;
         color: getColor(--color-text-main);
-        background: getColor(--color-background-sub);
+        white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
+        font-variant-numeric: tabular-nums;
       }
       .ical-cautions {
         margin-top: 0.8rem;
+      }
+      .ical-cautions__title {
+        font-weight: 700;
+        color: getColor(--color-text-main);
+        margin-bottom: 0.4rem;
+      }
+      .ical-cautions__list {
+        padding-left: 1.8rem;
+        color: getColor(--color-text-sub);
+        line-height: 1.9;
         li {
-          list-style: disc inside;
-          margin-bottom: 0.8rem;
+          list-style: disc;
           font-weight: 400;
         }
       }
@@ -443,6 +621,67 @@ const confirmDeleteAccount = async () => {
         }
       }
     }
+  }
+}
+.calendar-register-modal {
+  .register-targets {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .register-targets__item {
+    @include button-cursor;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    background: transparent;
+    border: none;
+    border-radius: $radius-2;
+    text-align: left;
+    transition: background 0.18s ease;
+    &:hover {
+      background: getColor(--color-base);
+    }
+    &:active {
+      background: getColor(--color-base);
+      opacity: 0.85;
+    }
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      &:hover,
+      &:active {
+        background: transparent;
+        opacity: 0.55;
+      }
+    }
+  }
+  .register-targets__title {
+    font-size: $font-medium;
+    font-weight: 700;
+    color: getColor(--color-text-main);
+  }
+  .register-targets__desc {
+    font-size: $font-small;
+    color: getColor(--color-text-sub);
+    font-weight: 400;
+  }
+  .register-targets__note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: $font-small;
+    color: getColor(--color-text-sub);
+    font-weight: 400;
+  }
+  .register-targets__note-icon {
+    font-size: $font-small;
+    line-height: 1;
   }
 }
 </style>
