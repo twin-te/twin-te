@@ -1,7 +1,11 @@
 import { RegisteredCourse } from "~/domain/course";
 import { Tag } from "~/domain/tag";
 import { initializeObject } from "~/utils";
-import { DisplayCourseTag, DisplayCreditTag } from "../viewmodels/tag";
+import {
+  DisplayCourseTag,
+  DisplayCreditTag,
+  DisplayIcalTag,
+} from "../viewmodels/tag";
 import { creditToDisplay } from "./credit";
 
 export const getDisplayCourseTags = (
@@ -56,5 +60,27 @@ export const getDisplayCreditTags = (
     id,
     name,
     credit: creditToDisplay(tagIdToCredit[id]),
+  }));
+};
+
+export const getDisplayIcalTags = (
+  courses: RegisteredCourse[],
+  tags: Tag[]
+): DisplayIcalTag[] => {
+  const tagIdToCourseCount: Record<string, number> = initializeObject(
+    tags.map(({ id }) => id),
+    0
+  );
+
+  courses.forEach(({ tagIds }) => {
+    tagIds.forEach((tagId) => {
+      tagIdToCourseCount[tagId] += 1;
+    });
+  });
+
+  return tags.map(({ id, name }) => ({
+    id,
+    name,
+    courseCount: tagIdToCourseCount[id],
   }));
 };
