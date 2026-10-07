@@ -12,6 +12,7 @@ import (
 //   - "/:provider/callback"
 //   - "/logout"
 //   - "/google/idToken"
+//   - "/apple/idToken"
 type impl struct {
 	accessController authmodule.AccessController
 	authUseCase      authmodule.UseCase
@@ -39,6 +40,8 @@ func New(
 	e.GET("/:provider/callback", h.handleOAuth2Callback)
 	e.GET("/logout", h.handleLogout)
 	e.GET("/google/idToken", h.handleIDTokenGoogle)
+	e.POST("/google/idToken", h.handleIDTokenGoogle)
+	e.POST("/apple/idToken", h.handleIDTokenApple)
 
 	return e
 }

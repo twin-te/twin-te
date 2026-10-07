@@ -96,14 +96,47 @@ func (h *impl) handleOAuth2Callback(c echo.Context) (err error) {
 }
 
 func (h *impl) handleIDTokenGoogle(c echo.Context) error {
-	idToken := c.QueryParam("token")
+	credential, err := getIDTokenCredential(c)
+	if err != nil {
+		return err
+	}
+
+	idToken := credential.Token
 	socialID, err := verifyGoogleIDToken(c.Request().Context(), idToken)
 	if err != nil {
 		return err
 	}
 
-	userAuthentication := authdomain.NewUserAuthentication(authdomain.ProviderGoogle, socialID)
+	return h.signUpOrLoginWithAuthentication(
+		c,
+		authdomain.NewUserAuthentication(authdomain.ProviderGoogle, socialID),
+		credential.RedirectURL,
+	)
+}
 
+func (h *impl) handleIDTokenApple(c echo.Context) error {
+	credential, err := getIDTokenCredential(c)
+	if err != nil {
+		return err
+	}
+
+	socialID, err := verifyAppleIDToken(c.Request().Context(), credential.Token)
+	if err != nil {
+		return err
+	}
+
+	return h.signUpOrLoginWithAuthentication(
+		c,
+		authdomain.NewUserAuthentication(authdomain.ProviderApple, socialID),
+		credential.RedirectURL,
+	)
+}
+
+func (h *impl) signUpOrLoginWithAuthentication(
+	c echo.Context,
+	userAuthentication authdomain.UserAuthentication,
+	redirectURL string,
+) error {
 	if _, err := h.accessController.Authenticate(c.Request().Context()); err == nil {
 		err = h.authUseCase.AddUserAuthentication(c.Request().Context(), userAuthentication)
 		if err != nil {
@@ -118,7 +151,23 @@ func (h *impl) handleIDTokenGoogle(c echo.Context) error {
 
 	setSessionInCookie(c, session)
 
-	return c.Redirect(http.StatusFound, getRedirectURLFromQuery(c))
+	return c.Redirect(http.StatusFound, getRedirectURL(redirectURL))
+}
+
+type idTokenCredential struct {
+	Token       string `query:"token" form:"token" json:"token"`
+	RedirectURL string `query:"redirect_url" form:"redirect_url" json:"redirect_url"`
+}
+
+func getIDTokenCredential(c echo.Context) (*idTokenCredential, error) {
+	credential := &idTokenCredential{}
+	if err := c.Bind(credential); err != nil {
+		return nil, err
+	}
+	if credential.Token == "" {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "token is required")
+	}
+	return credential, nil
 }
 
 func (h *impl) handleLogout(c echo.Context) error {

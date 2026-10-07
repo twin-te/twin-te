@@ -64,7 +64,7 @@ func (rc *RegisteredCourse) HasBasedCourse() bool {
 }
 
 func (rc *RegisteredCourse) Clone() *RegisteredCourse {
-	ret := lo.ToPtr(*rc)
+	ret := new(*rc)
 	ret.Methods = base.OptionCloneBy(rc.Methods, base.CopySlice)
 	ret.Schedules = base.OptionCloneBy(rc.Schedules, base.CopySlice)
 	ret.TagIDs = base.CopySlice(rc.TagIDs)

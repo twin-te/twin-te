@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/samber/lo"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
@@ -18,7 +17,7 @@ type SubscriptionPlan struct {
 }
 
 func (sp *SubscriptionPlan) Clone() *SubscriptionPlan {
-	ret := lo.ToPtr(*sp)
+	ret := new(*sp)
 	return ret
 }
 

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"cloud.google.com/go/civil"
-	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
@@ -91,7 +90,7 @@ func (e *Event) IsFallCExam() bool {
 }
 
 func (e *Event) Clone() *Event {
-	ret := lo.ToPtr(*e)
+	ret := new(*e)
 	return ret
 }
 

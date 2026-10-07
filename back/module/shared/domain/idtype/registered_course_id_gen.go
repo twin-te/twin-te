@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/samber/lo"
 )
 
 type RegisteredCourseID uuid.UUID
@@ -33,7 +32,7 @@ func (id *RegisteredCourseID) StringPtr() *string {
 	if id == nil {
 		return nil
 	}
-	return lo.ToPtr(id.String())
+	return new(id.String())
 }
 
 func NewRegisteredCourseID() RegisteredCourseID {

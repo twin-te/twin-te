@@ -40,9 +40,6 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 	codeToCourse := lo.SliceToMap(courses, func(course *timetabledomain.Course) (timetabledomain.Code, *timetabledomain.Course) {
 		return course.Code, course
 	})
-	courseIDToCode := lo.SliceToMap(courses, func(course *timetabledomain.Course) (idtype.CourseID, timetabledomain.Code) {
-		return course.ID, course.Code
-	})
 
 	notFoundCodes := lo.Filter(codes, func(code timetabledomain.Code, index int) bool {
 		_, ok := codeToCourse[code]
@@ -63,18 +60,19 @@ func (uc *impl) CreateRegisteredCoursesByCodes(ctx context.Context, year sharedd
 		return nil, err
 	}
 
-	if len(savedRegisteredCourses) != 0 {
-		alreadyRegisteredCodes := base.Map(savedRegisteredCourses, func(rc *timetabledomain.RegisteredCourse) timetabledomain.Code {
-			return courseIDToCode[rc.CourseID.MustGet()]
-		})
+	alreadyRegisteredCourseIDs := lo.SliceToMap(savedRegisteredCourses, func(rc *timetabledomain.RegisteredCourse) (idtype.CourseID, bool) {
+		return rc.CourseID.MustGet(), true
+	})
 
-		return nil, apperr.New(
-			timetableerr.CodeRegisteredCourseAlreadyExists,
-			fmt.Sprintf("the courses with these codes are already registered, %+v", alreadyRegisteredCodes),
-		)
+	newCodes := lo.Filter(codes, func(code timetabledomain.Code, index int) bool {
+		return !alreadyRegisteredCourseIDs[codeToCourse[code].ID]
+	})
+
+	if len(newCodes) == 0 {
+		return []*timetableappdto.RegisteredCourse{}, nil
 	}
 
-	registeredCourses, err := base.MapWithErr(codes, func(code timetabledomain.Code) (*timetabledomain.RegisteredCourse, error) {
+	registeredCourses, err := base.MapWithErr(newCodes, func(code timetabledomain.Code) (*timetabledomain.RegisteredCourse, error) {
 		return uc.f.NewRegisteredCourseFromCourse(userID, codeToCourse[code])
 	})
 	if err != nil {

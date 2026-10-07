@@ -95,7 +95,6 @@ func (uc *impl) updateContributorsCache(ctx context.Context) error {
 
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, paymentUser := range paymentUsers {
-		paymentUser := paymentUser
 		eg.Go(func() error {
 			select {
 			case <-ctx.Done():

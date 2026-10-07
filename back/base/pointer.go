@@ -1,6 +1,6 @@
 package base
 
-import "golang.org/x/exp/slices"
+import "slices"
 
 func ToPtrWithErr[T any](x T, err error) (*T, error) {
 	if err != nil {

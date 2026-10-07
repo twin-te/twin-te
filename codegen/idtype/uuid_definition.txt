@@ -1,6 +1,7 @@
 AlreadyReadID
 AnnouncementID
 CourseID
+IcalSubscriptionID
 RegisteredCourseID
 SessionID
 TagID

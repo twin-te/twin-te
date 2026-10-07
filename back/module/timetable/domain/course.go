@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/samber/mo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
@@ -34,7 +33,7 @@ type Course struct {
 }
 
 func (c *Course) Clone() *Course {
-	ret := lo.ToPtr(*c)
+	ret := new(*c)
 	ret.RecommendedGrades = base.CopySlice(c.RecommendedGrades)
 	ret.Methods = base.CopySlice(c.Methods)
 	ret.Schedules = base.CopySlice(c.Schedules)

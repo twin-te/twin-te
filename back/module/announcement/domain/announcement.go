@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/base"
 	shareddomain "github.com/twin-te/twin-te/back/module/shared/domain"
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -47,7 +46,7 @@ type Announcement struct {
 }
 
 func (a *Announcement) Clone() *Announcement {
-	ret := lo.ToPtr(*a)
+	ret := new(*a)
 	ret.Tags = base.CopySlice(a.Tags)
 	return ret
 }

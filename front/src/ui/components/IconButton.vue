@@ -104,6 +104,7 @@ export default defineComponent({
 
   &.--disabled {
     opacity: 0.3;
+    @include button-cursor(false);
   }
 
   @include button-cursor;

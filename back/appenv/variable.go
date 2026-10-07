@@ -18,6 +18,7 @@ var (
 
 	// handler
 	ADDR                 string   = loadString("ADDR")
+	APP_URL              string   = loadString("APP_URL")
 	CORS_ALLOWED_ORIGINS []string = loadStringSlice("CORS_ALLOWED_ORIGINS")
 
 	AUTH_DEFAULT_REDIRECT_URL  string   = loadString("AUTH_DEFAULT_REDIRECT_URL")
@@ -27,11 +28,12 @@ var (
 	AUTH_GOOGLE_CLIENT_SECRET string = loadString("AUTH_GOOGLE_CLIENT_SECRET")
 	AUTH_GOOGLE_CALLBACK_URL  string = loadString("AUTH_GOOGLE_CALLBACK_URL")
 
-	AUTH_APPLE_CLIENT_ID    string = loadString("AUTH_APPLE_CLIENT_ID")
-	AUTH_APPLE_TEAM_ID      string = loadString("AUTH_APPLE_TEAM_ID")
-	AUTH_APPLE_KEY_ID       string = loadString("AUTH_APPLE_KEY_ID")
-	AUTH_APPLE_PRIVATE_KEY  string = loadString("AUTH_APPLE_PRIVATE_KEY")
-	AUTH_APPLE_CALLBACK_URL string = loadString("AUTH_APPLE_CALLBACK_URL")
+	AUTH_APPLE_CLIENT_ID    string   = loadString("AUTH_APPLE_CLIENT_ID")
+	AUTH_APPLE_AUDIENCES    []string = loadStringSliceOrDefault("AUTH_APPLE_AUDIENCES", []string{AUTH_APPLE_CLIENT_ID})
+	AUTH_APPLE_TEAM_ID      string   = loadString("AUTH_APPLE_TEAM_ID")
+	AUTH_APPLE_KEY_ID       string   = loadString("AUTH_APPLE_KEY_ID")
+	AUTH_APPLE_PRIVATE_KEY  string   = loadString("AUTH_APPLE_PRIVATE_KEY")
+	AUTH_APPLE_CALLBACK_URL string   = loadString("AUTH_APPLE_CALLBACK_URL")
 
 	AUTH_TWITTER_CLIENT_ID     string = loadString("AUTH_TWITTER_CLIENT_ID")
 	AUTH_TWITTER_CLIENT_SECRET string = loadString("AUTH_TWITTER_CLIENT_SECRET")

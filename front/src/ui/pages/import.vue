@@ -147,9 +147,10 @@ const registeredSet = new Set(
   registered.map((course) => `${course.year}_${course.code}`)
 );
 
-const duplicatedResults = result.filter((course) =>
-  registeredSet.has(`${course.year}_${course.code}`)
-);
+const isCourseDuplicated = (course: Course) =>
+  registeredSet.has(`${course.year}_${course.code}`);
+
+const duplicatedResults = result.filter(isCourseDuplicated);
 
 if (duplicatedResults.length > 0) {
   const coursesText = duplicatedResults
@@ -161,20 +162,15 @@ if (duplicatedResults.length > 0) {
   );
 }
 
-const isCourseNotDuplicated = (course: Course) =>
-  duplicatedResults.find(
-    (duplicatedCourse) =>
-      course.code === duplicatedCourse.code &&
-      course.year === duplicatedCourse.year
-  ) === undefined;
-
 const courseResults = reactive(
-  result.filter(isCourseNotDuplicated).map((course) => ({
-    course: courseToDisplay(course),
-    schedules: course.schedules,
-    selected: true,
-    expanded: false,
-  }))
+  result
+    .filter((course) => !isCourseDuplicated(course))
+    .map((course) => ({
+      course: courseToDisplay(course),
+      schedules: course.schedules,
+      selected: true,
+      expanded: false,
+    }))
 );
 
 const selectedCourseResults = computed(() =>

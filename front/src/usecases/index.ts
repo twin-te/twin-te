@@ -1,6 +1,7 @@
 import { createConnectTransport } from "@connectrpc/connect-web";
 import { AnnouncementUseCase, IAnnouncementUseCase } from "./announcement";
 import { AuthUseCase, IAuthUseCase } from "./auth";
+import { CalendarUseCase, ICalendarUseCase } from "./calendar";
 import { FeedbackUseCase, IFeedbackUseCase } from "./feedback";
 import {
   ISchoolCalendarUseCase,
@@ -20,6 +21,7 @@ export const announcementUseCase: IAnnouncementUseCase = new AnnouncementUseCase
   transport
 );
 export const authUseCase: IAuthUseCase = new AuthUseCase(transport);
+export const calendarUseCase: ICalendarUseCase = new CalendarUseCase(transport);
 export const feedbackUseCase: IFeedbackUseCase = new FeedbackUseCase();
 export const schoolCalendarUseCase: ISchoolCalendarUseCase = new SchoolCalendarUseCase(
   transport
