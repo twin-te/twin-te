@@ -45,7 +45,7 @@ func GetSchedules(modules []SchoolCalendarModule, ss []timetabledomain.Schedule)
 
 	items := make([]item, 0, len(ss))
 	for _, s := range ss {
-		if s.Day.IsSpecial() || s.Period < 1 || s.Period > 6 {
+		if s.Day.IsSpecial() || s.Period < 1 || s.Period > 8 {
 			continue
 		}
 		items = append(items, item{
