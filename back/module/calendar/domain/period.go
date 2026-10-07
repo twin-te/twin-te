@@ -19,6 +19,10 @@ func GetPeriodStart(period timetabledomain.Period) civil.Time {
 		return civil.Time{Hour: 15, Minute: 15}
 	case 6:
 		return civil.Time{Hour: 16, Minute: 45}
+	case 7:
+		return civil.Time{Hour: 18, Minute: 0}
+	case 8:
+		return civil.Time{Hour: 19, Minute: 20}
 	default:
 		return civil.Time{Hour: 0, Minute: 0}
 	}
@@ -38,6 +42,10 @@ func GetPeriodEnd(period timetabledomain.Period) civil.Time {
 		return civil.Time{Hour: 16, Minute: 30}
 	case 6:
 		return civil.Time{Hour: 18, Minute: 0}
+	case 7:
+		return civil.Time{Hour: 19, Minute: 15}
+	case 8:
+		return civil.Time{Hour: 20, Minute: 35}
 	default:
 		return civil.Time{Hour: 23, Minute: 59}
 	}
