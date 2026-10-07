@@ -43,7 +43,7 @@ func (t *Tag) Update(data TagDataToUpdate) {
 		t.Name = name
 	}
 	if color, ok := data.Color.Get(); ok {
-		t.Color = mo.Some(*color)
+		t.Color = mo.PointerToOption(color)
 	}
 }
 
