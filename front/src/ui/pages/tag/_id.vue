@@ -1,16 +1,13 @@
 <template>
   <div class="wrapper">
     <PageHeader>
-      <template #left-button-icon>
-        <IconButton
-          size="large"
-          color="normal"
-          icon-name="arrow_back"
-          @click="$router.push('/tag')"
-        ></IconButton>
-      </template>
       <template #title>タグの編集</template>
     </PageHeader>
+    <Banner class="banner">
+      タグの並び替えは
+      <RouterLink class="link" to="/credit">「単位数」画面</RouterLink>
+      から行えます。
+    </Banner>
     <nav class="tags">
       <IconButton
         class="add-icon"
@@ -74,6 +71,7 @@ import { NotFoundError, isResultError } from "~/domain/error";
 import { Tag } from "~/domain/tag";
 import { creditToDisplay } from "~/presentation/presenters/credit";
 import { getDisplayCourseTags } from "~/presentation/presenters/tag";
+import Banner from "~/ui/components/Banner.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import LabeledTextField from "~/ui/components/LabeledTextField.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
@@ -212,7 +210,14 @@ const updateTag = async () => {
 const deleteTag = async () => {
   if (!selectedTag.value) return;
 
-  if (courses.value.length > 0 && !confirm("本当に削除しますか？")) return;
+  if (
+    courses.value.length > 0 &&
+    !confirm(
+      `このタグには${courses.value.length}件の授業が登録されています。\n本当に削除しますか？`
+    )
+  ) {
+    return;
+  }
 
   const tagId = selectedTag.value.id;
   await timetableUseCase.deleteTag(tagId);
@@ -237,12 +242,20 @@ const deleteTag = async () => {
 
   @include pc {
     display: grid;
-    grid-template: "header header" auto "tags main" 1fr / auto 1fr;
+    grid-template: "header header" "banner banner" auto "tags main" 1fr / auto 1fr;
   }
 }
 
 .header {
   grid-area: header;
+}
+
+.banner {
+  .link {
+    text-decoration: underline;
+  }
+
+  grid-area: banner;
 }
 
 .main {

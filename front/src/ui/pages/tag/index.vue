@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import IconButton from "~/ui/components/IconButton.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 </script>
 

@@ -1,6 +1,6 @@
 export type ColorHex = `#${string}`;
 export type PresetColor =
-  | "default"
+  | "gray"
   | "rose"
   | "orange"
   | "yellow"

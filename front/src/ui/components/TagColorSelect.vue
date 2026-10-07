@@ -10,7 +10,8 @@ const colors = [
   "yellow",
   "green",
   "blue",
-  "purple"
+  "purple",
+  "gray"
 ] as const satisfies readonly (PresetColor | null)[];
 
 const emits = defineEmits<{

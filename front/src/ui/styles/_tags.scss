@@ -1,9 +1,10 @@
 @use "sass:map";
+@use "variable";
 
 $tag-colors: (
-  "default": (
-    light: #b0a89a,
-    dark: #6a6054,
+  "gray": (
+    light: #a3adb3,
+    dark: #6b7a82,
   ),
   "rose": (
     light: #d45c5c,
@@ -32,6 +33,8 @@ $tag-colors: (
 );
 
 :root {
+  --tag-default: #{variable.getColor(--color-unselected)};
+
   @each $color, $values in $tag-colors {
     --tag-#{$color}: #{map.get($values, light)};
   }
