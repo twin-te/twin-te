@@ -1,12 +1,12 @@
 export type ColorHex = `#${string}`;
 export type PresetColor =
   | "default"
-  | "pink"
-  | "sky"
-  | "mint"
-  | "peach"
-  | "lilac"
-  | "ivory";
+  | "rose"
+  | "orange"
+  | "yellow"
+  | "green"
+  | "blue"
+  | "purple";
 export type TagColor = PresetColor | ColorHex;
 
 export type Tag = {

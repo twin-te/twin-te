@@ -1,5 +1,5 @@
 import { RegisteredCourse } from "~/domain/course";
-import { Tag } from "~/domain/tag";
+import { Tag, TagColor } from "~/domain/tag";
 import { initializeObject } from "~/utils";
 import { DisplayCourseTag, DisplayCreditTag } from "../viewmodels/tag";
 import { creditToDisplay } from "./credit";
@@ -8,10 +8,11 @@ export const getDisplayCourseTags = (
   course: RegisteredCourse,
   tags: Tag[]
 ): DisplayCourseTag[] => {
-  return tags.map(({ id, name }) => ({
+  return tags.map(({ id, name, color }) => ({
     id,
     name,
     assign: course.tagIds.findIndex((tagId) => tagId === id) !== -1,
+    color,
   }));
 };
 
@@ -60,3 +61,18 @@ export const getDisplayCreditTags = (
     color,
   }));
 };
+
+type PresetColor = Exclude<TagColor, `#${string}`>;
+
+function isPresetColor(color: TagColor): color is PresetColor {
+  return !color.startsWith("#");
+}
+
+type TagColorVariable = `--tag-${PresetColor | "default"})`;
+
+export function tagColorToCss(
+  color: TagColor | null
+): `#${string}` | `var(${TagColorVariable}` {
+  if (color && !isPresetColor(color)) return color;
+  return `var(--tag-${color ?? "default"})`;
+}

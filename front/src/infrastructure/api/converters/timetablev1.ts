@@ -5,7 +5,7 @@ import { Module } from "~/domain/module";
 import { Period, isPeriod } from "~/domain/period";
 import { Room, extractRoomsBySchedule } from "~/domain/room";
 import { Schedule, isNormalSchedule } from "~/domain/schedule";
-import { Tag } from "~/domain/tag";
+import { Tag, TagColor } from "~/domain/tag";
 import * as TimetableV1PB from "~/infrastructure/api/gen/timetable/v1/type_pb";
 import { getKeysFromObj, removeDuplicate } from "~/utils";
 import { fromPBAcademicYear, fromPBUUID } from "./shared";
@@ -281,6 +281,6 @@ export const fromPBTag = (pbTag: TimetableV1PB.Tag): Tag => {
     id: fromPBUUID(assurePresence(pbTag.id)),
     name: pbTag.name,
     order: pbTag.order,
-    color: pbTag.color ?? null,
+    color: pbTag.color == null ? null : (pbTag.color as TagColor),
   };
 };
