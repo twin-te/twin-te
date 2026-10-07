@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import {PresetColor, TagColor} from "~/domain/tag";
+import { PresetColor, TagColor } from '~/domain/tag'
+import { tagColorToCss } from "~/presentation/presenters/tag";
 
 const model = defineModel<TagColor | null>();
 const colors = [
   null,
-  "pink",
-  "sky",
-  "mint",
-  "peach",
-  "lilac",
-  "ivory",
-] as const satisfies (PresetColor | null)[];
+  "rose",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "purple"
+] as const satisfies readonly (PresetColor | null)[];
 
 const emits = defineEmits<{
   change: [TagColor | null];
@@ -28,7 +29,7 @@ const onClick = (color: TagColor | null) => {
       v-for="color in colors"
       :key="color ?? 'default'"
       class="color-rect"
-      :style="{ background: `var(--tag-${color ?? 'default'})` }"
+      :style="{ backgroundColor: tagColorToCss(color) }"
       @click="onClick(color)"
     >
       <div v-if="color === model" class="material-icons check">check</div>
@@ -40,7 +41,6 @@ const onClick = (color: TagColor | null) => {
 @use '~/ui/styles/variable';
 
 .color-select {
-  --tag-default: rgba(var(--color-primary-light));
   display: flex;
   gap: variable.$spacing-3;
   align-items: center;

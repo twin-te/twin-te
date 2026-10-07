@@ -8,7 +8,7 @@ withDefaults(
   }>(),
   { placeholder: "", type: "normal", disabled: false, added: false }
 );
-const model = defineModel<string>();
+const model = defineModel<string>({ required: true });
 
 defineEmits<{
   "enter-text-field": [];

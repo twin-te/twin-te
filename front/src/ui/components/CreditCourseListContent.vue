@@ -1,124 +1,69 @@
-<script lang="ts">
-import { computed, defineComponent, PropType, ref } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { DisplayCourseTag } from "~/presentation/viewmodels/tag";
 import Tag from "./Tag.vue";
-import TagEditor from "./TagEditor.vue";
+import TagList from "./TagList.vue";
 
 export type CreditCourseListContentState = "default" | "selected";
 
-export default defineComponent({
-  name: "CreditCourseListContent",
-  components: {
-    Tag,
-    TagEditor,
-  },
-  props: {
-    state: {
-      type: String as PropType<"default" | "selected">,
-      default: "default",
-    },
-    code: {
-      // 科目番号
-      type: String,
-      required: true,
-    },
-    name: {
-      // 授業名
-      type: String,
-      required: true,
-    },
-    credit: {
-      // 単位数
-      type: String,
-      required: true,
-    },
-    tags: {
-      type: Object as PropType<DisplayCourseTag[]>,
-      required: true,
-    },
-  },
-  emits: ["click", "click-tag", "create-tag"],
-  setup(props, { emit }) {
-    const assignedTags = computed(() => props.tags.filter((tag) => tag.assign));
+const props = defineProps<{
+  selected: boolean;
+  code: string;
+  name: string;
+  credit: string;
+  tags: DisplayCourseTag[];
+}>();
 
-    const onClick = () => {
-      add.value = false;
-      emit("click");
-    };
+defineEmits<{
+  click: [];
+  "click-tag": [DisplayCourseTag];
+}>();
 
-    /** tag-editor */
-    const add = ref(false);
-
-    return {
-      assignedTags,
-      onClick,
-      add,
-    };
-  },
-});
+const assignedTags = computed(() => props.tags.filter((tag) => tag.assign));
 </script>
 
 <template>
   <div
     :class="{
       'credit-course-list-content': true,
-      '--selected': state === 'selected',
+      '--selected': selected,
     }"
   >
     <div
       class="credit-course-list-content__course-info course-info"
-      @click="onClick"
+      @click="$emit('click')"
     >
       <div class="course-info__container">
         <div class="course-info__code">{{ code }}</div>
         <div class="course-info__name">{{ name }}</div>
       </div>
-      <div v-show="state !== 'selected'" class="course-info__tags">
-        <Tag v-for="tag in assignedTags" :key="tag.id" :assign="true">{{
-          tag.name
-        }}</Tag>
+      <div v-show="!selected" class="course-info__tags">
+        <Tag v-for="tag in assignedTags" :key="tag.id" :tag="tag" />
       </div>
       <div class="course-info__credit">{{ credit }}</div>
       <div
         :class="{
           'course-info__expand': true,
-          '--turned': state === 'selected',
+          '--turned': selected,
           'material-icons': true,
         }"
       >
         expand_more
       </div>
     </div>
-    <TagEditor
-      v-show="state === 'selected'"
-      v-model:add="add"
-      heading="タグの編集"
-      @create-tag="(tagName) => $emit('create-tag', tagName)"
-    >
-      <template #tags>
-        <Tag
-          v-for="tag in tags"
-          :key="tag.id"
-          :assign="tag.assign"
-          @click="$emit('click-tag', tag)"
-          >{{ tag.name }}
-        </Tag>
-        <template v-if="tags.length === 0">
-          作成済みのタグがありません。<br />
-          タグを作成すると授業を分類することができます。
-        </template>
-      </template>
-      <template #btn>タグを新たに作成する</template>
-    </TagEditor>
-    <div
-      v-show="state !== 'selected' || !add"
-      class="credit-course-list-content__border"
+    <TagList
+      v-show="selected"
+      heading="タグ"
+      :tags="tags"
+      @click:tag="$emit('click-tag', $event)"
     />
+    <div class="credit-course-list-content__border" />
   </div>
 </template>
 
 <style scoped lang="scss">
 @use "~/ui/styles" as *;
+@use "~/ui/styles/variable" as *;
 
 .credit-course-list-content {
   width: 100%;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { TagColor } from "~/domain/tag";
+import { tagColorToCss } from "~/presentation/presenters/tag";
 
 export type State = "default" | "none";
 
@@ -41,6 +42,14 @@ const handleClick = (e: MouseEvent) => {
 const hasCaution = computed(() => {
   return props.caution !== "";
 });
+
+const style = computed(() =>
+  props.state === "none"
+    ? {}
+    : {
+        "--color": tagColorToCss(props.color),
+      }
+);
 </script>
 
 <template>
@@ -49,10 +58,9 @@ const hasCaution = computed(() => {
       tile: true,
       [`--${state}`]: true,
       [`--under-filter`]: hasCaution,
+      'default-color': color == null,
     }"
-    :style="{
-      backgroundColor: color ? `var(--tag-${color})` : null,
-    }"
+    :style="style"
     @click="handleClick"
   >
     <div class="tile__course-name">{{ name }}</div>
@@ -69,18 +77,25 @@ const hasCaution = computed(() => {
 </template>
 
 <style scoped lang="scss">
-@use "~/ui/styles" as *;
+@use "~/ui/styles/variable" as *;
+@use "~/ui/styles/mixin" as *;
 
 .tile {
   @include button-cursor;
   position: relative;
-  padding: 0.5rem 0.6rem;
+  border: solid transparent 0.2rem;
+  padding: 0.3rem 0.4rem;
   border-radius: $radius-1;
   text-align: left;
   transition: $transition-box-shadow;
   overflow: hidden;
   &.--default {
-    background-color: getColor(--color-primary-light);
+    background-color: oklch(from var(--color) 0.91 calc(c * 0.4) h);
+
+    &.default-color {
+      background-color: getColor(--color-primary-light) !important;
+    }
+
     &:active {
       box-shadow: $shadow-tile-concave;
     }
@@ -126,5 +141,11 @@ const hasCaution = computed(() => {
     font-weight: 500;
     color: getColor(--color-primary-dull);
   }
+}
+:global(.dark .tile.--default) {
+  background-color: oklch(from var(--color) 0.33 calc(c * 0.4) h) !important;
+}
+:global(.dark .tile.--default.default-color) {
+  background-color: getColor(--color-primary-dark) !important;
 }
 </style>

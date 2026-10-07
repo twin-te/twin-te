@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { TagColor } from "~/domain/tag";
+import { tagColorToCss } from "~/presentation/presenters/tag";
 
 const props = defineProps<{
   tag: {
@@ -13,18 +14,16 @@ const props = defineProps<{
 
 defineEmits<{ click: [] }>();
 
-const color = computed(() =>
-  props.tag.color ? `var(--tag-${props.tag.color})` : null
-);
+const style = computed(() => ({
+  "--color": tagColorToCss(props.tag.color),
+  borderColor: props.tag.color == null ? undefined : "var(--color)",
+}));
 </script>
 
 <template>
   <div
     :class="['tag', tag.assign && '--assigned']"
-    :style="{
-      backgroundColor: tag.assign ? color : null,
-      borderColor: color,
-    }"
+    :style="style"
     @click="$emit('click')"
   >
     {{ tag.name }}
@@ -50,7 +49,10 @@ const color = computed(() =>
   @include button-cursor;
 
   &.--assigned {
-    background-color: var(--primary-liner);
+    background-color: oklch(from var(--color) 0.91 calc(c * 0.4) h);
   }
+}
+:global(.dark .tag.--assigned) {
+  background: oklch(from var(--color) 0.33 calc(c * 0.4) h) !important;
 }
 </style>

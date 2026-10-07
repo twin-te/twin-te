@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { TagColor } from "~/domain/tag";
+import { tagColorToCss } from "~/presentation/presenters/tag";
 
 const props = defineProps<{
-  tags: { id: string; name: string; color: string | null }[];
+  tags: { id: string; name: string; color: TagColor | null }[];
   selectedId?: string;
 }>();
 
@@ -32,7 +34,7 @@ const allTags = computed(() => [
       <div
         class="tag-list-item__color-chip"
         :style="{
-          backgroundColor: tag.color ? `var(--tag-${tag.color})` : '',
+          backgroundColor: tagColorToCss(tag.color),
         }"
       />
       <span>{{ tag.name }}</span>

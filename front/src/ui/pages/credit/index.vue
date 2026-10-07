@@ -271,10 +271,12 @@ const onClickNormalBtn = async (tag: DisplayCreditTag) => {
           return result;
         });
       } else {
-        await timetableUseCase.updateTag(tag.id, tag.name).then((result) => {
-          if (isResultError(result)) throw result;
-          return result;
-        });
+        await timetableUseCase
+          .updateTag(tag.id, tag.name, tag.color)
+          .then((result) => {
+            if (isResultError(result)) throw result;
+            return result;
+          });
       }
     } finally {
       updateDisplayCreditTags();
@@ -305,7 +307,7 @@ const onChangeOrder = async (newTags: DisplayCreditTag[]) => {
 
 const onClickAddBtn = () => {
   const id = createNewTagId();
-  displayCreditTags.value.push({ id, name: "", credit: "0.0" });
+  displayCreditTags.value.push({ id, name: "", credit: "0.0", color: null });
   editingTagId.value = id;
   focus([`#text-field-single-line--${id}`, "input"]);
 };

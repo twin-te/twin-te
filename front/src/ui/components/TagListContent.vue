@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { TagColor } from "~/domain/tag";
+import { tagColorToCss } from "~/presentation/presenters/tag";
+
 export type TagListContentMode = "default" | "edit";
 export type TagListContentDragHandle = "show" | "hide" | "disabled";
 
@@ -10,7 +13,7 @@ withDefaults(
     mode?: TagListContentMode;
     textfield?: boolean;
     dragHandle?: TagListContentDragHandle;
-    color?: string;
+    color?: TagColor | null;
   }>(),
   {
     name: "",
@@ -45,7 +48,7 @@ withDefaults(
       <div
         v-if="mode === 'default'"
         class="tag-list-content__color-chip"
-        :style="{ backgroundColor: color ? `var(--tag-${color})` : null }"
+        :style="{ backgroundColor: tagColorToCss(color) }"
       />
       <div
         v-if="mode === 'default' || !textfield"

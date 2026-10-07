@@ -429,10 +429,8 @@ const onClickCourseTile = async (
 };
 
 const getTagColor = (course: DisplayRegisteredCourse) => {
-  console.log(course);
   for (const tag of course.tags) {
     if (tag.assign && tag.color) {
-      console.log(tag.color);
       return tag.color;
     }
   }

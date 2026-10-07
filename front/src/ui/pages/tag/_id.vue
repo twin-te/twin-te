@@ -1,21 +1,27 @@
 <template>
-  <div class="courses">
-    <PageHeader class="header">
+  <div class="wrapper">
+    <PageHeader>
       <template #left-button-icon>
         <IconButton
           size="large"
           color="normal"
           icon-name="arrow_back"
-          @click="$router.push('/credit')"
+          @click="$router.push('/tag')"
         ></IconButton>
       </template>
-      <template #title>単位数</template>
+      <template #title>タグの編集</template>
     </PageHeader>
     <nav class="tags">
+      <IconButton
+        class="add-icon"
+        size="small"
+        icon-name="add"
+        @click="addTag"
+      />
       <TagListSmall
         :tags="allTags"
         :selected-id="id"
-        @click="(id_) => $router.push(`/credit/${id_}`)"
+        @click="(id_) => $router.push(`/tag/${id_}`)"
       />
     </nav>
     <div class="main">
@@ -23,27 +29,36 @@
         <LabeledTextField label="タグ名">
           <TextFieldSingleLine v-model="selectedTag.name" @change="updateTag" />
         </LabeledTextField>
-        <TagColorSelect v-model="selectedTag.color" @change="updateTag" />
+        <LabeledTextField label="タグの色">
+          <TagColorSelect v-model="selectedTag.color" @change="updateTag" />
+        </LabeledTextField>
+      </div>
+      <div v-if="selectedTag">
+        <TertiaryButton color="danger" @click="deleteTag">
+          <template #icon>
+            <span class="material-symbols-outlined">delete</span>
+          </template>
+          <template #text>タグを削除する</template>
+        </TertiaryButton>
       </div>
       <div class="main__info info">
-        <div class="info__tag">{{ info.tag }}</div>
-        <div class="info__year">({{ info.year }})</div>
-        <div class="info__credit">{{ info.credit }}</div>
+        <div class="info__tag">授業一覧</div>
+        <div class="info__credit">({{ totalCredits }} 単位)</div>
       </div>
       <div class="main__mask">
         <div class="main__courses">
-          <CreditCourseListContent
-            v-for="course in courses"
-            :key="course.id"
-            :selected="openCourses.has(course.id)"
-            :code="course.code"
-            :name="course.name"
-            :credit="course.credit"
-            :tags="course.tags"
-            @click="toggleState(course.id)"
-            @click-tag="(tag) => onClickTag(course, tag)"
-          ></CreditCourseListContent>
-          <div v-if="courses.length === 0" class="main__no-course">
+          <ul v-if="courses.length > 0" class="main__courses-list">
+            <li v-for="course in courses" :key="course.id" class="main__course">
+              <div class="course-code">{{ course.code }}</div>
+              <div class="course-info">
+                <div class="course-name">{{ course.name }}</div>
+                <div class="course-credit">
+                  ({{ course.year }}年度 {{ course.credit }}単位)
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="main__no-course">
             {{ noCourseMessage }}
           </div>
         </div>
@@ -54,27 +69,25 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { NotFoundError, isResultError } from "~/domain/error";
 import { Tag } from "~/domain/tag";
 import { creditToDisplay } from "~/presentation/presenters/credit";
 import { getDisplayCourseTags } from "~/presentation/presenters/tag";
-import CreditCourseListContent from "~/ui/components/CreditCourseListContent.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import LabeledTextField from "~/ui/components/LabeledTextField.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import TagColorSelect from "~/ui/components/TagColorSelect.vue";
 import TagListSmall from "~/ui/components/TagListSmall.vue";
+import TertiaryButton from "~/ui/components/TertiaryButton.vue";
 import TextFieldSingleLine from "~/ui/components/TextFieldSingleLine.vue";
-import { useCreditYear } from "~/ui/store";
 import { timetableUseCase } from "~/usecases";
 import type { DisplayCourseTag } from "~/presentation/viewmodels/tag";
-import type { CreditCourseListContentState } from "~/ui/components/CreditCourseListContent.vue";
 
+const router = useRouter();
 const route = useRoute();
 
 const id = computed(() => route.params.id as string);
-const { creditYear: year } = useCreditYear();
 const allTags = ref<Tag[]>([]);
 
 const selectedTag = ref<Tag>();
@@ -95,9 +108,7 @@ watch(
   { immediate: true }
 );
 
-const courseIdToState = reactive<Record<string, CreditCourseListContentState>>(
-  {}
-);
+const openCourses = reactive(new Set<string>());
 
 const totalCredits = ref<string>("");
 
@@ -107,33 +118,17 @@ type VMCourse = {
   code: string;
   credit: string;
   tags: DisplayCourseTag[];
+  year: number;
 };
 
 const courses = ref<VMCourse[]>([]);
-const openCourses = reactive(new Set<string>());
 
 const noCourseMessage = ref<string>("");
-
-const info = computed(() => ({
-  year: year.value === 0 ? "すべての年度" : `${year.value}年度`,
-  tag: selectedTag.value
-    ? `タグ「${selectedTag.value.name}」`
-    : "すべての授業 ",
-  credit: `${totalCredits.value}単位`,
-}));
-
-const toggleState = (id: string) => {
-  if (openCourses.has(id)) openCourses.delete(id);
-  else openCourses.add(id);
-};
 
 async function updateView(init = false) {
   const [registeredCourses, tags] = await Promise.all([
     timetableUseCase
-      .listRegisteredCourses(
-        year.value === 0 ? undefined : year.value,
-        selectedTag.value?.id
-      )
+      .listRegisteredCourses(undefined, selectedTag.value?.id)
       .then((result) => {
         if (isResultError(result)) throw result;
         return result;
@@ -161,9 +156,14 @@ async function updateView(init = false) {
         code: registeredCourse.code ?? "-",
         credit: creditToDisplay(registeredCourse.credit),
         tags: getDisplayCourseTags(registeredCourse, tags),
+        year: registeredCourse.year,
       };
     })
     .sort((courseA, courseB) => {
+      if (courseA.year !== courseB.year) {
+        return courseA.year < courseB.year ? -1 : 1;
+      }
+
       if (courseA.code !== courseB.code) {
         return courseA.code < courseB.code ? -1 : 1;
       }
@@ -191,11 +191,16 @@ async function updateView(init = false) {
         return "該当する授業がありません。";
       });
 
-    registeredCourses.forEach(({ id }) => {
-      courseIdToState[id] = "default";
-    });
+    openCourses.clear();
   }
 }
+
+const addTag = async () => {
+  const result = await timetableUseCase.createTag(null);
+  if (isResultError(result)) throw result;
+  allTags.value.push(result);
+  await router.push(`/tag/${result.id}`);
+};
 
 const updateTag = async () => {
   if (!selectedTag.value) return;
@@ -204,19 +209,23 @@ const updateTag = async () => {
   await updateView();
 };
 
-const onClickTag = async (course: VMCourse, tag: DisplayCourseTag) => {
-  tag.assign = !tag.assign;
-  await timetableUseCase.updateRegisteredCourse(course.id, {
-    tagIds: course.tags.filter(({ assign }) => assign).map(({ id }) => id),
-  });
-  await updateView();
+const deleteTag = async () => {
+  if (!selectedTag.value) return;
+
+  if (courses.value.length > 0 && !confirm("本当に削除しますか？")) return;
+
+  const tagId = selectedTag.value.id;
+  await timetableUseCase.deleteTag(tagId);
+  allTags.value = allTags.value.filter((tag) => tag.id !== tagId);
+  await router.push("/tag/all-courses");
 };
 </script>
 
 <style lang="scss" scoped>
-@use "~/ui/styles" as *;
+@use "~/ui/styles/variable" as *;
+@use "~/ui/styles/mixin" as *;
 
-.courses {
+.wrapper {
   @include max-width;
   height: 100vh;
 
@@ -242,17 +251,17 @@ const onClickTag = async (course: VMCourse, tag: DisplayCourseTag) => {
 
   display: flex;
   flex-direction: column;
-  gap: $spacing-5;
+  gap: $spacing-3;
 
   &__mask {
-    flex: 1 1 0px;
+    flex: 1 1 0;
 
     overflow-y: auto;
     @include scroll-mask;
   }
 
   &__courses {
-    padding: $spacing-3 $spacing-2 $spacing-3 $spacing-0; // padding of scrollable element
+    padding: $spacing-3 $spacing-2 $spacing-6 $spacing-0; // padding of scrollable element
   }
 
   &__no-course {
@@ -260,11 +269,53 @@ const onClickTag = async (course: VMCourse, tag: DisplayCourseTag) => {
     font-size: $font-small;
     line-height: $single-line;
   }
+
+  &__courses-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+
+  &__course {
+    display: flex;
+    gap: $spacing-1;
+    align-items: baseline;
+
+    .course-code {
+      width: 4.3em;
+    }
+    .course-info {
+      display: flex;
+      gap: 0 $spacing-1;
+      align-items: baseline;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+    .course-code,
+    .course-credit {
+      color: getColor(--color-text-sub);
+      font-size: $font-small;
+      line-height: $single-line;
+    }
+    .course-name {
+      color: getColor(--color-text-main);
+      font-size: $font-medium;
+      line-height: $single-line;
+    }
+  }
 }
 
 .tags {
   grid-area: tags;
   display: none;
+
+  padding-right: $spacing-3;
+  border-right: 1px solid lightgray;
+
+  .add-icon {
+    margin-left: auto;
+    margin-bottom: $spacing-3;
+  }
 
   @include pc {
     display: block;
