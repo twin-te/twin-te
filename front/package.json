@@ -67,6 +67,7 @@
     "rollup": "^3.29.5",
     "sass": "^1.86.3",
     "storybook-builder-vite": "^0.1.23",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vite": "^6.2.6",
     "vite-plugin-fonts": "^0.7.0",
