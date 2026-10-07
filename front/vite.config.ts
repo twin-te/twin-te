@@ -2,7 +2,7 @@ import path from "path";
 import { sentryRollupPlugin } from "@sentry/rollup-plugin";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
-import {VitePluginFonts} from "vite-plugin-fonts";
+import { VitePluginFonts } from "vite-plugin-fonts";
 
 const sourcemap: Record<string, "inline" | boolean> = {
   development: "inline",
