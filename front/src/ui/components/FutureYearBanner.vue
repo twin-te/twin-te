@@ -1,5 +1,9 @@
 <template>
-  <Banner>【ベータ版】{{ currentAcademicYear }}年度のシラバスを使用しています。</Banner>
+  <Banner
+    >【ベータ版】{{
+      currentAcademicYear
+    }}年度のシラバスを使用しています。</Banner
+  >
 </template>
 
 <script setup lang="ts">
