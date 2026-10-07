@@ -12,7 +12,8 @@ import { currentAcademicYear } from "~/domain/year";
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles/variable" as *;
+@use "~/ui/styles/mixin" as *;
 
 .future-year-banner {
   display: flex;
