@@ -53,7 +53,7 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .text-field-multilines {
   box-shadow: $shadow-input-concave;
