@@ -1,3 +1,5 @@
+import { TagColor } from "~/domain/tag";
+
 export type DisplayCourse = {
   id: string;
   year: number;
@@ -31,5 +33,5 @@ export type DisplayRegisteredCourse = {
   attendance: number;
   absence: number;
   late: number;
-  tags: { id: string; name: string; assign: boolean }[];
+  tags: { id: string; name: string; assign: boolean; color: TagColor | null }[];
 };

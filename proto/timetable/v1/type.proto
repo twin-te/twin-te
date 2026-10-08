@@ -96,4 +96,5 @@ message Tag {
   shared.UUID user_id = 2;
   string name = 3;
   int32 order = 4;
+  optional string color = 5;
 }

@@ -66,6 +66,7 @@ const menu = ref<Content[]>(
       show: true,
     },
     { iconName: "payments", item: "単位数", link: "/credit", show: true },
+    { iconName: "label", item: "タグ", link: "/tag/all-courses", show: true },
     {
       iconName: "event_note",
       item: "学年暦",

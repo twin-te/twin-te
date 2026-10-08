@@ -16,7 +16,7 @@ import {
 } from "~/domain/error";
 import { Module, modules } from "~/domain/module";
 import { NormalSchedule, Schedule, isNormalSchedule } from "~/domain/schedule";
-import { Tag } from "~/domain/tag";
+import { Tag, TagColor } from "~/domain/tag";
 import {
   NormalTimetable,
   initializeTimetable,
@@ -158,7 +158,7 @@ export interface ITimetableUseCase {
   >;
 
   createTag(
-    name: string
+    name: string | null
   ): Promise<Tag | UnauthenticatedError | NetworkError | InternalServerError>;
 
   listTags(): Promise<
@@ -175,9 +175,10 @@ export interface ITimetableUseCase {
     | InternalServerError
   >;
 
-  updateTagName(
+  updateTag(
     id: string,
-    name: string
+    name: string,
+    color: TagColor | null
   ): Promise<
     | Tag
     | NotFoundError
@@ -641,10 +642,10 @@ export class TimetableUseCase implements ITimetableUseCase {
   }
 
   async createTag(
-    name: string
+    name: string | null
   ): Promise<Tag | UnauthenticatedError | NetworkError | InternalServerError> {
     return this.#client
-      .createTag({ name })
+      .createTag({ name: name ?? undefined })
       .then((res) => fromPBTag(assurePresence(res.tag)))
       .then((tag) => {
         return this.#mutex.tags.runExclusive(() => {
@@ -696,9 +697,10 @@ export class TimetableUseCase implements ITimetableUseCase {
     return tag ?? new NotFoundError();
   }
 
-  async updateTagName(
+  async updateTag(
     id: string,
-    name: string
+    name: string,
+    color: TagColor | null
   ): Promise<
     | Tag
     | NotFoundError
@@ -707,7 +709,7 @@ export class TimetableUseCase implements ITimetableUseCase {
     | InternalServerError
   > {
     return this.#client
-      .updateTag({ id: toPBUUID(id), name })
+      .updateTag({ id: toPBUUID(id), name, color: color ?? undefined })
       .then((res) => fromPBTag(assurePresence(res.tag)))
       .then((tag) => {
         return this.#mutex.tags.runExclusive(() => {

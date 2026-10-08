@@ -1,39 +1,25 @@
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    placeholder?: string;
+    type?: "normal" | "slim";
+    added?: boolean;
+    disabled?: boolean;
+  }>(),
+  { placeholder: "", type: "normal", disabled: false, added: false }
+);
+const model = defineModel<string>({ required: true });
 
-export default defineComponent({
-  props: {
-    modelValue: {
-      type: String,
-      required: true,
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
-    type: {
-      type: String as PropType<"normal" | "slim">,
-      default: "normal",
-    },
-    added: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["update:modelValue", "enter-text-field", "close"],
-  setup: (_, { emit }) => {
-    const handleInput = (e: Event) => {
-      if (!(e.target instanceof HTMLInputElement)) return;
-      emit("update:modelValue", e.target.value);
-    };
+defineEmits<{
+  "enter-text-field": [];
+  close: [];
+  change: [Event];
+}>();
 
-    return { handleInput };
-  },
-});
+const handleInput = (e: Event) => {
+  if (!(e.target instanceof HTMLInputElement)) return;
+  model.value = e.target.value;
+};
 </script>
 
 <template>
@@ -50,6 +36,7 @@ export default defineComponent({
         :placeholder="placeholder"
         :disabled="disabled"
         @input="handleInput"
+        @change="(e) => $emit('change', e)"
         @keydown.enter="$emit('enter-text-field')"
       />
     </div>
@@ -64,7 +51,7 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .text-field {
   display: flex;

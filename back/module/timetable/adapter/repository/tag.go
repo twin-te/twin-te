@@ -59,6 +59,10 @@ func (r *impl) UpdateTag(ctx context.Context, tag *timetabledomain.Tag) error {
 		columns = append(columns, "name")
 	}
 
+	if tag.Color != before.Color {
+		columns = append(columns, "color")
+	}
+
 	if tag.Order != before.Order {
 		columns = append(columns, "order")
 	}

@@ -73,22 +73,11 @@
             <DecoratedIcon iconName="category"></DecoratedIcon>
           </CourseDetail>
         </section>
-        <TagEditor v-model:add="add" heading="タグ" @create-tag="onCreateTag">
-          <template #tags>
-            <Tag
-              v-for="tag in displayCourse.tags"
-              :key="tag.id"
-              :assign="tag.assign"
-              @click="() => onClickTag(tag)"
-              >{{ tag.name }}
-            </Tag>
-            <template v-if="displayCourse.tags.length === 0">
-              作成済みのタグがありません。<br />
-              タグを作成すると授業を分類することができます。
-            </template>
-          </template>
-          <template #btn>タグを新たに作成する</template>
-        </TagEditor>
+        <TagList
+          heading="タグ"
+          :tags="displayCourse.tags"
+          @click:tag="onClickTag"
+        />
         <TextFieldMultilines
           v-model="displayCourse.memo"
           class="main__memo"
@@ -213,8 +202,7 @@ import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import Popup from "~/ui/components/Popup.vue";
 import PopupContent from "~/ui/components/PopupContent.vue";
-import Tag from "~/ui/components/Tag.vue";
-import TagEditor from "~/ui/components/TagEditor.vue";
+import TagList from "~/ui/components/TagList.vue";
 import TextFieldMultilines from "~/ui/components/TextFieldMultilines.vue";
 import ToggleIconButton from "~/ui/components/ToggleIconButton.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
@@ -255,14 +243,13 @@ const updateView = async () => {
 
 await updateView();
 
-const updateCourse = (
+const updateCourse = async (
   id: string,
   data: Partial<Omit<RegisteredCourse, "id" | "year" | "code">>
 ) => {
-  return timetableUseCase.updateRegisteredCourse(id, data).then((result) => {
-    if (isResultError(result)) throw result;
-    return result;
-  });
+  const result = await timetableUseCase.updateRegisteredCourse(id, data);
+  if (isResultError(result)) throw result;
+  return result;
 };
 
 const updateMemo = async () => {
@@ -284,27 +271,7 @@ const updateCounter = async (
   await updateCourse(id, { [key]: newValue });
 };
 
-/** tag editor */
-const add = ref(false);
-
-const onCreateTag = async (name: string) => {
-  const existingAssignedTagIds = displayCourse.value.tags
-    .filter(({ assign }) => assign)
-    .map(({ id }) => id);
-  displayCourse.value.tags.push({ id: "new-tag", name, assign: true });
-  displayCourse.value = { ...displayCourse.value };
-
-  const createdTag = await timetableUseCase.createTag(name).then((result) => {
-    if (isResultError(result)) throw result;
-    return result;
-  });
-
-  await updateCourse(id, {
-    tagIds: [...existingAssignedTagIds, createdTag.id],
-  });
-  await updateView();
-};
-
+/** tag list */
 const onClickTag = async (clickedTag: DisplayCourseTag) => {
   clickedTag.assign = !clickedTag.assign;
   displayCourse.value = { ...displayCourse.value };

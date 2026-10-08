@@ -1,5 +1,9 @@
+@use "sass:color";
+
 @function hexToRGB($hex) {
-  @return red($hex), green($hex), blue($hex), alpha($hex);
+  @return color.channel($hex, "red", $space: rgb),
+    color.channel($hex, "green", $space: rgb),
+    color.channel($hex, "blue", $space: rgb), color.alpha($hex);
 }
 @function getColor($color_name) {
   @return rgba(var(#{$color_name}));
@@ -13,8 +17,8 @@ $theme-colors: (
   primary: #00c0c0,
   primary-light: #c8efef99,
   primary-dull: #66a0b9,
-  text-main: #626a76,
-  text-sub: #838e95,
+  text-main: #434c58,
+  text-sub: #57606c,
   text-sub-light: #8a98a0,
   button-gray: #889396,
   danger: #ed7f93,
@@ -46,8 +50,8 @@ $dark-theme-colors: (
   primary: #19c6c6,
   primary-light: #424c5a69,
   primary-dull: #4e7b8e,
-  text-main: #d4dae3,
-  text-sub: #adb8bd,
+  text-main: #dce1e8,
+  text-sub: #b9c0ca,
   text-sub-light: #9ca6ad,
   button-gray: #9db1b7,
   danger: #cf4861,
@@ -78,10 +82,12 @@ $dark-theme-colors: (
 :root {
   --base-liner: linear-gradient(158.17deg, #f3f5fa -1.94%, #e5e7ed 102.24%);
   --primary-liner: linear-gradient(91.58deg, #6bcedc -8.01%, #71e2dc 105.39%);
+  color-scheme: light;
   @each $key, $color in $theme-colors {
     --color-#{""+$key}: #{hexToRGB($color)};
   }
   .dark {
+    color-scheme: dark;
     --base-liner: linear-gradient(
       158.17deg,
       #0c101a -1.94%,

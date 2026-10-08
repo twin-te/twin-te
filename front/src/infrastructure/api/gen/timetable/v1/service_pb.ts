@@ -669,9 +669,9 @@ export class DeleteRegisteredCourseResponse extends Message<DeleteRegisteredCour
  */
 export class CreateTagRequest extends Message<CreateTagRequest> {
   /**
-   * @generated from field: string name = 1;
+   * @generated from field: optional string name = 1;
    */
-  name = "";
+  name?: string;
 
   constructor(data?: PartialMessage<CreateTagRequest>) {
     super();
@@ -681,7 +681,7 @@ export class CreateTagRequest extends Message<CreateTagRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "timetable.v1.CreateTagRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateTagRequest {
@@ -820,6 +820,11 @@ export class UpdateTagRequest extends Message<UpdateTagRequest> {
    */
   name?: string;
 
+  /**
+   * @generated from field: optional string color = 3;
+   */
+  color?: string;
+
   constructor(data?: PartialMessage<UpdateTagRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -830,6 +835,7 @@ export class UpdateTagRequest extends Message<UpdateTagRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "message", T: UUID },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 3, name: "color", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateTagRequest {
