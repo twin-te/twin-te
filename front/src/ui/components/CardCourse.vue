@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+import { isFutureYear } from "~/domain/year";
 import { DisplayCourse } from "~/presentation/viewmodels/course";
 import { getSyllabusUrl, openUrl } from "../url";
 import Button from "./Button.vue";
@@ -46,7 +47,10 @@ export default defineComponent({
       openUrl(getSyllabusUrl(props.course.year, props.course.code));
     };
 
-    return { emitCardEvent, emitCheckboxEvent, openSyllabus };
+    // The syllabus of a future-year course is not published yet.
+    const showSyllabus = !isFutureYear(props.course.year);
+
+    return { emitCardEvent, emitCheckboxEvent, openSyllabus, showSyllabus };
   },
 });
 </script>
@@ -116,6 +120,7 @@ export default defineComponent({
         <span class="material-icons">expand_more</span>
       </div>
       <div
+        v-if="showSyllabus"
         :class="{
           'card-course__syllabus-link': true,
           '--expanded': isExpanded,
