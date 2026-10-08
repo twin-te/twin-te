@@ -19,12 +19,12 @@ type Client struct {
 func (Client) TableName() string { return "oauth2_clients" }
 
 func FromDBClient(dbClient *Client) (*oauth2domain.Client, error) {
-	return oauth2domain.ConstructClient(func(c *oauth2domain.Client) (err error) {
+	return oauth2domain.ConstructClient(func(c *oauth2domain.Client) error {
 		c.ID = dbClient.ID
 		c.Name = dbClient.Name
 		c.ClientURI = dbClient.ClientURI
 		c.RedirectURIs = dbClient.RedirectURIs
-		return
+		return nil
 	})
 }
 

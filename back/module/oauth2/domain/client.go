@@ -6,8 +6,6 @@ import (
 
 // Client is identified by the following fields.
 //   - ID
-//
-// Only public clients (PKCE required) are supported.
 type Client struct {
 	ID           string
 	Name         string
@@ -15,6 +13,7 @@ type Client struct {
 	RedirectURIs []string
 }
 
+// ConstructClient only supports public clients (PKCE required).
 func ConstructClient(fn func(c *Client) (err error)) (*Client, error) {
 	c := new(Client)
 	if err := fn(c); err != nil {

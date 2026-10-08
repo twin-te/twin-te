@@ -43,7 +43,7 @@ func FromDBRequest(dbRequest *Request) (*oauth2domain.Request, error) {
 		r.Session = dbRequest.Session
 		r.Active = dbRequest.Active
 		r.ExpiresAt = dbRequest.ExpiresAt
-		return
+		return nil
 	})
 }
 

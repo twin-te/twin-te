@@ -1,18 +1,14 @@
 package oauth2factory
 
 import (
-	"net/url"
 	"time"
 
-	"github.com/samber/mo"
 	oauth2domain "github.com/twin-te/twin-te/back/module/oauth2/domain"
 	oauth2port "github.com/twin-te/twin-te/back/module/oauth2/port"
-	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
 )
 
 var _ oauth2port.Factory = (*impl)(nil)
 
-// fallbackRequestLifetime is used only when the expiry is not given.
 const fallbackRequestLifetime = 30 * 24 * time.Hour
 
 type impl struct {
@@ -20,40 +16,30 @@ type impl struct {
 }
 
 func (f *impl) NewClient(id, name, clientURI string, redirectURIs []string) (*oauth2domain.Client, error) {
-	return oauth2domain.ConstructClient(func(c *oauth2domain.Client) (err error) {
+	return oauth2domain.ConstructClient(func(c *oauth2domain.Client) error {
 		c.ID = id
 		c.Name = name
 		c.ClientURI = clientURI
 		c.RedirectURIs = redirectURIs
-		return
+		return nil
 	})
 }
 
-func (f *impl) NewRequest(
-	kind oauth2domain.RequestKind,
-	signature, requestID string,
-	userID idtype.UserID,
-	clientID string,
-	requestedAt time.Time,
-	requestedScopes, grantedScopes []string,
-	form url.Values,
-	session []byte,
-	expiresAt mo.Option[time.Time],
-) (*oauth2domain.Request, error) {
-	return oauth2domain.ConstructRequest(func(r *oauth2domain.Request) (err error) {
-		r.Kind = kind
-		r.Signature = signature
-		r.RequestID = requestID
-		r.UserID = userID
-		r.ClientID = clientID
-		r.RequestedAt = requestedAt.UTC().Truncate(time.Microsecond)
-		r.RequestedScopes = requestedScopes
-		r.GrantedScopes = grantedScopes
-		r.Form = form
-		r.Session = session
+func (f *impl) NewRequest(params oauth2port.NewRequestParams) (*oauth2domain.Request, error) {
+	return oauth2domain.ConstructRequest(func(r *oauth2domain.Request) error {
+		r.Kind = params.Kind
+		r.Signature = params.Signature
+		r.RequestID = params.RequestID
+		r.UserID = params.UserID
+		r.ClientID = params.ClientID
+		r.RequestedAt = params.RequestedAt.UTC().Truncate(time.Microsecond)
+		r.RequestedScopes = params.RequestedScopes
+		r.GrantedScopes = params.GrantedScopes
+		r.Form = params.Form
+		r.Session = params.Session
 		r.Active = true
-		r.ExpiresAt = expiresAt.OrElse(f.nowFunc().Add(fallbackRequestLifetime)).UTC().Truncate(time.Microsecond)
-		return
+		r.ExpiresAt = params.ExpiresAt.OrElse(f.nowFunc().Add(fallbackRequestLifetime)).UTC().Truncate(time.Microsecond)
+		return nil
 	})
 }
 

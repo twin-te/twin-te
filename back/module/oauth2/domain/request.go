@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -17,6 +18,13 @@ const (
 	RequestKindRefreshToken  RequestKind = "refresh_token"
 	RequestKindPKCE          RequestKind = "pkce"
 )
+
+var AllRequestKinds = []RequestKind{
+	RequestKindAuthorizeCode,
+	RequestKindAccessToken,
+	RequestKindRefreshToken,
+	RequestKindPKCE,
+}
 
 // Request is identified by the following fields.
 //   - Kind
@@ -42,11 +50,15 @@ func ConstructRequest(fn func(r *Request) (err error)) (*Request, error) {
 		return nil, err
 	}
 
-	if r.Kind == "" ||
-		r.Signature == "" ||
+	if !slices.Contains(AllRequestKinds, r.Kind) {
+		return nil, fmt.Errorf("invalid request kind %q", r.Kind)
+	}
+
+	if r.Signature == "" ||
 		r.RequestID == "" ||
 		r.UserID.IsZero() ||
 		r.ClientID == "" ||
+		len(r.Session) == 0 ||
 		r.RequestedAt.IsZero() ||
 		r.ExpiresAt.IsZero() {
 		return nil, fmt.Errorf("failed to construct %+v", r)
