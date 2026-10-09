@@ -5,6 +5,9 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   push-images:
     runs-on: ubuntu-latest

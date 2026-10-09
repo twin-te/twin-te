@@ -6,6 +6,9 @@ on:
       - "parser/**"
       - ".github/workflows/**"
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest

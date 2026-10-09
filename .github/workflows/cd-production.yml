@@ -5,6 +5,9 @@ on:
       - "*"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   push-image-front:
     runs-on: ubuntu-latest
