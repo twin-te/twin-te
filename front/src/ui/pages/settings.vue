@@ -122,6 +122,14 @@ declare global {
                 >コピー</Button
               >
             </div>
+            <TertiaryButton
+              class="ical-tag-link"
+              color="primary"
+              @click="onClickIcalTagCustomize"
+            >
+              <template #icon>sell</template>
+              <template #text>対象のタグをカスタマイズ</template>
+            </TertiaryButton>
             <div>
               <h5>注意事項</h5>
               <ul class="ical-cautions">
@@ -157,6 +165,129 @@ declare global {
         </div>
       </div>
     </div>
+    <Modal
+      v-if="icalUrl && isIcalTagModalVisible"
+      class="ical-tag-modal"
+      @click="closeIcalTagModal"
+    >
+      <template #title>{{
+        icalTagModalStep === "select"
+          ? "対象のタグをカスタマイズ"
+          : "URLを発行しました"
+      }}</template>
+      <template #contents>
+        <div
+          v-if="icalTagModalStep === 'select'"
+          class="ical-tag-modal__contents"
+        >
+          <p class="ical-tag-modal__description">
+            選択したタグが付いた授業だけに限定したURLを発行します。
+          </p>
+          <template v-if="displayIcalTags.length > 0">
+            <div class="ical-tag-modal__toolbar">
+              <span class="ical-tag-modal__selected-label">{{
+                selectedIcalTagIds.length > 0
+                  ? `${selectedIcalTagIds.length}個のタグを選択中`
+                  : "タグを選択してください"
+              }}</span>
+              <TertiaryButton color="ghost" @click="toggleAllIcalTags">
+                <template #icon>{{
+                  isAllIcalTagsSelected ? "remove_done" : "done_all"
+                }}</template>
+                <template #text>{{
+                  isAllIcalTagsSelected ? "すべて解除" : "すべて選択"
+                }}</template>
+              </TertiaryButton>
+            </div>
+            <div class="ical-tag-modal__tags">
+              <TagListContent
+                v-for="tag in displayIcalTags"
+                :key="tag.id"
+                class="ical-tag-modal__tag"
+                :name="tag.name"
+                :credit="`${tag.courseCount}件`"
+                @click="toggleIcalTag(tag.id)"
+              >
+                <template #btns>
+                  <Checkbox :isChecked="selectedIcalTagIds.includes(tag.id)" />
+                </template>
+              </TagListContent>
+            </div>
+          </template>
+          <p v-else class="ical-tag-modal__empty">
+            タグがまだありません。授業の詳細画面からタグを作成して、授業に設定してください。
+          </p>
+        </div>
+        <div v-else class="ical-tag-modal__contents">
+          <p class="ical-tag-modal__description">
+            以下のタグが付いた授業だけがカレンダーに同期されます。
+          </p>
+          <div class="ical-tag-modal__issued-tags">
+            <Tag v-for="tag in issuedIcalTags" :key="tag.id" :assign="true">
+              {{ tag.name }}
+            </Tag>
+          </div>
+          <div class="ical-tag-modal__url">
+            <input
+              :value="issuedIcalUrl"
+              type="text"
+              readonly
+              class="ical-tag-modal__url-input"
+            />
+            <Button
+              size="small"
+              :color="isIssuedIcalUrlCopied ? 'primary' : 'base'"
+              :pauseActiveStyle="false"
+              @click="copyIssuedIcalUrl"
+              >{{ isIssuedIcalUrlCopied ? "コピー済" : "コピー" }}</Button
+            >
+          </div>
+          <ul class="ical-tag-modal__notes">
+            <li>※ 元のURL（すべての授業）はそのまま使えます。</li>
+            <li>※ 対象のタグを変更するには、新しいURLを発行してください。</li>
+          </ul>
+        </div>
+      </template>
+      <template #button>
+        <template v-if="icalTagModalStep === 'select'">
+          <Button
+            class="ical-tag-modal__button"
+            size="medium"
+            layout="fill"
+            color="base"
+            @click="closeIcalTagModal"
+            >キャンセル</Button
+          >
+          <Button
+            class="ical-tag-modal__button"
+            size="medium"
+            layout="fill"
+            color="primary"
+            :state="selectedIcalTagIds.length > 0 ? 'default' : 'disabled'"
+            @click="issueIcalUrl"
+            >発行する</Button
+          >
+        </template>
+        <template v-else>
+          <Button
+            class="ical-tag-modal__button"
+            size="medium"
+            layout="fill"
+            color="base"
+            @click="backToIcalTagSelect"
+            >選び直す</Button
+          >
+          <Button
+            class="ical-tag-modal__button"
+            size="medium"
+            layout="fill"
+            color="primary"
+            @click="closeIcalTagModal"
+            >閉じる</Button
+          >
+        </template>
+      </template>
+    </Modal>
     <Modal
       v-if="isAccountDeletionModalVisible"
       class="account-delete-modal"
@@ -198,18 +329,25 @@ import {
   NetworkError,
   UnauthenticatedError,
 } from "~/domain/error";
-import { academicYears } from "~/domain/year";
+import { academicYears, currentAcademicYear } from "~/domain/year";
+import { getIcalUrlWithTags } from "~/presentation/presenters/calendar";
+import { getDisplayIcalTags } from "~/presentation/presenters/tag";
+import Checkbox from "~/ui/components/Checkbox.vue";
 import Dropdown from "~/ui/components/Dropdown.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
+import Tag from "~/ui/components/Tag.vue";
+import TagListContent from "~/ui/components/TagListContent.vue";
+import TertiaryButton from "~/ui/components/TertiaryButton.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
 import { isiOS, isMobile } from "~/ui/ua";
-import { authUseCase, calendarUseCase } from "~/usecases";
+import { authUseCase, calendarUseCase, timetableUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
 import { getLogoutUrl, redirectToUrl } from "../url";
+import type { DisplayIcalTag } from "~/presentation/viewmodels/tag";
 
 const router = useRouter();
 const { displayToast } = useToast();
@@ -273,6 +411,108 @@ const copyIcalUrl = async () => {
   } catch {
     displayToast("コピーに失敗しました", { type: "danger" });
   }
+};
+
+/** ical subscription filtered by tags */
+const [isIcalTagModalVisible, openIcalTagModal, closeIcalTagModal] = useSwitch(
+  false
+);
+const icalTagModalStep = ref<"select" | "issued">("select");
+const displayIcalTags = ref<DisplayIcalTag[]>([]);
+const selectedIcalTagIds = ref<string[]>([]);
+const issuedIcalTagIds = ref<string[]>([]);
+const isIssuedIcalUrlCopied = ref(false);
+
+const isAllIcalTagsSelected = computed(
+  () =>
+    displayIcalTags.value.length > 0 &&
+    selectedIcalTagIds.value.length === displayIcalTags.value.length
+);
+
+// Keep the display order so that the same selection always gives the same URL.
+const issuedIcalTags = computed(() =>
+  displayIcalTags.value.filter(({ id }) => issuedIcalTagIds.value.includes(id))
+);
+
+const issuedIcalUrl = computed(() =>
+  icalUrl.value
+    ? getIcalUrlWithTags(
+        icalUrl.value,
+        issuedIcalTags.value.map(({ id }) => id)
+      )
+    : ""
+);
+
+const onClickIcalTagCustomize = async () => {
+  const [tags, registeredCourses] = await Promise.all([
+    timetableUseCase.listTags(),
+    // The subscription URL has no year parameter, so the server exports the courses of the current academic year.
+    timetableUseCase.listRegisteredCourses(currentAcademicYear),
+  ]);
+
+  if (isResultError(tags) || isResultError(registeredCourses)) {
+    const error = isResultError(tags) ? tags : registeredCourses;
+    if (error instanceof UnauthenticatedError) {
+      displayToast(
+        "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。",
+        { type: "danger" }
+      );
+      router.push("/login");
+    } else if (error instanceof NetworkError) {
+      displayToast(
+        "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
+        { type: "danger" }
+      );
+    } else if (error instanceof InternalServerError) {
+      displayToast("サーバーエラーが発生しました。", { type: "danger" });
+    }
+    return;
+  }
+
+  displayIcalTags.value = getDisplayIcalTags(
+    registeredCourses,
+    tags.sort((tagA, tagB) => tagA.order - tagB.order)
+  );
+  // Always start from the initial state, without the previous selection.
+  selectedIcalTagIds.value = [];
+  issuedIcalTagIds.value = [];
+  isIssuedIcalUrlCopied.value = false;
+  icalTagModalStep.value = "select";
+  openIcalTagModal();
+};
+
+const toggleIcalTag = (tagId: string) => {
+  selectedIcalTagIds.value = selectedIcalTagIds.value.includes(tagId)
+    ? selectedIcalTagIds.value.filter((id) => id !== tagId)
+    : [...selectedIcalTagIds.value, tagId];
+};
+
+const toggleAllIcalTags = () => {
+  selectedIcalTagIds.value = isAllIcalTagsSelected.value
+    ? []
+    : displayIcalTags.value.map(({ id }) => id);
+};
+
+const issueIcalUrl = () => {
+  if (selectedIcalTagIds.value.length === 0) return;
+  issuedIcalTagIds.value = displayIcalTags.value
+    .filter(({ id }) => selectedIcalTagIds.value.includes(id))
+    .map(({ id }) => id);
+  isIssuedIcalUrlCopied.value = false;
+  icalTagModalStep.value = "issued";
+};
+
+const copyIssuedIcalUrl = async () => {
+  try {
+    await navigator.clipboard.writeText(issuedIcalUrl.value);
+    isIssuedIcalUrlCopied.value = true;
+  } catch {
+    displayToast("コピーに失敗しました", { type: "danger" });
+  }
+};
+
+const backToIcalTagSelect = () => {
+  icalTagModalStep.value = "select";
 };
 
 /** logout */
@@ -419,6 +659,19 @@ const confirmDeleteAccount = async () => {
         background: getColor(--color-background-sub);
         text-overflow: ellipsis;
       }
+      .ical-tag-link {
+        &:hover,
+        &:active {
+          box-shadow: none;
+        }
+        &:hover :deep(.tertiary-button__text) {
+          text-decoration: underline;
+          text-underline-offset: 0.3rem;
+        }
+        :deep(.tertiary-button__icon) {
+          font-size: $font-large;
+        }
+      }
       .ical-cautions {
         margin-top: 0.8rem;
         li {
@@ -443,6 +696,86 @@ const confirmDeleteAccount = async () => {
         }
       }
     }
+  }
+}
+
+.ical-tag-modal {
+  &__contents {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 0.6rem;
+  }
+  &__description,
+  &__empty {
+    @include text-description-sub;
+  }
+  &__empty {
+    margin-top: $spacing-4;
+  }
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: $spacing-4;
+    padding: 0 $spacing-2;
+  }
+  &__selected-label {
+    font-size: $font-small;
+    color: getColor(--color-text-sub);
+  }
+  &__tags {
+    flex: 1;
+    min-height: 0;
+    margin-top: $spacing-1;
+    padding: $spacing-2 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    @include scroll-mask;
+  }
+  &__tag {
+    @include button-cursor;
+    :deep(.tag-list-content__credit) {
+      font-size: $font-small;
+      font-weight: 400;
+      color: getColor(--color-text-sub);
+    }
+  }
+  &__issued-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-3 $spacing-2;
+    margin-top: $spacing-3;
+  }
+  &__url {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    height: $spacing-10;
+    margin-top: $spacing-6;
+    padding: 0 0.6rem 0 1.4rem;
+    border-radius: $radius-input;
+    background: getColor(--color-base);
+    box-shadow: $shadow-input-concave;
+  }
+  &__url-input {
+    flex: 1;
+    width: 0;
+    font-size: $font-medium;
+    font-weight: 500;
+    color: getColor(--color-text-main);
+    background: transparent;
+    text-overflow: ellipsis;
+  }
+  &__notes {
+    margin-top: $spacing-4;
+    @include text-description-sub;
+    li {
+      margin-bottom: $spacing-1;
+    }
+  }
+  &__button + &__button {
+    margin-left: $spacing-3;
   }
 }
 </style>

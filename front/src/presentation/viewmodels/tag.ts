@@ -9,3 +9,9 @@ export type DisplayCreditTag = {
   name: string;
   credit: string;
 };
+
+export type DisplayIcalTag = {
+  id: string;
+  name: string;
+  courseCount: number;
+};
