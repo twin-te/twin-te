@@ -1,6 +1,9 @@
 package authv4
 
 import (
+	"log"
+	"net/url"
+
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/appenv"
@@ -29,4 +32,31 @@ func isValidRedirectURL(redirectURL string) bool {
 
 func getRedirectURL(redirectURL string) string {
 	return lo.Ternary(isValidRedirectURL(redirectURL), redirectURL, appenv.AUTH_DEFAULT_REDIRECT_URL)
+}
+
+// getConnectResultRedirectURL returns the url to redirect to after connecting an authentication successfully.
+func getConnectResultRedirectURL(result oauth2Result) string {
+	return addQueryToURL(appenv.AUTH_CONNECT_REDIRECT_URL, "connect_result", string(result))
+}
+
+// getConnectErrorRedirectURL returns the url to redirect to after failing to connect an authentication.
+func getConnectErrorRedirectURL(code oauth2ErrorCode) string {
+	return addQueryToURL(appenv.AUTH_CONNECT_REDIRECT_URL, "connect_error", string(code))
+}
+
+// getLoginErrorRedirectURL returns the url to redirect to after failing to log in.
+func getLoginErrorRedirectURL(code oauth2ErrorCode) string {
+	return addQueryToURL(appenv.AUTH_LOGIN_ERROR_REDIRECT_URL, "login_error", string(code))
+}
+
+func addQueryToURL(rawURL, key, value string) string {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		log.Printf("failed to parse url %s, %+v", rawURL, err)
+		return rawURL
+	}
+	query := u.Query()
+	query.Set(key, value)
+	u.RawQuery = query.Encode()
+	return u.String()
 }
