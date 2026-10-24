@@ -1,25 +1,23 @@
 package authv4
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/samber/lo"
 	"github.com/twin-te/twin-te/back/appenv"
+	"github.com/twin-te/twin-te/back/apperr"
 	authdomain "github.com/twin-te/twin-te/back/module/auth/domain"
+	autherr "github.com/twin-te/twin-te/back/module/auth/err"
 )
 
 func (h *impl) handleOAuth2(c echo.Context) error {
 	state := generateState()
 
-	var url string
-	switch c.Param("provider") {
-	case "google":
-		url = googleOAuth2Config.AuthCodeURL(state)
-	case "apple":
-		url = appleOAuth2Config.AuthCodeURL(state)
-	case "twitter":
-		url = twitterOAuth2Config.AuthCodeURL(state, s256ChallengeOption)
-	default:
+	url, ok := getOAuth2AuthCodeURL(c.Param("provider"), state)
+	if !ok {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid provider")
 	}
 
@@ -28,30 +26,115 @@ func (h *impl) handleOAuth2(c echo.Context) error {
 		setAuthRedirectURLInCookie(c, redirectURL)
 	}
 
+	// Discard the connect flow which may have been started before, so that the callback is handled as login.
+	clearAuthConnectFromCookie(c)
 	setAuthStateInCookie(c, state)
 
 	return c.Redirect(http.StatusFound, url)
 }
 
-func (h *impl) handleOAuth2Callback(c echo.Context) (err error) {
-	defer func() {
-		clearAuthStateFromCookie(c)
-		clearAuthRedirectURLFromCookie(c)
+func (h *impl) handleOAuth2Connect(c echo.Context) error {
+	if _, err := h.accessController.Authenticate(c.Request().Context()); err != nil {
+		return c.Redirect(http.StatusFound, getConnectErrorRedirectURL(oauth2ErrorCodeUnauthenticated))
+	}
 
-		if err != nil {
-			return
+	state := generateState()
+
+	url, ok := getOAuth2AuthCodeURL(c.Param("provider"), state)
+	if !ok {
+		return c.Redirect(http.StatusFound, getConnectErrorRedirectURL(oauth2ErrorCodeInvalidProvider))
+	}
+
+	setAuthConnectInCookie(c)
+	setAuthStateInCookie(c, state)
+
+	return c.Redirect(http.StatusFound, url)
+}
+
+func getOAuth2AuthCodeURL(provider string, state string) (url string, ok bool) {
+	switch provider {
+	case "google":
+		return googleOAuth2Config.AuthCodeURL(state), true
+	case "apple":
+		return appleOAuth2Config.AuthCodeURL(state), true
+	case "twitter":
+		return twitterOAuth2Config.AuthCodeURL(state, s256ChallengeOption), true
+	default:
+		return "", false
+	}
+}
+
+// handleOAuth2Callback handles the callback of both login and connect.
+// It always redirects to the front end, even if an error occurs.
+func (h *impl) handleOAuth2Callback(c echo.Context) error {
+	isConnecting := isConnectingFromCookie(c)
+	redirectURL := getRedirectURLFromCookie(c)
+
+	clearAuthStateFromCookie(c)
+	clearAuthRedirectURLFromCookie(c)
+	clearAuthConnectFromCookie(c)
+
+	if isConnecting {
+		return c.Redirect(http.StatusFound, h.connectWithOAuth2Callback(c))
+	}
+	return c.Redirect(http.StatusFound, h.loginWithOAuth2Callback(c, redirectURL))
+}
+
+// connectWithOAuth2Callback adds the authentication to the logged-in user, and returns the url to redirect to.
+func (h *impl) connectWithOAuth2Callback(c echo.Context) string {
+	userAuthentication, err := getUserAuthenticationFromOAuth2Callback(c)
+	if err != nil {
+		return getConnectErrorRedirectURL(getOAuth2ErrorCode(err))
+	}
+
+	err = h.authUseCase.AddUserAuthentication(c.Request().Context(), userAuthentication)
+	if err == nil {
+		return getConnectResultRedirectURL(oauth2ResultConnected)
+	}
+
+	if apperr.Is(err, autherr.CodeUserAuthenticationAlreadyExists) {
+		if user, err := h.authUseCase.GetMe(c.Request().Context()); err == nil && lo.Contains(user.Authentications, userAuthentication) {
+			return getConnectResultRedirectURL(oauth2ResultAlreadyConnected)
 		}
+	}
 
-		c.Redirect(http.StatusFound, getRedirectURLFromCookie(c))
-	}()
+	return getConnectErrorRedirectURL(getOAuth2ErrorCode(err))
+}
 
-	if err := validateState(c); err != nil {
-		return err
+// loginWithOAuth2Callback signs up or logs in, and returns the url to redirect to.
+// Unlike the id token endpoints, the authentication is not added to the logged-in user.
+func (h *impl) loginWithOAuth2Callback(c echo.Context, redirectURL string) string {
+	userAuthentication, err := getUserAuthenticationFromOAuth2Callback(c)
+	if err != nil {
+		return getLoginErrorRedirectURL(getOAuth2ErrorCode(err))
+	}
+
+	session, err := h.authUseCase.SignUpOrLogin(c.Request().Context(), userAuthentication)
+	if err != nil {
+		return getLoginErrorRedirectURL(getOAuth2ErrorCode(err))
+	}
+
+	setSessionInCookie(c, session)
+
+	return redirectURL
+}
+
+func getUserAuthenticationFromOAuth2Callback(c echo.Context) (userAuthentication authdomain.UserAuthentication, err error) {
+	if err = validateState(c); err != nil {
+		return userAuthentication, newOAuth2Error(oauth2ErrorCodeInvalidState, err)
+	}
+
+	// The provider returns error instead of code, e.g. when the user cancels the authorization.
+	if providerError := c.QueryParam("error"); providerError != "" {
+		return userAuthentication, newOAuth2Error(
+			getOAuth2ErrorCodeFromProviderError(providerError),
+			fmt.Errorf("the provider returned error, %s", providerError),
+		)
 	}
 
 	code := c.QueryParam("code")
 	if code == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "authorization code is required")
+		return userAuthentication, echo.NewHTTPError(http.StatusBadRequest, "authorization code is required")
 	}
 
 	var (
@@ -70,29 +153,13 @@ func (h *impl) handleOAuth2Callback(c echo.Context) (err error) {
 		provider = authdomain.ProviderTwitter
 		socialID, err = getTwitterSocialID(c.Request().Context(), code)
 	default:
-		err = echo.NewHTTPError(http.StatusBadRequest, "invalid provider")
+		err = newOAuth2Error(oauth2ErrorCodeInvalidProvider, errors.New("invalid provider"))
 	}
 	if err != nil {
 		return
 	}
 
-	userAuthentication := authdomain.NewUserAuthentication(provider, socialID)
-
-	if _, err := h.accessController.Authenticate(c.Request().Context()); err == nil {
-		err = h.authUseCase.AddUserAuthentication(c.Request().Context(), userAuthentication)
-		if err != nil {
-			return err
-		}
-	}
-
-	session, err := h.authUseCase.SignUpOrLogin(c.Request().Context(), userAuthentication)
-	if err != nil {
-		return
-	}
-
-	setSessionInCookie(c, session)
-
-	return nil
+	return authdomain.NewUserAuthentication(provider, socialID), nil
 }
 
 func (h *impl) handleIDTokenGoogle(c echo.Context) error {
