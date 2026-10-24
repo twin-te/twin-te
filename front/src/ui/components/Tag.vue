@@ -20,7 +20,7 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .tag {
   width: max-content;
   height: 2rem;

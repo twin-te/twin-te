@@ -33,7 +33,7 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .check-content {
   width: max-content;

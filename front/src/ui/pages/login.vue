@@ -92,7 +92,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .login {
   @include center-flex(column);

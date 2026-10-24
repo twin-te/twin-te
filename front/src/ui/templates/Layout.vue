@@ -93,7 +93,7 @@ watch(isAuthenticated, () => setWelcomeModal(!isAuthenticated.value), {
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .layout {
   display: flex;
   background: var(--base-liner);
@@ -107,10 +107,11 @@ watch(isAuthenticated, () => setWelcomeModal(!isAuthenticated.value), {
   }
   &__grayfilter {
     display: none;
+    z-index: 12;
+
     @include portrait {
       display: block;
     }
-    z-index: 12;
   }
   &__toast {
     position: fixed;

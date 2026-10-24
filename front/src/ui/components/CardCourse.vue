@@ -136,7 +136,7 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 $grid-template-pc: "checkbox ... courseId   ... detail    ... link" auto
   "checkbox ... ...        ... detail ... link" 0.2rem

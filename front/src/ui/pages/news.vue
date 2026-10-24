@@ -51,7 +51,7 @@ const announcements = await announcementUseCase
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .news {
   @include max-width;
 }
