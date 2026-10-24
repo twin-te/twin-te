@@ -19,6 +19,10 @@ export const getLoginUrl = (provider: Provider, redirectUrl = appUrl) => {
   return `${appUrl}/auth/v4/${provider}?redirect_url=${redirectUrl}`;
 };
 
+export const getConnectUrl = (provider: Provider) => {
+  return `${appUrl}/auth/v4/${provider}/connect`;
+};
+
 export const getLogoutUrl = (redirectUrl = appUrl) => {
   return `${appUrl}/auth/v4/logout?redirect_url=${redirectUrl}`;
 };

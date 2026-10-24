@@ -67,12 +67,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { isResultError } from "~/domain/error";
 import { Provider } from "~/domain/user";
 import GrayFilter from "~/ui/components/GrayFilter.vue";
 import { getLoginUrl, redirectToUrl } from "~/ui/url";
-import { useSetting } from "../store";
+import { authUseCase } from "~/usecases";
+import { useSetting, useToast } from "../store";
+
+/** error of logging in, which is passed as query by the back end */
+const getLoginErrorMessage = (error: string): string => {
+  switch (error) {
+    case "cancelled":
+      return "ログインがキャンセルされました。";
+  }
+  return "ログインに失敗しました。お手数ですが、再度お試しください。";
+};
 
 export default defineComponent({
   components: { GrayFilter },
@@ -81,7 +92,25 @@ export default defineComponent({
     const route = useRoute();
     const redirectUrl = route.query.redirectUrl?.toString() as string;
     const { setting } = useSetting();
+    const { displayToast } = useToast();
     const clicked = ref(false);
+
+    onMounted(async () => {
+      const loginError = route.query.login_error?.toString();
+      if (loginError !== undefined) {
+        displayToast(getLoginErrorMessage(loginError), { type: "danger" });
+        // prevent the message from being displayed again on reload
+        router.replace({ query: { ...route.query, login_error: undefined } });
+      }
+
+      // Logging in again while logged in switches to another account, so go back to the top page.
+      // Check with the back end, since the auth state in the store may be stale, e.g. just after deleting the account.
+      const result = await authUseCase.getMe();
+      if (!isResultError(result)) {
+        router.replace("/");
+      }
+    });
+
     const login = (provider: Provider) => {
       clicked.value = true;
       redirectToUrl(getLoginUrl(provider, redirectUrl));
