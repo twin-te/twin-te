@@ -572,6 +572,11 @@ export class Tag extends Message<Tag> {
    */
   order = 0;
 
+  /**
+   * @generated from field: optional string color = 5;
+   */
+  color?: string;
+
   constructor(data?: PartialMessage<Tag>) {
     super();
     proto3.util.initPartial(data, this);
@@ -584,6 +589,7 @@ export class Tag extends Message<Tag> {
     { no: 2, name: "user_id", kind: "message", T: UUID },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "order", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 5, name: "color", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tag {

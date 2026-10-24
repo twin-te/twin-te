@@ -63,6 +63,7 @@
                 :credit="element.credit"
                 :mode="mode"
                 :textfield="editingTagId === element.id"
+                :color="element.color"
                 :drag-handle="editingTagId ? 'disabled' : 'show'"
               >
                 <template #textfiled>
@@ -271,7 +272,7 @@ const onClickNormalBtn = async (tag: DisplayCreditTag) => {
         });
       } else {
         await timetableUseCase
-          .updateTagName(tag.id, tag.name)
+          .updateTag(tag.id, tag.name, tag.color)
           .then((result) => {
             if (isResultError(result)) throw result;
             return result;
@@ -306,7 +307,7 @@ const onChangeOrder = async (newTags: DisplayCreditTag[]) => {
 
 const onClickAddBtn = () => {
   const id = createNewTagId();
-  displayCreditTags.value.push({ id, name: "", credit: "0.0" });
+  displayCreditTags.value.push({ id, name: "", credit: "0.0", color: null });
   editingTagId.value = id;
   focus([`#text-field-single-line--${id}`, "input"]);
 };
@@ -341,7 +342,7 @@ const onClickDeleteModal = async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .credit {
   @include max-width;

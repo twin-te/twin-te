@@ -679,6 +679,7 @@ type Tag struct {
 	UserId        *sharedpb.UUID         `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Order         int32                  `protobuf:"varint,4,opt,name=order,proto3" json:"order,omitempty"`
+	Color         *string                `protobuf:"bytes,5,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -741,6 +742,13 @@ func (x *Tag) GetOrder() int32 {
 	return 0
 }
 
+func (x *Tag) GetColor() string {
+	if x != nil && x.Color != nil {
+		return *x.Color
+	}
+	return ""
+}
+
 var File_timetable_v1_type_proto protoreflect.FileDescriptor
 
 const file_timetable_v1_type_proto_rawDesc = "" +
@@ -789,12 +797,14 @@ const file_timetable_v1_type_proto_rawDesc = "" +
 	"\aabsence\x18\f \x01(\x05R\aabsence\x12\x12\n" +
 	"\x04late\x18\r \x01(\x05R\x04late\x12%\n" +
 	"\atag_ids\x18\x0e \x03(\v2\f.shared.UUIDR\x06tagIdsB\a\n" +
-	"\x05_code\"t\n" +
+	"\x05_code\"\x99\x01\n" +
 	"\x03Tag\x12\x1c\n" +
 	"\x02id\x18\x01 \x01(\v2\f.shared.UUIDR\x02id\x12%\n" +
 	"\auser_id\x18\x02 \x01(\v2\f.shared.UUIDR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
-	"\x05order\x18\x04 \x01(\x05R\x05order*\xd0\x01\n" +
+	"\x05order\x18\x04 \x01(\x05R\x05order\x12\x19\n" +
+	"\x05color\x18\x05 \x01(\tH\x00R\x05color\x88\x01\x01B\b\n" +
+	"\x06_color*\xd0\x01\n" +
 	"\x06Module\x12\x16\n" +
 	"\x12MODULE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fMODULE_SPRING_A\x10\x01\x12\x13\n" +
@@ -887,6 +897,7 @@ func file_timetable_v1_type_proto_init() {
 		return
 	}
 	file_timetable_v1_type_proto_msgTypes[4].OneofWrappers = []any{}
+	file_timetable_v1_type_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
