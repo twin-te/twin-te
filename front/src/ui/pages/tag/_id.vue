@@ -1,6 +1,15 @@
 <template>
   <div class="wrapper">
     <PageHeader>
+      <template v-if="id !== 'all-courses'" #left-button-icon>
+        <IconButton
+          class="back-button"
+          size="large"
+          color="normal"
+          icon-name="arrow_back"
+          @click="$router.push('/tag/all-courses')"
+        ></IconButton>
+      </template>
       <template #title>タグの編集</template>
     </PageHeader>
     <Banner class="banner">
@@ -8,7 +17,7 @@
       <RouterLink class="link" to="/credit">「単位数」画面</RouterLink>
       から行えます。
     </Banner>
-    <nav class="tags">
+    <nav class="tags" :class="{ 'tags--visible': id === 'all-courses' }">
       <IconButton
         class="add-icon"
         size="small"
@@ -203,6 +212,11 @@ const addTag = async () => {
 const updateTag = async () => {
   if (!selectedTag.value) return;
   const { id, name, color } = selectedTag.value;
+  if (name.trim() === "") {
+    const savedName = allTags.value.find((t) => t.id === id)?.name;
+    if (savedName !== undefined) selectedTag.value.name = savedName;
+    return;
+  }
   await timetableUseCase.updateTag(id, name, color);
   await updateView();
 };
@@ -261,6 +275,7 @@ const deleteTag = async () => {
 .main {
   grid-area: main;
   flex-grow: 1;
+  min-width: 0;
 
   display: flex;
   flex-direction: column;
@@ -322,8 +337,9 @@ const deleteTag = async () => {
   grid-area: tags;
   display: none;
 
-  padding-right: $spacing-3;
-  border-right: 1px solid lightgray;
+  &--visible {
+    display: block;
+  }
 
   .add-icon {
     margin-left: auto;
@@ -332,6 +348,14 @@ const deleteTag = async () => {
 
   @include pc {
     display: block;
+    padding-right: $spacing-3;
+    border-right: 1px solid lightgray;
+  }
+}
+
+.back-button {
+  @include pc {
+    display: none;
   }
 }
 

@@ -200,6 +200,11 @@ async function updateView(init = false) {
 const updateTag = async () => {
   if (!selectedTag.value) return;
   const { id, name, color } = selectedTag.value;
+  if (name.trim() === "") {
+    const savedName = allTags.value.find((t) => t.id === id)?.name;
+    if (savedName !== undefined) selectedTag.value.name = savedName;
+    return;
+  }
   await timetableUseCase.updateTag(id, name, color);
   await updateView();
 };

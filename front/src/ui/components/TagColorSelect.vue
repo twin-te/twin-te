@@ -19,8 +19,9 @@ const emits = defineEmits<{
 }>();
 
 const onClick = (color: TagColor | null) => {
+  if (color === model.value) return;
   model.value = color;
-  if (color !== model.value) emits('change', color);
+  emits('change', color);
 };
 </script>
 
@@ -45,6 +46,7 @@ const onClick = (color: TagColor | null) => {
   display: flex;
   gap: variable.$spacing-3;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .color-rect {
