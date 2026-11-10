@@ -18,7 +18,7 @@ import SuspenseBoundary from "./SuspenseBoundary.vue";
 </script>
 
 <style scoped lang="scss">
-@use '~/ui/styles' as *;
+@use "~/ui/styles" as *;
 
 .loading {
   @include center-flex;
