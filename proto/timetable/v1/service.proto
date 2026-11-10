@@ -200,7 +200,7 @@ message ListTagsResponse {
 message UpdateTagRequest {
   shared.UUID id = 1;
   optional string name = 2;
-  optional string color = 3;
+  optional shared.OptionalString color = 3;
 }
 
 message UpdateTagResponse {

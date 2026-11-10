@@ -709,7 +709,11 @@ export class TimetableUseCase implements ITimetableUseCase {
     | InternalServerError
   > {
     return this.#client
-      .updateTag({ id: toPBUUID(id), name, color: color ?? undefined })
+      .updateTag({
+        id: toPBUUID(id),
+        name,
+        color: new SharedPB.OptionalString({ value: color ?? undefined }),
+      })
       .then((res) => fromPBTag(assurePresence(res.tag)))
       .then((tag) => {
         return this.#mutex.tags.runExclusive(() => {

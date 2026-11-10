@@ -355,7 +355,9 @@ func (svc *impl) UpdateTag(ctx context.Context, req *connect.Request[timetablev1
 		}
 	}
 
-	in.Color = mo.Some(req.Msg.Color)
+	if req.Msg.Color != nil {
+		in.Color = mo.Some(req.Msg.Color.Value)
+	}
 
 	tag, err := svc.uc.UpdateTag(ctx, in)
 	if err != nil {
