@@ -1,5 +1,5 @@
 import { RegisteredCourse } from "~/domain/course";
-import { Tag, TagColor } from "~/domain/tag";
+import { PresetColor, Tag, TagColor } from "~/domain/tag";
 import { initializeObject } from "~/utils";
 import { DisplayCourseTag, DisplayCreditTag } from "../viewmodels/tag";
 import { creditToDisplay } from "./credit";
@@ -61,8 +61,6 @@ export const getDisplayCreditTags = (
     color,
   }));
 };
-
-type PresetColor = Exclude<TagColor, `#${string}`>;
 
 function isPresetColor(color: TagColor): color is PresetColor {
   return !color.startsWith("#");
