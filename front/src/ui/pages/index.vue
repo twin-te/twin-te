@@ -439,7 +439,7 @@ const onClickNewsModal = async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .home {
   display: flex;

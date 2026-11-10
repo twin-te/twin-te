@@ -189,7 +189,7 @@ const onClickTag = async (course: VMCourse, tag: DisplayCourseTag) => {
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .courses {
   @include max-width;

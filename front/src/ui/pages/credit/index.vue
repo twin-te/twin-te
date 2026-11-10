@@ -341,7 +341,7 @@ const onClickDeleteModal = async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .credit {
   @include max-width;

@@ -71,7 +71,11 @@
 // button
 @mixin button-cursor($clickable: true) {
   user-select: none;
-  cursor: if($clickable, pointer, default);
+  @if $clickable {
+    cursor: pointer;
+  } @else {
+    cursor: default;
+  }
 }
 @mixin button-active($negative-shadow-convex: 0 0 0 #00000000) {
   background: var(--primary-liner);
