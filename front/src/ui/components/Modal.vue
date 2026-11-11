@@ -52,6 +52,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   z-index: 100;
+  // 画面幅が狭い場合でも、左右にページ本文と同じ余白を残して画面内に収める
+  max-width: calc(100% - $spacing-4 * 2);
   padding: $spacing-9 $spacing-8 $spacing-8;
   background: var(--base-liner);
   box-shadow: $shadow-base;
