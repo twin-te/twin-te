@@ -1,5 +1,8 @@
+@use "sass:color";
 @function hexToRGB($hex) {
-  @return red($hex), green($hex), blue($hex), alpha($hex);
+  @return color.channel($hex, "red", $space: rgb),
+    color.channel($hex, "green", $space: rgb),
+    color.channel($hex, "blue", $space: rgb), color.channel($hex, "alpha");
 }
 @function getColor($color_name) {
   @return rgba(var(#{$color_name}));

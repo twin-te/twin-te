@@ -12,7 +12,7 @@
 </template>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 
 .loading {
   @include center-flex;

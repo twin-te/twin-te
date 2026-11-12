@@ -15,7 +15,8 @@
     "importsNotUsedAsValues": "remove",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "unplugin-fonts/vite": ["node_modules/unplugin-fonts/dist/vite.d.ts"]
     },
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "jest", "node"]

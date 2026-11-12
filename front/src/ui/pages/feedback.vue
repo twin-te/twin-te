@@ -176,7 +176,7 @@ const onClickButton = async () => {
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .feedback {
   @include max-width;
 }

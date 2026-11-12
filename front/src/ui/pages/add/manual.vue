@@ -258,7 +258,7 @@ const duplicateScheduleText = ref("");
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .manual {
   @include max-width;
 }

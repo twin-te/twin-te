@@ -212,7 +212,7 @@ const navigateHandler = async (link: string) => {
 </template>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .sidebar {
   display: flex;
   flex-direction: column;

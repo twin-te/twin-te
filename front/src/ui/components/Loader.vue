@@ -17,7 +17,8 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-@import "~/ui/styles";
+@use "sass:list";
+@use "~/ui/styles" as *;
 
 $redius-1: calc(var(--size) / 8 * 3);
 $redius-2: calc(var(--size) / 8 * 2);
@@ -51,10 +52,14 @@ $spread-3: calc(var(--size) / 8 * -1);
     $spread-2
   );
 
-  @for $i from 1 through length($result) {
-    $j: ((($i - 1) - $shift) % length($result)) + 1;
-    $new-box-shadow: append(nth($result, $i), nth($spreads, $j), "space");
-    $result: set-nth($result, $i, $new-box-shadow);
+  @for $i from 1 through list.length($result) {
+    $j: ((($i - 1) - $shift) % list.length($result)) + 1;
+    $new-box-shadow: list.append(
+      list.nth($result, $i),
+      list.nth($spreads, $j),
+      "space"
+    );
+    $result: list.set-nth($result, $i, $new-box-shadow);
   }
 
   @return $result;

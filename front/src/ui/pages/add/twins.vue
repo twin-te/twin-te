@@ -86,7 +86,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "~/ui/styles";
+@use "~/ui/styles" as *;
 .twins {
   @include max-width;
 }
