@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP TABLE IF EXISTS oauth2_requests;
+DROP TABLE IF EXISTS oauth2_clients;
+
+COMMIT;
