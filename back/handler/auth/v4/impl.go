@@ -9,6 +9,7 @@ import (
 
 // impl handles the requests beggining with the following paths.
 //   - "/:provider"
+//   - "/:provider/connect"
 //   - "/:provider/callback"
 //   - "/logout"
 //   - "/google/idToken"
@@ -37,6 +38,7 @@ func New(
 	)
 
 	e.GET("/:provider", h.handleOAuth2)
+	e.GET("/:provider/connect", h.handleOAuth2Connect)
 	e.GET("/:provider/callback", h.handleOAuth2Callback)
 	e.GET("/logout", h.handleLogout)
 	e.GET("/google/idToken", h.handleIDTokenGoogle)

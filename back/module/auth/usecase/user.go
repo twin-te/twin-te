@@ -108,7 +108,7 @@ func (uc *impl) DeleteUserAuthentication(ctx context.Context, provider authdomai
 			return err
 		}
 		return rtx.UpdateUser(ctx, user)
-	}, true)
+	}, false)
 }
 
 func (uc *impl) Logout(ctx context.Context) error {
