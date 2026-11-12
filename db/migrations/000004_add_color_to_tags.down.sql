@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE tags DROP COLUMN color;
+
+COMMIT;

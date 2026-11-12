@@ -57,11 +57,12 @@ export const registeredCourseToDisplay = (
     late: course.late,
     tags: deepCopy(tags)
       .sort((a, b) => a.order - b.order)
-      .map(({ id, name }) => {
+      .map(({ id, name, color }) => {
         const index = course.tagIds.findIndex((tagId) => tagId === id);
         return {
           id,
           name,
+          color,
           assign: index !== -1,
         };
       }),

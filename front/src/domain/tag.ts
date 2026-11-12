@@ -1,7 +1,19 @@
+export type ColorHex = `#${string}`;
+export type PresetColor =
+  | "gray"
+  | "rose"
+  | "orange"
+  | "yellow"
+  | "green"
+  | "blue"
+  | "purple";
+export type TagColor = PresetColor | ColorHex;
+
 export type Tag = {
   id: string;
   name: string;
   order: number; // 0-indices
+  color: TagColor | null;
 };
 
 export type UndefinedTagOrder = -1;

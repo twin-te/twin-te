@@ -1,6 +1,7 @@
 package timetabledbmodel
 
 import (
+	"github.com/samber/mo"
 	"time"
 
 	"github.com/twin-te/twin-te/back/module/shared/domain/idtype"
@@ -12,6 +13,7 @@ type Tag struct {
 	UserID string
 	Name   string
 	Order  int
+	Color  *string
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -39,6 +41,8 @@ func FromDBTag(dbTag *Tag) (*timetabledomain.Tag, error) {
 			return err
 		}
 
+		t.Color = mo.PointerToOption(dbTag.Color)
+
 		return nil
 	})
 }
@@ -49,5 +53,6 @@ func ToDBTag(tag *timetabledomain.Tag) *Tag {
 		UserID: tag.UserID.String(),
 		Name:   tag.Name.String(),
 		Order:  tag.Order.Int(),
+		Color:  tag.Color.ToPointer(),
 	}
 }

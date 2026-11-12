@@ -1,0 +1,47 @@
+@use "sass:map";
+@use "variable";
+
+$tag-colors: (
+  "gray": (
+    light: #a3adb3,
+    dark: #6b7a82,
+  ),
+  "rose": (
+    light: #d45c5c,
+    dark: #8c3a3a,
+  ),
+  "orange": (
+    light: #d08030,
+    dark: #885020,
+  ),
+  "yellow": (
+    light: #b0a020,
+    dark: #6a6018,
+  ),
+  "green": (
+    light: #3aaa6a,
+    dark: #286e48,
+  ),
+  "blue": (
+    light: #4090da,
+    dark: #2a5a8c,
+  ),
+  "purple": (
+    light: #8a60d0,
+    dark: #5a3a8c,
+  ),
+);
+
+:root {
+  --tag-default: #{variable.getColor(--color-unselected)};
+
+  @each $color, $values in $tag-colors {
+    --tag-#{$color}: #{map.get($values, light)};
+  }
+
+  .dark {
+    @each $color, $values in $tag-colors {
+      --tag-#{$color}: #{map.get($values, dark)};
+    }
+  }
+}

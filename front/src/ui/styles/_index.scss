@@ -8,6 +8,7 @@
 @forward "transition";
 @use "variable";
 @use "mixin";
+@use 'tags';
 
 html {
   font-size: 62.5%; //1rem=10px

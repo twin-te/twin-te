@@ -103,6 +103,7 @@
             :room="
               setting.showRooms && courses.length > 0 ? courses[0].room : ''
             "
+            :color="courses.length !== 1 ? null : getTagColor(courses[0])"
             :caution="courses.length > 1 ? `他${courses.length - 1}件` : ''"
             @click="() => onClickCourseTile(day, period, courses)"
           />
@@ -134,6 +135,7 @@
                 state="default"
                 :name="course.name"
                 :room="setting.showRooms ? course.room : ''"
+                :color="getTagColor(course)"
                 @click="$router.push(`/course/${course.id}`)"
               />
             </div>
@@ -174,6 +176,7 @@
                 state="default"
                 :name="course.name"
                 :room="course.room"
+                :color="getTagColor(course)"
                 @click="$router.push(`/course/${course.id}`)"
               />
             </div>
@@ -425,6 +428,15 @@ const onClickCourseTile = async (
   }
 };
 
+const getTagColor = (course: DisplayRegisteredCourse) => {
+  for (const tag of course.tags) {
+    if (tag.assign && tag.color) {
+      return tag.color;
+    }
+  }
+  return null;
+};
+
 /** news modal */
 const [isNewsModalVisible, , closeNewsModal] = useSwitch(
   isAuthenticated.value && unreadAnnouncements.length > 0
@@ -453,15 +465,17 @@ const onClickNewsModal = async () => {
   box-shadow: $shadow-base;
   padding: $spacing-4 $spacing-3;
   margin: $spacing-4 (-$spacing-4) $spacing-0; //縦向きの画面でLayoutのpaddingを無視するため
-  @include landscape {
-    margin: $spacing-4 $spacing-0 $spacing-0;
-  }
+  height: calc(#{$vh} - 7.6rem);
   flex: 1;
   min-height: 0;
   grid-template:
     "toggle module btn" $spacing-7
     "table table table" 1fr
     / 12rem 1fr 10.4rem;
+
+  @include landscape {
+    margin: $spacing-4 $spacing-0 $spacing-0;
+  }
 
   @include landscape {
     border-radius: $spacing-4;

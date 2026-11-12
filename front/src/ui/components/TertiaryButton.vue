@@ -1,26 +1,25 @@
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-
-export default defineComponent({
-  name: "TertiaryButton",
-  props: {
-    color: {
-      type: String as PropType<"ghost" | "primary">,
-      default: "normal",
-    },
-    iconPosition: {
-      type: String as PropType<"left" | "right">,
-      default: "left",
-    },
-  },
-  emits: ["click"],
-});
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    color?: "ghost" | "primary" | "danger";
+    iconPosition?: "left" | "right";
+  }>(),
+  {
+    color: "primary",
+    iconPosition: "left",
+  }
+);
+defineEmits<{ click: [] }>();
+defineSlots<{
+  icon: () => unknown;
+  text: () => unknown;
+}>();
 </script>
 
 <template>
   <div
     :class="{ 'tertiary-button': true, [`tertiary-button--${color}`]: true }"
-    :style="{ flexDirection: iconPosition == 'left' ? 'row' : 'row-reverse' }"
+    :style="{ flexDirection: iconPosition === 'left' ? 'row' : 'row-reverse' }"
     @click="$emit('click')"
   >
     <div class="tertiary-button__icon material-icons">
@@ -58,6 +57,10 @@ export default defineComponent({
 
   &--primary {
     color: getColor(--color-primary);
+  }
+
+  &--danger {
+    color: getColor(--color-danger);
   }
 
   &:hover {

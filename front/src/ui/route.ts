@@ -14,6 +14,8 @@ const Edit = () => import("./pages/course/_id/edit.vue");
 const Details = () => import("./pages/course/_id/index.vue");
 const Courses = () => import("./pages/credit/_id.vue");
 const Credit = () => import("./pages/credit/index.vue");
+const Tag = () => import("./pages/tag/index.vue");
+const TagDetail = () => import("./pages/tag/_id.vue");
 const Feedback = () => import("./pages/feedback.vue");
 const Import = () => import("./pages/import.vue");
 const Login = () => import("./pages/login.vue");
@@ -47,6 +49,8 @@ const routes: RouteRecordRaw[] = [
   { path: "/news", component: News },
   { path: "/credit", component: Credit },
   { path: "/credit/:id", component: Courses },
+  { path: "/tag", component: Tag },
+  { path: "/tag/:id", component: TagDetail },
   { path: "/import-room", component: ImportRoom },
   { path: "/import-room/excel", component: ImportRoomExcel },
   { path: "/:pathMatch(.*)*", component: Error404 },
