@@ -134,6 +134,92 @@ declare global {
             </div>
           </div>
         </div>
+        <template v-if="isAuthenticated && connectedProviders">
+          <div class="main__content">
+            <p>ログイン方法</p>
+            <span class="provider-count"
+              >{{ connectedProviders.length }} /
+              {{ providers.length }} 連携中</span
+            >
+          </div>
+          <Card class="provider-card">
+            <div
+              v-for="(provider, index) in displayedProviders"
+              :key="provider"
+              class="provider"
+            >
+              <div v-if="index > 0" class="provider-card__divider"></div>
+              <div class="provider__row">
+                <div :class="['provider__mark', `provider__mark--${provider}`]">
+                  <img :src="providerMarkMap[provider]" alt="" />
+                </div>
+                <div class="provider__text">
+                  <span class="provider__name">{{
+                    providerMap[provider]
+                  }}</span>
+                  <span class="provider__status">{{
+                    connectedProviders.includes(provider)
+                      ? "連携済み"
+                      : "未連携"
+                  }}</span>
+                </div>
+                <div
+                  v-if="isLocked(provider)"
+                  class="provider__lock provider__lock--inline"
+                >
+                  <span class="material-icons">lock</span
+                  >ログイン方法が1つだけのため解除できません
+                </div>
+                <Button
+                  v-if="connectedProviders.includes(provider)"
+                  class="provider__button"
+                  size="small"
+                  color="base"
+                  :state="isLocked(provider) ? 'disabled' : 'default'"
+                  :pauseActiveStyle="false"
+                  @click="openDisconnectionModal(provider)"
+                >
+                  <span class="material-icons provider__button-icon--danger"
+                    >link_off</span
+                  ><span class="provider__button-label--danger">解除</span>
+                </Button>
+                <Button
+                  v-else-if="canConnect"
+                  class="provider__button"
+                  size="small"
+                  color="base"
+                  :pauseActiveStyle="false"
+                  @click="connect(provider)"
+                >
+                  <span class="material-icons provider__button-icon--liner"
+                    >add</span
+                  ><span class="provider__button-label--liner">接続</span>
+                </Button>
+              </div>
+              <div
+                v-if="isLocked(provider)"
+                class="provider__lock provider__lock--below"
+              >
+                <span class="material-icons">lock</span
+                >ログイン方法が1つだけのため解除できません
+              </div>
+            </div>
+            <div v-if="!canConnect" class="provider">
+              <div class="provider-card__divider"></div>
+              <div class="provider__row">
+                <div class="provider__mark provider__mark--add">
+                  <span class="material-icons">add</span>
+                </div>
+                <div class="provider__text">
+                  <span class="provider__name">ログイン方法を追加</span>
+                  <span class="provider__status"
+                    >ブラウザ版の設定画面から追加できます</span
+                  >
+                </div>
+              </div>
+            </div>
+          </Card>
+        </template>
         <div v-if="isAuthenticated" class="main__content--account">
           <p>アカウント情報</p>
           <div class="account-btns">
@@ -185,33 +271,75 @@ declare global {
         >
       </template>
     </Modal>
+    <Modal
+      v-if="providerToDisconnect"
+      class="provider-disconnect-modal"
+      size="small"
+      @click="closeDisconnectionModal"
+    >
+      <template #title
+        >{{
+          providerMap[providerToDisconnect]
+        }}との連携を解除しますか？</template
+      >
+      <template #contents>
+        <p class="modal__text">
+          解除すると、選択した{{
+            providerMap[providerToDisconnect]
+          }}アカウントではTwin:teにログインできなくなります。他のログイン方法を使って引き続きTwin:teを使用できます。
+        </p>
+      </template>
+      <template #button>
+        <Button
+          size="medium"
+          layout="fill"
+          color="base"
+          @click="closeDisconnectionModal"
+          >キャンセル</Button
+        >
+        <Button
+          size="medium"
+          layout="fill"
+          color="danger"
+          @click="confirmDisconnect"
+          >解除</Button
+        >
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useHead } from "@vueuse/head";
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   InternalServerError,
   isResultError,
   NetworkError,
   UnauthenticatedError,
 } from "~/domain/error";
+import { Provider } from "~/domain/user";
 import { academicYears } from "~/domain/year";
+import { providerMap } from "~/presentation/presenters/provider";
+import logoX from "~/ui/assets/login-page/logo-x.png";
+import markAppleWhite from "~/ui/assets/login-page/mark-apple-white.svg";
+import markGoogle from "~/ui/assets/login-page/mark-google.svg";
+import Card from "~/ui/components/Card.vue";
 import Dropdown from "~/ui/components/Dropdown.vue";
 import IconButton from "~/ui/components/IconButton.vue";
 import Modal from "~/ui/components/Modal.vue";
 import PageHeader from "~/ui/components/PageHeader.vue";
 import ToggleSwitch from "~/ui/components/ToggleSwitch.vue";
 import { useSwitch } from "~/ui/hooks/useSwitch";
-import { isiOS, isMobile } from "~/ui/ua";
+import { isAndroid, isiOS, isMobile } from "~/ui/ua";
 import { authUseCase, calendarUseCase } from "~/usecases";
 import Button from "../components/Button.vue";
 import { useAuth, useSetting, useToast } from "../store";
-import { getLogoutUrl, redirectToUrl } from "../url";
+import { getConnectUrl, getLogoutUrl, redirectToUrl } from "../url";
 
 const router = useRouter();
+const route = useRoute();
 const { displayToast } = useToast();
 
 useHead({
@@ -272,6 +400,138 @@ const copyIcalUrl = async () => {
     displayToast("URLをコピーしました", { type: "primary" });
   } catch {
     displayToast("コピーに失敗しました", { type: "danger" });
+  }
+};
+
+/** login providers */
+const providers: Provider[] = ["google", "apple", "twitter"];
+
+const providerMarkMap: Record<Provider, string> = {
+  google: markGoogle,
+  apple: markAppleWhite,
+  twitter: logoX,
+};
+
+const connectedProviders = ref<Provider[] | undefined>(undefined);
+
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    return;
+  }
+  const result = await authUseCase.getMe();
+  if (!isResultError(result)) {
+    connectedProviders.value = result.providers;
+  }
+});
+
+// The Android app ignores the redirect url of Google and always returns to the top page (twin-te/twin-te#482),
+// so connecting is not provided in the Android app until the app is updated.
+const canConnect = !isAndroid();
+
+// Only the connected providers are displayed if connecting is not provided.
+const displayedProviders = computed<Provider[]>(() =>
+  canConnect
+    ? providers
+    : providers.filter((provider) =>
+        connectedProviders.value?.includes(provider)
+      )
+);
+
+// The last provider cannot be disconnected, since the user has at least one authentication.
+const isLocked = (provider: Provider): boolean =>
+  connectedProviders.value?.length === 1 &&
+  connectedProviders.value.includes(provider);
+
+const connect = (provider: Provider) => {
+  redirectToUrl(getConnectUrl(provider));
+};
+
+/** result of connecting a provider, which is passed as query by the back end */
+const getConnectResultMessage = (result: string): string | undefined => {
+  switch (result) {
+    case "connected":
+      return "連携しました。";
+    case "already_connected":
+      return "このアカウントは既に連携済みです。";
+  }
+  return undefined;
+};
+
+const getConnectErrorMessage = (error: string): string => {
+  switch (error) {
+    case "cancelled":
+      return "連携がキャンセルされました。";
+    case "unauthenticated":
+      return "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。";
+    case "already_used_by_another_user":
+      return "このアカウントは既に別のTwin:teアカウントに連携されているため、連携できません。";
+    case "provider_already_connected":
+      return "同じサービスの別のアカウントが既に連携されています。連携を解除してからお試しください。";
+  }
+  return "連携に失敗しました。お手数ですが、再度お試しください。";
+};
+
+onMounted(() => {
+  const connectResult = route.query.connect_result?.toString();
+  const connectError = route.query.connect_error?.toString();
+  if (connectResult === undefined && connectError === undefined) {
+    return;
+  }
+
+  if (connectError !== undefined) {
+    displayToast(getConnectErrorMessage(connectError), { type: "danger" });
+  } else if (connectResult !== undefined) {
+    const message = getConnectResultMessage(connectResult);
+    if (message) displayToast(message, { type: "primary" });
+  }
+
+  // prevent the message from being displayed again on reload
+  router.replace({
+    query: {
+      ...route.query,
+      connect_result: undefined,
+      connect_error: undefined,
+    },
+  });
+});
+
+/** disconnect provider */
+const providerToDisconnect = ref<Provider | undefined>(undefined);
+
+const openDisconnectionModal = (provider: Provider) => {
+  providerToDisconnect.value = provider;
+};
+
+const closeDisconnectionModal = () => {
+  providerToDisconnect.value = undefined;
+};
+
+const confirmDisconnect = async () => {
+  const provider = providerToDisconnect.value;
+  if (provider === undefined) return;
+
+  const result = await authUseCase.deleteUserAuthentication(provider);
+  if (!isResultError(result)) {
+    closeDisconnectionModal();
+    connectedProviders.value = connectedProviders.value?.filter(
+      (connectedProvider) => connectedProvider !== provider
+    );
+    displayToast(`${providerMap[provider]}との連携を解除しました。`, {
+      type: "primary",
+    });
+  } else if (result instanceof UnauthenticatedError) {
+    displayToast(
+      "ログインの確認に失敗しました。お手数ですが、再度ログインした上でお試しいただけますと幸いです。",
+      { type: "danger" }
+    );
+    router.push("/login");
+  } else if (result instanceof NetworkError) {
+    displayToast(
+      "ネットワークエラーが発生しました。お使いの端末がインターネットに接続されているか、今一度確認ください。",
+      { type: "danger" }
+    );
+  } else if (result instanceof InternalServerError) {
+    displayToast("サーバーエラーが発生しました。", { type: "danger" });
   }
 };
 
@@ -354,6 +614,144 @@ const confirmDeleteAccount = async () => {
 @import "~/ui/styles";
 .settings {
   @include max-width;
+}
+
+.provider-count {
+  margin-left: auto;
+  font-size: $font-small;
+  color: getColor(--color-text-sub);
+}
+
+.main .provider-card {
+  padding: $spacing-1 $spacing-5;
+  margin-bottom: $spacing-3;
+  &__divider {
+    height: 0.2rem;
+    border-radius: 0.2rem;
+    box-shadow: $shadow-concave;
+  }
+}
+
+.provider {
+  display: flex;
+  flex-direction: column;
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: 1.4rem 0;
+  }
+  &__mark {
+    @include center-flex;
+    flex-shrink: 0;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    box-shadow: $shadow-drop;
+    img {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    &--google {
+      background: #ffffff;
+    }
+    &--apple,
+    &--twitter {
+      background: #000000;
+    }
+    &--add {
+      background: var(--base-liner);
+      box-shadow: $shadow-convex;
+      .material-icons {
+        font-size: 2rem;
+        @include text-liner;
+      }
+    }
+  }
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+  }
+  &__name {
+    color: getColor(--color-text-main);
+    font-weight: 500;
+  }
+  &__status {
+    @include ellipsis;
+    font-size: $font-small;
+    font-weight: 400;
+    color: getColor(--color-text-sub);
+  }
+  &__lock {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    white-space: nowrap;
+    font-size: $font-small;
+    font-weight: 400;
+    color: getColor(--color-text-sub);
+    .material-icons {
+      font-size: 1.4rem;
+      color: getColor(--color-button-gray);
+    }
+    // The reason is displayed below the row in portrait, and in the row in landscape.
+    &--below {
+      margin: -0.6rem 0 1.4rem;
+      line-height: $multi-line;
+      @include landscape {
+        display: none;
+      }
+    }
+    &--inline {
+      display: none;
+      @include landscape {
+        display: flex;
+      }
+    }
+  }
+  &__row &__button {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 0.6rem;
+    height: 2.8rem;
+    padding: 0 1.4rem 0 1rem;
+    background: var(--base-liner);
+    .material-icons {
+      font-size: 1.8rem;
+    }
+    span {
+      // Button ignores the click whose target is not the button itself.
+      pointer-events: none;
+    }
+    &:active:not(.--disabled) span {
+      color: getColor(--color-white);
+      @include void-text-liner;
+    }
+  }
+  &__button-icon--danger,
+  &__button-label--danger {
+    color: getColor(--color-danger);
+  }
+  &__button-icon--liner,
+  &__button-label--liner {
+    @include text-liner;
+  }
+}
+
+.provider-disconnect-modal .modal {
+  .button {
+    width: calc(50% - 0.6rem);
+    &:first-child {
+      margin-right: 0.6rem;
+    }
+    &:last-child {
+      margin-left: 0.6rem;
+    }
+  }
 }
 
 .main {
