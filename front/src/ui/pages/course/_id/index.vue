@@ -380,7 +380,9 @@ const popupContents: {
 ];
 
 // If the course is added by manual, the syllabus does not exist.
-if (displayCourse.value.code === "") popupContents.splice(1, 1);
+// The syllabus of a future-year course is not published yet, so hide the link as well.
+if (displayCourse.value.code === "" || isFutureYear(displayCourse.value.year))
+  popupContents.splice(1, 1);
 </script>
 
 <style scoped lang="scss">
